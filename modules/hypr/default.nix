@@ -29,12 +29,6 @@
     home-manager.users.joshammer = {
       imports = [./waybar.nix];
       home.file = {
-        ".config/xdg-desktop-portal".text = ''
-          [preferred]
-          default=gtk
-          org.freedesktop.impl.portal.Screenshot=wlr
-          org.freedesktop.impl.portal.ScreenCast=wlr
-        '';
         ".config/hypr/hyprland.conf".text =
           ''
             source = ~/.config/nixos/modules/hypr/hyprland.conf

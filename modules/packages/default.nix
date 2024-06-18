@@ -32,11 +32,11 @@ in {
           losslesscut-bin
           vscode
           obs-studio
+          vlc
 
           # sddm theme
           (callPackage ./aerial-sddm-theme.nix {}).aerial-sddm-theme
 
-          # xwaylandvideobridge xdg-desktop-portal-hyprland
           wdisplays
 
           android-studio
@@ -162,6 +162,7 @@ in {
           spice-gtk
           texliveTeTeX
           valgrind
+          wtype
 
           # xorg
           arandr
