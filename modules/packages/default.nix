@@ -24,15 +24,16 @@ in {
           ### gui
 
           # main
-          firefox
           discord
+          element-desktop
+          firefox
+          losslesscut-bin
+          obs-studio
           onedrive
           teams-for-linux
           virt-manager
-          losslesscut-bin
-          vscode
-          obs-studio
           vlc
+          vscode
 
           # sddm theme
           (callPackage ./aerial-sddm-theme.nix {}).aerial-sddm-theme
