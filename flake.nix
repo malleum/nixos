@@ -1,20 +1,16 @@
 {
-  description = "based nixos flake";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
 
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-alien.url = "github:thiagokokada/nix-alien";
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
+    fix-python.url = "github:GuillaumeDesforges/fix-python";
+    nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:speedster33/nixvim";
     stylix.url = "github:danth/stylix";
-    fix-python.url = "github:GuillaumeDesforges/fix-python";
   };
   outputs = inputs: let
     system = "x86_64-linux";
