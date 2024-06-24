@@ -5,14 +5,15 @@
   config,
   ...
 }: {
-  imports = [inputs.home-manager.nixosModules.home-manager];
-
   options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
 
+  imports = [
+    inputs.home-manager.nixosModules.home-manager
+    # inputs.hypr.nixosModules.default
+  ];
+
   config = lib.mkIf config.hypr.enable {
-    programs = {
-      hyprland.enable = true;
-    };
+    programs.hyprland.enable = true;
 
     environment = {
       sessionVariables = {
