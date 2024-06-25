@@ -174,16 +174,18 @@ in {
 
           # wayland
           cliphist
+          egl-wayland
           grim
           hyprpicker
           hyprshot
           slurp
+          swappy
           sway-contrib.grimshot
           swaylock
           swww
           wl-clip-persist
           wl-clipboard
-          # xwaylandvideobridge
+          xwaylandvideobridge
 
           # lols
           cava

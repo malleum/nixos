@@ -7,10 +7,7 @@
 }: {
   options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
 
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-    # inputs.hypr.nixosModules.default
-  ];
+  imports = [inputs.home-manager.nixosModules.home-manager];
 
   config = lib.mkIf config.hypr.enable {
     programs.hyprland.enable = true;
@@ -19,12 +16,19 @@
       sessionVariables = {
         WLR_NO_HARDWARE_CURSORS = "1";
         NIXOS_OZONE_WL = "1";
+
+        CLUTTER_BACKEND = "wayland";
+        WLR_RENDERER = "vulkan";
+
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
+        XDG_SESSION_TYPE = "wayland";
       };
     };
 
     xdg.portal = {
       enable = true;
-      extraPortals = [pkgs.xdg-desktop-portal-gtk];
+      extraPortals = [pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland];
     };
 
     home-manager.users.joshammer = {

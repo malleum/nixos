@@ -2,12 +2,12 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
-    # hypr.url = "github:hyprwm/Hyprland";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:speedster33/nixvim";
     stylix.url = "github:danth/stylix";

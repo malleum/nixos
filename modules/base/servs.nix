@@ -28,6 +28,7 @@
     hardware = {
       bluetooth.enable = true;
       acpilight.enable = true;
+      pulseaudio.enable = false;
     };
   };
 }
