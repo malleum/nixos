@@ -174,7 +174,6 @@ in {
 
           # wayland
           cliphist
-          egl-wayland
           grim
           hyprpicker
           hyprshot
@@ -185,7 +184,6 @@ in {
           swww
           wl-clip-persist
           wl-clipboard
-          xwaylandvideobridge
 
           # lols
           cava
