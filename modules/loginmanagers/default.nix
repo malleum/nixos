@@ -1,7 +1,1 @@
-{
-  imports = [
-    ./sddm.nix
-    ./greetd.nix
-    ./lightdm.nix
-  ];
-}
+{imports = [./sddm.nix ./greetd.nix ./lightdm.nix];}

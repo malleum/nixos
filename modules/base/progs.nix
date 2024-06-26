@@ -27,7 +27,6 @@
         enable = true;
         gamescopeSession.enable = true;
       };
-      zsh.enable = true;
     };
   };
 }

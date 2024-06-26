@@ -3,11 +3,7 @@
   config,
   ...
 }: {
-  imports = [
-    ./progs.nix
-    ./servs.nix
-    ./user.nix
-  ];
+  imports = [./progs.nix ./servs.nix ./user.nix];
 
   options.base = {
     enable = lib.mkEnableOption "Enables base.nix";
@@ -19,7 +15,7 @@
   config = lib.mkIf config.base.enable {
     networking.networkmanager.enable = true;
 
-    time.timeZone = "England/London";
+    time.timeZone = "UTC";
     i18n.defaultLocale = "en_US.utf8";
     console.keyMap = "dvorak";
 
