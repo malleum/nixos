@@ -184,6 +184,7 @@ in {
           swww
           wl-clip-persist
           wl-clipboard
+          xwaylandvideobridge
 
           # lols
           cava

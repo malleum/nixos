@@ -10,7 +10,10 @@
   imports = [inputs.home-manager.nixosModules.home-manager];
 
   config = lib.mkIf config.hypr.enable {
-    programs.hyprland.enable = true;
+    programs.hyprland = {
+      enable = true;
+      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    };
 
     environment = {
       sessionVariables = {
@@ -28,10 +31,7 @@
 
     xdg.portal = {
       enable = true;
-      extraPortals = [
-        pkgs.xdg-desktop-portal-gtk
-        # pkgs.xdg-desktop-portal-hyprland
-      ];
+      extraPortals = [pkgs.xdg-desktop-portal-gtk];
     };
 
     home-manager.users.joshammer = {

@@ -8,6 +8,7 @@
 
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:speedster33/nixvim";
     stylix.url = "github:danth/stylix";
