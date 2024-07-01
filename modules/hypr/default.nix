@@ -5,9 +5,9 @@
   config,
   ...
 }: {
-  options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
-
   imports = [inputs.home-manager.nixosModules.home-manager];
+
+  options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
 
   config = lib.mkIf config.hypr.enable {
     programs.hyprland = {
@@ -19,9 +19,6 @@
       sessionVariables = {
         WLR_NO_HARDWARE_CURSORS = "1";
         NIXOS_OZONE_WL = "1";
-
-        CLUTTER_BACKEND = "wayland";
-        WLR_RENDERER = "vulkan";
 
         XDG_CURRENT_DESKTOP = "Hyprland";
         XDG_SESSION_DESKTOP = "Hyprland";
@@ -45,7 +42,6 @@
               col.active_border = rgba(${config.stylix.base16Scheme.base0A}ee) rgba(${config.stylix.base16Scheme.base0B}ee) 30deg
               col.inactive_border = rgba(${config.stylix.base16Scheme.base01}ee)
             }
-
           ''
           + (
             if (config.networking.hostName != "magnus")
