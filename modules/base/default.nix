@@ -3,7 +3,11 @@
   config,
   ...
 }: {
-  imports = [./progs.nix ./servs.nix ./user.nix];
+  imports = [
+    ./progs.nix
+    ./servs.nix
+    ./user.nix
+  ];
 
   options.base = {
     enable = lib.mkEnableOption "Enables base.nix";
@@ -19,11 +23,7 @@
     i18n.defaultLocale = "en_US.utf8";
     console.keyMap = "dvorak";
 
-    nix.settings = {
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-      experimental-features = ["flakes" "nix-command"];
-    };
+    nix.settings.experimental-features = ["flakes" "nix-command"];
 
     system = {
       stateVersion = "22.11"; # DON'T CHANGE THIS

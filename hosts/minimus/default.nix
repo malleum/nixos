@@ -1,12 +1,15 @@
 {
-  imports = [./hardware-configuration.nix ../../modules];
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules
+  ];
 
   networking.hostName = "minimus";
   base = {
     enable = true;
     user.enable = true;
   };
-  users.users.joshammer.initialPassword = "john1125";
+  users.users.joshammer.initialPassword = "john11:25";
 
   home.enable = true;
 
