@@ -1,4 +1,30 @@
-{config, ...}: {
+{
+  config,
+  lib,
+  ...
+}: let
+  indexOf = list: item: let
+    indexHelper = l: i:
+      if l == []
+      then -1
+      else if builtins.elemAt l 0 == item
+      then i
+      else indexHelper (builtins.tail l) (i + 1); # Recurse with the next index and tail of the list
+  in
+    indexHelper list 0;
+
+  colors = [
+    "#${config.stylix.base16Scheme.base09}"
+    "#${config.stylix.base16Scheme.base0A}"
+    "#${config.stylix.base16Scheme.base0B}"
+    "#${config.stylix.base16Scheme.base0C}"
+  ];
+
+  mods = ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt"];
+  modulo' = a: b: a - b * builtins.div a b;
+  modulo = a: (modulo' a (builtins.length colors));
+  c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
+in {
   programs.waybar = {
     enable = true;
     # https://github.com/georgewhewell/nixos-host/blob/master/home/waybar.nix
@@ -11,23 +37,24 @@
         position = "top";
         modules-center = [];
         modules-left = ["hyprland/workspaces"];
-        modules-right = [
-          "tray"
-          "pulseaudio"
-          "network"
-          "cpu"
-          "memory"
-          "temperature"
-          "disk"
-          "backlight"
-          "battery"
-          "clock#c2"
-          "clock"
-          "custom/mt"
-        ];
+        modules-right = mods;
+        backlight = {
+          format = "{percent}% {icon}";
+          format-icons = ["" ""];
+        };
+        "hyprland/workspaces" = {
+          format = "{icon}";
+          format-icons = {
+            "1" = "";
+            "2" = "";
+            "3" = "";
+            "4" = "";
+            "5" = "";
+          };
+          # persistent-workspaces."*" = 5;
+        };
         battery = {
           format = "{capacity}% {icon}";
-          format-alt = "{time} {icon}";
           format-charging = "{capacity}% ";
           format-icons = ["" "" "" "" ""];
           format-plugged = "{capacity}% ";
@@ -51,14 +78,14 @@
           tooltip = false;
         };
         memory.format = "{}% ";
-        disk.format = "{}% ⬤";
+        disk.format = "{percentage_used}% ⬤";
         network = {
           interval = 1;
-          tooltip-format = "{ifname}: {ipaddr}/{cidr} |  ^ {bandwidthUpBits}, v {bandwidthDownBits}";
-          format-disconnected = "Disconnected ⚠";
-          format-ethernet = "{ifname}: {ipaddr}/{cidr}";
+          tooltip-format = "{ifname}: {ipaddr}/{cidr} |  ^ {bandwidthUpBits}, v {bandwidthDownBits} | {essid}";
+          format-disconnected = "⚠";
+          format-ethernet = "{signalStrength} ";
+          format-wifi = "{signalStrength} ";
           format-linked = "{ifname} (No IP)";
-          format-wifi = "{essid} {signalStrength} ";
           on-click = "nm-connection-editor";
         };
         pulseaudio = {
@@ -86,44 +113,40 @@
         };
       }
     ];
-    style = let
-      b9 = "#${config.stylix.base16Scheme.base09}";
-      ba = "#${config.stylix.base16Scheme.base0A}";
-      bb = "#${config.stylix.base16Scheme.base0B}";
-      bc = "#${config.stylix.base16Scheme.base0C}";
-    in ''
+    style = ''
       * {
           font-family: JetBrainsMono;
           font-size: 13px;
       }
 
       window#waybar {
-          background-color: rgba(43, 48, 59, 0.5);
-          border-bottom: 3px solid rgba(100, 114, 125, 0.5);
           color: #ffffff;
-          transition-property: background-color;
-          transition-duration: .5s;
           background: transparent;
-          border-bottom: none;
+          border-bottom: none
       }
 
-      window#waybar.hidden {
-          opacity: 0.2;
-      }
-
-      button {
-          transition: transform 0.1s ease-in-out;
-          background: rgba(0, 0, 0, 0.2);
-      }
-
-      button.active {
-          border-color: ${b9};
+      #workspaces  {
+          margin: 0 4px;
+          color: ${c.temperature};
+          border-bottom: none
       }
 
       #workspaces button {
           padding: 0 3px;
           margin: 0 5px;
+          border-radius: 0;
           color: #ffffff;
+          border-bottom: none
+      }
+
+      .modules-left #workspaces button.active {
+          color: ${c."custom/mt"};
+          border-bottom: none
+      }
+
+      #workspaces button.urgent {
+          color: ${c.temperature};
+          border-bottom: none
       }
 
       #clock,
@@ -142,41 +165,28 @@
           border-radius: 6px;
       }
 
-      #window,
-      #workspaces {
-          margin: 0 4px;
-      }
-
-      .modules-left > widget:first-child > #workspaces {
-          margin-left: 0;
-      }
-
-      .modules-right > widget:last-child > #workspaces {
-          margin-right: 0;
-      }
-
       #clock {
-          background-color: ${ba};
+          background-color: ${c.clock};
           color: #000000;
       }
 
       #custom-mt {
-          background-color: ${bb};
+          background-color: ${c."custom/mt"};
           color: #000000;
       }
 
       #clock.c2 {
-          background-color: ${b9};
+          background-color: ${c."clock#c2"};
       }
 
       #battery {
-          background-color: ${bc};
+          background-color: ${c.battery};
           color: #000000;
       }
 
       #battery.charging, #battery.plugged {
           color: #ffffff;
-          background-color: ${bc};
+          background-color: ${c.battery};
       }
 
       @keyframes blink {
@@ -196,32 +206,28 @@
           animation-direction: alternate;
       }
 
-      label:focus {
-          background-color: #000000;
-      }
-
       #cpu {
-          background-color: ${bc};
+          background-color: ${c.cpu};
           color: #000000;
       }
 
       #memory {
-          background-color: ${b9};
+          background-color: ${c.memory};
           color: #000000;
       }
 
       #disk {
-          background-color: ${bb};
+          background-color: ${c.disk};
           color: #000000;
       }
 
       #backlight {
-          background-color: ${bc};
+          background-color: ${c.backlight};
           color: #000000;
       }
 
       #network {
-          background-color: ${bb};
+          background-color: ${c.network};
           color: #000000;
       }
 
@@ -230,7 +236,7 @@
       }
 
       #pulseaudio {
-          background-color: ${ba};
+          background-color: ${c.pulseaudio};
           color: #000000;
       }
 
@@ -239,18 +245,8 @@
           color: #${config.stylix.base16Scheme.base07};
       }
 
-      #wireplumber {
-          background-color: ${ba};
-          color: #000000;
-      }
-
-      #wireplumber.muted {
-          background-color: #${config.stylix.base16Scheme.base01};
-          color: #${config.stylix.base16Scheme.base07};
-      }
-
       #temperature {
-          background-color: ${ba};
+          background-color: ${c.temperature};
           color: #000000;
       }
 
@@ -259,7 +255,7 @@
       }
 
       #tray {
-          background-color: ${b9};
+          background-color: ${c.tray};
           color: #000000;
       }
 

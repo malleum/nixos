@@ -38,7 +38,9 @@ in {
           # sddm theme
           (callPackage ./aerial-sddm-theme.nix {}).aerial-sddm-theme
 
+          protonup-ng
           wdisplays
+          wine
 
           android-studio
           android-tools
@@ -82,6 +84,7 @@ in {
           fastfetch
           ripgrep
           killall
+          choose
           unzip
           htop
           file
