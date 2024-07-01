@@ -11,24 +11,26 @@
   config = lib.mkIf config.i3.enable {
     picom.enable = true;
 
-    services.xserver = {
-      enable = true;
-      xkb = {
-        layout = "us";
-        variant = "dvorak";
-        options = "caps:escape";
-      };
-      autoRepeatDelay = 225;
-      autoRepeatInterval = 20;
-
+    services = {
       libinput = {
         enable = true;
         touchpad.naturalScrolling = true;
       };
 
-      windowManager.i3 = {
+      xserver = {
         enable = true;
-        configFile = ./i3.config;
+        xkb = {
+          layout = "us";
+          variant = "dvorak";
+          options = "caps:escape";
+        };
+        autoRepeatDelay = 225;
+        autoRepeatInterval = 20;
+
+        windowManager.i3 = {
+          enable = true;
+          configFile = ./i3.config;
+        };
       };
     };
     home-manager.users.joshammer = {
