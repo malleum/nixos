@@ -7,7 +7,7 @@
 
   config = lib.mkIf config.battery.enable {
     services = {
-      # Better scheduling for CPU cycles - thanks System76!!!
+      # Better scheduling for CPU cycles - thanks System76
       system76-scheduler.settings.cfsProfiles.enable = true;
 
       # Enable TLP (better than gnomes internal power manager)
@@ -33,7 +33,7 @@
       power-profiles-daemon.enable = false;
 
       # Enable thermald (only necessary if on Intel CPUs)
-      thermald.enable = true;
+      thermald.enable = false;
     };
 
     # Enable powertop

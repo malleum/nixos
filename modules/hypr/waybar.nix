@@ -6,11 +6,11 @@
       {
         height = 30;
         spacing = 6;
-        tray = {spacing = 10;};
+        tray.spacing = 10;
         layer = "top";
         position = "top";
         modules-center = [];
-        modules-left = ["hyprland/workspaces" "sway/workspaces"];
+        modules-left = ["hyprland/workspaces"];
         modules-right = [
           "tray"
           "pulseaudio"
@@ -40,7 +40,7 @@
           interval = 1;
           format = "{:%H:%M:%S}";
         };
-        "clock#c2" = {format = "{:%m-%d}";};
+        "clock#c2".format = "{:%m-%d}";
         "custom/mt" = {
           interval = 1;
           exec = "chron";

@@ -59,9 +59,6 @@ in {
           pulsemixer
           pasystray
 
-          # gpu
-          blender-hip
-
           # sddm theme
           libsForQt5.phonon-backend-gstreamer
           libsForQt5.qt5.qtgraphicaleffects
