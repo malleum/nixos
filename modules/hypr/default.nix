@@ -39,9 +39,10 @@
             source = ~/.config/nixos/modules/hypr/hyprland.conf
 
             general {
-              col.active_border = rgba(${config.stylix.base16Scheme.base0A}ee) rgba(${config.stylix.base16Scheme.base0B}ee) 30deg
-              col.inactive_border = rgba(${config.stylix.base16Scheme.base01}ee)
+              col.active_border = rgba(${config.stylix.base16Scheme.base04}ff) rgba(${config.stylix.base16Scheme.base0C}ff) 30deg
+              col.inactive_border = rgba(${config.stylix.base16Scheme.base01}aa)
             }
+
           ''
           + (
             if (config.networking.hostName != "magnus")
