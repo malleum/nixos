@@ -31,5 +31,9 @@ in
       dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
       wl-paste --type text --watch cliphist store
       wl-paste --type image --watch cliphist store
+
+      export XDG_CURRENT_DESKTOP="Hyprland";
+      export XDG_SESSION_DESKTOP="Hyprland";
+      export XDG_SESSION_TYPE="wayland";
     fi
   ''
