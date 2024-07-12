@@ -6,7 +6,6 @@
   ...
 }: let
   jetbrainNF = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
-  py-mods = ps: with ps; [discordpy pip plotly pillow numpy django djangorestframework];
 in {
   options.packages = {
     enable = lib.mkEnableOption "enables packages";
@@ -25,6 +24,7 @@ in {
 
           # main
           discord
+          vesktop
           element-desktop
           firefox
           losslesscut-bin
@@ -103,11 +103,10 @@ in {
       ++ (
         if config.packages.programming.enable
         then [
-          (python311.withPackages py-mods)
           luajitPackages.jsregexp
           lua-language-server
-          pypy3
           clang-tools
+          python3Full
           autoflake
           pyright
           flutter
@@ -118,6 +117,7 @@ in {
           gradle
           nodejs
           kotlin
+          pypy3
           smlnj
           tetex
           black
