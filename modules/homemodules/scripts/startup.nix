@@ -9,6 +9,7 @@ in
 
     if ! [[ $(ps -e | ${rg} -i "discord") ]]; then
       vesktop &
+      # discord &
     fi
 
     onedrive --monitor &
