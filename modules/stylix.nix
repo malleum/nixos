@@ -11,12 +11,15 @@
     else pkgs.runCommand "frame0.jpg" {} ''${ffmpeg} -i ${image} -vframes 1 $out'';
 
   ffmpeg = "${pkgs.ffmpeg}/bin/ffmpeg";
+  convert = "${pkgs.imagemagick}/bin/magick";
+  brightness = "-10";
+  contrast = "0";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
 
   stylix = {
     enable = true;
-    image = real_image;
+    image = pkgs.runCommand "dimmed.jpg" {} ''${convert} ${real_image} -brightness-contrast ${brightness},${contrast} $out '';
 
     polarity = "dark";
 
