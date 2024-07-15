@@ -4,15 +4,19 @@
   ...
 }: let
   image = /home/joshammer/OneDrive/Documents/Stuff/pics/car/cybertruckLego.jpg;
-  convert = "${pkgs.imagemagick}/bin/convert";
-  brightness = "-10";
-  contrast = "0";
+  # image = /home/joshammer/Downloads/gojo-hollow-purple-universe-jujutsu-kaisen-moewalls-com.mp4;
+  real_image =
+    if (builtins.substring ((builtins.stringLength image) - 4) 4 image) != ".mp4"
+    then image
+    else pkgs.runCommand "frame0.jpg" {} ''${ffmpeg} -i ${image} -vframes 1 $out'';
+
+  ffmpeg = "${pkgs.ffmpeg}/bin/ffmpeg";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
 
   stylix = {
     enable = true;
-    image = pkgs.runCommand "dimmed.jpg" {} ''${convert} ${image} -brightness-contrast ${brightness},${contrast} $out '';
+    image = real_image;
 
     polarity = "dark";
 

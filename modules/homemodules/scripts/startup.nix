@@ -27,8 +27,13 @@ in
 
       killall .waybar-wrapped
       waybar &
-      swww-daemon &
-      swww img ${wallpaper}
+      if [[ $(echo ${wallpaper} | ${rg} -v '.mp4') ]]; then
+        ${pkgs.mpvpaper}/bin/mpvpaper '*' ${wallpaper} &
+      else
+        swww-daemon &
+        swww img ${wallpaper}
+      fi
+
       dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
       wl-paste --type text --watch cliphist store
       wl-paste --type image --watch cliphist store
