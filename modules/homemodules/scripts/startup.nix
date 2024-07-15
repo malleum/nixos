@@ -27,7 +27,7 @@ in
 
       killall .waybar-wrapped
       waybar &
-      if [[ $(echo ${wallpaper} | ${rg} -v '.mp4') ]]; then
+      if [[ $(echo ${wallpaper} | ${rg} '.mp4') ]]; then
         ${pkgs.mpvpaper}/bin/mpvpaper '*' ${wallpaper} &
       else
         swww-daemon &
