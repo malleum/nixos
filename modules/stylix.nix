@@ -4,7 +4,6 @@
   ...
 }: let
   image = /home/joshammer/OneDrive/Documents/Stuff/pics/car/cybertruckLego.jpg;
-  # image = /home/joshammer/Downloads/gojo-hollow-purple-universe-jujutsu-kaisen-moewalls-com.mp4;
   real_image =
     if (builtins.substring ((builtins.stringLength image) - 4) 4 image) != ".mp4"
     then image
