@@ -29,13 +29,13 @@
     luaLoader.enable = true;
     viAlias = true;
 
-    colorschemes.tokyonight = {
-      enable = true;
-      settings = {
-        style = "night";
-        transparent = true;
-      };
-    };
+    # colorschemes.tokyonight = {
+    #   enable = true;
+    #   settings = {
+    #     style = "night";
+    #     transparent = true;
+    #   };
+    # };
 
     globals = {
       mapleader = " ";
