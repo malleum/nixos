@@ -4,8 +4,6 @@
     nativeBuildInputs = with pkgs; [git neovim nix eza];
     shellHook = ''
       alias la='eza --icons -la'
-      setxkbmap -option caps:escape
-      setxkbmap -variant dvorak
     '';
   };
 }

@@ -28,9 +28,7 @@ in {
     };
 
     fonts = {
-      sizes = {
-        terminal = 13;
-      };
+      sizes = {terminal = 13;};
       monospace = {
         package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
         name = "JetBrainsMono Nerd Font Mono";
@@ -45,9 +43,6 @@ in {
       };
     };
 
-    targets = {
-      # nixvim.enable = false;
-      fish.enable = false;
-    };
+    targets = {fish.enable = false;};
   };
 }
