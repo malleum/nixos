@@ -2,7 +2,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
-
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -11,11 +10,12 @@
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:speedster33/nixvim";
-    nxvm.url = "github:nix-community/nixvim";
+    nixvim.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
   };
   outputs = inputs: let
     system = "x86_64-linux";
+    inherit (inputs.nixpkgs) lib;
 
     stable_overlay = final: _prev: {stable = import inputs.nix-stable {system = final.system;};};
     overlays = [stable_overlay];
@@ -24,8 +24,6 @@
       inherit system overlays;
       config.allowUnfree = true;
     };
-
-    inherit (inputs.nixpkgs) lib;
 
     ns = host: (lib.nixosSystem {
       specialArgs = {inherit pkgs inputs;};
