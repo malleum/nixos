@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  image = /home/joshammer/OneDrive/Documents/Stuff/pics/car/cybertruckLego.jpg;
+  image = /home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg;
   real_image =
     if (builtins.substring ((builtins.stringLength image) - 4) 4 image) != ".mp4"
     then image

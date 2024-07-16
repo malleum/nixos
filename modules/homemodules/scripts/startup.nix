@@ -1,6 +1,6 @@
 {
   pkgs,
-  wallpaper ? "/home/joshammer/OneDrive/Documents/Stuff/pics/car/cybertruckLego.jpg",
+  wallpaper ? "/home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg",
   ...
 }: let
   rg = "${pkgs.ripgrep}/bin/rg";
@@ -27,7 +27,7 @@ in
 
       killall .waybar-wrapped
       waybar &
-      if [[ $(echo ${wallpaper} | ${rg} '.mp4') ]]; then
+      if [[ $(echo ${wallpaper} | ${rg} '(.mp4)|(.gif)') ]]; then
         ${pkgs.mpvpaper}/bin/mpvpaper '*' ${wallpaper} &
       else
         swww-daemon &
