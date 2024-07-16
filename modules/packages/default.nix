@@ -15,8 +15,6 @@ in {
     gui.enable = lib.mkEnableOption "enables gui packages";
   };
 
-  imports = [inputs.nxvm.nixosModules.nixvim ./nixvim];
-
   config = lib.mkIf config.packages.enable {
     environment.systemPackages = with pkgs;
       (
@@ -81,7 +79,7 @@ in {
         then [
           inputs.fix-python.packages.${pkgs.system}.default
           inputs.alejandra.defaultPackage.${pkgs.system}
-          # inputs.nixvim.packages.${pkgs.system}.default
+          inputs.nixvim.packages.${pkgs.system}.default
           nixos-shell
           fastfetch
           ripgrep
