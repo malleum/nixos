@@ -19,7 +19,7 @@
   config = lib.mkIf config.base.enable {
     networking.networkmanager.enable = true;
 
-    time.timeZone = "UTC";
+    time.timeZone = "America/New_York";
     i18n.defaultLocale = "en_US.utf8";
     console.keyMap = "dvorak";
 
