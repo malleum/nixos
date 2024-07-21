@@ -3,7 +3,7 @@ pkgs.writeShellScriptBin "chron" ''
 
   s=""
   if [ $# -eq 0 ]; then
-    s="$(date '+%H:%M:%S:%1N' --utc)"
+    s="$(date '+%H:%M:%S:%1N')"
   else
     s="$1"
   fi
