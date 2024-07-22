@@ -29,6 +29,13 @@
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
       };
+      chromium = {
+        enable = true;
+        extraOpts = {
+          "Brave VPN Disabled" = true;
+          "Brave Wallet Disabled" = true;
+        };
+      };
     };
   };
 }
