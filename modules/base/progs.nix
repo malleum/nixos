@@ -32,8 +32,8 @@
       chromium = {
         enable = true;
         extraOpts = {
-          "Brave VPN Disabled" = true;
-          "Brave Wallet Disabled" = true;
+          "BraveVPNDisabled" = true;
+          "BraveWalletDisabled" = true;
         };
       };
     };
