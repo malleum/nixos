@@ -1,7 +1,7 @@
 {
   pkgs,
   inputs,
-  lib,
+  ...
 }: let
   username = "joshammer";
   description = "Joshua Hammer";

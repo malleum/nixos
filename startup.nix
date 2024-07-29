@@ -2,8 +2,7 @@
   pkgs,
   wallpaper ? "/home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg", # use cybertruckLego.jpg unless wallpaper is passed into the attribute set
   ...
-}:
-pkgs.writeShellScriptBin "startup" ''
+}: pkgs.writeShellScriptBin "startup" ''
 
   # network manager
   nm-applet &
