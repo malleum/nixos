@@ -25,7 +25,6 @@ in {
           # main
           discord
           vesktop
-          element-desktop
           firefox
           losslesscut-bin
           obs-studio
