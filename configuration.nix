@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }: let
   username = "joshammer";
@@ -10,6 +11,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     inputs.stylix.nixosModules.stylix # for stylix to do all its styling in the background
+    inputs.home-manager.nixosModules.home-manager # allows us to do home-manager config stuff
   ];
 
   # TODO: This section will need to be replaced if your device doesn't support efi
@@ -42,7 +44,7 @@ in {
       # nix helper
       enable = true;
       clean.enable = true;
-      flake = "~/.config/nixos"; # or wherever you put your config files
+      flake = "/home/${username}/.config/nixos"; # or wherever you put your config files
     };
     nix-ld = {
       enable = true; # another nix thing to help patch binaries that break
@@ -65,10 +67,11 @@ in {
 
     hyprland.enable = true;
     waybar.enable = true; # bar
-    xdg.portal = {
-      enable = true;
-      extraPortals = [pkgs.xdg-desktop-portal-gtk]; # this helps hyprland render gtk things
-    };
+  };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [pkgs.xdg-desktop-portal-gtk]; # this helps hyprland render gtk things
   };
 
   services = {
@@ -152,7 +155,7 @@ in {
     backupFileExtension = "backup";
     useGlobalPkgs = true;
     useUserPackages = true;
-    users."${username}" = import ./home.nix; # NOTE: could put this in this file too, but readability moment
+    users."${username}" = import ./home.nix {inherit pkgs username config;}; # NOTE: could put this in this file too, but readability moment
   };
 
   environment = {
@@ -258,5 +261,5 @@ in {
     ];
   };
 
-  fonts.packages = [pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];}];
+  fonts.packages = [(pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];})];
 }
