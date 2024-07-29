@@ -176,6 +176,7 @@ in {
     };
 
     systemPackages = with pkgs; [
+      neovim
       discord
       obs-studio
       teams-for-linux
