@@ -5,7 +5,7 @@
   config,
   ...
 }: {
-  imports = [inputs.home-manager.nixosModules.home-manager];
+  imports = [inputs.home-manager.nixosModules.home-manager ./waybar.nix];
 
   options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
 
@@ -15,20 +15,12 @@
       package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     };
 
-    environment = {
-      sessionVariables = {
-        WLR_NO_HARDWARE_CURSORS = "1";
-        NIXOS_OZONE_WL = "1";
-      };
-    };
-
-    xdg.portal = {
-      enable = true;
-      extraPortals = [pkgs.xdg-desktop-portal-gtk];
+    environment.sessionVariables = {
+      WLR_NO_HARDWARE_CURSORS = "1";
+      NIXOS_OZONE_WL = "1";
     };
 
     home-manager.users.joshammer = {
-      imports = [./waybar.nix];
       home.file = {
         ".config/hypr/hyprland.conf".text =
           ''

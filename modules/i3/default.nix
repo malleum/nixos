@@ -33,13 +33,11 @@
         };
       };
     };
-    home-manager.users.joshammer = {
-      services.polybar = {
-        enable = true;
-        package = pkgs.polybar.override {pulseSupport = true;};
-        script = "polybar main & disown";
-        config = ../i3/polybar.ini;
-      };
+    home-manager.users.joshammer.services.polybar = {
+      enable = true;
+      package = pkgs.polybar.override {pulseSupport = true;};
+      script = "polybar main & disown";
+      config = ./polybar.ini;
     };
   };
 }

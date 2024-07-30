@@ -24,7 +24,7 @@ in {
     git = {
       enable = true;
       userEmail = "jph33@outlook.com";
-      userName = "Joshua Hammer";
+      userName = "joshua hammer";
       extraConfig.push.autoSetupRemote = true;
     };
 

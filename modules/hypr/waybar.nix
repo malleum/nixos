@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   ...
 }: let
   indexOf = list: item: let
@@ -20,12 +21,17 @@
     "#${config.stylix.base16Scheme.base0C}"
   ];
 
-  mods = ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt"];
+  mods =
+    if (config.networking.hostName == "magnus")
+    then ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/mt"]
+    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 in {
-  programs.waybar = {
+  imports = [inputs.home-manager.nixosModules.home-manager];
+
+  home-manager.users.joshammer.programs.waybar = lib.mkIf config.hypr.enable {
     enable = true;
     # https://github.com/georgewhewell/nixos-host/blob/master/home/waybar.nix
     settings = [
