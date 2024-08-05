@@ -32,20 +32,17 @@ in {
           teams-for-linux
           virt-manager
           vlc
-          vscode
+          vscodium
 
           # sddm theme
-          (callPackage ./aerial-sddm-theme.nix {}).aerial-sddm-theme
+          (callPackage ./aerial-sddm-theme.nix {})
 
           protonup-ng
           wdisplays
           wine
 
-          android-studio
-          android-tools
-          sdkmanager
+          # android-studio android-tools sdkmanager
 
-          zoom-us
           prismlauncher
 
           # office

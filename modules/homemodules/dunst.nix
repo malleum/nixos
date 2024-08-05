@@ -3,7 +3,7 @@
     enable = true;
     iconTheme = {
       name = "Adwaita";
-      package = pkgs.gnome3.adwaita-icon-theme;
+      package = pkgs.adwaita-icon-theme;
       size = "16x16";
     };
     settings = {
@@ -16,9 +16,6 @@
         line_height = 4;
         format = "<b>%s</b>\\n%b";
         corner_radius = 20;
-      };
-      shortcuts = {
-        close_all = "ctrl+shift+space";
       };
     };
   };
