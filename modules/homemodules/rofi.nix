@@ -9,10 +9,7 @@
     package = pkgs.rofi-wayland;
     location = "center";
     terminal = "kitty";
-    plugins = with pkgs; [
-      (rofi-calc.override {rofi-unwrapped = pkgs.rofi-wayland-unwrapped;})
-      (rofi-emoji.override {rofi-unwrapped = pkgs.rofi-wayland-unwrapped;})
-    ];
+    plugins = with pkgs; [rofi-emoji-wayland (rofi-calc.override {rofi-unwrapped = pkgs.rofi-wayland-unwrapped;})];
     extraConfig = {
       kb-primary-paste = "Control+V,Shift+Insert";
       drun-display-format = "{icon} {name}";
