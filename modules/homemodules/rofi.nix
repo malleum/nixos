@@ -15,9 +15,9 @@
       drun-display-format = "{icon} {name}";
       show-icons = true;
       hide-scrollbar = true;
-      display-drun = " 󰀘  Apps =>  ";
-      display-calc = " ⅀ Calc =>  ";
-      display-run = "   Command =>  ";
+      display-drun = " 󰀘 =>  ";
+      display-calc = " ⅀ =>  ";
+      display-emoji = " 🫠 =>  ";
     };
     theme = let
       inherit (config.lib.formats.rasi) mkLiteral;
@@ -25,10 +25,8 @@
       b1 = "#${config.stylix.base16Scheme.base01}";
       b2 = "#${config.stylix.base16Scheme.base02}";
       b9 = "#${config.stylix.base16Scheme.base09}";
-      ba = "#${config.stylix.base16Scheme.base0A}";
       bb = "#${config.stylix.base16Scheme.base0B}";
       bc = "#${config.stylix.base16Scheme.base0C}";
-      bd = "#${config.stylix.base16Scheme.base0D}";
       clear = "#00000000";
     in {
       "*" = {
