@@ -29,5 +29,6 @@
       acpilight.enable = true;
       pulseaudio.enable = false;
     };
+    boot.binfmt.emulatedSystems = ["aarch64-linux"]; # build arm packages
   };
 }
