@@ -5,7 +5,7 @@
   config,
   ...
 }: {
-  imports = [inputs.home-manager.nixosModules.home-manager ./waybar.nix];
+  imports = [./waybar.nix];
 
   options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
 
