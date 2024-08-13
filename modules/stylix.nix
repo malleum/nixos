@@ -26,9 +26,16 @@ in {
       terminal = 0.95;
       popups = 0.9;
     };
+    cursor = {
+      name = "material_light_cursors";
+      package = pkgs.material-cursors;
+      size = 32;
+    };
 
     fonts = {
-      sizes = {terminal = 13;};
+      sizes = {
+        terminal = 13;
+      };
       monospace = {
         package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
         name = "JetBrainsMono Nerd Font Mono";

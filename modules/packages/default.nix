@@ -36,6 +36,13 @@ in {
 
           # sddm theme
           (callPackage ./aerial-sddm-theme.nix {})
+          (catppuccin-sddm.override {
+            flavor = "mocha";
+            font = "JetBrainsMono Nerd Font Mono";
+            fontSize = "11";
+            # background = "${/home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg}";
+            loginBackground = true;
+          })
 
           protonup-ng
           wdisplays
