@@ -11,6 +11,7 @@
 
   config = lib.mkIf config.base.user.enable {
     programs = {
+      zsh.enable = true;
       fish.enable = true;
       nh = {
         enable = true;
@@ -19,12 +20,11 @@
       };
     };
     users = {
-      defaultUserShell = pkgs.fish;
-
       users.joshammer = {
         isNormalUser = true;
         description = "Josh Hammer";
         extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel"];
+        shell = pkgs.fish;
       };
     };
 

@@ -30,6 +30,15 @@
       enable = true;
       nix-direnv.enable = true;
     };
+    zsh = {
+      enable = true;
+      dotDir = ".config/zsh";
+      defaultKeymap = "viins";
+      enableCompletion = true;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      initExtra = "${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin";
+    };
   };
   home.packages = with pkgs; [
     fishPlugins.autopair
