@@ -83,23 +83,22 @@ in {
           inputs.fix-python.packages.${pkgs.system}.default
           inputs.alejandra.defaultPackage.${pkgs.system}
           inputs.nixvim.packages.${pkgs.system}.default
-          nixos-shell
           fastfetch
-          ripgrep
           killall
+          ripgrep
           choose
           unzip
-          htop
           file
-          wget
+          htop
           tldr
-          zip
-          feh
+          wget
           bat
-          sd
-          fd
+          feh
+          zip
           bc
+          fd
           jq
+          sd
         ]
         else []
       )
@@ -111,32 +110,32 @@ in {
           clang-tools
           python3Full
           autoflake
-          pyright
           flutter
           gnumake
+          pyright
           verilog
           erlang
-          stylua
           gradle
-          nodejs
           kotlin
-          pypy3
-          smlnj
-          tetex
+          nodejs
+          stylua
           black
-          isort
-          rustc
           cargo
           gleam
-          ruby
-          ruff
+          isort
+          pypy3
+          rustc
+          smlnj
+          tetex
           dart
           nasm
+          ruby
+          ruff
           gcc
           gdb
           jdk
-          nil
           lua
+          nil
           go
         ]
         else []
@@ -146,8 +145,9 @@ in {
         then [
           # nix
           inputs.nix-alien.packages.${pkgs.system}.nix-alien
-          nix-output-monitor
           nix-prefetch-github
+          nix-output-monitor
+          nixos-shell
           nvd
 
           # cli
