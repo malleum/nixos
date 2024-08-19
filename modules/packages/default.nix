@@ -200,7 +200,7 @@ in {
           sl
 
           # visio
-          awscli2
+          stable.awscli2
           openvpn
           pipx
           pre-commit
