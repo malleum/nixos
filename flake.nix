@@ -10,7 +10,6 @@
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";
-    nixvim.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
   };
   outputs = inputs: let
