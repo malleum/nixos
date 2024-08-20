@@ -83,18 +83,18 @@ in {
           inputs.fix-python.packages.${pkgs.system}.default
           inputs.alejandra.defaultPackage.${pkgs.system}
           inputs.nixvim.packages.${pkgs.system}.default
+          inputs.rip2.packages.${pkgs.system}.default
           fastfetch
           killall
           ripgrep
           choose
-          unzip
           file
           htop
+          ouch
           tldr
           wget
           bat
           feh
-          zip
           bc
           fd
           jq
@@ -160,7 +160,6 @@ in {
           neofetch
           networkmanagerapplet
           nitch
-          p7zip
           patchelf
           speedtest-cli
           spice-gtk
