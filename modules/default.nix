@@ -36,6 +36,6 @@
       programming.enable = lib.mkDefault true;
       etc.enable = lib.mkDefault true;
     };
-    sddm.enable = lib.mkDefault true;
+    sddm.enable = lib.mkDefault false;
   };
 }
