@@ -103,7 +103,6 @@ in {
           clang-tools
           python3Full
           autoflake
-          flutter
           gnumake
           pyright
           verilog
@@ -120,7 +119,6 @@ in {
           rustc
           smlnj
           tetex
-          dart
           nasm
           ruby
           ruff
