@@ -129,6 +129,7 @@ in {
           jdk
           lua
           nil
+          zig
           go
         ]
         else []
