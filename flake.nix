@@ -4,8 +4,8 @@
     nix-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
+    deploy.url = "github:serokell/deploy-rs";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nix-alien.url = "github:thiagokokada/nix-alien";

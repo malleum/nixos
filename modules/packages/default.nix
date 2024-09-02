@@ -137,6 +137,7 @@ in {
         then [
           # nix
           inputs.nix-alien.packages.${pkgs.system}.nix-alien
+          inputs.deploy.packages.${pkgs.system}.default
           nix-prefetch-github
           nix-output-monitor
           nixos-shell
