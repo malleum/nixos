@@ -145,6 +145,8 @@ in {
 
           # cli
           acpi
+          arp-scan
+          fping
           ikill
           latexrun
           libnotify
