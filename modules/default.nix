@@ -10,7 +10,7 @@
     ./gpu.nix
     ./hypr
     ./i3
-    ./loginmanagers
+    ./loginmanagers/sddm.nix
     ./packages
     ./stylix.nix
   ];
@@ -36,6 +36,5 @@
       programming.enable = lib.mkDefault true;
       etc.enable = lib.mkDefault true;
     };
-    sddm.enable = lib.mkDefault false;
   };
 }

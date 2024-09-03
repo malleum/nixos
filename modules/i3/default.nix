@@ -31,6 +31,7 @@
           enable = true;
           configFile = ./i3.config;
         };
+        displayManager.lightdm.enable = false;
       };
     };
     home-manager.users.joshammer.services.polybar = {
