@@ -34,11 +34,14 @@
         displayManager.lightdm.enable = false;
       };
     };
-    home-manager.users.joshammer.services.polybar = {
-      enable = true;
-      package = pkgs.polybar.override {pulseSupport = true;};
-      script = "polybar main & disown";
-      config = ./polybar.ini;
+    home-manager.users.joshammer = {
+      home.file.".xinitrc".text = ''exec i3'';
+      services.polybar = {
+        enable = true;
+        package = pkgs.polybar.override {pulseSupport = true;};
+        script = "polybar main & disown";
+        config = ./polybar.ini;
+      };
     };
   };
 }

@@ -166,6 +166,7 @@ in {
           arandr
           betterlockscreen
           xclip
+          xorg.xinit
           xorg.xkbcomp
           xorg.xrandr
 
