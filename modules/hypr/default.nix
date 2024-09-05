@@ -36,7 +36,7 @@
             if (config.networking.hostName == "magnus")
             then ''
               monitor=DP-1,1920x1080@165.00Hz,0x0,1
-              monitor=DP-2,1920x1080,1920x0,1
+              monitor=desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x1080,1
             ''
             else ""
           );
