@@ -33,8 +33,11 @@
 
           ''
           + (
-            if (config.networking.hostName != "magnus")
-            then "monitor=HDMI-A-1,1920x1080,1920x0,1"
+            if (config.networking.hostName == "magnus")
+            then ''
+              monitor=DP-1,1920x1080@165.00Hz,0x0,1
+              monitor=DP-2,1920x1080,1920x0,1
+            ''
             else ""
           );
       };
