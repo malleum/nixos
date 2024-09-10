@@ -1079,11 +1079,11 @@
         "nixvim": "nixvim_2"
       },
       "locked": {
-        "lastModified": 1725989205,
-        "narHash": "sha256-dj9VagBpT2VDQDkXSpkL4tZT7qQ9d3DOp+a+pZOEWyE=",
+        "lastModified": 1725994651,
+        "narHash": "sha256-fxLe7sU5ZbyCt56ngajTdTS+PON0vAv499DvqCeCr9k=",
         "owner": "malleum",
         "repo": "nixvim",
-        "rev": "667342c74eb45b2ce264af4fe40fe455e839b530",
+        "rev": "abdcca8978b5b56c50d8af31ba3fc3941ec11b5b",
         "type": "github"
       },
       "original": {
