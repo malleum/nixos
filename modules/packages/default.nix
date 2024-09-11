@@ -155,6 +155,7 @@ in {
           neofetch
           networkmanagerapplet
           nitch
+          openssl
           patchelf
           speedtest-cli
           spice-gtk
