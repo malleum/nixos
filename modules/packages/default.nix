@@ -120,6 +120,7 @@ in {
           smlnj
           tetex
           nasm
+          nmap
           ruby
           ruff
           gcc
