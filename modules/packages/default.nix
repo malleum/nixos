@@ -109,7 +109,6 @@ in {
           erlang
           gradle
           kotlin
-          netcat
           nodejs
           stylua
           black
