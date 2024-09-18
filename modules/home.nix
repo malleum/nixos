@@ -71,7 +71,7 @@ in {
       ];
       extensions = [
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
-        "gfbliohnnapiefjpjlpjnehglfpaknnc" # surfingkeys
+        "hfjbmagddngcpeloejdejnfgbamkjaeg" # vimium c
         "nngceckbapebfimnlniiiahkandclblb" # bitwarden
       ];
     };
