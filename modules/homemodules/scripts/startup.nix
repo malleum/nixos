@@ -8,8 +8,7 @@ in
   pkgs.writeShellScriptBin "startup" ''
 
     if ! [[ $(ps -e | ${rg} -i "discord") ]]; then
-      vesktop &
-      # discord &
+      discord &
     fi
 
     onedrive --monitor &
