@@ -8,7 +8,7 @@ in
   pkgs.writeShellScriptBin "startup" ''
 
     if ! [[ $(ps -e | ${rg} -i "discord") ]]; then
-      discord &
+      vesktop &
     fi
 
     onedrive --monitor &
@@ -26,12 +26,8 @@ in
 
       killall .waybar-wrapped
       waybar &
-      if [[ $(echo ${wallpaper} | ${rg} '(.mp4)|(.gif)') ]]; then
-        ${pkgs.mpvpaper}/bin/mpvpaper '*' ${wallpaper} &
-      else
-        swww-daemon &
-        swww img ${wallpaper}
-      fi
+      swww-daemon &
+      swww img ${wallpaper}
 
       dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
       wl-paste --type text --watch cliphist store
