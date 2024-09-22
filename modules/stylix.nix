@@ -4,12 +4,6 @@
   ...
 }: let
   image = /home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg;
-  real_image =
-    if (builtins.substring ((builtins.stringLength image) - 4) 4 image) != ".mp4"
-    then image
-    else pkgs.runCommand "frame0.jpg" {} ''${ffmpeg} -i ${image} -vframes 1 $out'';
-
-  ffmpeg = "${pkgs.ffmpeg}/bin/ffmpeg";
   convert = "${pkgs.imagemagick}/bin/magick";
   brightness = "-10";
   contrast = "0";
@@ -18,7 +12,7 @@ in {
 
   stylix = {
     enable = true;
-    image = pkgs.runCommand "dimmed.jpg" {} ''${convert} ${real_image} -brightness-contrast ${brightness},${contrast} $out '';
+    image = pkgs.runCommand "dimmed.jpg" {} ''${convert} ${image} -brightness-contrast ${brightness},${contrast} $out '';
 
     polarity = "dark";
 
@@ -41,12 +35,12 @@ in {
         name = "JetBrainsMono Nerd Font Mono";
       };
       sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Sans";
+        package = pkgs.noto-fonts;
+        name = "NotoSans";
       };
       serif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Serif";
+        package = pkgs.noto-fonts;
+        name = "NotoSerif";
       };
     };
 

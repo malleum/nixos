@@ -29,7 +29,6 @@ in {
           losslesscut-bin
           obs-studio
           onedrive
-          # teams-for-linux
           virt-manager
           vlc
           vscodium
@@ -174,15 +173,11 @@ in {
 
           # wayland
           cliphist
-          grim
           hyprpicker
           hyprshot
-          slurp
-          swappy
-          sway-contrib.grimshot
-          swaylock
-          swww
           mpvpaper
+          swappy
+          swww
           wl-clip-persist
           wl-clipboard
           xwaylandvideobridge
