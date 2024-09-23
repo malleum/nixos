@@ -99,6 +99,7 @@ in {
         then [
           luajitPackages.jsregexp
           lua-language-server
+          gcc-arm-embedded # arm-none-eabi-gcc -c
           clang-tools
           python3Full
           autoflake
