@@ -11,8 +11,6 @@ in
       vesktop &
     fi
 
-    onedrive --monitor &
-    nm-applet &
 
     if [[ $(ps -e | ${rg} "X" | ${rg} -v "wayland") ]]; then # Xorg
 
@@ -38,4 +36,7 @@ in
       export XDG_SESSION_DESKTOP="Hyprland";
       export XDG_SESSION_TYPE="wayland";
     fi
+
+    onedrive --monitor &
+    nm-applet &
   ''
