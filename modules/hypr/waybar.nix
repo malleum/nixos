@@ -35,7 +35,10 @@ in {
       {
         height = 30;
         spacing = 6;
-        tray.spacing = 10;
+        tray = {
+          spacing = 10;
+          show-passive-items = true;
+        };
         layer = "top";
         position = "top";
         modules-center = [];
