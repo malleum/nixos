@@ -7,11 +7,6 @@
 in
   pkgs.writeShellScriptBin "startup" ''
 
-    if ! [[ $(ps -e | ${rg} -i "discord") ]]; then
-      vesktop &
-    fi
-
-
     if [[ $(ps -e | ${rg} "X" | ${rg} -v "wayland") ]]; then # Xorg
 
       feh --bg-fill ${wallpaper}
@@ -27,14 +22,9 @@ in
       swww-daemon &
       swww img ${wallpaper}
 
-      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
       wl-paste --type text --watch cliphist store &
       wl-paste --type image --watch cliphist store &
       wl-clip-persist --clipboard regular & 
-
-      export XDG_CURRENT_DESKTOP="Hyprland";
-      export XDG_SESSION_DESKTOP="Hyprland";
-      export XDG_SESSION_TYPE="wayland";
     fi
 
     onedrive --monitor &
