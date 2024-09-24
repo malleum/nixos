@@ -48,6 +48,7 @@
         ls = "eza --icons --color";
         nixvim = "~/.config/nixvim/result/bin/nvim";
         rm = "echo Use 'rip' instead of rm";
+        s = ''[ "$(tty)" = "/dev/tty1" ] && exec sway'';
         zip = "ouch";
       };
     };

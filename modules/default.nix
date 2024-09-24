@@ -27,6 +27,7 @@
 
     home.enable = lib.mkDefault true;
     hypr.enable = lib.mkDefault true;
+    sway.enable = lib.mkDefault true;
     i3.enable = lib.mkDefault true;
 
     packages = {

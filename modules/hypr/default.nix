@@ -5,9 +5,9 @@
   config,
   ...
 }: {
-  imports = [./waybar.nix];
+  imports = [./waybar.nix ./sway.nix];
 
-  options.hypr.enable = lib.mkEnableOption "enables wayland WMs";
+  options.hypr.enable = lib.mkEnableOption "enables hyprland";
 
   config = lib.mkIf config.hypr.enable {
     programs.hyprland = {
