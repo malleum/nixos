@@ -174,7 +174,6 @@ in {
           mpvpaper
           swappy
           swww
-          wl-clip-persist
           wl-clipboard
           xwaylandvideobridge
 

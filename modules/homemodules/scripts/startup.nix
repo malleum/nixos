@@ -11,7 +11,6 @@ pkgs.writeShellScriptBin "startup" ''
   swww img ${wallpaper}
   
   wl-paste --watch cliphist store &
-  wl-clip-persist --clipboard regular &
 
   onedrive --monitor &
   nm-applet &
