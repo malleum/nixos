@@ -79,6 +79,7 @@
 
           "${mod}+o" = "move workspace to output next";
           "${mod}+f" = "fullscreen toggle";
+          "${mod}+e" = "layout tabbed";
 
           "${mod}+apostrophe" = "workspace number 1";
           "${mod}+comma" = "workspace number 2";
