@@ -9,8 +9,6 @@
     ./boot.nix
     ./gpu.nix
     ./hypr
-    ./i3
-    ./loginmanagers/sddm.nix
     ./packages
     ./stylix.nix
   ];
@@ -27,7 +25,6 @@
 
     home.enable = lib.mkDefault true;
     hypr.enable = lib.mkDefault true;
-    i3.enable = lib.mkDefault true;
 
     packages = {
       enable = lib.mkDefault true;
