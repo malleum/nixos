@@ -3,12 +3,12 @@
   config,
   ...
 }: {
-  imports = [./waybar.nix ./sway.nix];
+  imports = [./waybar.nix];
 
   options.hypr.enable = lib.mkEnableOption "enables hyprland";
 
   config = lib.mkIf config.hypr.enable {
-    programs.hyprland = {enable = true;};
+    programs.hyprland.enable = true;
 
     environment.sessionVariables = {
       WLR_NO_HARDWARE_CURSORS = "1";
