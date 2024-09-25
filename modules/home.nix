@@ -39,6 +39,7 @@ in {
       extensions = [
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
         "hfjbmagddngcpeloejdejnfgbamkjaeg" # vimium c
+        "nacjakoppgmdcpemlfnfegmlhipddanj" # pdf vimium c
         "nngceckbapebfimnlniiiahkandclblb" # bitwarden
       ];
     };

@@ -33,14 +33,9 @@ in {
           vlc
           vscodium
 
-          # sddm theme
-          (callPackage ./aerial-sddm-theme.nix {})
-
           protonup-ng
           wdisplays
           wine
-
-          # android-studio android-tools sdkmanager
 
           prismlauncher
 

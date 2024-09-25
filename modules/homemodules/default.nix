@@ -18,14 +18,7 @@
     };
   };
 
-  services = {
-    flameshot = {
-      enable = true;
-      settings.General.showStartupLaunchMessage = false;
-    };
-  };
-
   home.packages =
-    (map (a: pkgs.callPackage (./scripts + "/${a}.nix") {}) ["chron" "kls" "start-polybar"])
+    (map (a: pkgs.callPackage (./scripts + "/${a}.nix") {}) ["chron" "kls"])
     ++ [(pkgs.callPackage ./scripts/startup.nix {wallpaper = "${config.stylix.image}";})];
 }

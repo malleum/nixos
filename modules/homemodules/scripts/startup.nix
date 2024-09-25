@@ -10,10 +10,10 @@ pkgs.writeShellScriptBin "startup" ''
   swww-daemon &
   swww img ${wallpaper}
   
-  wl-paste --type text --watch cliphist store &
-  wl-paste --type image --watch cliphist store &
+  wl-paste --watch cliphist store &
   wl-clip-persist --clipboard regular &
 
   onedrive --monitor &
   nm-applet &
+  vesktop &
 ''

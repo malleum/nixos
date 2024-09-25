@@ -44,7 +44,7 @@
 
       shellAliases = {
         cat = "bat";
-        h = "Hyprland & disown";
+        h = "Hyprland";
         ls = "eza --icons --color";
         nixvim = "~/.config/nixvim/result/bin/nvim";
         rm = "echo Use 'rip' instead of rm";
