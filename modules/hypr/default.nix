@@ -186,6 +186,12 @@
             # Scroll through existing workspaces with m + scroll
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
+
+            ", xf86audiolowervolume, exec, pulsemixer --change-volume -5"
+            ", xf86audioraisevolume, exec, pulsemixer --max-volume 150 --change-volume +5"
+            ", xf86audiomute, exec, pulsemixer --toggle-mute"
+            ", xf86monbrightnessup, exec, xbacklight -inc 10"
+            ", xf86monbrightnessdown, exec, xbacklight -dec 10"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
