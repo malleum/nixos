@@ -57,7 +57,6 @@ in {
             "4" = "넷";
             "5" = "다섯";
           };
-          # persistent-workspaces."*" = 5;
         };
         battery = {
           format = "{capacity}% {icon}";

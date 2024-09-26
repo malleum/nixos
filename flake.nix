@@ -10,6 +10,7 @@
     fix-python.url = "github:GuillaumeDesforges/fix-python";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";
+    nxvim.url = "github:nix-community/nixvim";
     rip2.url = "github:MilesCranmer/rip2";
     stylix.url = "github:danth/stylix";
   };
