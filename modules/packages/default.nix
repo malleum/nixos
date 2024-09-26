@@ -168,12 +168,7 @@ in {
           xorg.xrandr
 
           # wayland
-          cliphist
           hyprpicker
-          hyprshot
-          mpvpaper
-          swappy
-          swww
           wl-clipboard
           xwaylandvideobridge
 

@@ -7,10 +7,10 @@ pkgs.writeShellScriptBin "startup" ''
 
   killall .waybar-wrapped
   waybar &
-  swww-daemon &
-  swww img ${wallpaper}
+  ${pkgs.swww}/bin/swww-daemon &
+  ${pkgs.swww}/bin/swww img ${wallpaper}
   
-  wl-paste --watch cliphist store &
+  wl-paste --watch ${pkgs.cliphist}/bin/cliphist store &
 
   onedrive --monitor &
   nm-applet &
