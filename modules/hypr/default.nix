@@ -35,8 +35,8 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "waybar"
-          "${pkgs.swww}/bin/swww-daemon"
-          "${pkgs.swww}/bin/swww img ${config.stylix.image}"
+          "swww-daemon"
+          "swww img ${config.stylix.image}"
           "wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
           "vesktop"
           "nm-applet"
@@ -178,7 +178,6 @@
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
             "SUPER CONTROL, d, exec, killall .Discord-wrappe"
             "SUPER CONTROL SHIFT, d, exec, killall electron"
-            "SUPER, bracketleft, exec, startup"
 
             "SUPER, o, movecurrentworkspacetomonitor, +1"
             "SUPER SHIFT, o, movecurrentworkspacetomonitor, -1"
@@ -187,8 +186,8 @@
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
 
-            ", xf86audiolowervolume, exec, pulsemixer --change-volume -5"
-            ", xf86audioraisevolume, exec, pulsemixer --max-volume 150 --change-volume +5"
+            '', xf86audiolowervolume, exec, pulsemixer --set-volume $(i="$(pulsemixer --get-volume | choose 0)" qalc "$i - 5 + $i % 5 " | choose -1)''
+            '', xf86audioraisevolume, exec, pulsemixer --max-volume 150 --set-volume $(i="$(pulsemixer --get-volume | choose 0)" qalc "$i + 5 - $i % 5 " | choose -1)''
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"

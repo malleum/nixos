@@ -169,6 +169,7 @@ in {
 
           # wayland
           hyprpicker
+          swww
           wl-clipboard
           xwaylandvideobridge
 

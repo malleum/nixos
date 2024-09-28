@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./dunst.nix
     ./fish.nix
@@ -18,7 +14,5 @@
     };
   };
 
-  home.packages =
-    (map (a: pkgs.callPackage (./scripts + "/${a}.nix") {}) ["chron" "kls"])
-    ++ [(pkgs.callPackage ./scripts/startup.nix {wallpaper = "${config.stylix.image}";})];
+  home.packages = map (a: pkgs.callPackage (./scripts + "/${a}.nix") {}) ["chron" "kls"];
 }
