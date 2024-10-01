@@ -186,8 +186,8 @@
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
 
-            '', xf86audiolowervolume, exec, pulsemixer --set-volume $(i="$(pulsemixer --get-volume | choose 0)" qalc "$i - 5 + $i % 5 " | choose -1)''
-            '', xf86audioraisevolume, exec, pulsemixer --max-volume 150 --set-volume $(i="$(pulsemixer --get-volume | choose 0)" qalc "$i + 5 - $i % 5 " | choose -1)''
+            ", xf86audiolowervolume, exec, pulsemixer --change-volume -5"
+            ", xf86audioraisevolume, exec, pulsemixer --change-volume +5"
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
