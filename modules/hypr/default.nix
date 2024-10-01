@@ -35,8 +35,6 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "waybar"
-          "swww-daemon"
-          "swww img ${config.stylix.image}"
           "wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
           "vesktop"
           "nm-applet"
