@@ -146,7 +146,7 @@
             "SUPER CONTROL, b, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
 
             "SUPER, n, exec, dunstctl close-all"
-            "SUPER SHIFT, n, exec, dunstctl set-paused true"
+            "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
 
             "SUPER, i, exec, kls"
 
