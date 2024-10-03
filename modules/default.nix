@@ -11,7 +11,6 @@
     ./hypr
     ./packages
     ./stylix.nix
-    ./nixvim.nix
   ];
 
   options.omni.enable = lib.mkOption {default = true;};
