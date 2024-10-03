@@ -3,9 +3,9 @@
   inputs,
   ...
 }: let
-  image = /home/joshammer/OneDrive/Documents/Stuff/pics/cybertruckLego.jpg;
+  image = /home/joshammer/OneDrive/Documents/Stuff/pics/sky_su57.jpg;
   convert = "${pkgs.imagemagick}/bin/magick";
-  brightness = "-10";
+  brightness = "-30";
   contrast = "0";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
