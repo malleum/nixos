@@ -116,6 +116,8 @@
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
           "workspace 4, title:^(.*Terraria.*)$"
+
+          "opacity .7, title:^(.*Discord.*)$"
         ];
 
         bind = let

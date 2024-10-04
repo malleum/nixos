@@ -3,9 +3,9 @@
   inputs,
   ...
 }: let
-  image = /home/joshammer/OneDrive/Documents/Stuff/pics/sky_su57.jpg;
+  image = /home/joshammer/.config/nixos/wallpapers/dark_sky_su57.jpg;
   convert = "${pkgs.imagemagick}/bin/magick";
-  brightness = "-30";
+  brightness = "-20";
   contrast = "0";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
@@ -17,7 +17,7 @@ in {
     polarity = "dark";
 
     opacity = {
-      terminal = 0.95;
+      terminal = 0.7;
       popups = 0.9;
     };
     cursor = {
