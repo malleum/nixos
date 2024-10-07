@@ -5,7 +5,7 @@
 }: let
   image = /home/joshammer/.config/nixos/wallpapers/dark_sky_su57.jpg;
   convert = "${pkgs.imagemagick}/bin/magick";
-  brightness = "-20";
+  brightness = "-13";
   contrast = "0";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
