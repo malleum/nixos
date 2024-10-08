@@ -113,7 +113,6 @@ in {
           pypy3
           rustc
           smlnj
-          tetex
           nasm
           nmap
           ruby
@@ -155,7 +154,7 @@ in {
           patchelf
           speedtest-cli
           spice-gtk
-          texliveTeTeX
+          texliveFull
           valgrind
           wtype
 
