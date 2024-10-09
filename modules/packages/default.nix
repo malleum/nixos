@@ -32,6 +32,7 @@ in {
           virt-manager
           vlc
           vscodium
+          zathura
 
           protonup-ng
           wdisplays
@@ -143,10 +144,8 @@ in {
           arp-scan
           fping
           ikill
-          latexrun
           libnotify
           libqalculate
-          libsForQt5.okular
           neofetch
           networkmanagerapplet
           nitch
@@ -154,7 +153,6 @@ in {
           patchelf
           speedtest-cli
           spice-gtk
-          texliveFull
           valgrind
           wtype
 
