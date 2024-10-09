@@ -35,6 +35,7 @@ in {
           zathura
 
           protonup-ng
+          quickemu
           wdisplays
           wine
 
