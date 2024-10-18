@@ -94,8 +94,6 @@ in {
       ++ (
         if config.packages.programming.enable
         then [
-          swi-prolog-gui
-
           luajitPackages.jsregexp
           lua-language-server
           gcc-arm-embedded # arm-none-eabi-gcc -c
