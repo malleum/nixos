@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  image = ../wallpapers/dark_sky_su57.jpg;
+  image = ../wallpapers/tall_dark_sky_su57.jpg;
   convert = "${pkgs.imagemagick}/bin/magick";
   brightness = "-13";
   contrast = "0";
