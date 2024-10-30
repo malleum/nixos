@@ -21,8 +21,8 @@ in {
       popups = 0.9;
     };
     cursor = {
-      name = "material_light_cursors";
-      package = pkgs.material-cursors;
+      name = "graphite-light";
+      package = pkgs.graphite-cursors;
       size = 32;
     };
 
