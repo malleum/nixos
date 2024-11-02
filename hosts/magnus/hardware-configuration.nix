@@ -33,4 +33,19 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  hardware = {
+    nvidia = {
+      prime = {
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:0:1:0";
+        amdgpuBusId = "PintelBusIdCI:54:0:0";
+      };
+      modesetting.enable = true;
+      powerManagement.enable = true;
+      open = false;
+      nvidiaSettings = true;
+      # package = config.boot.kernalPackages.nvidiaPackages.stable;
+    };
+  };
 }
