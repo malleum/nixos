@@ -112,6 +112,7 @@ in {
           cargo
           gleam
           isort
+          julia
           pypy3
           rustc
           smlnj
