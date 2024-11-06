@@ -26,6 +26,7 @@
         extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel"];
         shell = pkgs.fish;
       };
+      defaultUserShell = pkgs.fish;
     };
 
     home-manager = lib.mkIf config.home.enable {

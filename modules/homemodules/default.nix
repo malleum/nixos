@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   imports = [
     ./dunst.nix
-    ./fish.nix
+    ./shell.nix
     ./rofi.nix
     ./term.nix
     ./tmux.nix

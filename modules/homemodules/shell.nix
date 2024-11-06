@@ -9,14 +9,11 @@
             echo skill issue: $argv[1]
         end
 
-        function pythonEnv --description 'start a nix-shell with the given python packages' --argument pythonVersion
-            if set -q argv[2]
-              set argv $argv[2..-1]
-            end
-            for el in $argv
-              set ppkgs $ppkgs "python"$pythonVersion"Packages.$el"
-            end
-            nix-shell -p $ppkgs
+        function pyenv --description 'start a nix-shell with the given python packages'
+          for el in $argv
+            set ppkgs $ppkgs "python3Packages.$el"
+          end
+          nix-shell -p $ppkgs
         end
 
         set -g fish_greeting ""
@@ -25,11 +22,6 @@
         ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
       '';
     };
-    zoxide.enable = true;
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
     zsh = {
       enable = true;
       dotDir = ".config/zsh";
@@ -37,7 +29,27 @@
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      initExtra = "${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin";
+      initExtra = ''
+        pyenv() {
+          ppkgs=()
+          for el in "$@"; do
+            ppkgs+=("python3Packages.$el")
+          done
+          nix-shell -p "''${ppkgs[@]}"
+        }
+
+        ${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin
+      '';
+    };
+    zoxide.enable = true;
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {};
+    };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
     };
   };
   home.packages = with pkgs; [
