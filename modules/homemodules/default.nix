@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./dunst.nix
     ./shell.nix
@@ -14,5 +18,5 @@
     };
   };
 
-  home.packages = map (a: pkgs.callPackage (./scripts + "/${a}.nix") {}) ["chron" "kls"];
+  home.packages = map (a: pkgs.callPackage a {}) (lib.filesystem.listFilesRecursive ./scripts);
 }

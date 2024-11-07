@@ -7,17 +7,8 @@
     fish = {
       enable = true;
       shellInit = ''
-        alias tideconfig "tide configure --auto --style=Lean --prompt_colors='16 colors' --show_time=No --lean_prompt_height='Two lines' --prompt_connection=Disconnected --prompt_spacing=Compact --icons='Few icons' --transient=No"
-
         function fish_command_not_found
             echo skill issue: $argv[1]
-        end
-
-        function pyenv --description 'start a nix-shell with the given python packages'
-          for el in $argv
-            set ppkgs $ppkgs "python3Packages.$el"
-          end
-          nix-shell -p $ppkgs
         end
 
         set -g fish_greeting ""
@@ -28,30 +19,35 @@
     };
     zsh = {
       enable = true;
+      autocd = true;
       dotDir = ".config/zsh";
       defaultKeymap = "viins";
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       initExtra = ''
-        pyenv() {
-          ppkgs=()
-          for el in "$@"; do
-            ppkgs+=("python3Packages.$el")
-          done
-          nix-shell -p "''${ppkgs[@]}"
-        }
-
+        autopair-init
         ${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin
       '';
       plugins = [
         {
-          name = "zsh-directory-dot-expansion";
+          name = "zsh-replace-multiple-dots";
+          file = "replace-multiple-dots.plugin.zsh";
           src = pkgs.fetchFromGitHub {
-            owner = "wazum";
-            repo = "zsh-directory-dot-expansion";
-            rev = "fda62b133a197288c61672eb6c98379ca8513c13";
-            sha256 = "sha256-Hs4n43ceJoTKrh6Z4b/ozZ0McL0IXgdufljRtP++dVs=";
+            owner = "momo-lab";
+            repo = "zsh-replace-multiple-dots";
+            rev = "dd2a68b031fc86e2f10f34451e0d79cdb4981bfd";
+            sha256 = "sha256-T4hDTYjnsPWXGhAM4Kf4z5KMyR12zJrM3vW8QM6JR0w=";
+          };
+        }
+        {
+          name = "zsh-autopair";
+          file = "autopair.zsh";
+          src = pkgs.fetchFromGitHub {
+            owner = "hlissner";
+            repo = "zsh-autopair";
+            rev = "449a7c3d095bc8f3d78cf37b9549f8bb4c383f3d";
+            sha256 = "sha256-3zvOgIi+q7+sTXrT+r/4v98qjeiEL4Wh64rxBYnwJvQ= ";
           };
         }
       ];
@@ -60,8 +56,9 @@
     starship = {
       enable = true;
       enableZshIntegration = true;
+      enableFishIntegration = true;
       settings = {
-        add_newline = false;
+        add_newline = true;
         format = lib.concatStrings [
           "$directory"
           "$git_branch"
@@ -116,7 +113,6 @@
     fishPlugins.done
     fishPlugins.grc
     fishPlugins.puffer
-    fishPlugins.tide
 
     eza
     fzf
