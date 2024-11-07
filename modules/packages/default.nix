@@ -116,6 +116,7 @@ in {
           pypy3
           rustc
           smlnj
+          typst
           nasm
           nmap
           ruby
