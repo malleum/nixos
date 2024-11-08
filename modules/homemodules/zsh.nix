@@ -26,6 +26,7 @@
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       initExtra = ''
+        zstyle ':completion:*' matcher-list 'r:|?=**' 'm:{a-zA-Z}={A-Za-z}'
         autopair-init
         ${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin
       '';

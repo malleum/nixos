@@ -5,7 +5,7 @@
 }: {
   imports = [
     ./dunst.nix
-    ./shell.nix
+    ./zsh.nix
     ./rofi.nix
     ./term.nix
     ./tmux.nix
