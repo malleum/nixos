@@ -117,6 +117,7 @@
           "workspace 4, title:^(.*Minecraft.*)$"
           "workspace 4, title:^(.*Terraria.*)$"
 
+          "float, title:^(All Files)$"
           # "opacity .7, title:^(.*Discord.*)$"
         ];
 
