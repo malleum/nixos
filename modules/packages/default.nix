@@ -174,7 +174,6 @@ in {
           xwaylandvideobridge
 
           # lols
-          cava
           cmatrix
           cowsay
           fortune
