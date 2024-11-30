@@ -4,9 +4,7 @@
   lib,
   config,
   ...
-}: let
-  jetbrainNF = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
-in {
+}: {
   options.packages = {
     enable = lib.mkEnableOption "enables packages";
     minimus.enable = lib.mkEnableOption "enables required packages";
@@ -191,6 +189,6 @@ in {
         else []
       );
 
-    fonts.packages = [jetbrainNF];
+    fonts.packages = [pkgs.nerd-fonts.jetbrains-mono];
   };
 }
