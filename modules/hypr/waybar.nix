@@ -22,8 +22,8 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["backlight" "battery" "tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/mt"]
-    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt"];
+    then ["backlight" "battery" "tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/mt" "custom/ktv"]
+    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt" "custom/ktv"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
@@ -51,11 +51,11 @@ in {
         "hyprland/workspaces" = {
           format = "{icon}";
           format-icons = {
-            "1" = "하나";
-            "2" = "둘";
-            "3" = "셋";
-            "4" = "넷";
-            "5" = "다섯";
+            "1" = "𝋁";
+            "2" = "𝋂";
+            "3" = "𝋃";
+            "4" = "𝋄";
+            "5" = "𝋅";
           };
         };
         battery = {
@@ -76,6 +76,11 @@ in {
         "custom/mt" = {
           interval = 1;
           exec = "chron";
+          format = "{}";
+        };
+        "custom/ktv" = {
+          interval = 1;
+          exec = "ktv";
           format = "{}";
         };
         cpu = {
@@ -177,6 +182,11 @@ in {
 
       #custom-mt {
           background-color: ${c."custom/mt"};
+          color: #000000;
+      }
+
+      #custom-ktv {
+          background-color: ${c."custom/ktv"};
           color: #000000;
       }
 
