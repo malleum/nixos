@@ -32,5 +32,11 @@
       specialArgs = {inherit pkgs inputs;};
       modules = [(./hosts + "/${host}")];
     });
-  in {nixosConfigurations = lib.attrsets.genAttrs ["malleum" "magnus" "minimus"] ns;};
+  in {
+    nixosConfigurations = lib.attrsets.genAttrs ["malleum" "magnus" "minimus"] ns;
+    devShells = {
+      default = import ./shell.nix {inherit pkgs;};
+      scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
+    };
+  };
 }
