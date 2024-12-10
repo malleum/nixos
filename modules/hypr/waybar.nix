@@ -80,7 +80,7 @@ in {
         };
         "custom/ktv" = {
           interval = 1;
-          exec = "ktv";
+          exec = "ktv | choose -c 0:5";
           format = "{}";
         };
         cpu = {
@@ -161,6 +161,7 @@ in {
 
       #clock,
       #custom-mt,
+      #custom-ktv,
       #battery,
       #cpu,
       #memory,
