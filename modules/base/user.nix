@@ -24,9 +24,9 @@
         isNormalUser = true;
         description = "Josh Hammer";
         extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel"];
-        shell = pkgs.zsh;
+        shell = pkgs.fish;
       };
-      defaultUserShell = pkgs.zsh;
+      defaultUserShell = pkgs.fish;
     };
 
     home-manager = lib.mkIf config.home.enable {
