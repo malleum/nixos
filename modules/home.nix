@@ -13,6 +13,11 @@ in {
     inherit username homeDirectory;
     enableNixpkgsReleaseCheck = false;
     stateVersion = "23.11";
+
+    file.".config/onedrive/config".text = ''
+      disable_notifications = "true"
+      skip_dir = ".git*"
+    '';
   };
 
   xdg = {
