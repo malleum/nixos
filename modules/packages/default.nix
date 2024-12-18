@@ -76,6 +76,7 @@
           ripgrep
           choose
           file
+          btop
           htop
           ouch
           tldr
@@ -97,7 +98,6 @@
           gcc-arm-embedded # arm-none-eabi-gcc -c
           clang-tools
           python3Full
-          autoflake
           gnumake
           pyright
           verilog
@@ -109,16 +109,11 @@
           black
           cargo
           gleam
-          isort
           julia
           pypy3
           rustc
-          smlnj
-          typst
           nasm
           nmap
-          ruby
-          ruff
           gcc
           gdb
           jdk
