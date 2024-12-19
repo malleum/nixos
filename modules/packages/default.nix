@@ -114,6 +114,7 @@
           rustc
           nasm
           nmap
+          ruby
           gcc
           gdb
           jdk
