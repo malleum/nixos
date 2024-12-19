@@ -6,6 +6,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
+    base16.url = "github:SenchoPens/base16.nix/665b3c6748534eb766c777298721cece9453fdae";
     deploy.url = "github:serokell/deploy-rs";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
     nix-alien.url = "github:thiagokokada/nix-alien";
@@ -14,7 +15,7 @@
     rip2.url = "github:MilesCranmer/rip2";
     stylix.url = "github:danth/stylix";
     stylix.inputs.base16.follows = "base16";
-    base16.url = "github:SenchoPens/base16.nix/665b3c6748534eb766c777298721cece9453fdae";
+    xremap.url = "github:xremap/nix-flake";
   };
   outputs = inputs: let
     system = "x86_64-linux";

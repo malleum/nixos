@@ -23,7 +23,7 @@
       users.joshammer = {
         isNormalUser = true;
         description = "Josh Hammer";
-        extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel"];
+        extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel" "uinput"];
         shell = pkgs.fish;
       };
       defaultUserShell = pkgs.fish;

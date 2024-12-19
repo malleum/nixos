@@ -1,8 +1,11 @@
 {
   lib,
   config,
+  inputs,
   ...
 }: {
+  imports = [inputs.xremap.nixosModules.default];
+
   config = lib.mkIf config.base.servs.enable {
     services = {
       unclutter.enable = true;
@@ -16,6 +19,21 @@
         pulse.enable = true;
         jack.enable = true;
         wireplumber.enable = true;
+      };
+
+      xremap = {
+        withHypr = true;
+        serviceMode = "user";
+        userName = "joshammer";
+        config = {
+          modmap = [
+            {
+              remap = {
+                "KEY_1" = "KEY_2";
+              };
+            }
+          ];
+        };
       };
     };
 
