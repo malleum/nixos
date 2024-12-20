@@ -156,7 +156,9 @@
             "SUPER, n, exec, dunstctl close-all"
             "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
 
-            "SUPER, i, exec, kls"
+            "SUPER, tab, exec, hyprctl switchxkblayout all next"
+            "SUPER SHIFT, tab, exec, hyprctl keyword input:kb_options caps:escape"
+            "SUPER CONTROL, tab, exec, hyprctl keyword input:kb_options ''"
 
             "SUPER, s, exec, rofi -show drun"
             "SUPER, c, exec, rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy"

@@ -4,8 +4,6 @@
   inputs,
   ...
 }: {
-  # imports = [inputs.xremap.nixosModules.default];
-
   config = lib.mkIf config.base.servs.enable {
     services = {
       unclutter.enable = true;
@@ -20,21 +18,6 @@
         jack.enable = true;
         wireplumber.enable = true;
       };
-
-      # xremap = {
-      #   withHypr = true;
-      #   serviceMode = "user";
-      #   userName = "joshammer";
-      #   yamlConfig = ''
-      #     modmap:
-      #       - name: capsesc
-      #         window:
-      #           not: [aces.exe]
-      #         remap:
-      #           CAPSLOCK: Esc
-      #   '';
-      # };
-      #
     };
 
     security = {
