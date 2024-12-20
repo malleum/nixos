@@ -118,8 +118,11 @@
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
           "workspace 4, title:^(.*Terraria.*)$"
+          "workspace 4, title:^(.*War.*)$"
 
-          "float, title:^(All Files)$"
+          "float, title:^(.*All Files.*)$"
+          "float, title:^(.*War.*Settings.*)$"
+          "fullscreen, title:^(.*War(?!Settings))$"
           # "opacity .7, title:^(.*Discord.*)$"
         ];
 
