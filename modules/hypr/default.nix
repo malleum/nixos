@@ -156,7 +156,7 @@
             "SUPER, n, exec, dunstctl close-all"
             "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
 
-            "SUPER, tab, exec, hyprctl switchxkblayout all next"
+            "SUPER, backslash, exec, hyprctl switchxkblayout all next"
             "SUPER SHIFT, tab, exec, hyprctl keyword input:kb_options caps:escape"
             "SUPER CONTROL, tab, exec, hyprctl keyword input:kb_options ''"
 
