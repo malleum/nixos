@@ -8,7 +8,7 @@
     ./battery.nix
     ./boot.nix
     ./gpu.nix
-    ./hypr
+    ./wayland
     ./packages
     ./stylix.nix
   ];
@@ -24,7 +24,6 @@
     };
 
     home.enable = lib.mkDefault true;
-    hypr.enable = lib.mkDefault true;
 
     packages = {
       enable = lib.mkDefault true;

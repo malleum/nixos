@@ -28,7 +28,7 @@
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 in {
-  home-manager.users.joshammer.programs.waybar = lib.mkIf config.hypr.enable {
+  home-manager.users.joshammer.programs.waybar = {
     enable = true;
     # https://github.com/georgewhewell/nixos-host/blob/master/home/waybar.nix
     settings = [

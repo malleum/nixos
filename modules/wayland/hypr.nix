@@ -5,21 +5,12 @@
   pkgs,
   ...
 }: {
-  imports = [./waybar.nix];
-
-  options.hypr.enable = lib.mkEnableOption "enables hyprland";
-
-  config = lib.mkIf config.hypr.enable {
+  config = {
     programs.hyprland = {
       enable = true;
       withUWSM = true;
       package = inputs.hypr.packages.${pkgs.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-    };
-
-    environment.sessionVariables = {
-      WLR_NO_HARDWARE_CURSORS = "1";
-      NIXOS_OZONE_WL = "1";
     };
 
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
