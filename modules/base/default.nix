@@ -23,7 +23,11 @@
     i18n.defaultLocale = "en_US.utf8";
     console.keyMap = "dvorak";
 
-    nix.settings.experimental-features = ["flakes" "nix-command"];
+    nix.settings = {
+      experimental-features = ["flakes" "nix-command"];
+      substituters = ["https://hyprland.cachix.org"];
+      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    };
 
     system = {
       stateVersion = "22.11"; # DON'T CHANGE THIS

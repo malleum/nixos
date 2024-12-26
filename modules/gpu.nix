@@ -13,8 +13,6 @@
       "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
     ];
 
-    hardware = {
-      graphics.extraPackages = with pkgs; [rocmPackages.clr.icd];
-    };
+    hardware.graphics.extraPackages = with pkgs; [rocmPackages.clr.icd];
   };
 }

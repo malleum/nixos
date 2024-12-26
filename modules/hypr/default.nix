@@ -1,6 +1,7 @@
 {
-  lib,
   config,
+  inputs,
+  lib,
   pkgs,
   ...
 }: {
@@ -9,7 +10,12 @@
   options.hypr.enable = lib.mkEnableOption "enables hyprland";
 
   config = lib.mkIf config.hypr.enable {
-    programs.hyprland.enable = true;
+    programs.hyprland = {
+      enable = true;
+      withUWSM = true;
+      package = inputs.hypr.packages.${pkgs.system}.hyprland;
+      portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+    };
 
     environment.sessionVariables = {
       WLR_NO_HARDWARE_CURSORS = "1";
