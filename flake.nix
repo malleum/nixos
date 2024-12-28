@@ -9,6 +9,7 @@
     base16.url = "github:SenchoPens/base16.nix/665b3c6748534eb766c777298721cece9453fdae";
     deploy.url = "github:serokell/deploy-rs";
     hypr.url = "github:hyprwm/Hyprland";
+    hyprqt.url = "github:hyprwm/hyprland-qtutils";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";

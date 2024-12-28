@@ -166,6 +166,7 @@
           hyprpaper
           wl-clipboard
           xwaylandvideobridge
+          inputs.hyprqt.packages.${pkgs.system}.default
 
           # lols
           cmatrix
