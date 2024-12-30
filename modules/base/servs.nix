@@ -1,12 +1,11 @@
 {
   lib,
   config,
-  inputs,
   ...
 }: {
   config = lib.mkIf config.base.servs.enable {
     services = {
-      unclutter.enable = true;
+      # unclutter.enable = true;
       printing.enable = true;
       openssh.enable = true;
 

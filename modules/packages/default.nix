@@ -33,7 +33,7 @@
           zathura
 
           protonup-ng
-          quickemu
+          stable.quickemu
           wdisplays
           wine
 
@@ -110,7 +110,6 @@
           cargo
           gleam
           julia
-          pypy3
           rustc
           nasm
           nmap
