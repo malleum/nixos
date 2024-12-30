@@ -22,11 +22,11 @@
 
           # main
           discord
-          vesktop
           firefox
           losslesscut-bin
           obs-studio
           onedrive
+          vesktop
           virt-manager
           vlc
           vscodium

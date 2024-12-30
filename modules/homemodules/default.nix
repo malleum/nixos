@@ -5,10 +5,11 @@
 }: {
   imports = [
     ./dunst.nix
-    ./zsh.nix
     ./rofi.nix
+    ./spotify.nix
     ./term.nix
     ./tmux.nix
+    ./zsh.nix
   ];
 
   dconf.settings = {
