@@ -18,7 +18,7 @@
     };
   };
 
-  spotify-player = {
+  programs.spotify-player = {
     enable = true;
     settings.client_id_command = "~/OneDrive/Documents/Stuff/ProgrammingOrCodes/psswd/spotify_id.sh";
   };

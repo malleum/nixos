@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  image = ../wallpapers/tall_dark_sky_su57.jpg;
+  image = ../wallpapers/grid.jpeg;
   convert = "${pkgs.imagemagick}/bin/magick";
   brightness = "-13";
   contrast = "0";
@@ -17,7 +17,7 @@ in {
     polarity = "dark";
 
     opacity = {
-      terminal = 0.7;
+      terminal = 0.85;
       popups = 0.9;
     };
     cursor = {
