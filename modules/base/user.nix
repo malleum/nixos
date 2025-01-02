@@ -33,7 +33,7 @@
       backupFileExtension = "backup";
       useGlobalPkgs = true;
       useUserPackages = true;
-      users.joshammer = import ../home.nix;
+      users.joshammer = ../home.nix;
     };
   };
 }

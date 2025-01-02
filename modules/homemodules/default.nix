@@ -6,7 +6,6 @@
   imports = [
     ./dunst.nix
     ./rofi.nix
-    ./spotify.nix
     ./term.nix
     ./tmux.nix
     ./zsh.nix
@@ -17,6 +16,11 @@
       autoconnect = ["qemu:///system"];
       uris = ["qemu:///system"];
     };
+  };
+
+  spotify-player = {
+    enable = true;
+    settings.client_id_command = "~/OneDrive/Documents/Stuff/ProgrammingOrCodes/psswd/spotify_id.sh";
   };
 
   home.packages = map (a: pkgs.callPackage a {}) (lib.filesystem.listFilesRecursive ./scripts);

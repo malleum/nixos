@@ -35,8 +35,9 @@
           "wl-paste --watch ${pkgs.stable.cliphist}/bin/cliphist store"
           "vesktop"
           "nm-applet"
-          "onedrive --monitor"
           "hyprpaper"
+          "spotify_player -d"
+          "onedrive --monitor"
         ];
 
         input = {

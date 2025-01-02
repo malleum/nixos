@@ -50,7 +50,7 @@
         ls = "eza --icons --color";
         nixvim = "~/.config/nixvim/result/bin/nvim";
         rm = "echo Use 'rip' instead of rm";
-        zip = "ouch";
+        sp = "spotify_player";
       };
     };
   };
