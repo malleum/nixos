@@ -29,7 +29,7 @@
     #     exec-once = [
     #       "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
     #       "waybar"
-    #       "wl-paste --watch ${pkgs.stable.cliphist}/bin/cliphist store"
+    #       "wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
     #       "vesktop"
     #       "nm-applet"
     #       "onedrive --monitor"
@@ -157,7 +157,7 @@
     #         "SUPER, s, exec, rofi -show drun"
     #         "SUPER, c, exec, rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy"
     #         "SUPER SHIFT, e, exec, rofi -modi emoji -show emoji"
-    #         "SUPER, v, exec, ${pkgs.stable.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.stable.cliphist}/bin/cliphist decode | wl-copy"
+    #         "SUPER, v, exec, ${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy"
     #
     #         "SUPER SHIFT, q, killactive"
     #         "SUPER CONTROL SHIFT, semicolon, exit"
