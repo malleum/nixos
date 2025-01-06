@@ -1,6 +1,8 @@
 {
+  inputs,
   lib,
   config,
+  system,
   ...
 }: {
   imports = [
@@ -28,6 +30,23 @@
       substituters = ["https://hyprland.cachix.org"];
       trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
+
+    nixpkgs.pkgs = let
+      overlays = [
+        (final: _prev: {
+          stable = import inputs.stable {
+            system = final.system;
+            config.allowUnfree = true;
+          };
+        })
+      ];
+
+      pkgs = import inputs.unstable {
+        inherit overlays system;
+        config.allowUnfree = true;
+      };
+    in
+      pkgs;
 
     system = {
       stateVersion = "22.11"; # DON'T CHANGE THIS
