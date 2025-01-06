@@ -33,7 +33,7 @@
           zathura
 
           protonup-ng
-          quickemu
+          stable.quickemu
           wdisplays
           wine
 
