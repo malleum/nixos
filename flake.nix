@@ -26,10 +26,14 @@
       specialArgs = {inherit inputs system;};
       modules = [(./hosts + "/${host}")];
     });
+    pkgs = import inputs.unstable {inherit system;};
+    ss = name: {
+      type = "app";
+      program = "${pkgs.callPackage ./modules/homemodules/scripts/${name}.nix {inherit pkgs;}}/bin/${name}";
+    };
   in {
-    devShells.${system} = let
-      pkgs = import inputs.unstable {inherit system;};
-    in {
+    apps.${system} = lib.attrsets.genAttrs (map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts)) ss;
+    devShells.${system} = {
       default = import ./shell.nix {inherit pkgs;};
       scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
     };
