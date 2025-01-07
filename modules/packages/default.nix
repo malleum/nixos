@@ -18,26 +18,18 @@
       (
         if config.packages.gui.enable
         then [
-          ### gui
-
-          # main
-          discord
           firefox
           losslesscut-bin
           obs-studio
           onedrive
           vesktop
-          virt-manager
           vlc
-          vscodium
-          zathura
 
+          prismlauncher
           protonup-ng
           stable.quickemu
           wdisplays
           wine
-
-          prismlauncher
 
           # office
           hunspellDicts.en-us
@@ -50,12 +42,6 @@
           pavucontrol
           pulsemixer
           pasystray
-
-          # sddm theme
-          libsForQt5.phonon-backend-gstreamer
-          libsForQt5.qt5.qtgraphicaleffects
-          libsForQt5.qt5.qtmultimedia
-          gst_all_1.gst-plugins-good
 
           # styling
           nwg-look
@@ -93,34 +79,23 @@
       ++ (
         if config.packages.programming.enable
         then [
-          luajitPackages.jsregexp
-          lua-language-server
-          gcc-arm-embedded # arm-none-eabi-gcc -c
-          clang-tools
-          python3Full
-          gnumake
-          pyright
-          verilog
-          erlang
-          gradle
-          kotlin
-          nodejs
-          stylua
-          black
           cargo
-          gleam
-          julia
-          rustc
-          nasm
-          nmap
-          ruby
+          clang-tools
           gcc
           gdb
-          jdk
-          lua
-          nil
-          zig
+          gnumake
           go
+          gradle
+          jdk
+          julia
+          kotlin
+          lua
+          nodejs
+          pyright
+          python3Full
+          rustc
+          typst
+          zig
         ]
         else []
       )
@@ -138,34 +113,22 @@
           # cli
           acpi
           arp-scan
-          fping
-          ikill
           libnotify
           libqalculate
-          neofetch
           networkmanagerapplet
           nitch
+          nmap
           openssl
-          patchelf
           speedtest-cli
           spice-gtk
-          valgrind
-          wtype
-
-          # xorg
-          arandr
-          betterlockscreen
-          xclip
-          xorg.xinit
-          xorg.xkbcomp
-          xorg.xrandr
 
           # wayland
-          hyprpicker
           hyprpaper
-          wl-clipboard
-          xwaylandvideobridge
+          hyprpicker
           inputs.hyprqt.packages.${pkgs.system}.default
+          wl-clipboard
+          wtype
+          xwaylandvideobridge
 
           # lols
           cmatrix

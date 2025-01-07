@@ -1,6 +1,6 @@
-{pkgs ? import <nixpkgs> {}}: let
+{pkgs, ...}: let
   lib = pkgs.lib;
 in
-  pkgs.mkShellNoCC {
+  pkgs.mkShell {
     packages = map (a: pkgs.callPackage a {}) (lib.filesystem.listFilesRecursive ./scripts);
   }

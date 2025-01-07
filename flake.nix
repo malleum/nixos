@@ -27,9 +27,11 @@
       modules = [(./hosts + "/${host}")];
     });
   in {
-    devShells.${system} = {
-      default = import ./shell.nix;
-      scripts = import ./modules/homemodules/shell.nix;
+    devShells.${system} = let
+      pkgs = import inputs.unstable {inherit system;};
+    in {
+      default = import ./shell.nix {inherit pkgs;};
+      scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
     };
     nixosConfigurations = lib.attrsets.genAttrs ["malleum" "magnus" "minimus"] ns;
   };
