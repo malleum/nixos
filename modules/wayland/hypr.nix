@@ -112,7 +112,7 @@
           "workspace 1, title:^(.*Brave.*)$"
           "workspace 2, title:^(.*Discord.*)$"
           "workspace 2, title:^(.*Microsoft Teams.*)$"
-          "workspace 3, title:^(kitty)$"
+          "workspace 3, title:^(ghostty)$"
           "workspace 3, title:^(foot)$"
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
@@ -143,7 +143,7 @@
         in
           [
             "SUPER, return, exec, foot"
-            "SUPER SHIFT, return, exec, kitty"
+            "SUPER SHIFT, return, exec, ghostty"
             "SUPER, b, exec, brave"
             "SUPER SHIFT, b, exec, chromium"
             "SUPER, d, exec, vesktop"

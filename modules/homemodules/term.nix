@@ -1,19 +1,5 @@
 {
   programs = {
-    kitty = {
-      enable = true;
-      settings = {
-        enable_audio_bell = false;
-        confirm_os_window_close = "0";
-      };
-      extraConfig = ''
-        map ctrl+c copy_or_interrupt
-        map kitty_mod+w no_op
-        map shift+cmd+d no_op
-        map ctrl+d no_op
-      '';
-    };
-
     foot = {
       enable = true;
       settings = {
@@ -22,6 +8,18 @@
       };
     };
 
-    alacritty.enable = true;
+    ghostty = {
+      enable = true;
+      enableFishIntegration = true;
+      settings = {
+        clipboard-paste-protection = false;
+        cursor-style = "block";
+        cursor-style-blink = false;
+        mouse-hide-while-typing = true;
+        shell-integration-features = "no-cursor";
+        window-decoration = false;
+        confirm-close-surface = false;
+      };
+    };
   };
 }
