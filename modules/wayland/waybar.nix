@@ -41,9 +41,17 @@ in {
         };
         layer = "top";
         position = "top";
-        modules-center = [];
+        modules-center = (
+          if (config.networking.hostName == "magnus")
+          then mods
+          else []
+        );
         modules-left = ["hyprland/workspaces"];
-        modules-right = mods;
+        modules-right = (
+          if (config.networking.hostName != "magnus")
+          then mods
+          else []
+        );
         backlight = {
           format = "{percent}% {icon}";
           format-icons = ["" ""];
