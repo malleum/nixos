@@ -93,6 +93,7 @@
           nodejs
           pyright
           python3Full
+          python311
           rustc
           typst
           zig
