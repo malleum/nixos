@@ -86,7 +86,7 @@
           gnumake
           go
           gradle
-          jdk23
+          jdk21
           julia
           kotlin
           lua
