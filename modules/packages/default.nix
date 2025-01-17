@@ -54,17 +54,17 @@
         if config.packages.minimus.enable
         then [
           inputs.fix-python.packages.${pkgs.system}.default
-          inputs.alejandra.defaultPackage.${pkgs.system}
           inputs.nixvim.packages.${pkgs.system}.default
-          inputs.rip2.packages.${pkgs.system}.default
+          alejandra
           fastfetch
           killall
           ripgrep
           choose
-          file
           btop
+          file
           htop
           ouch
+          rip2
           tldr
           wget
           bat
@@ -105,7 +105,6 @@
         then [
           # nix
           inputs.nix-alien.packages.${pkgs.system}.nix-alien
-          inputs.deploy.packages.${pkgs.system}.default
           nix-prefetch-github
           nix-output-monitor
           nixos-shell
@@ -126,7 +125,7 @@
           # wayland
           hyprpaper
           hyprpicker
-          inputs.hyprqt.packages.${pkgs.system}.default
+          hyprland-qtutils
           wl-clipboard
           wtype
           xwaylandvideobridge
