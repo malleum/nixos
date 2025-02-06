@@ -22,8 +22,8 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["backlight" "battery" "tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/mt" "custom/ktv"]
-    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/mt" "custom/ktv"];
+    then ["backlight" "battery" "tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/chron" "custom/ktv" "custom/duod"]
+    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/chron" "custom/ktv" "custom/duod"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
@@ -81,7 +81,7 @@ in {
           format = "{:%H:%M:%S}";
         };
         "clock#c2".format = "{:%m-%d}";
-        "custom/mt" = {
+        "custom/chron" = {
           interval = 1;
           exec = "chron";
           format = "{}";
@@ -89,6 +89,11 @@ in {
         "custom/ktv" = {
           interval = 1;
           exec = "ktv | choose -c 0:5";
+          format = "{}";
+        };
+        "custom/duod" = {
+          interval = 1;
+          exec = "duod | choose -c 0:7";
           format = "{}";
         };
         cpu = {

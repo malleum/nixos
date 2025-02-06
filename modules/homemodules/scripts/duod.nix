@@ -1,5 +1,5 @@
 {pkgs, ...}:
-pkgs.writeShellScriptBin "dude" ''
+pkgs.writeShellScriptBin "duod" ''
     s=""
     if [ $# -eq 0 ]; then
     s="$(date '+%H:%M:%S:%N')"
