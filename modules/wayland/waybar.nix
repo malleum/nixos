@@ -93,7 +93,7 @@ in {
         };
         "custom/duod" = {
           interval = 1;
-          exec = "duod | choose -c 0:7";
+          exec = "duod | choose 0:3";
           format = "{}";
         };
         cpu = {
