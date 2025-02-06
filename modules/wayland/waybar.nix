@@ -136,166 +136,174 @@ in {
         };
       }
     ];
-    style = ''
-      * {
-          font-family: JetBrainsMono;
-          font-size: 13px;
-      }
+    style =
+      #css
+      ''
+        * {
+            font-family: JetBrainsMono;
+            font-size: 13px;
+        }
 
-      window#waybar {
-          color: #ffffff;
-          background: transparent;
-          border-bottom: none
-      }
+        window#waybar {
+            color: #ffffff;
+            background: transparent;
+            border-bottom: none
+        }
 
-      #workspaces  {
-          margin: 0 4px;
-          color: ${c.temperature};
-          border-bottom: none
-      }
+        #workspaces  {
+            margin: 0 4px;
+            color: ${c.temperature};
+            border-bottom: none
+        }
 
-      #workspaces button {
-          padding: 0 3px;
-          margin: 0 5px;
-          border-radius: 0;
-          color: #ffffff;
-          border-bottom: none
-      }
+        #workspaces button {
+            padding: 0 3px;
+            margin: 0 5px;
+            border-radius: 0;
+            color: #ffffff;
+            border-bottom: none
+        }
 
-      .modules-left #workspaces button.active {
-          color: ${c."custom/mt"};
-          border-bottom: none
-      }
+        .modules-left #workspaces button.active {
+            color: ${c."custom/chron"};
+            border-bottom: none
+        }
 
-      #workspaces button.urgent {
-          color: ${c.temperature};
-          border-bottom: none
-      }
+        #workspaces button.urgent {
+            color: ${c.temperature};
+            border-bottom: none
+        }
 
-      #clock,
-      #custom-mt,
-      #custom-ktv,
-      #battery,
-      #cpu,
-      #memory,
-      #disk,
-      #temperature,
-      #backlight,
-      #network,
-      #pulseaudio,
-      #wireplumber,
-      #tray {
-          padding: 0 10px;
-          border-radius: 6px;
-      }
+        #clock,
+        #custom-chron,
+        #custom-ktv,
+        #custom-duod,
+        #battery,
+        #cpu,
+        #memory,
+        #disk,
+        #temperature,
+        #backlight,
+        #network,
+        #pulseaudio,
+        #wireplumber,
+        #tray {
+            padding: 0 10px;
+            border-radius: 6px;
+        }
 
-      #clock {
-          background-color: ${c.clock};
-          color: #000000;
-      }
+        #clock {
+            background-color: ${c.clock};
+            color: #000000;
+        }
 
-      #custom-mt {
-          background-color: ${c."custom/mt"};
-          color: #000000;
-      }
+        #custom-chron {
+            background-color: ${c."custom/chron"};
+            color: #000000;
+        }
 
-      #custom-ktv {
-          background-color: ${c."custom/ktv"};
-          color: #000000;
-      }
+        #custom-ktv {
+            background-color: ${c."custom/ktv"};
+            color: #000000;
+        }
 
-      #clock.c2 {
-          background-color: ${c."clock#c2"};
-      }
+        #custom-duod {
+            background-color: ${c."custom/duod"};
+            color: #000000;
+        }
 
-      #battery {
-          background-color: ${c.battery};
-          color: #000000;
-      }
+        #clock.c2 {
+            background-color: ${c."clock#c2"};
+        }
 
-      #battery.charging, #battery.plugged {
-          color: #ffffff;
-          background-color: ${c.battery};
-      }
+        #battery {
+            background-color: ${c.battery};
+            color: #000000;
+        }
 
-      @keyframes blink {
-          to {
-              background-color: #ffffff;
-              color: #000000;
-          }
-      }
+        #battery.charging, #battery.plugged {
+            color: #ffffff;
+            background-color: ${c.battery};
+        }
 
-      #battery.critical:not(.charging) {
-          background-color: #f53c3c;
-          color: #ffffff;
-          animation-name: blink;
-          animation-duration: 0.5s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-      }
+        @keyframes blink {
+            to {
+                background-color: #ffffff;
+                color: #000000;
+            }
+        }
 
-      #cpu {
-          background-color: ${c.cpu};
-          color: #000000;
-      }
+        #battery.critical:not(.charging) {
+            background-color: #f53c3c;
+            color: #ffffff;
+            animation-name: blink;
+            animation-duration: 0.5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
 
-      #memory {
-          background-color: ${c.memory};
-          color: #000000;
-      }
+        #cpu {
+            background-color: ${c.cpu};
+            color: #000000;
+        }
 
-      #disk {
-          background-color: ${c.disk};
-          color: #000000;
-      }
+        #memory {
+            background-color: ${c.memory};
+            color: #000000;
+        }
 
-      #backlight {
-          background-color: ${c.backlight};
-          color: #000000;
-      }
+        #disk {
+            background-color: ${c.disk};
+            color: #000000;
+        }
 
-      #network {
-          background-color: ${c.network};
-          color: #000000;
-      }
+        #backlight {
+            background-color: ${c.backlight};
+            color: #000000;
+        }
 
-      #network.disconnected {
-          background-color: #f53c3c;
-      }
+        #network {
+            background-color: ${c.network};
+            color: #000000;
+        }
 
-      #pulseaudio {
-          background-color: ${c.pulseaudio};
-          color: #000000;
-      }
+        #network.disconnected {
+            background-color: #f53c3c;
+        }
 
-      #pulseaudio.muted {
-          background-color: #${config.stylix.base16Scheme.base01};
-          color: #${config.stylix.base16Scheme.base07};
-      }
+        #pulseaudio {
+            background-color: ${c.pulseaudio};
+            color: #000000;
+        }
 
-      #temperature {
-          background-color: ${c.temperature};
-          color: #000000;
-      }
+        #pulseaudio.muted {
+            background-color: #${config.stylix.base16Scheme.base01};
+            color: #${config.stylix.base16Scheme.base07};
+        }
 
-      #temperature.critical {
-          background-color: #eb4d4b;
-      }
+        #temperature {
+            background-color: ${c.temperature};
+            color: #000000;
+        }
 
-      #tray {
-          background-color: ${c.tray};
-          color: #000000;
-      }
+        #temperature.critical {
+            background-color: #eb4d4b;
+        }
 
-      #tray > .passive {
-          -gtk-icon-effect: dim;
-      }
+        #tray {
+            background-color: ${c.tray};
+            color: #000000;
+        }
 
-      #tray > .needs-attention {
-          -gtk-icon-effect: highlight;
-          background-color: #eb4d4b;
-      }
-    '';
+        #tray > .passive {
+            -gtk-icon-effect: dim;
+        }
+
+        #tray > .needs-attention {
+            -gtk-icon-effect: highlight;
+            background-color: #eb4d4b;
+        }
+      '';
   };
 }
