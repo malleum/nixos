@@ -22,8 +22,8 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["backlight" "battery" "tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "clock#c2" "clock" "custom/chron" "custom/ktv" "custom/duod"]
-    else ["tray" "pulseaudio" "network" "cpu" "memory" "temperature" "disk" "backlight" "battery" "clock#c2" "clock" "custom/chron" "custom/ktv" "custom/duod"];
+    then ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron"]
+    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/chron"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
@@ -84,16 +84,6 @@ in {
         "custom/chron" = {
           interval = 1;
           exec = "chron";
-          format = "{}";
-        };
-        "custom/ktv" = {
-          interval = 1;
-          exec = "ktv | choose -c 0:5";
-          format = "{}";
-        };
-        "custom/duod" = {
-          interval = 1;
-          exec = "duod | choose 0:3";
           format = "{}";
         };
         cpu = {
@@ -176,8 +166,6 @@ in {
 
         #clock,
         #custom-chron,
-        #custom-ktv,
-        #custom-duod,
         #battery,
         #cpu,
         #memory,
@@ -199,16 +187,6 @@ in {
 
         #custom-chron {
             background-color: ${c."custom/chron"};
-            color: #000000;
-        }
-
-        #custom-ktv {
-            background-color: ${c."custom/ktv"};
-            color: #000000;
-        }
-
-        #custom-duod {
-            background-color: ${c."custom/duod"};
             color: #000000;
         }
 
@@ -248,18 +226,8 @@ in {
             color: #000000;
         }
 
-        #memory {
-            background-color: ${c.memory};
-            color: #000000;
-        }
-
         #disk {
             background-color: ${c.disk};
-            color: #000000;
-        }
-
-        #backlight {
-            background-color: ${c.backlight};
             color: #000000;
         }
 
