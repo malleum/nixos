@@ -22,7 +22,7 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron"]
+    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron"]
     else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/chron"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
