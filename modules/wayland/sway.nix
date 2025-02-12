@@ -17,6 +17,8 @@
           xkb_layout = "us,us";
           xkb_variant = "dvorak,";
           xkb_options = "caps:escape";
+          repeat_delay = "225";
+          repeat_rate = "50";
         };
         bars = [];
         seat."*" = {
