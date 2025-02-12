@@ -19,6 +19,8 @@
           xkb_options = "caps:escape";
           repeat_delay = "225";
           repeat_rate = "50";
+          tap = "enabled";
+          natural_scroll = "enabled";
         };
         bars = [];
         seat."*" = {
