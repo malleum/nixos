@@ -46,7 +46,7 @@ in {
           then mods
           else []
         );
-        modules-left = ["hyprland/workspaces"];
+        modules-left = ["${config.wm}/workspaces"];
         modules-right = (
           if (config.networking.hostName != "magnus")
           then mods
@@ -56,7 +56,7 @@ in {
           format = "{percent}% {icon}";
           format-icons = ["" ""];
         };
-        "hyprland/workspaces" = {
+        "${config.wm}/workspaces" = {
           format = "{icon}";
           format-icons = {
             "1" = "𝋁";

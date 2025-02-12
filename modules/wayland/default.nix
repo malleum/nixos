@@ -2,6 +2,7 @@
   imports = [./waybar.nix ./sway.nix ./hypr.nix];
 
   config = {
+    wm = "sway";
     services.displayManager.ly = {
       enable = true;
     };

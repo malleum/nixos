@@ -11,11 +11,14 @@
     ./user.nix
   ];
 
-  options.base = {
-    enable = lib.mkEnableOption "Enables base.nix";
-    servs.enable = lib.mkEnableOption "Enables services";
-    progs.enable = lib.mkEnableOption "Enables programs";
-    user.enable = lib.mkEnableOption "Enables user";
+  options = {
+    wm = lib.mkOption {default = "";};
+    base = {
+      enable = lib.mkEnableOption "Enables base.nix";
+      servs.enable = lib.mkEnableOption "Enables services";
+      progs.enable = lib.mkEnableOption "Enables programs";
+      user.enable = lib.mkEnableOption "Enables user";
+    };
   };
 
   config = lib.mkIf config.base.enable {
