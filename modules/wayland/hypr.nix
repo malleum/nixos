@@ -111,6 +111,7 @@
         windowrulev2 = [
           "workspace 1, title:^(.*Brave.*)$"
           "workspace 2, title:^(.*Discord.*)$"
+          "workspace 2, title:^(.*vesktop.*)$"
           "workspace 2, title:^(.*Microsoft Teams.*)$"
           "workspace 3, title:^(ghostty)$"
           "workspace 3, title:^(foot)$"
