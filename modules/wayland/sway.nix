@@ -19,17 +19,18 @@
           modifier = "Mod4";
           bindkeysToCode = true;
           defaultWorkspace = "workspace number 1";
-          window = {
-            titlebar = false;
-          };
+          focus = {wrapping = "yes";};
           input."*" = {
-              xkb_layout = "us,us";
-              xkb_variant = "dvorak,";
-              xkb_options = "caps:escape";
-              repeat_delay = "225";
-              repeat_rate = "50";
-              tap = "enabled";
-              natural_scroll = if (osConfig.networking.hostName == "magnus") then "disabled" else "enabled";
+            xkb_layout = "us,us";
+            xkb_variant = "dvorak,";
+            xkb_options = "caps:escape";
+            repeat_delay = "225";
+            repeat_rate = "50";
+            tap = "enabled";
+            natural_scroll =
+              if (osConfig.networking.hostName == "magnus")
+              then "disabled"
+              else "enabled";
           };
           bars = [];
           seat."*" = {
@@ -49,6 +50,15 @@
             "3" = [{title = "(foot|ghostty)";}];
             "4" = [{title = "(Steam|Minecraft|War)";}];
             "5" = [{title = "OBS";}];
+          };
+          window = {
+            titlebar = false;
+            commands = [
+              {
+                command = "focus";
+                criteria.class = "";
+              }
+            ];
           };
           floating = {
             titlebar = false;
