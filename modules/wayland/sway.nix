@@ -124,10 +124,9 @@
 
               "${m}+escape" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000"; # escape
 
-              "${m}+bracketleft" = "exec killall hyprpaper; hyprpaper";
-              "${m}+bracketright" = "exec killall .waybar-wrapped; waybar";
+              "${m}+bracketright" = "exec 'killall .waybar-wrapped; waybar'";
               "${mc}+d" = "exec killall .Discord-wrappe";
-              "${mcs}+d" = "exec killall electron";
+              "${mcs}+d" = "exec killall .electron-wrapp";
 
               "${m}+o" = "move workspace to output right; focus right";
               "${ms}+o" = "move workspace to output left; focus left";
