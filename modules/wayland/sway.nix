@@ -10,6 +10,7 @@
       pkgs,
       config,
       lib,
+      osConfig,
       ...
     }: {
       wayland.windowManager.sway = {
@@ -22,13 +23,13 @@
             titlebar = false;
           };
           input."*" = {
-            xkb_layout = "us,us";
-            xkb_variant = "dvorak,";
-            xkb_options = "caps:escape";
-            repeat_delay = "225";
-            repeat_rate = "50";
-            tap = "enabled";
-            natural_scroll = "enabled";
+              xkb_layout = "us,us";
+              xkb_variant = "dvorak,";
+              xkb_options = "caps:escape";
+              repeat_delay = "225";
+              repeat_rate = "50";
+              tap = "enabled";
+              natural_scroll = if (osConfig.networking.hostName == "magnus") then "disabled" else "enabled";
           };
           bars = [];
           seat."*" = {
@@ -71,10 +72,12 @@
               l = "right";
               h = "left";
             };
-            many = mod: action: set: lib.attrsets.mapAttrs' (key: num: lib.attrsets.nameValuePair "${mod}+${key}" "${action} ${num}") set;
+            many = mod: action: set: lib.attrsets.mapAttrs' (key: num: lib.attrsets.nameValuePair "${mod}+${key}" (builtins.replaceStrings ["#"] [num] action)) set;
           in
             {
-              "${m}+b" = "exec, brave";
+              "${m}+return" = "exec foot";
+              "${ms}+return" = "exec ghostty";
+              "${m}+b" = "exec brave";
               "${ms}+b" = "exec firefox";
               "${m}+d" = "exec vesktop";
               "${ms}+d" = "exec brave 'https://teams.microsoft.com/v2/'";
@@ -87,11 +90,13 @@
 
               # "${m}+backslash" = "exec hyprctl switchxkblayout all next";
 
-              "${m}, s" = "exec rofi -show drun";
-              "${m}, c" = "exec rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy";
-              "${ms} e" = "exec rofi -modi emoji -show emoji";
-              "${m}, v" = "exec ${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy";
+              "${m}+s" = "exec rofi -show drun";
+              "${m}+c" = "exec rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy";
+              "${ms}+e" = "exec rofi -modi emoji -show emoji";
+              "${m}+v" = "exec ${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy";
 
+              "${ms}+r" = "reload";
+              "${m}+r" = "mode resize";
               "${ms}+q" = "kill";
               "${mcs}+semicolon" = "exit";
               "${ms}+z" = "exec poweroff";
@@ -107,26 +112,26 @@
 
               "${m}+f" = "fullscreen toggle";
 
-              "${m}+code:9" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000"; # escape
+              "${m}+escape" = "exec ${pkgs.swaylock}/bin/swaylock -c 000000"; # escape
 
-              "${m}, bracketleft" = "exec killall hyprpaper; hyprpaper";
-              "${m}, bracketright" = "exec killall .waybar-wrapped; waybar";
-              "${m} CONTROL, d" = "exec killall .Discord-wrappe";
-              "${m} CONTROL SHIFT, d" = "exec killall electron";
+              "${m}+bracketleft" = "exec killall hyprpaper; hyprpaper";
+              "${m}+bracketright" = "exec killall .waybar-wrapped; waybar";
+              "${mc}+d" = "exec killall .Discord-wrappe";
+              "${mcs}+d" = "exec killall electron";
 
-              # "${m}, o, movecurrentworkspacetomonitor, +1";
-              # "${ms} o, movecurrentworkspacetomonitor, -1";
+              "${m}+o" = "move workspace to output right; focus right";
+              "${ms}+o" = "move workspace to output left; focus left";
 
-              ", xf86audiolowervolume" = "exec pulsemixer --change-volume -5";
-              ", xf86audioraisevolume" = "exec pulsemixer --change-volume +5";
-              ", xf86audiomute" = "exec pulsemixer --toggle-mute";
-              ", xf86monbrightnessup" = "exec xbacklight -inc 10";
-              ", xf86monbrightnessdown" = "exec xbacklight -dec 10";
+              "xf86audiolowervolume" = "exec pulsemixer --change-volume -5";
+              "xf86audioraisevolume" = "exec pulsemixer --change-volume +5";
+              "xf86audiomute" = "exec pulsemixer --toggle-mute";
+              "xf86monbrightnessup" = "exec xbacklight -inc 10";
+              "xf86monbrightnessdown" = "exec xbacklight -dec 10";
             }
-            // many m "workspace number" wkspaces
-            // many ms "move container to workspace number" wkspaces
-            // many m "focus" lettertodirection
-            // many ms "move" lettertodirection;
+            // many m "workspace number #" wkspaces
+            // many ms "move container to workspace number #; workspace number #" wkspaces
+            // many m "focus #" lettertodirection
+            // many ms "move #" lettertodirection;
         };
       };
     };
