@@ -27,6 +27,7 @@
             repeat_delay = "225";
             repeat_rate = "50";
             tap = "enabled";
+            "dwt" = "disabled";
             natural_scroll =
               if (osConfig.networking.hostName == "magnus")
               then "disabled"
