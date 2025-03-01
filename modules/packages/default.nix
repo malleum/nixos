@@ -132,7 +132,7 @@
             hyprland-qtutils
             wl-clipboard
             wtype
-            xwaylandvideobridge
+            kdePackages.xwaylandvideobridge
 
             # lols
             cmatrix
