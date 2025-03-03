@@ -33,6 +33,7 @@
       backupFileExtension = "backup";
       useGlobalPkgs = true;
       useUserPackages = true;
+      extraSpecialArgs = {inherit inputs;};
       users.joshammer = ../home.nix;
     };
   };

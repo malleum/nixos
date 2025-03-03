@@ -15,12 +15,16 @@
 
   config = let
     iogii = pkgs.callPackage ./iogii.nix {};
+    ifopt = opt: lst:
+      if opt
+      then lst
+      else [];
   in
     lib.mkIf config.packages.enable {
       environment.systemPackages = with pkgs;
         (
-          if config.packages.gui.enable
-          then [
+          ifopt config.packages.gui.enable
+          [
             firefox
             losslesscut-bin
             obs-studio
@@ -51,11 +55,10 @@
             gtk4
             gtk3
           ]
-          else []
         )
         ++ (
-          if config.packages.minimus.enable
-          then [
+          ifopt config.packages.minimus.enable
+          [
             inputs.fix-python.packages.${pkgs.system}.default
             inputs.nixvim.packages.${pkgs.system}.default
             alejandra
@@ -77,11 +80,10 @@
             jq
             sd
           ]
-          else []
         )
         ++ (
-          if config.packages.programming.enable
-          then [
+          ifopt config.packages.programming.enable
+          [
             cargo
             clang-tools
             gcc
@@ -102,11 +104,10 @@
             typst
             zig
           ]
-          else []
         )
         ++ (
-          if config.packages.etc.enable
-          then [
+          ifopt config.packages.etc.enable
+          [
             # nix
             inputs.nix-alien.packages.${pkgs.system}.nix-alien
             nix-prefetch-github
@@ -149,7 +150,6 @@
             pre-commit
             poetry
           ]
-          else []
         );
 
       fonts.packages = [pkgs.nerd-fonts.jetbrains-mono];
