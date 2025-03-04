@@ -17,42 +17,6 @@
         ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
       '';
     };
-    zsh = {
-      enable = true;
-      autocd = true;
-      dotDir = ".config/zsh";
-      defaultKeymap = "viins";
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-      initExtra = ''
-        zstyle ':completion:*' matcher-list 'r:|?=**' 'm:{a-zA-Z}={A-Za-z}'
-        autopair-init
-        ${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin
-      '';
-      plugins = [
-        {
-          name = "zsh-replace-multiple-dots";
-          file = "replace-multiple-dots.plugin.zsh";
-          src = pkgs.fetchFromGitHub {
-            owner = "momo-lab";
-            repo = "zsh-replace-multiple-dots";
-            rev = "dd2a68b031fc86e2f10f34451e0d79cdb4981bfd";
-            sha256 = "sha256-T4hDTYjnsPWXGhAM4Kf4z5KMyR12zJrM3vW8QM6JR0w=";
-          };
-        }
-        {
-          name = "zsh-autopair";
-          file = "autopair.zsh";
-          src = pkgs.fetchFromGitHub {
-            owner = "hlissner";
-            repo = "zsh-autopair";
-            rev = "449a7c3d095bc8f3d78cf37b9549f8bb4c383f3d";
-            sha256 = "sha256-3zvOgIi+q7+sTXrT+r/4v98qjeiEL4Wh64rxBYnwJvQ= ";
-          };
-        }
-      ];
-    };
     zoxide.enable = true;
     starship = {
       enable = true;
