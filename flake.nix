@@ -10,7 +10,6 @@
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";
     stylix.url = "github:danth/stylix";
-    flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = inputs: let
     inherit (inputs.unstable) lib;
@@ -24,12 +23,10 @@
           config.allowUnfree = true;
         }
     );
-
-    apps = map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts);
   in {
     apps = forEachSystem (
       pkgs:
-        lib.attrsets.genAttrs apps (name: {
+        lib.attrsets.genAttrs (map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts)) (name: {
           type = "app";
           program = "${pkgs.callPackage ./modules/homemodules/scripts/${name}.nix {inherit pkgs;}}/bin/${name}";
         })
