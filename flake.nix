@@ -13,7 +13,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = inputs:
-    inputs.flake-utils.lib.eachSystem inputs.flake-utils.lib.allSystems (
+    inputs.flake-utils.lib.eachDefaultSystemPassThrough (
       system: let
         inherit (inputs.unstable) lib;
 
