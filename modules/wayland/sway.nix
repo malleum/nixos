@@ -1,5 +1,11 @@
-{pkgs, ...}: {
-  config = {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
+  options.sway.enable = lib.mkEnableOption "Enables sway";
+  config = lib.mkIf config.sway.enable {
     programs.sway = {
       enable = true;
       package = pkgs.swayfx;

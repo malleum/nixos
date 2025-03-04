@@ -22,6 +22,7 @@
       progs.enable = lib.mkDefault true;
       user.enable = lib.mkDefault true;
     };
+    sway.enable = lib.mkDefault false;
 
     home.enable = lib.mkDefault true;
 
