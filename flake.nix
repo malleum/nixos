@@ -12,34 +12,51 @@
     stylix.url = "github:danth/stylix";
     flake-utils.url = "github:numtide/flake-utils";
   };
-  outputs = inputs:
-    inputs.flake-utils.lib.eachDefaultSystemPassThrough (
-      system: let
-        inherit (inputs.unstable) lib;
+  outputs = inputs: let
+    inherit (inputs.unstable) lib;
 
-        ns = host: (lib.nixosSystem {
-          specialArgs = {inherit inputs system;};
-          modules = [(./hosts + "/${host}")];
-        });
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+    pkgsFor = lib.genAttrs systems (
+      system:
+        import inputs.unstable {
+          inherit system;
+          config.allowUnfree = true;
+        }
+    );
 
-        pkgs = import inputs.unstable {inherit system;};
-        ss = name: {
+    apps = map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts);
+  in {
+    apps = forEachSystem (
+      pkgs:
+        lib.attrsets.genAttrs apps (name: {
           type = "app";
           program = "${pkgs.callPackage ./modules/homemodules/scripts/${name}.nix {inherit pkgs;}}/bin/${name}";
-        };
-      in {
-        apps.${system} = lib.attrsets.genAttrs (map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts)) ss;
-        devShells.${system} = {
-          default = import ./shell.nix {inherit pkgs;};
-          scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
-        };
-        nixosConfigurations = lib.attrsets.genAttrs ["malleum" "magnus"] ns;
-        homeConfigurations = {
-          "joshammer@minimus" = lib.homeManagerConfiguration {
-            modules = [./hosts/minimus];
-            extraSpecialArgs = {inherit inputs system;};
-          };
-        };
-      }
+        })
     );
+    devShells = forEachSystem (pkgs: {
+      default = import ./shell.nix {inherit pkgs;};
+      scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
+    });
+    nixosConfigurations = let
+      system = "x86_64-linux";
+    in {
+      "malleum" = lib.nixosSystem {
+        specialArgs = {inherit inputs system;};
+        modules = [./hosts/malleum];
+      };
+      "magnus" = lib.nixosSystem {
+        specialArgs = {inherit inputs system;};
+        modules = [./hosts/magnus];
+      };
+    };
+    homeConfigurations = let
+      system = "aarch64-linux";
+    in {
+      "joshammer@mcspeed" = lib.homeManagerConfiguration {
+        modules = [./hosts/minimus];
+        extraSpecialArgs = {inherit inputs system;};
+      };
+    };
+  };
 }
