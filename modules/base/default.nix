@@ -36,9 +36,9 @@
 
     nixpkgs.pkgs = let
       overlays = [
-        (final: _prev: {
+        (final: prev: {
           stable = import inputs.stable {
-            system = final.system;
+            system = prev.system;
             config.allowUnfree = true;
           };
         })
