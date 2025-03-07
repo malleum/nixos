@@ -137,13 +137,13 @@ in {
         window#waybar {
             color: #ffffff;
             background: transparent;
-            border-bottom: none
+            border-bottom: none;
         }
 
         #workspaces  {
             margin: 0 4px;
             color: ${c.temperature};
-            border-bottom: none
+            border-bottom: none;
         }
 
         #workspaces button {
@@ -151,17 +151,21 @@ in {
             margin: 0 5px;
             border-radius: 0;
             color: #ffffff;
-            border-bottom: none
+            border-bottom: none;
+            padding: 0 10px;
+            border-radius: 6px;
+            background-color: ${c."custom/chron"};
         }
 
-        .modules-left #workspaces button.active {
-            color: ${c."custom/chron"};
-            border-bottom: none
+        #workspaces button.active {
+            color: #000000;
+            border-bottom: none;
+            background-color: ${c.clock};
         }
 
         #workspaces button.urgent {
             color: ${c.temperature};
-            border-bottom: none
+            border-bottom: none;
         }
 
         #clock,
