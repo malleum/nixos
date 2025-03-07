@@ -14,13 +14,13 @@
         set -g fish_greeting ""
 
         fish_vi_key_bindings
+        set fish_cursor_insert block
         ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
       '';
     };
     zoxide.enable = true;
     starship = {
       enable = true;
-      enableZshIntegration = true;
       enableFishIntegration = true;
       settings = {
         add_newline = true;

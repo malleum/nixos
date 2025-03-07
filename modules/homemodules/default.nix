@@ -8,7 +8,7 @@
     ./rofi.nix
     ./term.nix
     ./tmux.nix
-    ./zsh.nix
+    ./sh.nix
   ];
 
   dconf.settings = {

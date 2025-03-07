@@ -11,7 +11,6 @@
 
   config = lib.mkIf config.base.user.enable {
     programs = {
-      zsh.enable = true;
       fish.enable = true;
       nh = {
         enable = true;

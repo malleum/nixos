@@ -3,6 +3,7 @@
     foot = {
       enable = true;
       settings = {
+        cursor.style = "block";
         main.term = "xterm-256color";
         mouse.hide-when-typing = "yes";
       };
