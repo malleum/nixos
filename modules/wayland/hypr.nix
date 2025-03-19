@@ -186,7 +186,7 @@
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
             "SUPER CONTROL, d, exec, killall .Discord-wrappe"
-            "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
+            "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp && killall electron"
 
             "SUPER, o, movecurrentworkspacetomonitor, +1"
             "SUPER SHIFT, o, movecurrentworkspacetomonitor, -1"
