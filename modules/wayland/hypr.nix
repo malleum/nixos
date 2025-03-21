@@ -182,6 +182,7 @@
             "SUPER SHIFT, f, fullscreen, 0"
 
             "SUPER, code:9, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
+            "CONTROL, w, exec, echo -n"
 
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
