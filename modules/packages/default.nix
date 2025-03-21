@@ -32,7 +32,7 @@
             vesktop
             vlc
 
-            prismlauncher
+            stable.prismlauncher
             protonup-ng
             quickemu
             wdisplays
