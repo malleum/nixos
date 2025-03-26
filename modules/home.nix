@@ -32,6 +32,16 @@ in {
       userName = "joshua hammer";
       extraConfig.push.autoSetupRemote = true;
     };
+    qutebrowser = {
+      enable = true;
+      settings = {
+        colors = {
+          webpage = {
+            preferred_color_scheme = "dark";
+          };
+        };
+      };
+    };
 
     chromium = {
       enable = true;

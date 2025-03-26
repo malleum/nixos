@@ -110,6 +110,8 @@
 
         windowrulev2 = [
           "workspace 1, title:^(.*Brave.*)$"
+          "workspace 1, title:^(.*Firefox.*)$"
+          "workspace 1, title:^(.*qutebrowser.*)$"
           "workspace 2, title:^(.*Discord.*)$"
           "workspace 2, title:^(.*vesktop.*)$"
           "workspace 2, title:^(.*Microsoft Teams.*)$"
@@ -123,7 +125,6 @@
           "float, title:^(.*All Files.*)$"
           "float, title:^(.*War.*Settings.*)$"
           "fullscreen, title:^(.*War(?!Settings))$"
-          # "opacity .7, title:^(.*Discord.*)$"
         ];
 
         bind = let
@@ -145,10 +146,10 @@
           [
             "SUPER, return, exec, foot"
             "SUPER SHIFT, return, exec, ghostty"
-            "SUPER, b, exec, brave"
-            "SUPER SHIFT, b, exec, chromium"
+            "SUPER, b, exec, qutebrowser"
+            "SUPER SHIFT, b, exec, brave"
             "SUPER, d, exec, vesktop"
-            "SUPER SHIFT, d, exec, brave 'https://teams.microsoft.com/v2/'"
+            "SUPER SHIFT, d, exec, qutebrowser 'https://teams.microsoft.com/v2/'"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
             "SUPER CONTROL, b, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"

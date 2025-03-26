@@ -52,7 +52,7 @@
             {command = "onedrive --monitor";}
           ];
           assigns = {
-            "1" = [{title = "(Brave|Firefox)";}];
+            "1" = [{title = "(Brave|Firefox|qutebrowser)";}];
             "2" = [{title = "(Discord|vesktop|Microsoft Teams)";}];
             "3" = [{title = "(foot|ghostty)";}];
             "4" = [{title = "(Steam|Minecraft|War)";}];
@@ -94,10 +94,10 @@
             {
               "${m}+return" = "exec foot";
               "${ms}+return" = "exec ghostty";
-              "${m}+b" = "exec brave";
-              "${ms}+b" = "exec firefox";
+              "${m}+b" = "exec qutebrowser";
+              "${ms}+b" = "exec brave";
               "${m}+d" = "exec vesktop";
-              "${ms}+d" = "exec brave 'https://teams.microsoft.com/v2/'";
+              "${ms}+d" = "exec qutebrowser 'https://teams.microsoft.com/v2/'";
 
               "${m}+x" = "exec wl-copy 'https://xkcd.com/1475/'";
               "${mc}+b" = "exec wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'";
