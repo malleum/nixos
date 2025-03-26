@@ -60,7 +60,7 @@
       variables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
-        BROWSER = "qutebrowser";
+        BROWSER = "qb";
         TERMINAL = "foot";
       };
 

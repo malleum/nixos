@@ -146,10 +146,10 @@
           [
             "SUPER, return, exec, foot"
             "SUPER SHIFT, return, exec, ghostty"
-            "SUPER, b, exec, qutebrowser"
+            "SUPER, b, exec, qb"
             "SUPER SHIFT, b, exec, brave"
             "SUPER, d, exec, vesktop"
-            "SUPER SHIFT, d, exec, qutebrowser 'https://teams.microsoft.com/v2/'"
+            "SUPER SHIFT, d, exec, qb 'https://teams.microsoft.com/v2/'"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
             "SUPER CONTROL, b, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
