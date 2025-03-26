@@ -34,7 +34,17 @@ in {
     };
     qutebrowser = {
       enable = true;
+      searchEngines = {
+        "DEFAULT" = "https://search.brave.com/search?q={}";
+        "d" = "https://search.duckduckgo.com/?q={}";
+        "w" = "https://en.wikipedia.org/w/index.php?search={}";
+        "g" = "https://www.google.com/search?q={}";
+      };
       settings = {
+        url = {
+          start_pages = ["https://search.brave.com/"];
+          default_page = "https://search.brave.com/";
+        };
         colors = {
           webpage = {
             preferred_color_scheme = "dark";
