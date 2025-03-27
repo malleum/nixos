@@ -104,6 +104,7 @@
         };
 
         dwindle.preserve_split = true;
+        binds.movefocus_cycles_fullscreen = true;
 
         gestures. workspace_swipe = false;
         layerrule = "blur,rofi";
