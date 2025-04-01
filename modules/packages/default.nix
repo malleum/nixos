@@ -86,6 +86,7 @@
           [
             cargo
             clang-tools
+            clojure
             gcc
             gdb
             gnumake
