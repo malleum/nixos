@@ -861,11 +861,11 @@
         "nixvim": "nixvim_2"
       },
       "locked": {
-        "lastModified": 1744418945,
-        "narHash": "sha256-SMlovnWrh/7hH498pN57au/Z/pfeaqGarI5vtzCZhjY=",
+        "lastModified": 1744737984,
+        "narHash": "sha256-broj+1OGvr9FnldY8+jBzno/nVQ+cKp9vvI9sjFn1Mc=",
         "owner": "malleum",
         "repo": "nixvim",
-        "rev": "1d958538abae48ca78ce684cc00feddb4b53780a",
+        "rev": "d21297734ac55cb374b1ba80803d5f96e6c70995",
         "type": "github"
       },
       "original": {
