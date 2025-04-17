@@ -96,6 +96,7 @@
             jdk21
             julia
             kotlin
+            leiningen
             lua
             nodejs
             pyright
