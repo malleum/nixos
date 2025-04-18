@@ -84,6 +84,7 @@
         ++ (
           ifopt config.packages.programming.enable
           [
+            antlr
             cargo
             clang-tools
             clojure
