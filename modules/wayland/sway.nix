@@ -94,10 +94,10 @@
             {
               "${m}+return" = "exec foot";
               "${ms}+return" = "exec ghostty";
-              "${m}+b" = "exec qb";
-              "${ms}+b" = "exec brave";
+              "${m}+b" = "exec brave";
+              "${ms}+b" = "exec qb";
               "${m}+d" = "exec vesktop";
-              "${ms}+d" = "exec qb 'https://teams.microsoft.com/v2/'";
+              "${ms}+d" = "exec brave 'https://teams.microsoft.com/v2/'";
 
               "${m}+x" = "exec wl-copy 'https://xkcd.com/1475/'";
               "${mc}+b" = "exec wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'";
