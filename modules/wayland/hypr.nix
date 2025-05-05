@@ -202,6 +202,12 @@
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
+
+            # mcsr
+            "SUPER, F1, exec, echo normal | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F2, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F3, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F4, exec, echo zoom | nc -U /tmp/minecraft-manager.sock"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
