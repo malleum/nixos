@@ -206,6 +206,7 @@
             # mcsr
             "SUPER, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
             "SUPER, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
