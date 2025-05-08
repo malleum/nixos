@@ -33,6 +33,7 @@
             vlc
 
             stable.prismlauncher
+            vinegar
             protonup-ng
             quickemu
             wdisplays
