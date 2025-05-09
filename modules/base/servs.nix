@@ -7,6 +7,7 @@
     services = {
       printing.enable = true;
       openssh.enable = true;
+      flatpak.enable = true;
 
       pipewire = {
         enable = true;
