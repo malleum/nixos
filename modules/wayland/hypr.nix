@@ -19,8 +19,9 @@
         monitor =
           if config.networking.hostName == "magnus"
           then [
-            "DP-1,1920x1080@165.00Hz,0x0,1"
-            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x1080,1"
+            # "DP-1,1920x1080@165.00Hz,0x0,1"
+            # "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x1080,1"
+            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x0,1"
           ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
