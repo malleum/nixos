@@ -37,6 +37,7 @@
             protonup-ng
             quickemu
             wdisplays
+            lutris
             wine
 
             # office
