@@ -65,11 +65,6 @@
       };
 
       shellAliases = {
-        cat = "bat";
-        la = "ls -lah";
-        ls = "eza --icons --color";
-        nixvim = "~/.config/nixvim/result/bin/nvim";
-        rm = "echo Use 'rip' instead of rm";
         sp = "spotify_player";
       };
     };
