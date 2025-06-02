@@ -66,7 +66,6 @@
 
       shellAliases = {
         cat = "bat";
-        h = "Hyprland";
         la = "ls -lah";
         ls = "eza --icons --color";
         nixvim = "~/.config/nixvim/result/bin/nvim";

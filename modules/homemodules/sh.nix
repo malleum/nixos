@@ -16,6 +16,17 @@
         fish_vi_key_bindings
         set fish_cursor_insert block
         ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
+
+        alias cat "bat";
+        alias la "ls -lah";
+        alias ls "eza --icons --color";
+        alias nixvim "~/.config/nixvim/result/bin/nvim";
+        alias rm "echo Use 'rip' instead of rm";
+        
+        abbr -a stag "STAGING_BRANCH=(git branch --show-current)"
+        abbr -a prod 'VS_RUN_PROD=1'
+        abbr -a rpy rg --iglob='\'*.py'\'
+        abbr -a pt CID=\$DEV python -m pytest -vv --durations=5 --pdb
       '';
     };
     zoxide.enable = true;
