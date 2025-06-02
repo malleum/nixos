@@ -24,8 +24,7 @@
           ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
-            "desc:LG Electronics LG ULTRAGEAR 406NTAB8X168,highres,auto-right,1,transform,3" # right monitor
-            "desc:LG Electronics LG ULTRAGEAR 406NTHM8X153,highres,auto-left,1,transform,1" # left monitor
+            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
             ",preferred,auto,1"
           ];
 
