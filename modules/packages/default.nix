@@ -103,7 +103,7 @@
             lua
             nodejs
             pyright
-            python311
+            python3Full
             rustc
             typst
             zig
@@ -152,7 +152,6 @@
             openvpn
             pipx
             pre-commit
-            poetry
           ]
         );
 
