@@ -5,4 +5,5 @@
   ];
   networking.hostName = "malleum";
   battery.enable = true;
+  gpu.enable = true;
 }
