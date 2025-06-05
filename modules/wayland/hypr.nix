@@ -152,7 +152,8 @@
             "SUPER SHIFT, d, exec, brave 'https://teams.microsoft.com/v2/'"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
-            "SUPER CONTROL, b, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
+            "SUPER SHIFT, x, exec, wl-copy 'Neida, jeg ville vinne'"
+            "SUPER CONTROL, x, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
 
             "SUPER, n, exec, dunstctl close-all"
             "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
