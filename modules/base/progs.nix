@@ -30,6 +30,7 @@
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
       };
+      gamemode.enable = true;
       chromium = {
         enable = true;
         extraOpts = {

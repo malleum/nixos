@@ -31,14 +31,20 @@
             onedrive
             vesktop
             vlc
-
-            stable.prismlauncher
-            vinegar
-            protonup-ng
             quickemu
             wdisplays
-            lutris
+
+            stable.prismlauncher
+            protonup-ng
             wine
+
+            vulkan-tools 
+            vulkan-loader 
+            vulkan-validation-layers
+            vulkan-loader
+
+            libva 
+            libva-utils
 
             # office
             hunspellDicts.en-us
