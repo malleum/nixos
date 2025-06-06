@@ -12,7 +12,7 @@
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
     };
 
-    home-manager.users.joshammer.services.hyprpaper.enable = true;
+    # home-manager.users.joshammer.services.hyprpaper.enable = true;
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
       settings = lib.mkForce {

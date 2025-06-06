@@ -8,6 +8,7 @@
       printing.enable = true;
       openssh.enable = true;
       flatpak.enable = true;
+      resolved.enable = true;
 
       pipewire = {
         enable = true;

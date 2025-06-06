@@ -39,5 +39,8 @@
         };
       };
     };
+
+    networking.firewall.allowedTCPPorts = [80 443 5222];
+    networking.firewall.allowedUDPPorts = [3478 3479 3480];
   };
 }
