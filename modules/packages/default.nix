@@ -36,7 +36,9 @@
 
             stable.prismlauncher
             protonup-ng
+            lutris
             wine
+            winetricks
 
             vulkan-tools 
             vulkan-loader 

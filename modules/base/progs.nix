@@ -26,11 +26,9 @@
       kdeconnect.enable = true;
       steam = {
         enable = true;
-        gamescopeSession.enable = true;
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
       };
-      gamemode.enable = true;
       chromium = {
         enable = true;
         extraOpts = {
@@ -39,8 +37,5 @@
         };
       };
     };
-
-    networking.firewall.allowedTCPPorts = [80 443 5222];
-    networking.firewall.allowedUDPPorts = [3478 3479 3480];
   };
 }
