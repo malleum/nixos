@@ -24,7 +24,7 @@
         };
         # Key repeat settings
         autoRepeatDelay = 225;
-        autoRepeatInterval = 50;
+        autoRepeatInterval = 20;
       };
 
       libinput = {

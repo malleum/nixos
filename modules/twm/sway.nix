@@ -45,11 +45,8 @@
           };
           startup = [
             {command = "waybar";}
-            {command = "wl-paste --watch ${pkgs.cliphist}/bin/cliphist store";}
             {command = "vesktop";}
             {command = "nm-applet";}
-            {command = "spotify_player -d";}
-            {command = "onedrive --monitor";}
           ];
           assigns = {
             "1" = [{title = "(Brave|Firefox|qutebrowser)";}];

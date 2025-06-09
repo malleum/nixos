@@ -57,8 +57,8 @@ in {
       enable = true;
       package = pkgs.brave;
       commandLineArgs = [
-        "--enable-features=UseOzonePlatform "
-        "--ozone-platform=wayland"
+        # "--enable-features=UseOzonePlatform "
+        # "--ozone-platform=wayland"
         "--password-store=basic"
       ];
       extensions = [

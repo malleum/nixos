@@ -16,6 +16,10 @@
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
       settings = lib.mkForce {
+        env = [
+          "WLR_NO_HARDWARE_CURSORS,1"
+          "NIXOS_OZONE_WL,1"
+        ];
         monitor =
           if config.networking.hostName == "magnus"
           then [
@@ -31,12 +35,9 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "waybar"
-          "wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
           "vesktop"
           "nm-applet"
           "hyprpaper"
-          "spotify_player -d"
-          "onedrive --monitor"
         ];
 
         input = {
