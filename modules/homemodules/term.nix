@@ -10,6 +10,13 @@
       };
     };
 
-    kitty = {enable = true;};
+    kitty = {
+      enable = true;
+      extraConfig = ''
+        enable_audio_bell no
+
+        map ctrl+shift+w discard_event
+      '';
+    };
   };
 }
