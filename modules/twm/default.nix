@@ -1,5 +1,5 @@
 {
-  imports = [./waybar.nix ./sway.nix ./hypr.nix];
+  imports = [./waybar.nix ./sway.nix ./hypr.nix ./i3.nix];
 
   config = {
     wm = "hyprland";

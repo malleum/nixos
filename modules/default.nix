@@ -8,7 +8,7 @@
     ./battery.nix
     ./boot.nix
     ./gpu.nix
-    ./wayland
+    ./twm
     ./packages
     ./stylix.nix
   ];
