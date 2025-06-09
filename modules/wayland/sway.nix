@@ -54,7 +54,7 @@
           assigns = {
             "1" = [{title = "(Brave|Firefox|qutebrowser)";}];
             "2" = [{title = "(Discord|vesktop|Microsoft Teams)";}];
-            "3" = [{title = "(foot|ghostty)";}];
+            "3" = [{title = "(foot|kitty)";}];
             "4" = [{title = "(Steam|Minecraft|War)";}];
             "5" = [{title = "OBS";}];
           };
@@ -93,7 +93,7 @@
           in
             {
               "${m}+return" = "exec foot";
-              "${ms}+return" = "exec ghostty";
+              "${ms}+return" = "exec kitty";
               "${m}+b" = "exec brave";
               "${ms}+b" = "exec qb";
               "${m}+d" = "exec vesktop";

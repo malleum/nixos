@@ -19,8 +19,8 @@
         monitor =
           if config.networking.hostName == "magnus"
           then [
-            "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,1920x0,1"
-            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x0,1"
+            "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
+            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
           ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
@@ -115,7 +115,7 @@
           "workspace 2, title:^(.*Discord.*)$"
           "workspace 2, title:^(.*vesktop.*)$"
           "workspace 2, title:^(.*Microsoft Teams.*)$"
-          "workspace 3, title:^(ghostty)$"
+          "workspace 3, title:^(kitty)$"
           "workspace 3, title:^(foot)$"
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
@@ -145,7 +145,7 @@
         in
           [
             "SUPER, return, exec, foot"
-            "SUPER SHIFT, return, exec, ghostty"
+            "SUPER SHIFT, return, exec, kitty"
             "SUPER, b, exec, brave"
             "SUPER SHIFT, b, exec, qb"
             "SUPER, d, exec, vesktop"

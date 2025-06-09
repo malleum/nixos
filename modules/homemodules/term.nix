@@ -10,18 +10,6 @@
       };
     };
 
-    ghostty = {
-      enable = true;
-      enableFishIntegration = true;
-      settings = {
-        clipboard-paste-protection = false;
-        cursor-style = "block";
-        cursor-style-blink = false;
-        mouse-hide-while-typing = true;
-        shell-integration-features = "no-cursor";
-        window-decoration = false;
-        confirm-close-surface = false;
-      };
-    };
+    kitty = {enable = true;};
   };
 }
