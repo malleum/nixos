@@ -18,11 +18,42 @@
         };
 
         xkb = {
-          layout = "us,us";
-          variant = "dvorak,";
-          options = "caps:escape";
+          layout = "us,mcsr,us";
+          variant = "dvorak,,";
+          options = "caps:escape,grp:sclk_toggle";
+
+          extraLayouts.mcsr = {
+            description = "My MCSR epic layout";
+            languages = ["nob"];
+            symbolsFile = pkgs.writeText "mcsr" ''
+              default partial alphanumeric_keys
+              xkb_symbols "basic" {
+                include "us(dvorak)"
+                name[Group1]= "mcsr";
+                
+                key <AE01> { [ h, H ] };
+                key <AE02> { [ t, T ] };
+                key <AE04> { [ aring, Aring ] };
+
+                key <AD01> { [ u, U ] };
+                key <AD02> { [ b, B ] };
+                key <AD03> { [ oslash, Oslash ] };
+                key <AD04> { [ y, Y ] };
+                key <AD05> { [ p, P ] };
+
+                key <AC01> { [ l, L ] };
+                key <AC02> { [ r, R ] };
+                key <AC03> { [ n, N ] };
+
+                key <AB02> { [ a, A ] };
+                key <AB03> { [ s, S ] };
+                key <AB04> { [ k, K ] };
+
+                key <CAPS> { [ BackSpace, BackSpace ] };
+              };
+            '';
+          };
         };
-        # Key repeat settings
         autoRepeatDelay = 225;
         autoRepeatInterval = 20;
       };
