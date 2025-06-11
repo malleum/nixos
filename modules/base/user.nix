@@ -5,7 +5,10 @@
   lib,
   ...
 }: {
-  imports = [inputs.home-manager.nixosModules.home-manager];
+  imports = [
+    ./keyd.nix
+    inputs.home-manager.nixosModules.home-manager
+  ];
 
   options.home.enable = lib.mkEnableOption "enables home modules";
 
@@ -22,7 +25,7 @@
       users.joshammer = {
         isNormalUser = true;
         description = "Josh Hammer";
-        extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel" "kvm"];
+        extraGroups = ["adbusers" "audio" "libvirtd" "networkmanager" "video" "wheel" "kvm" "keyd"];
         shell = pkgs.fish;
       };
       defaultUserShell = pkgs.fish;

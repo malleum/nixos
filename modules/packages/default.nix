@@ -26,12 +26,13 @@
           ifopt config.packages.gui.enable
           [
             firefox
+            keyd
             losslesscut-bin
             obs-studio
             onedrive
+            quickemu
             vesktop
             vlc
-            quickemu
             wdisplays
 
             stable.prismlauncher
