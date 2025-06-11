@@ -6,18 +6,6 @@
     services.displayManager.ly.enable = true;
 
     systemd.user.services = {
-      keyd-application-mapper = {
-        description = "keyd application mapper";
-        wantedBy = ["graphical-session.target"];
-        partOf = ["graphical-session.target"];
-        after = ["graphical-session.target"];
-
-        serviceConfig = {
-          ExecStart = ''${pkgs.fish}/bin/fish -c 'DISPLAY="" ${pkgs.keyd}/bin/keyd-application-mapper' '';
-          Restart = "always";
-          RestartSec = 1;
-        };
-      };
       # Clipboard manager
       cliphist = {
         description = "Clipboard manager";

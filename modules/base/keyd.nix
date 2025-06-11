@@ -1,5 +1,4 @@
 {pkgs, ...}: {
-  # Create the config file manually
   environment.etc."keyd/default.conf".text = ''
     [ids]
     *
@@ -8,28 +7,45 @@
     capslock = esc
   '';
 
-  # Create a working systemd service
-  systemd.services.keyd-manual = {
-    description = "keyd remapping daemon";
-    wantedBy = ["multi-user.target"];
-    after = ["local-fs.target"];
+  home-manager.users.joshammer.xdg.configFile."keyd/app.conf".text = ''
+    [Minecraft*]
 
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.keyd}/bin/keyd";
-      Restart = "always";
-      RestartSec = 1;
+    capslock = 0
+  '';
 
-      # Keep it simple - run as root, don't try to change groups
-      User = "root";
+  systemd = {
+    services.keyd-manual = {
+      description = "keyd remapping daemon";
+      wantedBy = ["multi-user.target"];
+      after = ["local-fs.target"];
 
-      # Don't restrict capabilities that keyd might need
-      NoNewPrivileges = false;
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.keyd}/bin/keyd";
+        Restart = "always";
+        RestartSec = 1;
+        User = "root";
+        NoNewPrivileges = false;
+        ProtectSystem = false;
+        ProtectHome = false;
+      };
+    };
 
-      # Allow keyd to do what it needs
-      ProtectSystem = false;
-      ProtectHome = false;
+    user.services = {
+      keyd-application-mapper = {
+        description = "keyd application mapper";
+        wantedBy = ["graphical-session.target"];
+        partOf = ["graphical-session.target"];
+        after = ["graphical-session.target"];
+
+        serviceConfig = {
+          ExecStart = ''${pkgs.fish}/bin/fish -c 'DISPLAY="" ${pkgs.keyd}/bin/keyd-application-mapper' '';
+          Restart = "always";
+          RestartSec = 1;
+        };
+      };
     };
   };
+
   users.groups.keyd = {};
 }
