@@ -19,6 +19,7 @@
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
           "NIXOS_OZONE_WL,1"
+          "QT_QPA_PLATFORM,wayland"
         ];
         monitor =
           if config.networking.hostName == "magnus"
@@ -49,6 +50,7 @@
 
           touchpad.natural_scroll = true;
 
+          accel_profile = "flat";
           sensitivity = 0;
           repeat_delay = 225;
           repeat_rate = 50;

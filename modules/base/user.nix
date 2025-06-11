@@ -10,7 +10,6 @@
   options.home.enable = lib.mkEnableOption "enables home modules";
 
   config = lib.mkIf config.base.user.enable {
-    xdg.portal.enable = true;
     programs = {
       fish.enable = true;
       nh = {

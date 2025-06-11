@@ -140,12 +140,13 @@
             spice-gtk
 
             # wayland
+            hyprland-qtutils
             hyprpaper
             hyprpicker
-            hyprland-qtutils
+            kdePackages.xwaylandvideobridge
+            qt6.qtwayland
             wl-clipboard
             wtype
-            kdePackages.xwaylandvideobridge
 
             # lols
             cmatrix
