@@ -18,6 +18,23 @@
         jack.enable = true;
         wireplumber.enable = true;
       };
+
+      keyd = {
+        enable = true;
+        keyboards = {
+          default = {
+            ids = ["*"];
+            settings = {
+              main = {
+                capslock = "esc";
+              };
+              "Minecraft*:*" = {
+                capslock = "0";
+              };
+            };
+          };
+        };
+      };
     };
 
     security = {

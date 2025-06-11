@@ -29,7 +29,7 @@
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 in {
-  home-manager.users.joshammer.services.polybar = {
+  home-manager.users.joshammer.services.polybar = lib.mkIf config.i3.enable {
     enable = true;
     package = pkgs.polybar; # Ensure polybar is available
     script = "polybar main &"; # Launch the bar named 'main'

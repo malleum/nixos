@@ -1,5 +1,11 @@
-{pkgs, ...}: {
-  config = {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
+  options.i3.enable = lib.mkEnableOption "Enables i3";
+  config = lib.mkIf config.i3.enable {
     services = {
       xserver = {
         enable = true;
@@ -30,7 +36,7 @@
               xkb_symbols "basic" {
                 include "us(dvorak)"
                 name[Group1]= "mcsr";
-                
+
                 key <AE01> { [ h, H ] };
                 key <AE02> { [ t, T ] };
                 key <AE04> { [ aring, Aring ] };

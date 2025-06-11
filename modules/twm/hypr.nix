@@ -12,7 +12,6 @@
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
     };
 
-    # home-manager.users.joshammer.services.hyprpaper.enable = true;
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
       settings = lib.mkForce {
@@ -44,7 +43,6 @@
         input = {
           kb_layout = "us, us";
           kb_variant = "dvorak,";
-          kb_options = "caps:escape";
 
           follow_mouse = 1;
 
@@ -162,8 +160,6 @@
             "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
 
             "SUPER, backslash, exec, hyprctl switchxkblayout all next"
-            "SUPER SHIFT, tab, exec, hyprctl keyword input:kb_options caps:escape"
-            "SUPER CONTROL, tab, exec, hyprctl keyword input:kb_options ''"
 
             "SUPER, s, exec, rofi -show drun"
             "SUPER, c, exec, rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy"

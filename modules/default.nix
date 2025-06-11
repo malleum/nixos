@@ -23,6 +23,7 @@
       user.enable = lib.mkDefault true;
     };
     sway.enable = lib.mkDefault false;
+    i3.enable = lib.mkDefault false;
 
     home.enable = lib.mkDefault true;
 
