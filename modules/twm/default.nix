@@ -31,17 +31,26 @@
           RestartSec = 5;
         };
       };
+    };
 
-      # Spotify player daemon
-      spotify-player = {
-        description = "Spotify player daemon";
-        wantedBy = ["default.target"];
-        after = ["network-online.target"];
-        wants = ["network-online.target"];
-        serviceConfig = {
-          ExecStart = "${pkgs.spotify-player}/bin/spotify_player";
-          Restart = "always";
-          RestartSec = 3;
+    home-manager.users.joshammer = {pkgs, ...}: {
+      systemd.user.services = {
+        spotifyplayer = {
+          Unit = {
+            Description = "Spotify player daemon";
+            After = ["network-online.target"];
+            Wants = ["network-online.target"];
+          };
+
+          Install = {
+            WantedBy = ["default.target"];
+          };
+
+          Service = {
+            ExecStart = "${pkgs.spotify-player}/bin/spotify-player";
+            Restart = "always";
+            RestartSec = 1;
+          };
         };
       };
     };
