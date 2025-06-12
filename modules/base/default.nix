@@ -26,7 +26,7 @@
 
     time.timeZone = "America/New_York";
     i18n.defaultLocale = "en_US.UTF-8";
-    console.keyMap = "dvorak";
+    console.keyMap = "us";
 
     nix.settings = {
       experimental-features = ["flakes" "nix-command"];

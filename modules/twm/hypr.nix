@@ -19,6 +19,7 @@
           "WLR_NO_HARDWARE_CURSORS,1"
           "NIXOS_OZONE_WL,1"
           "QT_QPA_PLATFORM,wayland"
+          "XKB_DEFAULT_OPTIONS,compose:menu"
         ];
         monitor =
           if config.networking.hostName == "magnus"
@@ -42,6 +43,7 @@
 
         input = {
           kb_layout = "us";
+          kb_options = "compose:menu";
 
           follow_mouse = 1;
 

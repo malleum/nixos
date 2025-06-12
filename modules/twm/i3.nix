@@ -24,9 +24,7 @@
         };
 
         xkb = {
-          layout = "us,mcsr,us";
-          variant = "dvorak,,";
-          options = "caps:escape,grp:sclk_toggle";
+          layout = "us";
 
           extraLayouts.mcsr = {
             description = "My MCSR epic layout";

@@ -61,7 +61,6 @@
     y = f
     z = ;
     shift = layer(dvorak_shift)
-    scrolllock = setlayout(mcsr)
 
     [dvorak_shift:S]
     ' = _
@@ -109,6 +108,7 @@
     x = Q
     y = F
     z = :
+    scrolllock = setlayout(mcsr)
 
 
     [mcsr:layout]
@@ -121,7 +121,7 @@
 
     meta = alt
 
-    tab = å
+    tab = macro(compose a *)
     ` = tab
     1 = 1
     2 = 2
@@ -151,7 +151,7 @@
     \ = \
 
     a = b
-    s = ø
+    s = macro(compose o /)
     d = u
     f = f
     g = g
