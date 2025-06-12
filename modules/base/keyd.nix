@@ -121,7 +121,7 @@
 
     meta = alt
 
-    tab = macro(compose a *)
+    tab = t
     ` = tab
     1 = 1
     2 = 2
@@ -151,8 +151,8 @@
     \ = \
 
     a = b
-    s = macro(compose o /)
-    d = u
+    s = u
+    d = s
     f = f
     g = g
     h = d
@@ -162,8 +162,8 @@
     ; = s
     ' = -
 
-    z = ;
-    x = s
+    z = h
+    x = l
     c = a
     v = k
     b = b
