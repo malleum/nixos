@@ -41,8 +41,7 @@
         ];
 
         input = {
-          kb_layout = "us, us";
-          kb_variant = "dvorak,";
+          kb_layout = "us";
 
           follow_mouse = 1;
 
@@ -182,7 +181,7 @@
             "SUPER, f, fullscreen, 1"
             "SUPER SHIFT, f, fullscreen, 0"
 
-            "SUPER, code:9, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
+            "SUPER, `, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
 
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
