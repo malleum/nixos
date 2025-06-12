@@ -6,12 +6,12 @@
     clock24 = true;
     keyMode = "vi";
     baseIndex = 1;
-    plugins = with pkgs.tmuxPlugins; [sensible tilish tmux-fzf];
+    plugins = with pkgs.tmuxPlugins; [sensible tilish tmux-fzf resurrect continuum];
     extraConfig = ''
       set -g mouse on
       set-option -ga terminal-overrides ",xterm-256color:Tc"
 
-      set -g status-right "#[fg=colour133,nobold,nounderscore,noitalics]#[fg=colour0,bg=colour133] #h "
+      set -g status-right "#[fg=colour133,nobold,nounderscore,noitalics]#[fg=colour0,bg=colour133] #h "
       bind v split-window -h -c '#{pane_current_path}'
       bind s split-window -v -c '#{pane_current_path}'
       bind c new-window -c '#{pane_current_path}'
@@ -19,6 +19,15 @@
       # Undercurl
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'  # undercurl support
       set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'  # underscore colours - needs tmux-3.0
+
+      # tmux-resurrect configuration
+      set -g @resurrect-capture-pane-contents 'on'
+      set -g @resurrect-strategy-vim 'session'
+      set -g @resurrect-strategy-nvim 'session'
+
+      # tmux-continuum configuration
+      set -g @continuum-save-interval '5'
+      set -g @continuum-restore 'on'
 
       # tokyonight-night
       set -g mode-style "fg=#7aa2f7,bg=#3b4261"
