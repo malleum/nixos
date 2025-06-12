@@ -114,26 +114,32 @@
     [mcsr:layout]
 
     capslock = backspace
+
     leftcontrol = rightshift
 
-    ` = `
-    1 = h
-    2 = t
+    leftalt = i
+
+    meta = alt
+
+    tab = å
+    ` = tab
+    1 = 1
+    2 = 2
     3 = 3
-    4 = å
-    5 = 5
-    6 = 6
+    4 = 4
+    5 = 0
+    6 = 5
     7 = 7
     8 = 8
     9 = 9
-    0 = 0
+    0 = 6
     - = [
     = = ]
 
-    q = u
-    w = b
-    e = ø
-    r = y
+    q = e
+    w = r
+    e = n
+    r = p
     t = y
     y = f
     u = g
@@ -144,11 +150,11 @@
     ] = =
     \ = \
 
-    a = l
-    s = r
-    d = n
-    f = u
-    g = i
+    a = b
+    s = ø
+    d = u
+    f = f
+    g = g
     h = d
     j = h
     k = t
@@ -156,12 +162,12 @@
     ; = s
     ' = -
 
-    z = a
+    z = ;
     x = s
-    c = j
+    c = a
     v = k
-    b = x
-    n = b
+    b = b
+    n = x
     m = m
     , = w
     . = v
