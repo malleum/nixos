@@ -4,7 +4,7 @@
   config,
   ...
 }: {
-  imports = [./firefoxs.nix];
+  imports = [./firefox.nix];
 
   config = lib.mkIf config.base.progs.enable {
     virtualisation = {
