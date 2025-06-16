@@ -22,15 +22,14 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron"]
-    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/chron"];
+    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron" "custom/duod"]
+    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/chron" "custom/duod"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 in {
   home-manager.users.joshammer.programs.waybar = {
     enable = true;
-    # https://github.com/georgewhewell/nixos-host/blob/master/home/waybar.nix
     settings = [
       {
         height = 30;
@@ -85,6 +84,12 @@ in {
           interval = 1;
           exec = "chron";
           format = "{}";
+        };
+        "custom/duod" = {
+          interval = 1;
+          exec = "duod-waybar-render";
+          format = "{}";
+          return-type = "json";
         };
         cpu = {
           format = "{usage}% ";
@@ -170,6 +175,7 @@ in {
 
         #clock,
         #custom-chron,
+        #custom-duod,
         #battery,
         #cpu,
         #memory,
@@ -194,6 +200,20 @@ in {
             color: #000000;
         }
 
+        #custom-duod {
+            background-color: #000000;
+            color: #000000;
+            padding: 0px 0px;
+            font-size: 16px;
+        }
+
+        #custom-duod.duod-widget {
+            background-image: url("/tmp/duod_waybar.svg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 36px 36px;
+            min-width: 36px;
+        }
         #clock.c2 {
             background-color: ${c."clock#c2"};
         }
