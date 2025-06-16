@@ -6,7 +6,16 @@
     clock24 = true;
     keyMode = "vi";
     baseIndex = 1;
-    plugins = with pkgs.tmuxPlugins; [sensible tilish tmux-fzf resurrect continuum];
+    plugins = with pkgs.tmuxPlugins; [
+      sensible 
+      tilish 
+      tmux-fzf 
+      resurrect 
+      continuum
+      copycat
+      yank
+      open
+    ];
     extraConfig = ''
       set -g mouse on
       set-option -ga terminal-overrides ",xterm-256color:Tc"
@@ -28,6 +37,13 @@
       # tmux-continuum configuration
       set -g @continuum-save-interval '5'
       set -g @continuum-restore 'on'
+
+      # tmux-yank configuration (optional customizations)
+      set -g @yank_selection_mouse 'clipboard'
+      set -g @yank_action 'copy-pipe'
+
+      # tmux-open configuration (optional customizations)
+      set -g @open-S 'https://www.google.com/search?q='
 
       # tokyonight-night
       set -g mode-style "fg=#7aa2f7,bg=#3b4261"
