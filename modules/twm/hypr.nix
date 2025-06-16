@@ -53,7 +53,8 @@
         ];
 
         input = {
-          kb_layout = "us";
+          kb_layout = "us, us";
+          kb_variant = "dvorak,";
           kb_options = "compose:menu";
 
           follow_mouse = 1;

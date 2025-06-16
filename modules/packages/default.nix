@@ -40,12 +40,12 @@
             wine
             winetricks
 
-            vulkan-tools 
-            vulkan-loader 
+            vulkan-tools
+            vulkan-loader
             vulkan-validation-layers
             vulkan-loader
 
-            libva 
+            libva
             libva-utils
 
             # office

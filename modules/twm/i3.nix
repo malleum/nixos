@@ -24,7 +24,8 @@
         };
 
         xkb = {
-          layout = "us";
+          layout = "us, us";
+          variant = "dvorak,";
 
           extraLayouts.mcsr = {
             description = "My MCSR epic layout";
