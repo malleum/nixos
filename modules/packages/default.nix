@@ -25,7 +25,6 @@
         (
           ifopt config.packages.gui.enable
           [
-            firefox
             keyd
             losslesscut-bin
             obs-studio

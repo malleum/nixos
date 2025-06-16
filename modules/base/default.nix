@@ -28,14 +28,25 @@
     i18n.defaultLocale = "en_US.UTF-8";
     console.keyMap = "us";
 
-    nix.settings = {
-      experimental-features = ["flakes" "nix-command"];
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    nix = {
+      package = lib.mkForce inputs.determinix.packages.${system}.default;
+      settings = {
+        auto-optimise-store = true;
+        experimental-features = ["flakes" "nix-command"];
+        substituters = [
+          "https://cache.nixos.org/"
+          "https://hyprland.cachix.org"
+        ];
+        trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        ];
+      };
     };
 
     nixpkgs.pkgs = let
       overlays = [
+        inputs.nur.overlays.default
         (final: prev: {
           stable = import inputs.stable {
             system = prev.system;

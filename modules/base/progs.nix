@@ -4,6 +4,8 @@
   config,
   ...
 }: {
+  imports = [./firefoxs.nix];
+
   config = lib.mkIf config.base.progs.enable {
     virtualisation = {
       libvirtd.enable = true;

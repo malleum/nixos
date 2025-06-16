@@ -5,10 +5,12 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "unstable";
 
-    hypr.url = "github:hyprwm/Hyprland";
+    determinix.url = "https://flakehub.com/f/DeterminateSystems/nix/*";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
+    hypr.url = "github:hyprwm/Hyprland";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";
+    nur.url = "github:nix-community/NUR";
     stylix.url = "github:danth/stylix";
   };
   outputs = inputs: let

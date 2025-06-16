@@ -4,7 +4,17 @@
   ...
 }: {
   config = lib.mkIf config.base.servs.enable {
+    # Faster boot (may help overall responsiveness)
+    systemd.extraConfig = ''
+      DefaultTimeoutStopSec=10s
+    '';
+
     services = {
+      preload.enable = true; # Preload frequently used applications
+
+      # If using SSD
+      fstrim.enable = true;
+
       printing.enable = true;
       openssh.enable = true;
       flatpak.enable = true;
