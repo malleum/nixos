@@ -22,8 +22,8 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/chron" "custom/duod"]
-    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/chron" "custom/duod"];
+    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/duod"]
+    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/duod"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
@@ -80,11 +80,6 @@ in {
           format = "{:%H:%M:%S}";
         };
         "clock#c2".format = "{:%m-%d}";
-        "custom/chron" = {
-          interval = 1;
-          exec = "chron";
-          format = "{}";
-        };
         "custom/duod" = {
           interval = 1;
           exec = "duod-waybar-render";
@@ -159,7 +154,7 @@ in {
             border-bottom: none;
             padding: 0 10px;
             border-radius: 6px;
-            background-color: ${c."custom/chron"};
+            background-color: ${c."custom/duod"};
         }
 
         #workspaces button.active {
@@ -174,7 +169,6 @@ in {
         }
 
         #clock,
-        #custom-chron,
         #custom-duod,
         #battery,
         #cpu,
@@ -195,25 +189,30 @@ in {
             color: #000000;
         }
 
-        #custom-chron {
-            background-color: ${c."custom/chron"};
-            color: #000000;
-        }
-
-        #custom-duod {
+         #custom-duod {
             background-color: #000000;
-            color: #000000;
-            padding: 0px 0px;
+            color: transparent; /* Hide the space character */
+            padding: 2px 8px;
             font-size: 16px;
-        }
-
-        #custom-duod.duod-widget {
-            background-image: url("/tmp/duod_waybar.svg");
+            min-width: 28px;
+            min-height: 28px;
+            
+            /* Display the SVG as background */
+            background-image: url("file:///tmp/duod_current.svg");
             background-repeat: no-repeat;
             background-position: center;
-            background-size: 36px 36px;
-            min-width: 36px;
+            background-size: 38px 38px ;
+            
+            /* Force reload every second by adding cache-busting */
+            animation: refresh-bg 1s infinite;
         }
+
+        /* This animation tricks the browser into checking the file again */
+        @keyframes refresh-bg {
+            0% { background-image: url("file:///tmp/duod_current.svg?t=0"); }
+            100% { background-image: url("file:///tmp/duod_current.svg?t=1"); }
+        }
+
         #clock.c2 {
             background-color: ${c."clock#c2"};
         }
