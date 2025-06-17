@@ -13,7 +13,9 @@
 
   home-manager.users.joshammer.xdg.configFile."keyd/app.conf".text = ''
     [*minecraft*]
-    capslock = backspace
+    capslock = 0
+    0 = noop
+    f3 = noop
   '';
 
   systemd = {

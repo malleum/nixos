@@ -37,6 +37,7 @@
             stable.prismlauncher
             protonup-ng
             lutris
+            bottles
             wine
             winetricks
 
