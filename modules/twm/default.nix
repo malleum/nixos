@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  imports = [./waybar.nix ./sway.nix ./hypr.nix ./i3.nix ./polybar.nix];
+  imports = [./waybar.nix ./eww.nix ./sway.nix ./hypr.nix ./i3.nix ./polybar.nix];
 
   config = {
     wm = "hyprland";

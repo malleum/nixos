@@ -33,16 +33,19 @@
           "LIBVA_DRIVER_NAME,radeonsi"
         ];
         monitor =
-          if config.networking.hostName == "magnus"
-          then [
-            "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
-            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
-          ]
-          else [
-            "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
-            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
-            ",preferred,auto,1"
-          ];
+          [",addreserved,30,0,0,0"]
+          ++ (
+            if config.networking.hostName == "magnus"
+            then [
+              "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
+              "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
+            ]
+            else [
+              "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
+              "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
+              ",preferred,auto,1"
+            ]
+          );
 
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
