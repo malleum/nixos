@@ -52,6 +52,7 @@
           "vesktop"
           "nm-applet"
           "hyprpaper"
+          "startup-eww-bar"
         ];
 
         input = {
@@ -201,7 +202,7 @@
 
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
-            "SUPER SHIFT, bracketright, exec, systemctl --user restart eww.service"
+            "SUPER SHIFT, bracketright, exec, startup-eww-bar"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 

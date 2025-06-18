@@ -31,58 +31,24 @@
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 
   # Eww scripts
-  duod-eww-script = pkgs.writeShellScriptBin "duod-eww" ''
-    #!/usr/bin/env bash
+  startup-eww-bar =
+    pkgs.writeShellScriptBin "startup-eww-bar"
+    # bash
+    ''
+      #!/usr/bin/env bash
 
-    # Convert hex digits to decimal (a=10, b=11)
-    hex_to_dec() {
-        case $1 in
-            a) echo 10 ;;
-            b) echo 11 ;;
-            *) echo $1 ;;
-        esac
-    }
+      # Kill any existing Eww instances
+      eww kill
 
-    # Get duod output and parse values
-    duod_output=$(duod | choose 2:)
-    read -r outer middle inner <<< "$duod_output"
+      # Start Eww daemon
+      eww daemon
 
-    # Convert to decimal
-    outer_val=$(hex_to_dec "$outer")
-    middle_val=$(hex_to_dec "$middle")
-    inner_val=$(hex_to_dec "$inner")
+      # Wait a bit for the daemon to fully start
+      sleep 1
 
-    # Calculate stroke-dasharray
-    calc_dash() {
-        local value=$1
-        local circ=$2
-        local filled=$(( value * circ / 12 ))
-        local empty=$(( circ - filled ))
-        echo "$filled $empty"
-    }
-
-    outer_dash=$(calc_dash $outer_val 63)
-    middle_dash=$(calc_dash $middle_val 38)
-    inner_dash=$(calc_dash $inner_val 19)
-
-    # Generate unique filename with timestamp to prevent caching
-    timestamp=$(date +%s%N)
-    svg_file="/tmp/duod_$timestamp.svg"
-
-    # Remove old duod SVG files (keep only last 5)
-    ls -t /tmp/duod_*.svg 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
-
-    # Create new SVG file
-    cat > "$svg_file" << EOF
-    <svg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='14' cy='14' r='11' fill='none' stroke='#45b7d1' stroke-width='2.5' stroke-dasharray='$outer_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='7' fill='none' stroke='#3eed84' stroke-width='2.5' stroke-dasharray='$middle_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='3.5' fill='none' stroke='#eeee22' stroke-width='2.5' stroke-dasharray='$inner_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-    </svg>
-    EOF
-
-    echo "$svg_file"
-  '';
+      # Open the Eww bar window
+      eww open bar
+    '';
 
   battery-script =
     pkgs.writeShellScriptBin "battery-eww"
@@ -95,14 +61,14 @@
         status=$(cat "$battery_path/status" 2>/dev/null || echo "Unknown")
 
         case $status in
-          "Charging") icon="" ;;
-          "Full") icon="" ;;
+          "Charging") icon="" ;;
+          "Full") icon="" ;;
           *)
-            if [ "$capacity" -ge 90 ]; then icon=""
-            elif [ "$capacity" -ge 70 ]; then icon=""
-            elif [ "$capacity" -ge 50 ]; then icon=""
-            elif [ "$capacity" -ge 30 ]; then icon=""
-            else icon=""
+            if [ "$capacity" -ge 90 ]; then icon=""
+            elif [ "$capacity" -ge 70 ]; then icon=""
+            elif [ "$capacity" -ge 50 ]; then icon=""
+            elif [ "$capacity" -ge 30 ]; then icon=""
+            else icon=""
             fi
             ;;
         esac
@@ -111,6 +77,75 @@
       else
         echo "{\"capacity\": 0, \"status\": \"Not available\", \"icon\": \"\"}"
       fi
+    '';
+
+  hypr-workspaces-eww-script =
+    pkgs.writeShellScriptBin "hypr-workspaces-eww"
+    # bash
+    ''
+      #!/usr/bin/env bash
+
+      # Define your workspace symbols (using Nerd Font compatible symbols)
+      # You can customize these if you have a specific font like your 𝋁, 𝋂, etc.
+      # But for general compatibility, Font Awesome symbols are recommended.
+      SYMBOL_EMPTY=""    # Circle outline
+      SYMBOL_OCCUPIED="" # Circle filled
+      SYMBOL_ACTIVE=""   # Circle with dot (active)
+      SYMBOL_SPECIAL="󰏖" # A distinct symbol for special workspaces (e.g., sticky)
+      SYMBOL_URGENT=""   # Exclamation mark for urgent windows
+
+      # Function to get Hyprland workspace info and format for Eww
+      get_workspaces_json() {
+          local -a workspaces_array=()
+          local -i current_workspace_id=$(hyprctl activeworkspace -j | jq -r '.id')
+
+          # Get all workspaces (including empty ones)
+          hyprctl workspaces -j | jq -c '.[]' | while read -r workspace_json; do
+              local id=$(echo "$workspace_json" | jq -r '.id')
+              local name=$(echo "$workspace_json" | jq -r '.name')
+              local windows=$(echo "$workspace_json" | jq -r '.windows')
+              local focused=$(echo "$workspace_json" | jq -r '.focused')
+              local has_urgent=false # Placeholder for urgent status (more complex to get directly from hyprctl workspaces)
+
+              # Determine symbol based on state
+              local symbol="$SYMBOL_EMPTY"
+              if [ "$windows" -gt 0 ]; then
+                  symbol="$SYMBOL_OCCUPIED"
+              fi
+              if [ "$focused" = "true" ]; then
+                  symbol="$SYMBOL_ACTIVE"
+              fi
+              # Add logic for urgent if you can detect it (e.g., from activewindow events)
+              # if $has_urgent; then
+              #    symbol="$SYMBOL_URGENT"
+              # fi
+
+              workspaces_array+=( "{ \"id\": $id, \"name\": \"$name\", \"focused\": $focused, \"windows\": $windows, \"symbol\": \"$symbol\" }" )
+          done
+
+          # Join the array elements with commas and wrap in a JSON array
+          printf "[%s]\n" "$(IFS=,; echo "''${workspaces_array[*]}")"
+      }
+
+      # Initial output when Eww starts
+      get_workspaces_json
+
+      # Listen for Hyprland events and trigger updates
+      hyprctl event | while IFS= read -r event; do
+          case "$event" in
+              # Workspace events
+              "workspace>>"* | \
+              "focusedworkspace>>"* | \
+              "createworkspace>>"* | \
+              "destroyworkspace>>"* | \
+              "moveworkspace>>"* | \
+              "activewindow>>"* | \
+              "windowopened>>"* | \
+              "windowclosed>>"* )
+                  get_workspaces_json
+                  ;;
+          esac
+      done
     '';
 
   temperature-script =
@@ -173,7 +208,7 @@
         signal=$(nmcli -t -f SIGNAL dev wifi 2>/dev/null | head -1)
         if [ -n "$signal" ] && [ "$signal" != "--" ] && [ "$signal" -gt 0 ]; then
           connected="true"
-          icon=""
+          icon=""
         fi
       fi
 
@@ -181,7 +216,7 @@
       if [ "$connected" = "false" ] && nmcli -t -f STATE g 2>/dev/null | grep -q "connected"; then
         connected="true"
         signal=100
-        icon=""
+        icon=""
       fi
 
       echo "{\"connected\": $connected, \"signal\": $signal, \"icon\": \"$icon\"}"
@@ -194,12 +229,12 @@
       #!/usr/bin/env bash
 
       # Get volume and mute status
-      volume=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -o '[0-9]*%' | head -1 | tr -d '%')
-      muted=$(pactl get-sink-mute @DEFAULT_SINK@ | grep -o 'yes\|no')
+      volume=$("${pkgs.pulseaudioFull}/bin/pactl" get-sink-volume @DEFAULT_SINK@ | grep -o '[0-9]*%' | head -1 | tr -d '%')
+      muted=$("${pkgs.pulseaudioFull}/bin/pactl" get-sink-mute @DEFAULT_SINK@ | grep -o 'yes\|no')
 
       # Get source (microphone) volume
-      source_volume=$(pactl get-source-volume @DEFAULT_SOURCE@ | grep -o '[0-9]*%' | head -1 | tr -d '%')
-      source_muted=$(pactl get-source-mute @DEFAULT_SOURCE@ | grep -o 'yes\|no')
+      source_volume=$("${pkgs.pulseaudioFull}/bin/pactl" get-source-volume @DEFAULT_SOURCE@ | grep -o '[0-9]*%' | head -1 | tr -d '%')
+      source_muted=$("${pkgs.pulseaudioFull}/bin/pactl" get-source-mute @DEFAULT_SOURCE@ | grep -o 'yes\|no')
 
       # Provide defaults if values are empty
       volume=''${volume:-0}
@@ -208,21 +243,74 @@
       source_muted=''${source_muted:-no}
 
       if [ "$muted" = "yes" ]; then
-        icon=""
+        icon=""
       else
-        if [ "$volume" -ge 70 ]; then icon=""
-        elif [ "$volume" -ge 30 ]; then icon=""
-        else icon=""
+        if [ "$volume" -ge 70 ]; then icon=""
+        elif [ "$volume" -ge 30 ]; then icon=""
+        else icon=""
         fi
       fi
 
-      source_icon=""
+      source_icon=""
       if [ "$source_muted" = "yes" ]; then
-        source_icon=""
+        source_icon=""
       fi
 
       echo "{\"volume\": $volume, \"muted\": \"$muted\", \"icon\": \"$icon\", \"source_volume\": $source_volume, \"source_muted\": \"$source_muted\", \"source_icon\": \"$source_icon\"}"
     '';
+
+  duod-eww-script = pkgs.writeShellScriptBin "duod-eww" ''
+    #!/usr/bin/env bash
+
+    # Convert hex digits to decimal (a=10, b=11)
+    hex_to_dec() {
+        case $1 in
+            a) echo 10 ;;
+            b) echo 11 ;;
+            *) echo $1 ;;
+        esac
+    }
+
+    # Get duod output and parse values
+    duod_output=$(duod | choose 2:)
+    read -r outer middle inner <<< "$duod_output"
+
+    # Convert to decimal
+    outer_val=$(hex_to_dec "$outer")
+    middle_val=$(hex_to_dec "$middle")
+    inner_val=$(hex_to_dec "$inner")
+
+    # Calculate stroke-dasharray
+    calc_dash() {
+        local value=$1
+        local circ=$2
+        local filled=$(( value * circ / 12 ))
+        local empty=$(( circ - filled ))
+        echo "$filled $empty"
+    }
+
+    outer_dash=$(calc_dash $outer_val 63)
+    middle_dash=$(calc_dash $middle_val 38)
+    inner_dash=$(calc_dash $inner_val 19)
+
+    # Generate unique filename with timestamp to prevent caching
+    timestamp=$(date +%s%N)
+    svg_file="/tmp/duod_$timestamp.svg"
+
+    # Remove old duod SVG files (keep only last 5)
+    ls -t /tmp/duod_*.svg 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
+
+    # Create new SVG file
+    cat > "$svg_file" << EOF
+    <svg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='14' cy='14' r='11' fill='none' stroke='#45b7d1' stroke-width='2.5' stroke-dasharray='$outer_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='7' fill='none' stroke='#3eed84' stroke-width='2.5' stroke-dasharray='$middle_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='3.5' fill='none' stroke='#eeee22' stroke-width='2.5' stroke-dasharray='$inner_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+    </svg>
+    EOF
+
+    echo "$svg_file"
+  '';
 
   eww-config = pkgs.writeTextFile {
     name = "eww.yuck";
@@ -238,27 +326,27 @@
         (defpoll audio_info :interval "1s" :initial "{}" "audio-eww")
         (defpoll cpu_usage :interval "2s" :initial "0" "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print int(usage)}'")
         (defpoll temp_info :interval "3s" :initial "0" "temperature-eww")
-        (defpoll disk_usage :interval "10s" :initial "0" "df / | awk 'NR==2 {print int($5)}' | tr -d '%'")
+        (defpoll disk_usage :interval "60s" :initial "0" "df / | awk 'NR==2 {print int($5)}' | tr -d '%'")
         (defpoll memory_usage :interval "2s" :initial "0" "free | awk 'NR==2{printf \"%.0f\", $3*100/$2}'")
 
         ;; Workspaces
-        (deflisten workspaces :initial "[]" "${config.wm}/workspaces")
+        (deflisten workspaces :initial "[]" "hypr-workspaces-eww")
 
         ;; Widgets
         (defwidget workspaces_widget []
           (box :class "workspaces" :space-evenly false :halign "start"
             (for workspace in workspaces
               (button :class "workspace-button ''${workspace.focused ? 'active' : ""} ''${workspace.urgent ? 'urgent' : ""}"
-                      :onclick "i3-msg workspace ''${workspace.name}"
+                      :onclick "hyprctl dispatch workspace ''${workspace.name}"
                 (label :text "''${workspace.name == '1' ? '𝋁' :
                                workspace.name == '2' ? '𝋂' :
                                workspace.name == '3' ? '𝋃' :
                                workspace.name == '4' ? '𝋄' :
-                               workspace.name == '5' ? '𝋅' : workspace.name}")))))
+                               workspace.name == '5' ? '𝋅' : workspace.symbol}")))))
 
         (defwidget battery_widget []
           (box :class "battery" :space-evenly false
-            (label :text "''${battery_info.capacity}% ''${battery_info.icon}")))
+            (label :text "''${battery_info.capacity} ''${battery_info.icon}")))
 
         (defwidget clock_widget []
           (box :class "clock" :space-evenly false
@@ -275,24 +363,24 @@
         (defwidget network_widget []
           (box :class "network" :space-evenly false
             (button :onclick "nm-connection-editor"
-              (label :text "''${network_info.connected ? network_info.signal : 0} ''${network_info.icon}"))))
+              (label :text "''${network_info.connected == "true" ? network_info.signal : 0} ''${network_info.icon}"))))
 
         (defwidget audio_widget []
           (box :class "pulseaudio" :space-evenly false
             (button :onclick "pavucontrol"
-              (label :text "''${audio_info.volume}% ''${audio_info.icon} ''${audio_info.source_volume}% ''${audio_info.source_icon}"))))
+              (label :text "''${audio_info.volume} ''${audio_info.icon} ''${audio_info.source_volume} ''${audio_info.source_icon}"))))
 
         (defwidget cpu_widget []
           (box :class "cpu" :space-evenly false
-            (label :text "''${cpu_usage}% 󰍛")))
+            (label :text "''${cpu_usage} 󰍛")))
 
         (defwidget temperature_widget []
           (box :class "temperature" :space-evenly false
-            (label :text "''${temp_info}°C ''${temp_info > 80 ? "" : temp_info > 60 ? "" : ""}")))
+            (label :text "''${temp_info} ''${temp_info > 80 ? "" : temp_info > 60 ? "" : ""}")))
 
         (defwidget disk_widget []
           (box :class "disk" :space-evenly false
-            (label :text "''${disk_usage}% ⬤")))
+            (label :text "''${disk_usage} ⬤")))
 
         (defwidget memory_widget []
           (box :class "memory" :space-evenly false
@@ -493,29 +581,13 @@ in {
     network-script
     audio-script
     temperature-script
+    hypr-workspaces-eww-script
+    startup-eww-bar
   ];
 
   home-manager.users.joshammer = {
     xdg.configFile."eww/eww.yuck".source = eww-config;
     xdg.configFile."eww/eww.scss".source = eww-css;
 
-    # Systemd service to start eww
-    systemd.user.services.eww = {
-      Unit = {
-        Description = "Eww bar";
-        After = ["graphical-session-pre.target"];
-        PartOf = ["graphical-session.target"];
-      };
-
-      Service = {
-        ExecStart = "${pkgs.eww}/bin/eww daemon --no-daemonize";
-        ExecStartPost = "${pkgs.bash}/bin/bash -c 'sleep 2 && ${pkgs.eww}/bin/eww open bar'";
-        ExecStop = "${pkgs.eww}/bin/eww kill";
-        Restart = "on-failure";
-        RestartSec = 1;
-      };
-
-      Install.WantedBy = ["graphical-session.target"];
-    };
   };
 }
