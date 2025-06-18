@@ -81,67 +81,51 @@
 
   hypr-workspaces-eww-script =
     pkgs.writeShellScriptBin "hypr-workspaces-eww"
-    # bash
     ''
       #!/usr/bin/env bash
 
-      # Define your workspace symbols (using Nerd Font compatible symbols)
-      # You can customize these if you have a specific font like your 𝋁, 𝋂, etc.
-      # But for general compatibility, Font Awesome symbols are recommended.
-      SYMBOL_EMPTY=""    # Circle outline
-      SYMBOL_OCCUPIED="" # Circle filled
-      SYMBOL_ACTIVE=""   # Circle with dot (active)
-      SYMBOL_SPECIAL="󰏖" # A distinct symbol for special workspaces (e.g., sticky)
-      SYMBOL_URGENT=""   # Exclamation mark for urgent windows
+      # Ensure required commands are in the PATH
+      # This is the idiomatic NixOS way to provide dependencies to a shell script.
 
-      # Function to get Hyprland workspace info and format for Eww
+      # Define your workspace symbols
+      SYMBOL_EMPTY=""
+      SYMBOL_OCCUPIED=""
+      SYMBOL_ACTIVE=""
+      # These are not used in this simplified version but are kept for reference
+      # SYMBOL_SPECIAL="󰏖"
+      # SYMBOL_URGENT=""
+
+      # A single, robust function to get and format workspace data using jq
       get_workspaces_json() {
-          local -a workspaces_array=()
-          local -i current_workspace_id=$(hyprctl activeworkspace -j | jq -r '.id')
-
-          # Get all workspaces (including empty ones)
-          hyprctl workspaces -j | jq -c '.[]' | while read -r workspace_json; do
-              local id=$(echo "$workspace_json" | jq -r '.id')
-              local name=$(echo "$workspace_json" | jq -r '.name')
-              local windows=$(echo "$workspace_json" | jq -r '.windows')
-              local focused=$(echo "$workspace_json" | jq -r '.focused')
-              local has_urgent=false # Placeholder for urgent status (more complex to get directly from hyprctl workspaces)
-
-              # Determine symbol based on state
-              local symbol="$SYMBOL_EMPTY"
-              if [ "$windows" -gt 0 ]; then
-                  symbol="$SYMBOL_OCCUPIED"
-              fi
-              if [ "$focused" = "true" ]; then
-                  symbol="$SYMBOL_ACTIVE"
-              fi
-              # Add logic for urgent if you can detect it (e.g., from activewindow events)
-              # if $has_urgent; then
-              #    symbol="$SYMBOL_URGENT"
-              # fi
-
-              workspaces_array+=( "{ \"id\": $id, \"name\": \"$name\", \"focused\": $focused, \"windows\": $windows, \"symbol\": \"$symbol\" }" )
-          done
-
-          # Join the array elements with commas and wrap in a JSON array
-          printf "[%s]\n" "$(IFS=,; echo "''${workspaces_array[*]}")"
+          hyprctl workspaces -j | jq --compact-output \
+              --arg symbol_active "$SYMBOL_ACTIVE" \
+              --arg symbol_occupied "$SYMBOL_OCCUPIED" \
+              --arg symbol_empty "$SYMBOL_EMPTY" \
+              'map({
+                  id: .id,
+                  name: .name,
+                  windows: .windows,
+                  focused: .focused,
+                  symbol: (if .focused then $symbol_active else (if .windows > 0 then $symbol_occupied else $symbol_empty end) end)
+              }) | sort_by(.id)'
       }
 
-      # Initial output when Eww starts
+      # Initial output
       get_workspaces_json
 
-      # Listen for Hyprland events and trigger updates
-      hyprctl event | while IFS= read -r event; do
+      # Listen for events using the modern socat method for Hyprland sockets.
+      # The socket path is dynamically determined via Hyprland's instance signature.
+      ${pkgs.socat}/bin/socat -U - "unix-connect:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r event; do
+          # We only care about events related to workspace changes.
+          # This filters events to avoid unnecessary updates.
           case "$event" in
-              # Workspace events
               "workspace>>"* | \
               "focusedworkspace>>"* | \
               "createworkspace>>"* | \
               "destroyworkspace>>"* | \
               "moveworkspace>>"* | \
-              "activewindow>>"* | \
-              "windowopened>>"* | \
-              "windowclosed>>"* )
+              "openwindow>>"* | \
+              "closewindow>>"* )
                   get_workspaces_json
                   ;;
           esac
@@ -272,13 +256,14 @@
     }
 
     # Get duod output and parse values
-    duod_output=$(duod | choose 2:)
-    read -r outer middle inner <<< "$duod_output"
+    duod_output=$(duod | choose :3)
+    read -r outer middle inner center <<< "$duod_output"
 
     # Convert to decimal
     outer_val=$(hex_to_dec "$outer")
     middle_val=$(hex_to_dec "$middle")
     inner_val=$(hex_to_dec "$inner")
+    center_val=$(hex_to_dec "$center")
 
     # Calculate stroke-dasharray
     calc_dash() {
@@ -289,23 +274,21 @@
         echo "$filled $empty"
     }
 
-    outer_dash=$(calc_dash $outer_val 63)
-    middle_dash=$(calc_dash $middle_val 38)
-    inner_dash=$(calc_dash $inner_val 19)
+    outer_dash=$(calc_dash $outer_val 82)
+    middle_dash=$(calc_dash $middle_val 57)
+    inner_dash=$(calc_dash $inner_val 31)
+    center_dash=$(calc_dash $center_val 6)
 
     # Generate unique filename with timestamp to prevent caching
-    timestamp=$(date +%s%N)
-    svg_file="/tmp/duod_$timestamp.svg"
-
-    # Remove old duod SVG files (keep only last 5)
-    ls -t /tmp/duod_*.svg 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
+    svg_file="/tmp/duod.svg"
 
     # Create new SVG file
     cat > "$svg_file" << EOF
     <svg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='14' cy='14' r='11' fill='none' stroke='#45b7d1' stroke-width='2.5' stroke-dasharray='$outer_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='7' fill='none' stroke='#3eed84' stroke-width='2.5' stroke-dasharray='$middle_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='3.5' fill='none' stroke='#eeee22' stroke-width='2.5' stroke-dasharray='$inner_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='13' fill='none' stroke='#45b7d1' stroke-width='4' stroke-dasharray='$outer_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='9' fill='none' stroke='#3eed84' stroke-width='4' stroke-dasharray='$middle_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='5' fill='none' stroke='#eeee22' stroke-width='4' stroke-dasharray='$inner_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='1' fill='none' stroke='#ff3322' stroke-width='4' stroke-dasharray='$center_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
     </svg>
     EOF
 
@@ -471,19 +454,23 @@
 
         .workspace-button {
           padding: 0 10px;
-          margin: 0 5px;
-          border-radius: 6px;
+          margin: 0 8px;
+          border-radius: 8px;
           color: #ffffff;
           background-color: ${c.duod or "#333333"};
           min-width: 30px;
+          border: 2px solid #${config.stylix.base16Scheme.base01};
+          transition: all 0.2s ease-in-out;
 
           &.active {
             color: #000000;
             background-color: ${c.clock or "#ffffff"};
+            border-color: ${c.temperature or "#ff0088"};
           }
 
           &.urgent {
             color: ${c.temperature or "#ff0000"};
+            border-color: ${c.temperature or "#ff0000"};
           }
         }
 
@@ -588,6 +575,5 @@ in {
   home-manager.users.joshammer = {
     xdg.configFile."eww/eww.yuck".source = eww-config;
     xdg.configFile."eww/eww.scss".source = eww-css;
-
   };
 }
