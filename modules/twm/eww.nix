@@ -30,24 +30,28 @@
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 
-  # Eww scripts
   startup-eww-bar =
     pkgs.writeShellScriptBin "startup-eww-bar"
-    # bash
     ''
       #!/usr/bin/env bash
 
-      # Kill any existing Eww instances
+      # Kill any existing Eww instances to start fresh
       eww kill
 
-      # Start Eww daemon
+      # Start the Eww daemon
       eww daemon
 
-      # Wait a bit for the daemon to fully start
+      # Wait for the daemon to start
       sleep 1
 
-      # Open the Eww bar window
-      eww open bar
+      # Get a list of monitor IDs from Hyprland
+      monitor_ids=$(hyprctl monitors -j | jq -r '.[].id')
+
+      # Loop through each monitor ID and open a bar
+      for id in $monitor_ids; do
+          echo "Opening bar for monitor $id"
+          eww open "bar-$id"
+      done
     '';
 
   battery-script =
@@ -83,49 +87,33 @@
     pkgs.writeShellScriptBin "hypr-workspaces-eww"
     ''
       #!/usr/bin/env bash
+      # Exit if no monitor ID is provided
+      if [ -z "$1" ]; then echo "Error: No monitor ID provided." >&2; exit 1; fi
 
-      # Ensure required commands are in the PATH
-      # This is the idiomatic NixOS way to provide dependencies to a shell script.
+      MONITOR_ID=$1
 
-      # Define your workspace symbols
-      SYMBOL_EMPTY=""
-      SYMBOL_OCCUPIED=""
-      SYMBOL_ACTIVE=""
-      # These are not used in this simplified version but are kept for reference
-      # SYMBOL_SPECIAL="󰏖"
-      # SYMBOL_URGENT=""
+      SYMBOL_EMPTY=""; SYMBOL_OCCUPIED=""; SYMBOL_ACTIVE=""
 
-      # A single, robust function to get and format workspace data using jq
       get_workspaces_json() {
+          local monitor_name=$(hyprctl monitors -j | jq -r ".[] | select(.id == $MONITOR_ID) | .name")
+          if [ -z "$monitor_name" ]; then echo "[]"; return; fi
           hyprctl workspaces -j | jq --compact-output \
-              --arg symbol_active "$SYMBOL_ACTIVE" \
-              --arg symbol_occupied "$SYMBOL_OCCUPIED" \
-              --arg symbol_empty "$SYMBOL_EMPTY" \
-              'map({
-                  id: .id,
-                  name: .name,
-                  windows: .windows,
-                  focused: .focused,
-                  symbol: (if .focused then $symbol_active else (if .windows > 0 then $symbol_occupied else $symbol_empty end) end)
-              }) | sort_by(.id)'
+              --arg monitor_name "$monitor_name" \
+              --arg symbol_active "$SYMBOL_ACTIVE" --arg symbol_occupied "$SYMBOL_OCCUPIED" --arg symbol_empty "$SYMBOL_EMPTY" \
+              'map(select(.monitor == $monitor_name))
+              | map({ id: .id, name: .name, windows: .windows, focused: .focused,
+                      symbol: (if .focused then $symbol_active else (if .windows > 0 then $symbol_occupied else $symbol_empty end) end)
+                    }) | sort_by(.id)'
       }
 
       # Initial output
       get_workspaces_json
 
-      # Listen for events using the modern socat method for Hyprland sockets.
-      # The socket path is dynamically determined via Hyprland's instance signature.
+      # Listen for events and regenerate the output
       ${pkgs.socat}/bin/socat -U - "unix-connect:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r event; do
-          # We only care about events related to workspace changes.
-          # This filters events to avoid unnecessary updates.
           case "$event" in
-              "workspace>>"* | \
-              "focusedworkspace>>"* | \
-              "createworkspace>>"* | \
-              "destroyworkspace>>"* | \
-              "moveworkspace>>"* | \
-              "openwindow>>"* | \
-              "closewindow>>"* )
+              "workspace>>"* | "focusedworkspace>>"* | "createworkspace>>"* | "destroyworkspace>>"* | \
+              "moveworkspace>>"* | "openwindow>>"* | "closewindow>>"* | "movewindow>>"* )
                   get_workspaces_json
                   ;;
           esac
@@ -183,7 +171,7 @@
     ''
       #!/usr/bin/env bash
 
-      connected="false"
+      connected=0
       signal=0
       icon="⚠"
 
@@ -191,14 +179,14 @@
       if nmcli -t -f WIFI g 2>/dev/null | grep -q "enabled"; then
         signal=$(nmcli -t -f SIGNAL dev wifi 2>/dev/null | head -1)
         if [ -n "$signal" ] && [ "$signal" != "--" ] && [ "$signal" -gt 0 ]; then
-          connected="true"
+          connected=1
           icon=""
         fi
       fi
 
       # Check ethernet if WiFi failed
-      if [ "$connected" = "false" ] && nmcli -t -f STATE g 2>/dev/null | grep -q "connected"; then
-        connected="true"
+      if [ "$connected" = 0 ] && nmcli -t -f STATE g 2>/dev/null | grep -q "connected"; then
+        connected=1
         signal=100
         icon=""
       fi
@@ -274,10 +262,10 @@
         echo "$filled $empty"
     }
 
-    outer_dash=$(calc_dash $outer_val 82)
-    middle_dash=$(calc_dash $middle_val 57)
-    inner_dash=$(calc_dash $inner_val 31)
-    center_dash=$(calc_dash $center_val 6)
+    outer_dash=$(calc_dash $outer_val 69)
+    middle_dash=$(calc_dash $middle_val 31)
+    inner_dash=$(calc_dash $inner_val 13)
+    # center_dash=$(calc_dash $center_val 13)
 
     # Generate unique filename with timestamp to prevent caching
     svg_file="/tmp/duod.svg"
@@ -285,10 +273,9 @@
     # Create new SVG file
     cat > "$svg_file" << EOF
     <svg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='14' cy='14' r='13' fill='none' stroke='#45b7d1' stroke-width='4' stroke-dasharray='$outer_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='9' fill='none' stroke='#3eed84' stroke-width='4' stroke-dasharray='$middle_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='5' fill='none' stroke='#eeee22' stroke-width='4' stroke-dasharray='$inner_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='1' fill='none' stroke='#ff3322' stroke-width='4' stroke-dasharray='$center_dash' stroke-linecap='round' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='11' fill='none' stroke='#45b7d1' stroke-width='6' stroke-dasharray='$outer_dash' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='5' fill='none' stroke='#3eed84' stroke-width='6' stroke-dasharray='$middle_dash' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='2' fill='none' stroke='#ff3322' stroke-width='4' stroke-dasharray='$inner_dash' transform='rotate(-90 14 14)'/>
     </svg>
     EOF
 
@@ -313,19 +300,24 @@
         (defpoll memory_usage :interval "2s" :initial "0" "free | awk 'NR==2{printf \"%.0f\", $3*100/$2}'")
 
         ;; Workspaces
-        (deflisten workspaces :initial "[]" "hypr-workspaces-eww")
+        (deflisten workspaces-0 :initial "[]" "hypr-workspaces-eww 0")
+        (deflisten workspaces-1 :initial "[]" "hypr-workspaces-eww 1")
+        (deflisten workspaces-2 :initial "[]" "hypr-workspaces-eww 2")
+        (deflisten workspaces-3 :initial "[]" "hypr-workspaces-eww 3")
+        (deflisten workspaces-4 :initial "[]" "hypr-workspaces-eww 4")
+
 
         ;; Widgets
-        (defwidget workspaces_widget []
+        (defwidget workspaces_widget [workspaces]
           (box :class "workspaces" :space-evenly false :halign "start"
             (for workspace in workspaces
               (button :class "workspace-button ''${workspace.focused ? 'active' : ""} ''${workspace.urgent ? 'urgent' : ""}"
                       :onclick "hyprctl dispatch workspace ''${workspace.name}"
-                (label :text "''${workspace.name == '1' ? '𝋁' :
-                               workspace.name == '2' ? '𝋂' :
-                               workspace.name == '3' ? '𝋃' :
-                               workspace.name == '4' ? '𝋄' :
-                               workspace.name == '5' ? '𝋅' : workspace.symbol}")))))
+                (label :text "''${workspace.name == '1' ? '000' :
+                               workspace.name == '2' ? '001' :
+                               workspace.name == '3' ? '010' :
+                               workspace.name == '4' ? '010' :
+                               workspace.name == '5' ? '100' : workspace.symbol}")))))
 
         (defwidget battery_widget []
           (box :class "battery" :space-evenly false
@@ -346,7 +338,7 @@
         (defwidget network_widget []
           (box :class "network" :space-evenly false
             (button :onclick "nm-connection-editor"
-              (label :text "''${network_info.connected == "true" ? network_info.signal : 0} ''${network_info.icon}"))))
+              (label :text "''${network_info.connected == 1 ? network_info.signal : 0} ''${network_info.icon}"))))
 
         (defwidget audio_widget []
           (box :class "pulseaudio" :space-evenly false
@@ -389,15 +381,19 @@
                                 module == "memory" ? "(memory_widget)" :
                                 module == "tray" ? "(tray_widget)" : ""}))))
 
-        (defwidget bar []
+        (defwidget bar [monitor_id]
           (centerbox :orientation "h" :class "bar"
             (box :class "left" :halign "start" :space-evenly false
-              (workspaces_widget))
+              (workspaces_widget :workspaces {monitor_id == 0 ? workspaces-0 :
+                                monitor_id == 1 ? workspaces-1 :
+                                monitor_id == 2 ? workspaces-2 :
+                                monitor_id == 3 ? workspaces-3 :
+                                monitor_id == 4 ? workspaces-4 : []}))
             ${
           if (config.networking.hostName == "magnus")
           then ''
             (box :class "center" :halign "center" :space-evenly false
-              (bar_modules :modules '["tray", "pulseaudio", "network", "cpu", "temperature", "disk", "clock2", "clock", "duod"]')
+              (bar_modules :modules '["tray", "pulseaudio", "network", "cpu", "temperature", "disk", "clock2", "clock", "duod"]'))
             (box :class "right" :halign "end")
           ''
           else ''
@@ -407,23 +403,27 @@
           ''
         }))
 
-        ;; Windows
-        (defwindow bar
+        ;; NEW: Define a window for each monitor
+        ;; The startup script will open the correct one based on detected monitors.
+        ;; Add more if you have more than 2 monitors (e.g., bar-2, bar-3)
+        (defwindow bar-0
           :monitor 0
           :windowtype "dock"
-          :geometry (geometry :x "0%"
-                             :y "0%"
-                             :width "100%"
-                             :height "30px"
-                             :anchor "top center")
+          :geometry (geometry :x "0%" :y "0%" :width "100%" :height "30px" :anchor "top center")
           :reserve (struts :side "top" :distance "30px")
-          (bar))
+          (bar :monitor_id 0))
 
+        (defwindow bar-1
+          :monitor 1
+          :windowtype "dock"
+          :geometry (geometry :x "0%" :y "0%" :width "100%" :height "30px" :anchor "top center")
+          :reserve (struts :side "top" :distance "30px")
+          (bar :monitor_id 1))
       '';
   };
 
   eww-css = pkgs.writeTextFile {
-    name = "eww.scss";
+    name = "eww.css";
     text =
       # css
       ''
@@ -449,34 +449,34 @@
 
         .workspaces {
           margin: 0 4px;
-          color: ${c.temperature or "#ffffff"};
+          color: #ffffff;
         }
 
-        .workspace-button {
-          padding: 0 10px;
-          margin: 0 8px;
-          border-radius: 8px;
+        .workspaces button {
+          padding: 0 4px;
+          margin: 0 4px;
+          border-radius: 4px;
           color: #ffffff;
           background-color: ${c.duod or "#333333"};
           min-width: 30px;
           border: 2px solid #${config.stylix.base16Scheme.base01};
           transition: all 0.2s ease-in-out;
+        }
 
-          &.active {
-            color: #000000;
-            background-color: ${c.clock or "#ffffff"};
-            border-color: ${c.temperature or "#ff0088"};
-          }
+        .workspaces button.active {
+          color: #000000;
+          background-color: ${c.clock or "#ffffff"};
+          border-color: ${c.temperature or "#ff0088"};
+        }
 
-          &.urgent {
-            color: ${c.temperature or "#ff0000"};
-            border-color: ${c.temperature or "#ff0000"};
-          }
+        .workspaces button.urgent {
+          color: ${c.temperature or "#ff0000"};
+          border-color: ${c.temperature or "#ff0000"};
         }
 
         .battery, .clock, .clock2, .duod, .network, .pulseaudio,
         .cpu, .temperature, .disk, .memory, .tray {
-          padding: 4 10px;
+          padding: 4px 10px;
           border-radius: 6px;
           color: #000000;
         }
@@ -498,34 +498,34 @@
 
         .battery {
           background-color: ${c.battery or "#00ff00"};
+        }
 
-          &.charging, &.plugged {
-            color: #ffffff;
-          }
+        .battery.charging, .battery.plugged {
+          color: #ffffff;
+        }
 
-          &.critical {
-            background-color: #f53c3c;
-            color: #ffffff;
-            animation: blink 0.5s linear infinite alternate;
-          }
+        .battery.critical {
+          background-color: #f53c3c;
+          color: #ffffff;
+          animation: blink 0.5s linear infinite alternate;
         }
 
         .network {
           background-color: ${c.network or "#0088cc"};
+        }
 
-          &.disconnected {
-            background-color: #f53c3c;
-            color: #ffffff;
-          }
+        .network.disconnected {
+          background-color: #f53c3c;
+          color: #ffffff;
         }
 
         .pulseaudio {
           background-color: ${c.pulseaudio or "#ff8800"};
+        }
 
-          &.muted {
-            background-color: #${config.stylix.base16Scheme.base01 or "444444"};
-            color: #${config.stylix.base16Scheme.base07 or "ffffff"};
-          }
+        .pulseaudio.muted {
+          background-color: #${config.stylix.base16Scheme.base01 or "444444"};
+          color: #${config.stylix.base16Scheme.base07 or "ffffff"};
         }
 
         .cpu {
@@ -534,10 +534,10 @@
 
         .temperature {
           background-color: ${c.temperature or "#ff0088"};
+        }
 
-          &.critical {
-            background-color: #eb4d4b;
-          }
+        .temperature.critical {
+          background-color: #eb4d4b;
         }
 
         .disk {
@@ -550,6 +550,17 @@
 
         .tray {
           background-color: ${c.tray or "#888888"};
+        }
+
+        .tray menu,
+        .tray .menu,
+        tooltip,
+        .tooltip {
+          background-color: #${config.stylix.base16Scheme.base00 or "000000"};
+          color: #${config.stylix.base16Scheme.base07 or "ffffff"};
+          border: 1px solid #${config.stylix.base16Scheme.base02 or "333333"};
+          border-radius: 4px;
+          padding: 4px;
         }
 
         @keyframes blink {
@@ -574,6 +585,6 @@ in {
 
   home-manager.users.joshammer = {
     xdg.configFile."eww/eww.yuck".source = eww-config;
-    xdg.configFile."eww/eww.scss".source = eww-css;
+    xdg.configFile."eww/eww.css".source = eww-css;
   };
 }
