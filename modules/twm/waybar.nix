@@ -22,8 +22,8 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock" "custom/duod"]
-    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock" "custom/duod"];
+    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock"]
+    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock"];
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
@@ -80,12 +80,6 @@ in {
           format = "{:%H:%M:%S}";
         };
         "clock#c2".format = "{:%m-%d}";
-        "custom/duod" = {
-          interval = 1;
-          exec = "duod-waybar-render";
-          format = "{}";
-          return-type = "json";
-        };
         cpu = {
           format = "{usage}% ";
           tooltip = false;
@@ -154,7 +148,7 @@ in {
             border-bottom: none;
             padding: 0 10px;
             border-radius: 6px;
-            background-color: ${c."custom/duod"};
+            background-color: ${c."pulseaudio"};
         }
 
         #workspaces button.active {
@@ -169,7 +163,6 @@ in {
         }
 
         #clock,
-        #custom-duod,
         #battery,
         #cpu,
         #memory,
@@ -187,30 +180,6 @@ in {
         #clock {
             background-color: ${c.clock};
             color: #000000;
-        }
-
-         #custom-duod {
-            background-color: #000000;
-            color: transparent; /* Hide the space character */
-            padding: 2px 8px;
-            font-size: 16px;
-            min-width: 28px;
-            min-height: 28px;
-            
-            /* Display the SVG as background */
-            background-image: url("file:///tmp/duod_current.svg");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 38px 38px ;
-            
-            /* Force reload every second by adding cache-busting */
-            animation: refresh-bg 1s infinite;
-        }
-
-        /* This animation tricks the browser into checking the file again */
-        @keyframes refresh-bg {
-            0% { background-image: url("file:///tmp/duod_current.svg?t=0"); }
-            100% { background-image: url("file:///tmp/duod_current.svg?t=1"); }
         }
 
         #clock.c2 {

@@ -49,7 +49,6 @@
 
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-          "waybar"
           "vesktop"
           "nm-applet"
           "hyprpaper"
@@ -202,6 +201,7 @@
 
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
+            "SUPER SHIFT, bracketright, exec, systemctl --user restart eww.service"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 
