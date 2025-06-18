@@ -7,8 +7,7 @@
   indexOf = list: item: let
     indexHelper = l: i:
       if l == []
-      then -1
-      else if builtins.elemAt l 0 == item
+      then -1 else if builtins.elemAt l 0 == item
       then i
       else indexHelper (builtins.tail l) (i + 1);
   in
@@ -311,13 +310,13 @@
         (defwidget workspaces_widget [workspaces]
           (box :class "workspaces" :space-evenly false :halign "start"
             (for workspace in workspaces
-              (button :class "workspace-button ''${workspace.focused ? 'active' : ""} ''${workspace.urgent ? 'urgent' : ""}"
+              (button :class "workspaces button ''${workspace.focused == true ? 'active' : workspace.urgent == true ? 'urgent' : 'normal'}"
                       :onclick "hyprctl dispatch workspace ''${workspace.name}"
-                (label :text "''${workspace.name == '1' ? '000' :
-                               workspace.name == '2' ? '001' :
-                               workspace.name == '3' ? '010' :
-                               workspace.name == '4' ? '010' :
-                               workspace.name == '5' ? '100' : workspace.symbol}")))))
+                (label :text "''${workspace.name == '1' ? '󱑖' :
+                               workspace.name == '2' ? '󱑋' :
+                               workspace.name == '3' ? '󱑌' :
+                               workspace.name == '4' ? '󱑍' :
+                               workspace.name == '5' ? '󱑎' : workspace.symbol}")))))
 
         (defwidget battery_widget []
           (box :class "battery" :space-evenly false
@@ -452,7 +451,7 @@
           color: #ffffff;
         }
 
-        .workspaces button {
+        .workspaces.button {
           padding: 0 4px;
           margin: 0 4px;
           border-radius: 4px;
@@ -463,13 +462,13 @@
           transition: all 0.2s ease-in-out;
         }
 
-        .workspaces button.active {
+        .workspaces.button.active {
           color: #000000;
           background-color: ${c.clock or "#ffffff"};
           border-color: ${c.temperature or "#ff0088"};
         }
 
-        .workspaces button.urgent {
+        .workspaces.button.urgent {
           color: ${c.temperature or "#ff0000"};
           border-color: ${c.temperature or "#ff0000"};
         }
