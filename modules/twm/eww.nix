@@ -7,12 +7,12 @@
   indexOf = list: item: let
     indexHelper = l: i:
       if l == []
-      then -1 else if builtins.elemAt l 0 == item
+      then -1
+      else if builtins.elemAt l 0 == item
       then i
       else indexHelper (builtins.tail l) (i + 1);
   in
     indexHelper list 0;
-
   colors = [
     "#${config.stylix.base16Scheme.base09}"
     "#${config.stylix.base16Scheme.base0A}"
@@ -243,28 +243,42 @@
     }
 
     # Get duod output and parse values
-    duod_output=$(duod | choose :3)
-    read -r outer middle inner center <<< "$duod_output"
+    duod_output=$(duod)
+    outer="''${duod_output:0:1}"
+    middle="''${duod_output:1:1}"
+    inner="''${duod_output:2:1}"
+    d="''${duod_output:3:1}"
+    e="''${duod_output:4:1}"
 
     # Convert to decimal
     outer_val=$(hex_to_dec "$outer")
     middle_val=$(hex_to_dec "$middle")
     inner_val=$(hex_to_dec "$inner")
-    center_val=$(hex_to_dec "$center")
 
     # Calculate stroke-dasharray
     calc_dash() {
         local value=$1
         local circ=$2
-        local filled=$(( value * circ / 12 ))
-        local empty=$(( circ - filled ))
+        local filled=$(echo "scale=2; $value * $circ / 12" | bc)
+        local empty=$(echo "scale=2; $circ - $filled" | bc)
         echo "$filled $empty"
     }
 
-    outer_dash=$(calc_dash $outer_val 69)
-    middle_dash=$(calc_dash $middle_val 31)
-    inner_dash=$(calc_dash $inner_val 13)
-    # center_dash=$(calc_dash $center_val 13)
+    outer_w="6"
+    middle_w="8"
+    inner_w="2"
+
+    outer_r="11"
+    middle_r="4"
+    inner_r="13.5"
+
+    outer_c=$(echo "scale=2; $outer_r * 2 * 3.14" | bc)
+    middle_c=$(echo "scale=2; $middle_r * 2 * 3.14" | bc)
+    inner_c=$(echo "scale=2; $inner_r * 2 * 3.14" | bc)
+
+    outer_dash="$(calc_dash "$outer_val" "$outer_c")"
+    middle_dash="$(calc_dash "$middle_val" "$middle_c")"
+    inner_dash="$(calc_dash "$inner_val" "$inner_c")"
 
     # Generate unique filename with timestamp to prevent caching
     svg_file="/tmp/duod.svg"
@@ -272,14 +286,15 @@
     # Create new SVG file
     cat > "$svg_file" << EOF
     <svg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='14' cy='14' r='11' fill='none' stroke='#45b7d1' stroke-width='6' stroke-dasharray='$outer_dash' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='5' fill='none' stroke='#3eed84' stroke-width='6' stroke-dasharray='$middle_dash' transform='rotate(-90 14 14)'/>
-      <circle cx='14' cy='14' r='2' fill='none' stroke='#ff3322' stroke-width='4' stroke-dasharray='$inner_dash' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='$outer_r' fill='none' stroke='#45f781' stroke-width='$outer_w' stroke-dasharray='$outer_dash' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='$middle_r' fill='none' stroke='#0083f2' stroke-width='$middle_w' stroke-dasharray='$middle_dash' transform='rotate(-90 14 14)'/>
+      <circle cx='14' cy='14' r='$inner_r' fill='none' stroke='#ff0000' stroke-width='$inner_w' stroke-dasharray='$inner_dash' transform='rotate(-90 14 14)'/>
     </svg>
     EOF
 
     echo "$svg_file"
   '';
+
 
   eww-config = pkgs.writeTextFile {
     name = "eww.yuck";
@@ -289,14 +304,14 @@
         ;; Variables and Polls
         (defpoll time_full :interval "1s" "date '+%H:%M:%S'")
         (defpoll time_date :interval "60s" "date '+%m-%d'")
-        (defpoll duod_svg :interval "1s" "duod-eww")
-        (defpoll battery_info :interval "5s" :initial "{}" "battery-eww")
-        (defpoll network_info :interval "5s" :initial "{}" "network-eww")
+        (defpoll duod_svg :interval "10s" "duod-eww")
+        (defpoll battery_info :interval "10s" :initial "{}" "battery-eww")
+        (defpoll network_info :interval "10s" :initial "{}" "network-eww")
         (defpoll audio_info :interval "1s" :initial "{}" "audio-eww")
-        (defpoll cpu_usage :interval "2s" :initial "0" "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print int(usage)}'")
-        (defpoll temp_info :interval "3s" :initial "0" "temperature-eww")
+        (defpoll cpu_usage :interval "5s" :initial "0" "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print int(usage)}'")
+        (defpoll temp_info :interval "5s" :initial "0" "temperature-eww")
         (defpoll disk_usage :interval "60s" :initial "0" "df / | awk 'NR==2 {print int($5)}' | tr -d '%'")
-        (defpoll memory_usage :interval "2s" :initial "0" "free | awk 'NR==2{printf \"%.0f\", $3*100/$2}'")
+        (defpoll memory_usage :interval "10s" :initial "0" "free | awk 'NR==2{printf \"%.0f\", $3*100/$2}'")
 
         ;; Workspaces
         (deflisten workspaces-0 :initial "[]" "hypr-workspaces-eww 0")
@@ -310,8 +325,8 @@
         (defwidget workspaces_widget [workspaces]
           (box :class "workspaces" :space-evenly false :halign "start"
             (for workspace in workspaces
-              (button :class "workspaces button ''${workspace.focused == true ? 'active' : workspace.urgent == true ? 'urgent' : 'normal'}"
-                      :onclick "hyprctl dispatch workspace ''${workspace.name}"
+                (button :class [ "workspaces" "button" "''${workspace.focused ? "active" : workspace.urgent ? "urgent" : "normal"}" ]
+                        :onclick "hyprctl dispatch workspace ''${workspace.name}"
                 (label :text "''${workspace.name == '1' ? '󱑖' :
                                workspace.name == '2' ? '󱑋' :
                                workspace.name == '3' ? '󱑌' :
@@ -319,7 +334,7 @@
                                workspace.name == '5' ? '󱑎' : workspace.symbol}")))))
 
         (defwidget battery_widget []
-          (box :class "battery" :space-evenly false
+          (box :class "battery ''${battery_info.status == 'Charging' ? 'charging' : battery_info.capacity < 20 ? 'critical' : 'normal'}" :space-evenly false
             (label :text "''${battery_info.capacity} ''${battery_info.icon}")))
 
         (defwidget clock_widget []
@@ -335,12 +350,12 @@
             (image :path duod_svg :image-width 28 :image-height 28)))
 
         (defwidget network_widget []
-          (box :class "network" :space-evenly false
+          (box :class "network ''${network_info.connected == 0 ? 'disconnected' : 'connected'}" :space-evenly false
             (button :onclick "nm-connection-editor"
               (label :text "''${network_info.connected == 1 ? network_info.signal : 0} ''${network_info.icon}"))))
 
         (defwidget audio_widget []
-          (box :class "pulseaudio" :space-evenly false
+          (box :class "pulseaudio ''${audio_info.muted == 'yes' ? 'muted' : 'normal'}" :space-evenly false
             (button :onclick "pavucontrol"
               (label :text "''${audio_info.volume} ''${audio_info.icon} ''${audio_info.source_volume} ''${audio_info.source_icon}"))))
 
@@ -503,7 +518,7 @@
           color: #ffffff;
         }
 
-        .battery.critical {
+        .battery .critical {
           background-color: #f53c3c;
           color: #ffffff;
           animation: blink 0.5s linear infinite alternate;

@@ -33,5 +33,5 @@ pkgs.writeShellScriptBin "duod" ''
 
   declare -A digit
   digit=( [0]=0 [1]=1 [2]=2 [3]=3 [4]=4 [5]=5 [6]=6 [7]=7 [8]=8 [9]=9 [10]=a [11]=b )
-  echo "''${digit[''$p0]} ''${digit[''$p1]} ''${digit[''$p2]} ''${digit[''$p3]} ''${digit[''$p4]}"
+  echo "''${digit[''$p0]}''${digit[''$p1]}''${digit[''$p2]}''${digit[''$p3]}''${digit[''$p4]}"
 ''
