@@ -16,6 +16,8 @@
     capslock = 0
     0 = noop
     f3 = noop
+    tab = rightshift
+    rightshift = tab
   '';
 
   systemd = {

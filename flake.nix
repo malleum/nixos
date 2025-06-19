@@ -26,13 +26,6 @@
         }
     );
   in {
-    apps = forEachSystem (
-      pkgs:
-        lib.attrsets.genAttrs (map (a: builtins.substring 0 (builtins.stringLength (builtins.baseNameOf a) - 4) (builtins.baseNameOf a)) (lib.filesystem.listFilesRecursive ./modules/homemodules/scripts)) (name: {
-          type = "app";
-          program = "${pkgs.callPackage ./modules/homemodules/scripts/${name}.nix {inherit pkgs;}}/bin/${name}";
-        })
-    );
     devShells = forEachSystem (pkgs: {
       default = import ./shell.nix {inherit pkgs;};
       scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
@@ -47,14 +40,6 @@
       "magnus" = lib.nixosSystem {
         specialArgs = {inherit inputs system;};
         modules = [./hosts/magnus];
-      };
-    };
-    homeConfigurations = let
-      system = "aarch64-linux";
-    in {
-      "joshammer@mcspeed" = lib.homeManagerConfiguration {
-        modules = [./hosts/minimus];
-        extraSpecialArgs = {inherit inputs system;};
       };
     };
   };
