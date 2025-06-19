@@ -10,8 +10,6 @@
     '';
 
     services = {
-      preload.enable = true; # Preload frequently used applications
-
       # If using SSD
       fstrim.enable = true;
 

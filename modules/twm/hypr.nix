@@ -18,7 +18,6 @@
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
           "NIXOS_OZONE_WL,1"
-          "QT_QPA_PLATFORM,wayland"
           "XKB_DEFAULT_OPTIONS,compose:menu"
           # Force Firefox to use Wayland
           "MOZ_ENABLE_WAYLAND,1"
@@ -28,7 +27,6 @@
           "MOZ_ACCELERATED,1"
           # Hyprland specific
           "GDK_BACKEND,wayland,x11" # Prefer Wayland, fallback to X11
-          "QT_QPA_PLATFORM,waylandxcb"
           # VAAPI for hardware video decoding
           "LIBVA_DRIVER_NAME,radeonsi"
         ];

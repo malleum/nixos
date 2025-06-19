@@ -25,6 +25,7 @@
         (
           ifopt config.packages.gui.enable
           [
+            code-cursor-fhs
             keyd
             losslesscut-bin
             obs-studio
@@ -44,7 +45,6 @@
             vulkan-tools
             vulkan-loader
             vulkan-validation-layers
-            vulkan-loader
 
             libva
             libva-utils
