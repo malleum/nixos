@@ -11,7 +11,6 @@
       package = inputs.hypr.packages.${pkgs.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
     };
-
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
       settings = lib.mkForce {
@@ -46,7 +45,9 @@
           );
 
         exec-once = [
-          "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+          "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
+          "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+          "${inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
           "hyprpaper"
@@ -67,6 +68,7 @@
           repeat_delay = 225;
           repeat_rate = 50;
         };
+        cursor.no_wraps = false;
         general = {
           gaps_in = 5;
           gaps_out = 15;
@@ -196,7 +198,7 @@
             "SUPER, f, fullscreen, 1"
             "SUPER SHIFT, f, fullscreen, 0"
 
-            "SUPER, grave, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
+            "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
 
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
@@ -218,9 +220,13 @@
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
 
             # mcsr
-            "ALT, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
-            "ALT, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
-            "ALT, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
+
+            "SUPER, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
+            "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
+            "SUPER, Pause, exec, fish ~/documents/gh/mcsr/pearch1.17.sh"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces

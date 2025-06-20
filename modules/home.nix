@@ -21,8 +21,8 @@ in {
   };
 
   xdg = {
-    inherit configHome;
     enable = true;
+    inherit configHome;
   };
 
   programs = {

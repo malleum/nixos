@@ -147,7 +147,11 @@
             kdePackages.xwaylandvideobridge
             qt6.qtwayland
             wl-clipboard
+            wl-crosshair
             wtype
+            wlrctl
+
+            xdotool
 
             # lols
             cmatrix
