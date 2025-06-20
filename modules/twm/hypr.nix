@@ -68,7 +68,6 @@
           repeat_delay = 225;
           repeat_rate = 50;
         };
-        cursor.no_wraps = false;
         general = {
           gaps_in = 5;
           gaps_out = 15;
