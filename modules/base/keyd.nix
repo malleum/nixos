@@ -15,8 +15,8 @@
     [*minecraft*]
     capslock = 0
     0 = noop
-    leftcontrol = rightshift
-    rightshift = leftcontrol 
+    ` = rightshift
+    rightshift = ` 
   '';
 
   systemd = {
