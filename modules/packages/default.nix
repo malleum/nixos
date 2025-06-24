@@ -34,6 +34,7 @@
             vesktop
             vlc
             wdisplays
+            tiled
 
             stable.prismlauncher
             protonup-ng
