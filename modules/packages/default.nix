@@ -31,8 +31,8 @@
             obs-studio
             onedrive
             quickemu
-            vesktop
             vlc
+            vesktop
             wdisplays
             tiled
 

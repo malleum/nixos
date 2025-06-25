@@ -18,9 +18,14 @@
     };
   };
 
-  programs.spotify-player = {
-    enable = true;
-    settings.client_id_command = "~/OneDrive/Documents/Stuff/ProgrammingOrCodes/psswd/spotify_id.sh";
+  programs = {
+    spotify-player = {
+      enable = true;
+      settings.client_id_command = "~/OneDrive/Documents/Stuff/ProgrammingOrCodes/psswd/spotify_id.sh";
+    };
+    vesktop = {
+      enable = true;
+    };
   };
 
   home.packages = map (a: pkgs.callPackage a {}) (lib.filesystem.listFilesRecursive ./scripts);
