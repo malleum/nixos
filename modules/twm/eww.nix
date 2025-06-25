@@ -84,6 +84,7 @@
 
   hypr-workspaces-eww-script =
     pkgs.writeShellScriptBin "hypr-workspaces-eww"
+    # bash
     ''
       #!/usr/bin/env bash
       # Exit if no monitor ID is provided
@@ -91,18 +92,21 @@
 
       MONITOR_ID=$1
 
-      SYMBOL_EMPTY=""; SYMBOL_OCCUPIED=""; SYMBOL_ACTIVE=""
-
       get_workspaces_json() {
+          # Get the name of the monitor based on its ID
           local monitor_name=$(hyprctl monitors -j | jq -r ".[] | select(.id == $MONITOR_ID) | .name")
           if [ -z "$monitor_name" ]; then echo "[]"; return; fi
+
+          # Get the ID of the active workspace
+          local active_workspace_id=$(hyprctl activeworkspace -j | jq '.id')
+
+          # Generate the JSON
           hyprctl workspaces -j | jq --compact-output \
               --arg monitor_name "$monitor_name" \
-              --arg symbol_active "$SYMBOL_ACTIVE" --arg symbol_occupied "$SYMBOL_OCCUPIED" --arg symbol_empty "$SYMBOL_EMPTY" \
+              --argjson active_id "$active_workspace_id" \
               'map(select(.monitor == $monitor_name))
-              | map({ id: .id, name: .name, windows: .windows, focused: .focused,
-                      symbol: (if .focused then $symbol_active else (if .windows > 0 then $symbol_occupied else $symbol_empty end) end)
-                    }) | sort_by(.id)'
+              | map( . + { focused: (.id == $active_id) } )
+              | sort_by(.id)'
       }
 
       # Initial output
@@ -325,13 +329,13 @@
         (defwidget workspaces_widget [workspaces]
           (box :class "workspaces" :space-evenly false :halign "start"
             (for workspace in workspaces
-                (button :class [ "workspaces" "button" "''${workspace.focused ? "active" : workspace.urgent ? "urgent" : "normal"}" ]
-                        :onclick "hyprctl dispatch workspace ''${workspace.name}"
+              (button :class "workspace-button ''${workspace.focused ? "active" : "normal"}"
+                      :onclick "hyprctl dispatch workspace ''${workspace.name}"
                 (label :text "''${workspace.name == '1' ? '󱑖' :
-                               workspace.name == '2' ? '󱑋' :
-                               workspace.name == '3' ? '󱑌' :
-                               workspace.name == '4' ? '󱑍' :
-                               workspace.name == '5' ? '󱑎' : workspace.symbol}")))))
+                                workspace.name == '2' ? '󱑋' :
+                                workspace.name == '3' ? '󱑌' :
+                                workspace.name == '4' ? '󱑍' :
+                                workspace.name == '5' ? '󱑎' : ""}")))))
 
         (defwidget battery_widget []
           (box :class "battery ''${battery_info.status == 'Charging' ? 'charging' : battery_info.capacity < 20 ? 'critical' : 'normal'}" :space-evenly false
@@ -463,10 +467,9 @@
 
         .workspaces {
           margin: 0 4px;
-          color: #ffffff;
         }
 
-        .workspaces.button {
+        .workspace-button {
           padding: 0 4px;
           margin: 0 4px;
           border-radius: 4px;
@@ -477,16 +480,12 @@
           transition: all 0.2s ease-in-out;
         }
 
-        .workspaces.button.active {
+        .workspace-button.active {
           color: #000000;
           background-color: ${c.clock or "#ffffff"};
           border-color: ${c.temperature or "#ff0088"};
         }
 
-        .workspaces.button.urgent {
-          color: ${c.temperature or "#ff0000"};
-          border-color: ${c.temperature or "#ff0000"};
-        }
 
         .battery, .clock, .clock2, .duod, .network, .pulseaudio,
         .cpu, .temperature, .disk, .memory, .tray {
