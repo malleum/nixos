@@ -4,5 +4,5 @@ pkgs.writeShellScriptBin "pyenv" ''
   for el in "$@"; do
     ppkgs+=("python3Packages.$el")
   done
-  nix-shell -p "''${ppkgs[@]}"
+  nix-shell -p "''${ppkgs[@]}" --command fish
 ''
