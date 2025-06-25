@@ -21,90 +21,99 @@
     };
     theme = let
       inherit (config.lib.formats.rasi) mkLiteral;
+      # Inherit base colors from your stylix configuration
       b0 = "#${config.stylix.base16Scheme.base00}";
       b1 = "#${config.stylix.base16Scheme.base01}";
       b2 = "#${config.stylix.base16Scheme.base02}";
-      b9 = "#${config.stylix.base16Scheme.base09}";
-      bb = "#${config.stylix.base16Scheme.base0B}";
-      bc = "#${config.stylix.base16Scheme.base0C}";
-      clear = "#00000000";
+      b5 = "#${config.stylix.base16Scheme.base05}"; # Main foreground/text color
+      b9 = "#${config.stylix.base16Scheme.base09}"; # A nice accent color
+      bc = "#${config.stylix.base16Scheme.base0C}"; # Another accent for selected text
+
+      # --- Modern Additions ---
+      bg-main = "${b0}CC";
+      bg-alt = "${b1}33";
+      bg-selected = "${b9}4D";
+      transparent = "#00000000";
     in {
       "*" = {
-        width = 1000;
-        height = 370;
-        spacing = 4;
+        background-color = mkLiteral transparent;
+        text-color = mkLiteral b5;
       };
-      "element" = {
-        padding = 0;
-        border = 0;
-        spacing = 0;
-        cursor = mkLiteral "pointer";
-        text-color = mkLiteral bb;
-        background-color = mkLiteral b0;
-      };
-      "element selected" = {
-        background-color = mkLiteral b1;
-        text-color = mkLiteral bc;
-      };
-      "element-text" = {
-        background-color = mkLiteral clear;
-        text-color = mkLiteral "inherit";
-        highlight = mkLiteral "inherit";
-        cursor = mkLiteral "inherit";
-      };
-      "element-icon" = {
-        background-color = mkLiteral clear;
-        size = mkLiteral "2em";
-        text-color = mkLiteral "inherit";
-        cursor = mkLiteral "inherit";
-      };
+
       "window" = {
-        padding = 2;
-        border = 3;
-        background-color = mkLiteral b0;
+        location = mkLiteral "center";
+        anchor = mkLiteral "center";
+        width = mkLiteral "45%";
+        height = mkLiteral "50%";
+        padding = mkLiteral "24px";
+        border = mkLiteral "2px";
+        border-radius = mkLiteral "16px";
+        border-color = mkLiteral b9;
+        background-color = mkLiteral bg-main;
       };
+
       "mainbox" = {
-        padding = 2;
-        border = 0;
-        background-color = mkLiteral b0;
+        orientation = mkLiteral "vertical";
+        children = mkLiteral "[inputbar, listview]";
+        spacing = mkLiteral "16px";
+        background-color = mkLiteral transparent;
       };
-      "message" = {
-        padding = mkLiteral "1px";
-        border-color = mkLiteral b0;
-        border = 0;
-        background-color = mkLiteral b0;
-      };
-      "textbox" = {
-        background-color = mkLiteral b0;
-        text-color = mkLiteral bc;
-      };
-      "listview" = {
-        padding = mkLiteral "2px 0px 0px";
-        scrollbar = false;
-        spacing = mkLiteral "2px";
-        fixed-height = 0;
-        border-color = mkLiteral b0;
-        border = 0;
-        background-color = mkLiteral b0;
-      };
+
       "inputbar" = {
-        padding = mkLiteral "1px";
-        spacing = 1;
         children = mkLiteral "[prompt, entry]";
-        background-color = mkLiteral b0;
+        spacing = mkLiteral "12px";
+        padding = mkLiteral "12px";
+        border-radius = mkLiteral "12px";
+        background-color = mkLiteral bg-alt;
       };
-      "entry" = {
-        spacing = 1;
-        text-color = mkLiteral b2;
-        placeholder-color = mkLiteral b1;
-        placeholder = "Type to filter";
-        cursor = mkLiteral "text";
-        background-color = mkLiteral b0;
-      };
+
       "prompt" = {
-        spacing = 0;
+        enabled = true;
         text-color = mkLiteral b9;
-        background-color = mkLiteral b0;
+        background-color = mkLiteral transparent;
+      };
+
+      "entry" = {
+        placeholder = "Search applications...";
+        placeholder-color = mkLiteral b2;
+        text-color = mkLiteral bc;
+        cursor = mkLiteral "text";
+        background-color = mkLiteral transparent;
+      };
+
+      "listview" = {
+        # This is the stable, compatible way to create a grid.
+        # It uses the default vertical layout with multiple columns.
+        columns = 6;
+        lines = 3;
+        spacing = mkLiteral "12px";
+        cycle = true;
+        background-color = mkLiteral transparent;
+      };
+
+      "element" = {
+        orientation = mkLiteral "vertical";
+        cursor = mkLiteral "pointer";
+        spacing = mkLiteral "8px";
+        padding = mkLiteral "12px";
+        border-radius = mkLiteral "12px";
+      };
+
+      "element-icon" = {
+        size = mkLiteral "3.5em";
+        horizontal-align = mkLiteral "0.5";
+        background-color = mkLiteral transparent;
+      };
+
+      "element-text" = {
+        horizontal-align = mkLiteral "0.5";
+        text-color = mkLiteral "inherit";
+        background-color = mkLiteral transparent;
+      };
+
+      "element selected" = {
+        background-color = mkLiteral bg-selected;
+        text-color = mkLiteral bc;
       };
     };
   };

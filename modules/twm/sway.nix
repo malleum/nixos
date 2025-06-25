@@ -49,7 +49,7 @@
             {command = "nm-applet";}
           ];
           assigns = {
-            "1" = [{title = "(Brave|Firefox|qutebrowser)";}];
+            "1" = [{title = "(Brave|Firefox)";}];
             "2" = [{title = "(Discord|vesktop|Microsoft Teams)";}];
             "3" = [{title = "(foot|kitty)";}];
             "4" = [{title = "(Steam|Minecraft|War)";}];
@@ -92,7 +92,7 @@
               "${m}+return" = "exec foot";
               "${ms}+return" = "exec kitty";
               "${m}+b" = "exec brave";
-              "${ms}+b" = "exec qb";
+              "${ms}+b" = "exec firefox";
               "${m}+d" = "exec vesktop";
               "${ms}+d" = "exec brave 'https://teams.microsoft.com/v2/'";
 

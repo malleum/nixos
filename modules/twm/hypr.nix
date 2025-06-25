@@ -127,7 +127,6 @@
         windowrulev2 = [
           "workspace 1, title:^(.*Brave.*)$"
           "workspace 1, title:^(.*Firefox.*)$"
-          "workspace 1, title:^(.*qutebrowser.*)$"
           "workspace 2, title:^(.*Discord.*)$"
           "workspace 2, title:^(.*vesktop.*)$"
           "workspace 2, title:^(.*Microsoft Teams.*)$"
@@ -163,7 +162,7 @@
             "SUPER, return, exec, foot"
             "SUPER SHIFT, return, exec, kitty"
             "SUPER, b, exec, brave"
-            "SUPER SHIFT, b, exec, qb"
+            "SUPER SHIFT, b, exec, firefox"
             "SUPER, d, exec, vesktop"
             "SUPER SHIFT, d, exec, brave 'https://teams.microsoft.com/v2/'"
 
