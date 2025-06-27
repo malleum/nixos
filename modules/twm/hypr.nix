@@ -224,7 +224,8 @@
 
             "SUPER, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
-            "SUPER, Pause, exec, fish ~/documents/gh/mcsr/pearch1.17.sh"
+            "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
+            "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
