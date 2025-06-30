@@ -96,7 +96,6 @@
         ++ (
           ifopt config.packages.programming.enable
           [
-            antlr
             cargo
             clang-tools
             clojure
@@ -112,8 +111,7 @@
             leiningen
             lua
             nodejs
-            pyright
-            python3Full
+            python3
             rustc
             typst
             zig
@@ -165,8 +163,6 @@
             # visio
             awscli2
             openvpn
-            pipx
-            pre-commit
           ]
         );
 
