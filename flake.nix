@@ -7,7 +7,17 @@
 
     determinix.url = "https://flakehub.com/f/DeterminateSystems/nix/*";
     fix-python.url = "github:GuillaumeDesforges/fix-python";
-    hypr.url = "github:hyprwm/Hyprland";
+
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprchroma = {
+      url = "github:alexhulbert/Hyprchroma";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:malleum/nixvim";
     nur.url = "github:nix-community/NUR";
