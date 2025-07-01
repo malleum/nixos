@@ -26,7 +26,6 @@
         abbr -a stag "STAGING_BRANCH=(git branch --show-current)"
         abbr -a prod 'VS_RUN_PROD=1'
         abbr -a rpy rg --iglob='\'*.py'\'
-        abbr -a pt CID=\$DEV python -m pytest -vv --durations=5 --pdb
 
         if test -f ~/documents/gh/k/abbr.fish
             source ~/documents/gh/k/abbr.fish
