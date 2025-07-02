@@ -244,7 +244,6 @@
       plugins = [
         inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
         inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
-        inputs.hyprchroma.packages.${pkgs.system}.Hypr-DarkWindow
       ];
 
       # Plugin-specific configuration in extraConfig
@@ -278,23 +277,6 @@
             # Use a color that complements your active border or a subtle accent
             color = rgba(${config.stylix.base16Scheme.base0C}88) # Example: active border color with transparency
             # Or you can use a fixed color, e.g., color = rgba(0000FF88) for blue trails
-          }
-        }
-
-        # Hyprchroma configuration
-        plugin {
-          hyprchroma {
-            # This is the key color Hyprchroma will make transparent.
-            # You'll need to find the exact RGB value of the background color
-            # of applications you want to make transparent (e.g., Discord, Electron apps).
-            # A common one for Electron apps is a slight off-black.
-            # Use a color picker tool (like `gcolor` or `kcolorchooser`) on the app's background.
-            # Example for a common dark gray:
-            default_color = rgb(282c34) # Example: Replace with the actual background color of your target app
-            threshold = 0.05 # Tolerance for the color matching (0.0 - 1.0, higher means more colors match)
-            # Higher threshold might make more of the app transparent, but also
-            # potentially parts you don't want transparent.
-            # Lower threshold is more precise.
           }
         }
       '';

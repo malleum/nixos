@@ -9,10 +9,6 @@
     fix-python.url = "github:GuillaumeDesforges/fix-python";
 
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprchroma = {
-      url = "github:alexhulbert/Hyprchroma";
-      inputs.hyprland.follows = "hyprland";
-    };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
