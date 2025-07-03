@@ -239,47 +239,44 @@
         ];
       };
 
-      # --- Hyprland Plugins Configuration ---
-      # This is the crucial part for adding plugins.
-      plugins = [
-        inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-        inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
-      ];
-
-      # Plugin-specific configuration in extraConfig
-      extraConfig = ''
-        # Hyprexpo configuration
-        plugin {
-          hyprexpo {
-            columns = 3
-            gap_size = 5
-            # Adjust these colors to fit your stylix scheme or preferred colors
-            bg_col = rgba(${config.stylix.base16Scheme.base00}bb) # Background color, slightly transparent
-            active_workspace_border_color = rgba(${config.stylix.base16Scheme.base0C}ff) # Active workspace border
-            active_window_border_color = rgba(${config.stylix.base16Scheme.base04}ff) # Active window border
-            workspace_border_color = rgba(${config.stylix.base16Scheme.base01}aa) # Inactive workspace border
-            window_border_color = rgba(${config.stylix.base16Scheme.base01}aa) # Inactive window border
-            workspace_method = center # [center/first] e.g. first 1 or center m+1 (center current workspace)
-            enable_gesture = true # laptop touchpad gesture
-            gesture_fingers = 3 # 3 or 4 fingers
-            overlay_padding = 10 # Padding around the expo overlay
-            workspace_name_color = rgba(${config.stylix.base16Scheme.base05}ff) # Color for workspace names
-            workspace_name_font_size = 20 # Font size for workspace names
-          }
-        }
-
-        # Hyprtrails configuration
-        plugin {
-          hyprtrails {
-            decay_factor = 0.95 # How quickly trails fade (0.0 - 1.0, higher means longer trail)
-            initial_alpha = 0.8 # Initial transparency of the trail (0.0 - 1.0)
-            length = 20 # Number of trail segments
-            # Use a color that complements your active border or a subtle accent
-            color = rgba(${config.stylix.base16Scheme.base0C}88) # Example: active border color with transparency
-            # Or you can use a fixed color, e.g., color = rgba(0000FF88) for blue trails
-          }
-        }
-      '';
+      # plugins = [
+      #   inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      #   inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
+      # ];
+      #
+      # extraConfig = ''
+      #   # Hyprexpo configuration
+      #   plugin {
+      #     hyprexpo {
+      #       columns = 3
+      #       gap_size = 5
+      #       # Adjust these colors to fit your stylix scheme or preferred colors
+      #       bg_col = rgba(${config.stylix.base16Scheme.base00}bb) # Background color, slightly transparent
+      #       active_workspace_border_color = rgba(${config.stylix.base16Scheme.base0C}ff) # Active workspace border
+      #       active_window_border_color = rgba(${config.stylix.base16Scheme.base04}ff) # Active window border
+      #       workspace_border_color = rgba(${config.stylix.base16Scheme.base01}aa) # Inactive workspace border
+      #       window_border_color = rgba(${config.stylix.base16Scheme.base01}aa) # Inactive window border
+      #       workspace_method = center # [center/first] e.g. first 1 or center m+1 (center current workspace)
+      #       enable_gesture = true # laptop touchpad gesture
+      #       gesture_fingers = 3 # 3 or 4 fingers
+      #       overlay_padding = 10 # Padding around the expo overlay
+      #       workspace_name_color = rgba(${config.stylix.base16Scheme.base05}ff) # Color for workspace names
+      #       workspace_name_font_size = 20 # Font size for workspace names
+      #     }
+      #   }
+      #
+      #   # Hyprtrails configuration
+      #   plugin {
+      #     hyprtrails {
+      #       decay_factor = 0.95 # How quickly trails fade (0.0 - 1.0, higher means longer trail)
+      #       initial_alpha = 0.8 # Initial transparency of the trail (0.0 - 1.0)
+      #       length = 20 # Number of trail segments
+      #       # Use a color that complements your active border or a subtle accent
+      #       color = rgba(${config.stylix.base16Scheme.base0C}88) # Example: active border color with transparency
+      #       # Or you can use a fixed color, e.g., color = rgba(0000FF88) for blue trails
+      #     }
+      #   }
+      # '';
     };
   };
 }

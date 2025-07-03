@@ -35,6 +35,7 @@
             vesktop
             wdisplays
             tiled
+            godot
 
             stable.prismlauncher
             protonup-ng
