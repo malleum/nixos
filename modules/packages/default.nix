@@ -142,6 +142,7 @@
             openssl
             speedtest-cli
             spice-gtk
+            wirelesstools # apparently needed for wt 🤷‍♀
 
             # wayland
             hyprland-qtutils

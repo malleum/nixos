@@ -7,16 +7,9 @@
   imports = [./firefox.nix];
 
   config = lib.mkIf config.base.progs.enable {
-    virtualisation = {
-      libvirtd.enable = true;
-      docker = {
-        enable = true;
-        rootless = {
-          enable = true;
-          setSocketVariable = true;
-        };
-      };
-    };
+    # virtualisation = {
+    #   libvirtd.enable = true;
+    # };
 
     programs = {
       adb.enable = true;
