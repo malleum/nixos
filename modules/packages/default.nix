@@ -36,6 +36,9 @@
             wdisplays
             tiled
             godot
+            haguichi
+            logmein-hamachi
+            lumafly
 
             stable.prismlauncher
             protonup-ng
