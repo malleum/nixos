@@ -40,7 +40,7 @@
             logmein-hamachi
             lumafly
 
-            stable.prismlauncher
+            prismlauncher
             protonup-ng
             lutris
             bottles
