@@ -37,7 +37,6 @@
             tiled
             godot
             haguichi
-            logmein-hamachi
             lumafly
 
             prismlauncher
@@ -134,6 +133,7 @@
             # cli
             acpi
             arp-scan
+            gemini-cli
             libnotify
             libqalculate
             networkmanagerapplet
@@ -142,7 +142,6 @@
             openssl
             speedtest-cli
             spice-gtk
-            wirelesstools # apparently needed for wt 🤷‍♀
 
             # wayland
             hyprland-qtutils
