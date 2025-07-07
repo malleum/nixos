@@ -11,12 +11,8 @@ pkgs.writers.writeFishBin "disfiles" {}
           set files (fd --type f | sort)
       end
       for file in $files
-          set output "$output$file\n\n"
-          set output "$output```\n"
-          set output "$output"(cat $file)"\n"
-          set output "$output```\n\n"
+          set output "$output$file\n```\n$(cat $file)\n```\n"
       end
-
       echo -e $output | wl-copy
 
   end
