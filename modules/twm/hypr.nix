@@ -131,8 +131,11 @@
           "workspace 3, title:^(foot)$"
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
+          "workspace 4, title:^(.*Prism Launcher.*)$"
           "workspace 4, title:^(.*Terraria.*)$"
           "workspace 4, title:^(.*War.*)$"
+          "workspace 5, title:^(.*OBS.*)$"
+          "workspace 5, title:^(.*MainPicker.*)$"
 
           "float, title:^(.*All Files.*)$"
           "float, title:^(.*War.*Settings.*)$"
