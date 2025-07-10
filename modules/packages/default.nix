@@ -75,7 +75,6 @@
           ifopt config.packages.minimus.enable
           [
             inputs.fix-python.packages.${pkgs.system}.default
-            inputs.nixvim.packages.${pkgs.system}.default
             alejandra
             fastfetch
             killall

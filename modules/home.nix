@@ -7,6 +7,7 @@ in {
   stylix.targets = {
     tmux.enable = false;
     fish.enable = false;
+    nixvim.enable = false;
   };
 
   home = {

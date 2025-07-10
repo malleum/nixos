@@ -20,7 +20,7 @@
         alias cat "bat";
         alias la "ls -lah";
         alias ls "eza --icons --color";
-        alias nixvim "~/.config/nixvim/result/bin/nvim";
+        alias nixvim "nix run ~/.config/nixos#default";
         alias rm "echo Use 'rip' instead of rm";
 
         abbr -a stag "STAGING_BRANCH=(git branch --show-current)"

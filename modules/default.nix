@@ -11,6 +11,7 @@
     ./twm
     ./packages
     ./stylix.nix
+    ./../nixvim
   ];
 
   options.omni.enable = lib.mkOption {default = true;};

@@ -44,6 +44,9 @@ in {
       };
     };
 
-    targets = {fish.enable = false;};
+    targets = {
+      fish.enable = false;
+      nixvim.enable = false;
+    };
   };
 }
