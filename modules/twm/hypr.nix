@@ -67,7 +67,7 @@
           gaps_in = 5;
           gaps_out = 15;
           border_size = 2;
-          layout = "dwindle, master";
+          layout = "dwindle";
 
           "col.active_border" = "rgba(${config.stylix.base16Scheme.base04}ff) rgba(${config.stylix.base16Scheme.base0C}ff) 30deg";
           "col.inactive_border" = "rgba(${config.stylix.base16Scheme.base01}aa)";
@@ -152,13 +152,10 @@
           };
 
           hyprscrolling = {
-            # Sensible defaults for hyprscrolling
-            scroll_factor = 1.0;
-            scroll_points = 3;
-            scroll_method = "edge";
-            scroll_condition = "onwindow";
-            scroll_switch_windows = true;
-            scroll_focus_wrap = false;
+            fullscreen_on_one_column = false;
+            column_width = 0.5; # Sets the default column width to 50% of the monitor
+            focus_fit_method = 0; # 0 = center, 1 = fit
+            explicit_column_widths = "0.333, 0.5, 0.667, 1.0";
           };
         };
 
@@ -246,6 +243,16 @@
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
             "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
             "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
+
+            "SUPER, right, layoutmsg, move +col"
+            "SUPER, left, layoutmsg, move -col"
+            "SUPER, up, layoutmsg, colresize +0.1"
+            "SUPER, down, layoutmsg, colresize -0.1"
+            "SUPER, e, layoutmsg, promote" # <-- Alternative for promote
+
+            "SUPER, 0, exec, hyprctl dispatch changelayout dwindle"
+            "SUPER, 9, exec, hyprctl dispatch changelayout master"
+            "SUPER, 8, exec, hyprctl dispatch changelayout scrolling"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
