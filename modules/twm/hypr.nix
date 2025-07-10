@@ -144,22 +144,6 @@
 
         # Plugin configurations
         plugin = {
-          hyprexpo = {
-            columns = 3;
-            gap_size = 5;
-            bg_col = "rgba(${config.stylix.base16Scheme.base00}bb)";
-            active_workspace_border_color = "rgba(${config.stylix.base16Scheme.base0C}ff)";
-            active_window_border_color = "rgba(${config.stylix.base16Scheme.base04}ff)";
-            workspace_border_color = "rgba(${config.stylix.base16Scheme.base01}aa)";
-            window_border_color = "rgba(${config.stylix.base16Scheme.base01}aa)";
-            workspace_method = "center";
-            enable_gesture = true;
-            gesture_fingers = 3;
-            overlay_padding = 10;
-            workspace_name_color = "rgba(${config.stylix.base16Scheme.base05}ff)";
-            workspace_name_font_size = 20;
-          };
-
           hyprtrails = {
             decay_factor = 0.95;
             initial_alpha = 0.8;
@@ -243,9 +227,6 @@
             "SUPER, o, movecurrentworkspacetomonitor, +1"
             "SUPER SHIFT, o, movecurrentworkspacetomonitor, -1"
 
-            # Add hyprexpo binding
-            "SUPER, tab, hyprexpo:expo, toggle"
-
             # Scroll through existing workspaces with m + scroll
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
@@ -279,7 +260,6 @@
       };
 
       plugins = with pkgs; [
-        hyprlandPlugins.hyprexpo
         hyprlandPlugins.hyprtrails
         hyprlandPlugins.hyprscrolling
       ];
