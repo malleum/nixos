@@ -150,13 +150,6 @@
             length = 20;
             color = "rgba(${config.stylix.base16Scheme.base0C}88)";
           };
-
-          hyprscrolling = {
-            fullscreen_on_one_column = false;
-            column_width = 0.5; # Sets the default column width to 50% of the monitor
-            focus_fit_method = 0; # 0 = center, 1 = fit
-            explicit_column_widths = "0.333, 0.5, 0.667, 1.0";
-          };
         };
 
         bind = let
@@ -218,6 +211,7 @@
             "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
             "SUPER SHIFT, bracketright, exec, startup-eww-bar"
+            "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 
@@ -235,24 +229,14 @@
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
 
             # mcsr
-            "SUPER, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
-            "SUPER, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
-            "SUPER, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
-
-            "SUPER, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
+            "CONTROL, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
+            "CONTROL, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
+            "CONTROL, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
+            "CONTROL, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
             "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
             "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
-
-            "SUPER, right, layoutmsg, move +col"
-            "SUPER, left, layoutmsg, move -col"
-            "SUPER, up, layoutmsg, colresize +0.1"
-            "SUPER, down, layoutmsg, colresize -0.1"
-            "SUPER, e, layoutmsg, promote" # <-- Alternative for promote
-
-            "SUPER, 0, exec, hyprctl dispatch changelayout dwindle"
-            "SUPER, 9, exec, hyprctl dispatch changelayout master"
-            "SUPER, 8, exec, hyprctl dispatch changelayout scrolling"
+            "SUPER CONTROL SHIFT, 0, exec, fish ~/documents/gh/mcsr/omni.fish"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
@@ -266,10 +250,7 @@
         ];
       };
 
-      plugins = with pkgs; [
-        hyprlandPlugins.hyprtrails
-        hyprlandPlugins.hyprscrolling
-      ];
+      plugins = with pkgs; [ hyprlandPlugins.hyprtrails ];
     };
   };
 }
