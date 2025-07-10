@@ -137,7 +137,7 @@
           "workspace 5, title:^(.*OBS.*)$"
           "workspace 5, title:^(.*MainPicker.*)$"
 
-          "float, title:^(.*All Files.*)$"
+          "float, title:^(.*(All|Save) Files?.*)$"
           "float, title:^(.*War.*Settings.*)$"
           "fullscreen, title:^(.*War(?!Settings))$"
         ];
