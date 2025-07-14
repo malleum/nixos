@@ -15,7 +15,7 @@ in {
       base09 = "449caa";
       base0A = "84938e";
       base0B = "37a38c";
-      base0C = "b48a6a";
+      base0C = "A34C51";
       base0D = "6996ab";
       base0E = "539d9c";
       base0F = "7c997a";

@@ -34,8 +34,8 @@
         "window" = {
           location = mkLiteral "center";
           anchor = mkLiteral "center";
-          width = mkLiteral "45%";
-          height = mkLiteral "49%";
+          width = mkLiteral "50%";
+          height = mkLiteral "50%";
           padding = mkLiteral "24px";
           border = mkLiteral "2px";
           border-radius = mkLiteral "16px";

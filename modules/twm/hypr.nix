@@ -44,6 +44,7 @@
           "vesktop"
           "nm-applet"
           "waybar"
+          "swww-daemon"
         ];
 
         input = {
@@ -189,6 +190,7 @@
             "SUPER, c, exec, rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy"
             "SUPER SHIFT, e, exec, rofi -modi emoji -show emoji"
             "SUPER, v, exec, ${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy"
+            "SUPER CONTROL SHIFT, s, exec, themeswitcher"
 
             "SUPER SHIFT, q, killactive"
             "SUPER CONTROL SHIFT, semicolon, exit"
@@ -208,9 +210,9 @@
 
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
 
-            "SUPER, bracketleft, exec, systemctl --user restart hyprpaper"
+            "SUPER, bracketleft, exec, swww kill; swww-daemon"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
-            "SUPER CONTROL, bracketleft, exec, systemctl --user stop hyprpaper"
+            "SUPER CONTROL, bracketleft, exec, swww kill"
             "SUPER CONTROL, bracketright, exec, killall .waybar-wrapped"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
@@ -236,8 +238,8 @@
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
             "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
             "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
-            "SUPER SHIFT, bracketright, exec, fish ~/documents/gh/mcsr/omni.fish"
             "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
+            "SUPER SHIFT, bracketright, exec, fish ~/documents/gh/mcsr/omni.fish"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces

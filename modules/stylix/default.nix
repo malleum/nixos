@@ -11,13 +11,14 @@
       image = lib.mkForce themes.${theme}.image;
     };
   };
+  theme = "space";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
 
   stylix = {
     enable = true;
-    image = themes.cybertruck.image;
-    base16Scheme = themes.cybertruck.base16Scheme;
+    image = themes.${theme}.image;
+    base16Scheme = themes.${theme}.base16Scheme;
 
     polarity = "dark";
 

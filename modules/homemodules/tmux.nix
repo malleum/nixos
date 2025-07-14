@@ -1,5 +1,19 @@
-{pkgs, ...}: {
-  programs.tmux = {
+{
+  config,
+  pkgs,
+  ...
+}: {
+  programs.tmux = let
+    # Define Stylix colors as variables for readability
+    # These are common base16 mappings; you can adjust them as you like.
+    black = "#${config.stylix.base16Scheme.base00}";
+    bg_highlight = "#${config.stylix.base16Scheme.base02}";
+    blue = "#${config.stylix.base16Scheme.base0D}";
+    cyan = "#${config.stylix.base16Scheme.base0C}";
+    fg = "#${config.stylix.base16Scheme.base05}";
+    magenta = "#${config.stylix.base16Scheme.base0E}";
+    yellow = "#${config.stylix.base16Scheme.base0A}";
+  in {
     enable = true;
     shortcut = "Space";
     terminal = "tmux-256color";
@@ -7,27 +21,29 @@
     keyMode = "vi";
     baseIndex = 1;
     plugins = with pkgs.tmuxPlugins; [
-      sensible 
-      tilish 
-      tmux-fzf 
-      resurrect 
+      sensible
+      tilish
+      tmux-fzf
+      resurrect
       continuum
       copycat
       yank
       open
     ];
+    # Use an indented string (two single-quotes) to allow for Nix's ${...} interpolation
     extraConfig = ''
       set -g mouse on
       set-option -ga terminal-overrides ",xterm-256color:Tc"
 
-      set -g status-right "#[fg=colour133,nobold,nounderscore,noitalics]#[fg=colour0,bg=colour133] #h "
+      # Use a vibrant color for the hostname
+      set -g status-right "#[fg=${magenta},nobold,nounderscore,noitalics]#[fg=${black},bg=${magenta}] #h "
       bind v split-window -h -c '#{pane_current_path}'
       bind s split-window -v -c '#{pane_current_path}'
       bind c new-window -c '#{pane_current_path}'
 
       # Undercurl
-      set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'  # undercurl support
-      set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'  # underscore colours - needs tmux-3.0
+      set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'  # undercurl support
+      set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'  # underscore colours - needs tmux-3.0
 
       # tmux-resurrect configuration
       set -g @resurrect-capture-pane-contents 'on'
@@ -45,19 +61,19 @@
       # tmux-open configuration (optional customizations)
       set -g @open-S 'https://www.google.com/search?q='
 
-      # tokyonight-night
-      set -g mode-style "fg=#7aa2f7,bg=#3b4261"
+      # --- THEMED COLORS START HERE ---
+      set -g mode-style "fg=${blue},bg=${bg_highlight}"
 
-      set -g message-style "fg=#7aa2f7,bg=#3b4261"
-      set -g message-command-style "fg=#7aa2f7,bg=#3b4261"
+      set -g message-style "fg=${blue},bg=${bg_highlight}"
+      set -g message-command-style "fg=${blue},bg=${bg_highlight}"
 
-      set -g pane-border-style "fg=#3b4261"
-      set -g pane-active-border-style "fg=#7aa2f7"
+      set -g pane-border-style "fg=${bg_highlight}"
+      set -g pane-active-border-style "fg=${blue}"
 
       set -g status "on"
       set -g status-justify "left"
 
-      set -g status-style "fg=#7aa2f7,bg=#16161e"
+      set -g status-style "fg=${blue},bg=${black}"
 
       set -g status-left-length "100"
       set -g status-right-length "100"
@@ -65,17 +81,17 @@
       set -g status-left-style NONE
       set -g status-right-style NONE
 
-      set -g status-left "#[fg=#15161e,bg=#7aa2f7,bold] #S #[fg=#7aa2f7,bg=#16161e,nobold,nounderscore,noitalics]"
-      set -g status-right "#[fg=#7aa2f7,bg=#16161e,nobold,nounderscore,noitalics]#[fg=#15161e,bg=#7aa2f7,bold] #h "
+      set -g status-left "#[fg=${black},bg=${blue},bold] #S #[fg=${blue},bg=${black},nobold,nounderscore,noitalics]"
+      set -g status-right "#[fg=${blue},bg=${black},nobold,nounderscore,noitalics]#[fg=${black},bg=${blue},bold] #h "
 
-      setw -g window-status-activity-style "underscore,fg=#a9b1d6,bg=#16161e"
+      setw -g window-status-activity-style "underscore,fg=${fg},bg=${black}"
       setw -g window-status-separator ""
-      setw -g window-status-style "NONE,fg=#a9b1d6,bg=#16161e"
-      setw -g window-status-format "#[fg=#16161e,bg=#16161e,nobold,nounderscore,noitalics]#[default] #I / #W #F #[fg=#16161e,bg=#16161e,nobold,nounderscore,noitalics]"
-      setw -g window-status-current-format "#[fg=#16161e,bg=#3b4261,nobold,nounderscore,noitalics]#[fg=#7aa2f7,bg=#3b4261,bold] #I / #W #F #[fg=#3b4261,bg=#16161e,nobold,nounderscore,noitalics]"
+      setw -g window-status-style "NONE,fg=${fg},bg=${black}"
+      setw -g window-status-format "#[fg=${black},bg=${black},nobold,nounderscore,noitalics]#[default] #I / #W #F #[fg=${black},bg=${black},nobold,nounderscore,noitalics]"
+      setw -g window-status-current-format "#[fg=${black},bg=${bg_highlight},nobold,nounderscore,noitalics]#[fg=${blue},bg=${bg_highlight},bold] #I / #W #F #[fg=${bg_highlight},bg=${black},nobold,nounderscore,noitalics]"
 
       # tmux-plugins/tmux-prefix-highlight support
-      set -g @prefix_highlight_output_prefix "#[fg=#e0af68]#[bg=#16161e]#[fg=#16161e]#[bg=#e0af68]"
+      set -g @prefix_highlight_output_prefix "#[fg=${yellow}]#[bg=${black}]#[fg=${black}]#[bg=${yellow}]"
       set -g @prefix_highlight_output_suffix ""
     '';
   };

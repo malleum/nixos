@@ -1,13 +1,14 @@
-{pkgs, ...}: let
+{pkgs, lib, ...}: let
   username = "joshammer";
   homeDirectory = "/home/${username}";
   configHome = "${homeDirectory}/.config";
 in {
   imports = [./homemodules];
   stylix.targets = {
-    tmux.enable = false;
     fish.enable = false;
+    hyprpaper.enable = lib.mkForce false;
     nixvim.enable = false;
+    tmux.enable = false;
   };
 
   home = {

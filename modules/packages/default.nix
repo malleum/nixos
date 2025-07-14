@@ -143,10 +143,10 @@
 
             # wayland
             hyprland-qtutils
-            hyprpaper
             hyprpicker
             kdePackages.xwaylandvideobridge
             qt6.qtwayland
+            swww
             wl-clipboard
             wl-crosshair
             wtype

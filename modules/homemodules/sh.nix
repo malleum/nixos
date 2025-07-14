@@ -4,15 +4,29 @@
   ...
 }: {
   programs = {
-    fish = {
+    fish = let
+      themes = import ../stylix/themes.nix {inherit pkgs;};
+
+      wallpaper-script = lib.concatMapStringsSep "\n" (name: ''
+        case "${name}"; swww img "${themes.${name}.image}" --transition-type any --transition-fps 60
+      '') (lib.attrNames themes);
+    in {
       enable = true;
       shellInit = ''
         function fish_command_not_found
             echo skill issue: $argv[1]
         end
 
+        function set_wallpaper
+            switch $argv[1]
+                ${wallpaper-script}
+            end
+        end
+
         function theme
-            sudo "/nix/var/nix/profiles/system/specialisation/$argv[1]/bin/switch-to-configuration" switch
+            sudo "/nix/var/nix/profiles/system/specialisation/$argv[1]/bin/switch-to-configuration" switch & disown
+            sleep 1
+            set_wallpaper theme
         end
 
         set -g fish_greeting ""

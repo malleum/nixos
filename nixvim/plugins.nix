@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   alejandra = "${pkgs.alejandra}/bin/alejandra";
   cljfmt = "${pkgs.cljfmt}/bin/cljfmt";
   gdformat = "${pkgs.gdtoolkit_4}/bin/gdformat";
@@ -25,10 +29,7 @@ in {
       treesitter = {
         enable = true;
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash c gdscript cmake cpp c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss sql svelte toml typescript vim yaml zig];
-        settings = {
-          highlight.enable = true;
-          indent.enable = true;
-        };
+        settings = {highlight.enable = true;};
       };
 
       conform-nvim = {
@@ -66,32 +67,116 @@ in {
         linters.ruff.cmd = ruff;
         lintersByFt.python = ["ruff"];
       };
+      lualine = let
+        # Define colors from your Stylix palette
+        colors = {
+          bg = "#${config.stylix.base16Scheme.base00}";
+          bg_alt = "#${config.stylix.base16Scheme.base01}";
+          fg = "#${config.stylix.base16Scheme.base05}";
+          fg_dark = "#${config.stylix.base16Scheme.base03}";
 
-      lualine = {
+          red = "#${config.stylix.base16Scheme.base08}";
+          green = "#${config.stylix.base16Scheme.base0B}";
+          blue = "#${config.stylix.base16Scheme.base0D}";
+          yellow = "#${config.stylix.base16Scheme.base0A}";
+          magenta = "#${config.stylix.base16Scheme.base0E}";
+        };
+      in {
         enable = true;
         settings = {
           options = {
+            theme = {
+              normal = {
+                a = {
+                  fg = colors.bg;
+                  bg = colors.blue;
+                  gui = "bold";
+                };
+                b = {
+                  fg = colors.fg;
+                  bg = colors.bg_alt;
+                };
+                c = {
+                  fg = colors.fg;
+                  bg = colors.bg;
+                };
+              };
+              insert = {
+                a = {
+                  fg = colors.bg;
+                  bg = colors.green;
+                  gui = "bold";
+                };
+              };
+              visual = {
+                a = {
+                  fg = colors.bg;
+                  bg = colors.magenta;
+                  gui = "bold";
+                };
+              };
+              replace = {
+                a = {
+                  fg = colors.bg;
+                  bg = colors.red;
+                  gui = "bold";
+                };
+              };
+              command = {
+                a = {
+                  fg = colors.bg;
+                  bg = colors.yellow;
+                  gui = "bold";
+                };
+              };
+              inactive = {
+                a = {
+                  fg = colors.fg;
+                  bg = colors.bg;
+                  gui = "bold";
+                };
+                b = {
+                  fg = colors.fg_dark;
+                  bg = colors.bg;
+                };
+                c = {
+                  fg = colors.fg_dark;
+                  bg = colors.bg;
+                };
+              };
+            };
             section_separators = {
               left = "";
               right = "";
             };
             component_separators = {
-              left = "\\";
-              right = "/";
+              left = "";
+              right = "";
             };
+            always_divide_middle = true;
           };
+
           sections = {
             lualine_a = ["mode"];
-            lualine_b = ["branch" "diff" "diagnostics"];
-            lualine_c = ["filename"];
-            lualine_x = ["selectioncount" "filetype"];
-            lualine_y = ["encoding" "filexxformat"];
+            lualine_b = ["branch" "diff"];
+            lualine_c = ["diagnostics"];
+            lualine_x = ["filetype"];
+            lualine_y = ["progress"];
             lualine_z = ["location"];
+          };
+
+          # CORRECTED: Use an empty list `[]` for empty sections, not `{}`.
+          inactive_sections = {
+            lualine_a = [];
+            lualine_b = [];
+            lualine_c = ["filename"];
+            lualine_x = ["location"];
+            lualine_y = [];
+            lualine_z = [];
           };
         };
       };
     };
-
     keymaps = [
       {
         mode = "n";
