@@ -131,7 +131,9 @@
             # cli
             acpi
             arp-scan
+            ffmpeg
             gemini-cli
+            imagemagick
             libnotify
             libqalculate
             networkmanagerapplet

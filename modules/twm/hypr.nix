@@ -4,7 +4,9 @@
   pkgs,
   ...
 }: {
-  config = {
+  config = let
+    wallpaper = config.stylix.image;
+  in {
     programs.hyprland.enable = true;
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
@@ -44,7 +46,7 @@
           "vesktop"
           "nm-applet"
           "waybar"
-          "swww-daemon"
+          "swww-daemon && swww img ${wallpaper}"
         ];
 
         input = {

@@ -43,4 +43,8 @@ in {
     };
     image = dim ./wallpapers/cybertruckLego.jpg "-20";
   };
+  su57 = {
+    base16Scheme = null;
+    image = dim ./wallpapers/tall_dark_sky_su57.jpg "-10";
+  };
 }
