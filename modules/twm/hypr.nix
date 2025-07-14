@@ -53,7 +53,10 @@
 
           follow_mouse = 1;
 
-          touchpad.natural_scroll = true;
+          touchpad = {
+            natural_scroll = true;
+            disable_while_typing = true;
+          };
 
           accel_profile = "flat";
           sensitivity = 0;
@@ -219,8 +222,8 @@
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
 
-            ", xf86audiolowervolume, exec, pulsemixer --change-volume -5"
-            ", xf86audioraisevolume, exec, pulsemixer --change-volume +5"
+            ", xf86audiolowervolume, exec, pulsemixer --set-volume $(echo \"($(pulsemixer --get-volume | choose 0) - 5) / 5 * 5\" | bc)"
+            ", xf86audioraisevolume, exec, pulsemixer --set-volume $(echo \"($(pulsemixer --get-volume | choose 0) + 5) / 5 * 5\" | bc)"
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"

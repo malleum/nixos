@@ -11,6 +11,10 @@
             echo skill issue: $argv[1]
         end
 
+        function theme
+            sudo "/nix/var/nix/profiles/system/specialisation/$argv[1]/bin/switch-to-configuration" switch
+        end
+
         set -g fish_greeting ""
 
         fish_vi_key_bindings

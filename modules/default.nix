@@ -10,7 +10,7 @@
     ./gpu.nix
     ./twm
     ./packages
-    ./stylix.nix
+    ./stylix
     ./../nixvim
   ];
 
