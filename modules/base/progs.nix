@@ -7,11 +7,11 @@
   imports = [./firefox.nix];
 
   config = lib.mkIf config.base.progs.enable {
-    # virtualisation = {
-    #   libvirtd.enable = true;
-    # };
-
     programs = {
+      obs-studio = {
+        enable = true;
+        plugins = with pkgs.obs-studio-plugins; [obs-pipewire-audio-capture wlrobs];
+      };
       adb.enable = true;
       dconf.enable = true;
       nix-ld = {

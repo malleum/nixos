@@ -28,7 +28,6 @@
             code-cursor-fhs
             keyd
             losslesscut-bin
-            obs-studio
             onedrive
             quickemu
             vlc
