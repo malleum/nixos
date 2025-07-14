@@ -15,9 +15,8 @@
     [*minecraft*]
     capslock = 0
     0 = noop
+    f3 = noop
   '';
-  # ` = rightshift
-  # rightshift = `
 
   systemd = {
     services.keyd-manual = {

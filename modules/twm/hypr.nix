@@ -24,20 +24,18 @@
           # VAAPI for hardware video decoding
           "LIBVA_DRIVER_NAME,radeonsi"
         ];
-        monitor =
-          [",addreserved,30,0,0,0"]
-          ++ (
-            if config.networking.hostName == "magnus"
-            then [
-              "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
-              "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
-            ]
-            else [
-              "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
-              "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
-              ",preferred,auto,1"
-            ]
-          );
+        monitor = (
+          if config.networking.hostName == "magnus"
+          then [
+            "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
+            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
+          ]
+          else [
+            "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
+            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
+            ",preferred,auto,1"
+          ]
+        );
 
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
@@ -45,8 +43,7 @@
           "${pkgs.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
-          "hyprpaper"
-          "startup-eww-bar"
+          "waybar"
         ];
 
         input = {
@@ -208,10 +205,10 @@
 
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
 
-            "SUPER, bracketleft, exec, killall hyprpaper; hyprpaper"
+            "SUPER, bracketleft, exec, systemctl --user restart hyprpaper"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
-            "SUPER SHIFT, bracketright, exec, startup-eww-bar"
-            "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
+            "SUPER CONTROL, bracketleft, exec, systemctl --user stop hyprpaper"
+            "SUPER CONTROL, bracketright, exec, killall .waybar-wrapped"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 
@@ -236,7 +233,8 @@
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
             "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
             "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
-            "SUPER CONTROL SHIFT, 0, exec, fish ~/documents/gh/mcsr/omni.fish"
+            "SUPER SHIFT, bracketright, exec, fish ~/documents/gh/mcsr/omni.fish"
+            "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
@@ -250,7 +248,7 @@
         ];
       };
 
-      plugins = with pkgs; [ hyprlandPlugins.hyprtrails ];
+      plugins = with pkgs; [hyprlandPlugins.hyprtrails];
     };
   };
 }

@@ -35,7 +35,7 @@
           location = mkLiteral "center";
           anchor = mkLiteral "center";
           width = mkLiteral "45%";
-          height = mkLiteral "50%";
+          height = mkLiteral "49%";
           padding = mkLiteral "24px";
           border = mkLiteral "2px";
           border-radius = mkLiteral "16px";
@@ -53,27 +53,36 @@
           spacing = mkLiteral "12px";
           padding = mkLiteral "12px";
           border-radius = mkLiteral "12px";
-          background-color = mkLiteral "#${config.stylix.base16Scheme.base01}33";
+          background-color = mkLiteral "#${config.stylix.base16Scheme.base01}66"; # More visible background
         };
         "listview" = {
-          columns = 6;
-          lines = 3;
-          spacing = mkLiteral "12px";
+          # --- KEY CHANGE: From grid to list ---
+          columns = 1;
+          lines = 8; # Adjust as needed for more/fewer visible items
+          spacing = mkLiteral "8px"; # Space between list items
           cycle = true;
+          # Ensure listview itself has a transparent background
+          background-color = mkLiteral "transparent";
         };
         "element" = {
-          orientation = mkLiteral "vertical";
+          # --- KEY CHANGE: Horizontal item layout ---
+          orientation = mkLiteral "horizontal";
+          children = mkLiteral "[element-icon, element-text]";
           cursor = mkLiteral "pointer";
-          spacing = mkLiteral "8px";
-          padding = mkLiteral "12px";
+          spacing = mkLiteral "16px"; # Space between icon and text
+          padding = mkLiteral "10px";
           border-radius = mkLiteral "12px";
         };
         "element-icon" = {
-          size = mkLiteral "3.5em";
-          horizontal-align = mkLiteral "0.5";
+          # --- KEY CHANGE: Smaller icon for list view ---
+          size = mkLiteral "1.5em";
+          # Icons are now vertically centered in the list item
+          vertical-align = mkLiteral "0.5";
         };
         "element-text" = {
-          horizontal-align = mkLiteral "0.5";
+          # --- KEY CHANGE: Left-aligned text ---
+          horizontal-align = mkLiteral "0.0";
+          vertical-align = mkLiteral "0.5";
           text-color = mkLiteral "inherit";
         };
         "element selected" = {
@@ -81,24 +90,23 @@
           text-color = mkLiteral "#${config.stylix.base16Scheme.base0C}";
         };
         "entry" = {
-          placeholder = "Search or Calculate...";
-          placeholder-color = mkLiteral "#${config.stylix.base16Scheme.base02}";
+          placeholder = "";
+          placeholder-color = mkLiteral "#${config.stylix.base16Scheme.base03}";
           text-color = mkLiteral "#${config.stylix.base16Scheme.base0C}";
+          vertical-align = mkLiteral "0.5";
         };
         "prompt" = {
           text-color = mkLiteral "#${config.stylix.base16Scheme.base09}";
+          vertical-align = mkLiteral "0.5";
         };
-
         "message" = {
           padding = mkLiteral "12px";
           border-radius = mkLiteral "12px";
           background-color = mkLiteral "#${config.stylix.base16Scheme.base01}4D";
         };
         "textbox" = {
-          # This is the box that holds the live answer text.
           background-color = mkLiteral "inherit";
-          text-color = mkLiteral "#${config.stylix.base16Scheme.base0B}"; # A bright, readable color for the result
-          font = "JetBrainsMono Nerd Font 12";
+          text-color = mkLiteral "#${config.stylix.base16Scheme.base0B}";
           horizontal-align = mkLiteral "0.5";
         };
       };
