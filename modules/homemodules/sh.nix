@@ -26,7 +26,7 @@
         function theme
             sudo "/nix/var/nix/profiles/system/specialisation/$argv[1]/bin/switch-to-configuration" switch & disown
             sleep 1
-            set_wallpaper theme
+            set_wallpaper $argv[1]
         end
 
         set -g fish_greeting ""
