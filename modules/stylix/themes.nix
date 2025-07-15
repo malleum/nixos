@@ -45,22 +45,22 @@ in {
   };
   su57 = {
     base16Scheme = {
-      base00 = "#0b131e";
-      base01 = "#7F7F79";
-      base02 = "#325E8B";
-      base03 = "#546F95";
-      base04 = "#587EC3";
-      base05 = "#748CA9";
-      base06 = "#7394CA";
-      base07 = "#bcc6ce";
-      base08 = "#838a90";
-      base09 = "#7F7F79";
-      base0A = "#325E8B";
-      base0B = "#546F95";
-      base0C = "#587EC3";
-      base0D = "#748CA9";
-      base0E = "#7394CA";
-      base0F = "#bcc6ce";
+      base00 = "0b131e";
+      base01 = "7F7F79";
+      base02 = "325E8B";
+      base03 = "546F95";
+      base04 = "587EC3";
+      base05 = "748CA9";
+      base06 = "7394CA";
+      base07 = "bcc6ce";
+      base08 = "838a90";
+      base09 = "7F7F79";
+      base0A = "325E8B";
+      base0B = "546F95";
+      base0C = "587EC3";
+      base0D = "748CA9";
+      base0E = "7394CA";
+      base0F = "bcc6ce";
     };
     image = dim ./wallpapers/tall_dark_sky_su57.jpg "-10";
   };

@@ -15,7 +15,6 @@
     [*minecraft*]
     capslock = 0
     0 = noop
-    f3 = noop
   '';
 
   systemd = {
