@@ -27,8 +27,8 @@ in {
       popups = 0.9;
     };
     cursor = {
-      name = "graphite-light";
-      package = pkgs.graphite-cursors;
+      name = "Bibata-Modern-Classic";
+      package = pkgs.bibata-cursors;
       size = 32;
     };
 
