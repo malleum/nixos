@@ -199,8 +199,8 @@
             "SUPER SHIFT, z, exec, poweroff"
             "SUPER CONTROL, z, exec, reboot"
 
-            ", print, exec, ${pkgs.hyprshot}/bin/hyprshot -m output --clipboard-only"
-            "SHIFT, print, exec, ${pkgs.hyprshot}/bin/hyprshot -m window --clipboard-only"
+            ", print, exec, ${pkgs.hyprshot}/bin/hyprshot -m active -z --clipboard-only"
+            "SHIFT, print, exec, ${pkgs.hyprshot}/bin/hyprshot -m region -z --clipboard-only"
             "SUPER SHIFT, s, exec, ${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only"
             "SUPER CONTROL, s, exec, wl-paste | ${pkgs.swappy}/bin/swappy -f -"
 
