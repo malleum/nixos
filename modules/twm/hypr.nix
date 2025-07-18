@@ -238,8 +238,8 @@
             "CONTROL, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
             "CONTROL, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
             "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
-            "SUPER, Pause, exec, fish ~/documents/gh/mcsr/creative.sh"
-            "SUPER SHIFT, Pause, exec, fish ~/documents/gh/mcsr/pearch.sh"
+            "SUPER, home, exec, fish ~/documents/gh/mcsr/creative.sh"
+            "SUPER SHIFT, home, exec, fish ~/documents/gh/mcsr/pearch.sh"
             "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
             "SUPER SHIFT, bracketright, exec, fish ~/documents/gh/mcsr/omni.fish"
           ]
