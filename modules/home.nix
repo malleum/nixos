@@ -1,7 +1,12 @@
-{pkgs, lib, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   username = "joshammer";
   homeDirectory = "/home/${username}";
   configHome = "${homeDirectory}/.config";
+  glfwww = pkgs.callPackage ./packages/glfwww.nix {};
 in {
   imports = [./homemodules];
   stylix.targets = {
@@ -16,10 +21,13 @@ in {
     enableNixpkgsReleaseCheck = false;
     stateVersion = "23.11";
 
-    file.".config/onedrive/config".text = ''
-      disable_notifications = "true"
-      skip_dir = ".git*"
-    '';
+    file = {
+      ".config/onedrive/config".text = ''
+        disable_notifications = "true"
+        skip_dir = ".git*"
+      '';
+      ".local/lib64/libglfw.so".source = "${glfwww}/lib/libglfw.so";
+    };
   };
 
   xdg = {

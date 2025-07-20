@@ -15,6 +15,7 @@
 
   config = let
     iogii = pkgs.callPackage ./iogii.nix {};
+    glfwww = pkgs.callPackage ./glfwww.nix {};
     ifopt = opt: lst:
       if opt
       then lst
@@ -39,6 +40,8 @@
             lumafly
 
             prismlauncher
+            waywall 
+            glfwww
             protonup-ng
             lutris
             bottles
