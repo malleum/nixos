@@ -233,17 +233,6 @@
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
-
-            # mcsr
-            "CONTROL, F3, exec, echo thin | nc -U /tmp/minecraft-manager.sock"
-            "CONTROL, mouse:275, exec, echo wide | nc -U /tmp/minecraft-manager.sock"
-            "CONTROL, F1, exec, echo measure | nc -U /tmp/minecraft-manager.sock"
-            "CONTROL, grave, exec, echo chest | nc -U /tmp/minecraft-manager.sock"
-            "SUPER, 3, exec, fish ~/documents/gh/mcsr/crosshair.sh"
-            "SUPER, home, exec, fish ~/documents/gh/mcsr/creative.sh"
-            "SUPER SHIFT, home, exec, fish ~/documents/gh/mcsr/pearch.sh"
-            "SUPER SHIFT, bracketleft, exec, bash ~/documents/gh/mcsr/wallpaper.sh"
-            "SUPER SHIFT, bracketright, exec, fish ~/documents/gh/mcsr/omni.fish"
           ]
           ++ many "SUPER" "workspace" wkspaces
           ++ many "SUPER SHIFT" "movetoworkspace" wkspaces
