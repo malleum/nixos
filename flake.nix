@@ -18,6 +18,7 @@
 
     nur.url = "github:nix-community/NUR";
     stylix.url = "github:danth/stylix";
+    waywall.url = "github:malleum/waywall";
   };
   outputs = {self, ...} @ inputs: let
     inherit (inputs.unstable) lib;

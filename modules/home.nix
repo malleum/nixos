@@ -1,12 +1,13 @@
 {
   pkgs,
   lib,
+  inputs,
   ...
 }: let
   username = "joshammer";
   homeDirectory = "/home/${username}";
   configHome = "${homeDirectory}/.config";
-  glfwww = pkgs.callPackage ./packages/glfwww.nix {};
+  glfwww = inputs.waywall.packages.${pkgs.system}.glfw;
 in {
   imports = [./homemodules];
   stylix.targets = {

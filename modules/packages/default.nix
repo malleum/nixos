@@ -15,9 +15,9 @@
 
   config = let
     iogii = pkgs.callPackage ./iogii.nix {};
-    glfwww = pkgs.callPackage ./glfwww.nix {};
-    ninjabrainbot = pkgs.callPackage ./ninjabrain-bot.nix {};
-    waywall-git = pkgs.callPackage ./waywall.nix {};
+    glfwww = inputs.waywall.packages.${pkgs.system}.glfw;
+    ninjabrainbot = inputs.waywall.packages.${pkgs.system}.ninjabrainbot;
+    waywall-git = inputs.waywall.packages.${pkgs.system}.waywall;
     ifopt = opt: lst:
       if opt
       then lst

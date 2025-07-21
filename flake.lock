@@ -574,6 +574,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_7": {
+      "locked": {
+        "lastModified": 1752950548,
+        "narHash": "sha256-NS6BLD0lxOrnCiEOcvQCDVPXafX1/ek1dfJHX1nUIzc=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "c87b95e25065c028d31a94f06a62927d18763fdf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixvim": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -674,7 +690,8 @@
         "nur": "nur",
         "stable": "stable",
         "stylix": "stylix",
-        "unstable": "unstable"
+        "unstable": "unstable",
+        "waywall": "waywall"
       }
     },
     "stable": {
@@ -879,6 +896,24 @@
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "waywall": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_7"
+      },
+      "locked": {
+        "lastModified": 1753069708,
+        "narHash": "sha256-DFmP3F4JV7vcEuVdBoe4wqNqemY+a+BJWFUWnA5HinI=",
+        "owner": "malleum",
+        "repo": "waywall",
+        "rev": "7e4a1232db87baa5459feb9623a831bb86a06271",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "waywall",
         "type": "github"
       }
     }
