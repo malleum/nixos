@@ -134,6 +134,8 @@
           "workspace 3, title:^(foot)$"
           "workspace 4, title:^(.*Steam.*)$"
           "workspace 4, title:^(.*Minecraft.*)$"
+          "workspace 4 silent, title:^(waywall)$"
+          "fullscreen, title:^(waywall)$"
           "workspace 4, title:^(.*Prism Launcher.*)$"
           "workspace 4, title:^(.*Terraria.*)$"
           "workspace 4, title:^(.*War.*)$"

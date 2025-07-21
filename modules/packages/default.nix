@@ -16,6 +16,8 @@
   config = let
     iogii = pkgs.callPackage ./iogii.nix {};
     glfwww = pkgs.callPackage ./glfwww.nix {};
+    ninjabrainbot = pkgs.callPackage ./ninjabrain-bot.nix {};
+    waywall-git = pkgs.callPackage ./waywall.nix {};
     ifopt = opt: lst:
       if opt
       then lst
@@ -40,8 +42,9 @@
             lumafly
 
             prismlauncher
-            waywall 
+            waywall-git
             glfwww
+            ninjabrainbot
             protonup-ng
             lutris
             bottles
