@@ -26,6 +26,17 @@
         jack.enable = true;
         wireplumber.enable = true;
       };
+
+      xserver = {
+        enable = true;
+        xkb.extraLayouts = {
+          mcsr = {
+            description = "MCSR Custom Layout";
+            languages = ["eng"];
+            symbolsFile = ./keyboard.xkb;
+          };
+        };
+      };
     };
 
     security = {

@@ -1,0 +1,82 @@
+// MCSR v2 Layout
+
+xkb_symbols "mcsr" {
+    include "us"
+    name[Group1]= "mcsr";
+
+    // -- ROW 1 (Top - Tilde and Numbers) --
+    key <TLDE> { [         Tab,  ISO_Left_Tab  ] }; // CUSTOM: This key is now Tab
+    key <AE01> { [         1,    exclam        ] }; // CUSTOM
+    key <AE02> { [         2,    at            ] }; // CUSTOM
+    key <AE03> { [         3,    numbersign    ] }; // CUSTOM
+    key <AE04> { [         4,    dollar        ] }; // CUSTOM
+    key <AE05> { [         5,    percent       ] }; // CUSTOM
+    key <AE06> { [         6,    asciicircum   ] }; // Standard
+    key <AE07> { [         7,    ampersand     ] }; // Standard
+    key <AE08> { [         8,    asterisk      ] }; // Standard
+    key <AE09> { [         9,    parenleft     ] }; // Standard
+    key <AE10> { [         0,    parenright    ] }; // Standard
+    key <AE11> { [ bracketleft,  braceleft     ] }; // Standard
+    key <AE12> { [ bracketright, braceright    ] }; // Standard
+    key <BKSP> { [   BackSpace,  BackSpace     ] };
+
+    // -- ROW 2 (Tab and Top Letters) --
+    key <TAB>  { [      plus,       plus        ] }; // MODIFIED: Original Tab is +
+    key <AD01> { [         n,    N             ] }; // CUSTOM
+    key <AD02> { [         r,    R             ] }; // CUSTOM
+    key <AD03> { [         e,    E             ] }; // CUSTOM
+    key <AD04> { [         u,    U             ] }; // CUSTOM
+    key <AD05> { [         y,    Y             ] }; // CUSTOM
+    key <AD06> { [         p,    P             ] }; // REPURPOSED for displaced 'p'
+    key <AD07> { [         o,    O             ] }; // REPURPOSED for displaced 'o'
+    key <AD08> { [         k,    K             ] }; // REPURPOSED for displaced 'k'
+    key <AD09> { [         x,    X             ] }; // REPURPOSED for displaced 'x'
+    key <AD10> { [         l,    L             ] }; // Dvorak
+    key <AD11> { [ apostrophe,   quotedbl      ] }; // REPURPOSED for displaced '''
+    key <AD12> { [     equal,    plus          ] }; // Dvorak
+    key <BKSL> { [     comma,    less          ] }; // REPURPOSED for displaced ','
+
+    // -- ROW 3 (Modifiers and Middle Letters) --
+    key <CAPS> { [         0,    0             ] }; // MODIFIED: CapsLock is Backspace
+    key <AC01> { [    oslash,    Oslash        ] }; // CUSTOM: ø/Ø
+    key <AC02> { [         t,    T             ] }; // CUSTOM
+    key <AC03> { [ Backspace,    Backspace     ] }; // CUSTOM: This key is now Tab
+    key <AC04> { [         f,    F             ] }; // CUSTOM
+    key <AC05> { [         g,    G             ] }; // CUSTOM
+    key <AC06> { [         d,    D             ] }; // Dvorak
+    key <AC07> { [         h,    H             ] }; // Dvorak
+    key <AC08> { [         j,    J             ] }; // REPURPOSED for displaced 'j'
+    key <AC09> { [         q,    Q             ] }; // REPURPOSED for displaced 'q'
+    key <AC10> { [ semicolon,    colon         ] }; // REPURPOSED for displaced ';'
+    key <AC11> { [      minus,   underscore    ] }; // Dvorak
+    key <RTRN> { [      Return,   Return        ] };
+
+    // -- ROW 4 (Modifiers and Bottom Letters) --
+    key <LFSH> { [   Control_L                 ] }; // MODIFIED: Left Shift is now logical Control
+    key <AB01> { [         s,    S             ] }; // CUSTOM
+    key <AB02> { [         a,    A             ] }; // CUSTOM
+    key <AB03> { [         c,    C             ] }; // CUSTOM
+    key <AB04> { [         i,    I             ] }; // CUSTOM
+    key <AB05> { [         b,    B             ] }; // CUSTOM
+    key <AB06> { [         m,    M             ] }; // Dvorak
+    key <AB07> { [         w,    W             ] }; // Dvorak
+    key <AB08> { [         v,    V             ] }; // Dvorak
+    key <AB09> { [         z,    Z             ] }; // Dvorak
+    key <AB10> { [    period,    greater       ] }; // REPURPOSED for displaced '.'
+    key <RTSH> { [   Shift_R,    Shift_R       ] };
+
+    // -- ROW 5 (Bottom Modifiers) --
+    key <LCTL> { [   Shift_L                   ] }; // MODIFIED: Left Control is now logical Shift
+    key <LWIN> { [     Super_L                 ] };
+    key <LALT> { [      aring,   Aring         ] }; // MODIFIED: Left Alt is å/Å
+    key <SPCE> { [      space,   space         ] };
+    key <RALT> { [   ISO_Level3_Shift          ] };
+    key <RWIN> { [     Super_R                 ] };
+    key <MENU> { [      Menu                   ] };
+    key <RCTL> { [   Control_R                 ] };
+
+    // -- Final Modifier Map Definitions --
+    modifier_map Shift   { <RTSH>, <LCTL> };
+    modifier_map Control { <RCTL>, <LFSH> };
+};
+

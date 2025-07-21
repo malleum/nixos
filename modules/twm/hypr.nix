@@ -143,8 +143,6 @@
           "workspace 5, title:^(.*MainPicker.*)$"
 
           "float, title:^(.*(All|Save) Files?.*)$"
-          "float, title:^(.*War.*Settings.*)$"
-          "fullscreen, title:^(.*War(?!Settings))$"
         ];
 
         # Plugin configurations
