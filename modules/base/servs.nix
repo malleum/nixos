@@ -3,6 +3,8 @@
   config,
   ...
 }: {
+  imports = [./keyboard.nix];
+
   config = lib.mkIf config.base.servs.enable {
     # Faster boot (may help overall responsiveness)
     systemd.extraConfig = ''
@@ -33,7 +35,7 @@
           mcsr = {
             description = "MCSR Custom Layout";
             languages = ["eng"];
-            symbolsFile = ./keyboard.xkb;
+            symbolsFile = builtins.toFile "mcsrkeyboard.xkb" config.keyboard;
           };
         };
       };

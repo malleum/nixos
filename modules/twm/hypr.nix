@@ -52,7 +52,7 @@
         input = {
           kb_layout = "us,us";
           kb_variant = "dvorak,";
-          kb_options = "caps:escape,compose:menu";
+          kb_options = "compose:menu";
 
           follow_mouse = 1;
 
