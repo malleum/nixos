@@ -15,6 +15,11 @@
     [*minecraft*]
     capslock = 0
     0 = noop
+
+    [waywall]
+    tab = +
+    ` = tab
+    d = backspace
   '';
 
   systemd = {
