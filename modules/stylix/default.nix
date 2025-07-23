@@ -27,8 +27,10 @@ in {
       popups = 0.9;
     };
     cursor = {
-      name = "Bibata-Modern-Classic";
-      package = pkgs.bibata-cursors;
+      # name = "Bibata-Modern-Classic";
+      # package = pkgs.bibata-cursors;
+      name = "crosshaircursor";
+      package = inputs.crosshair.packages.${pkgs.system}.crosshaircursor;
       size = 32;
     };
 
