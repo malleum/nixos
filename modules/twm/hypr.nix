@@ -210,7 +210,7 @@
             "SUPER, f, fullscreen, 1"
             "SUPER SHIFT, f, fullscreen, 0"
 
-            "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000" # escape
+            "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000"
 
             "SUPER, bracketleft, exec, swww kill; swww-daemon"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
@@ -226,8 +226,8 @@
             "SUPER, mouse_down, workspace, e+1"
             "SUPER, mouse_up, workspace, e-1"
 
-            ", xf86audiolowervolume, exec, pulsemixer --set-volume $(echo \"($(pulsemixer --get-volume | choose 0) - 5) / 5 * 5\" | bc)"
-            ", xf86audioraisevolume, exec, pulsemixer --set-volume $(echo \"($(pulsemixer --get-volume | choose 0) + 5) / 5 * 5\" | bc)"
+            ", xf86audiolowervolume, exec, pulsemixer --change-volume -5"
+            ", xf86audioraisevolume, exec, pulsemixer --change-volume +5"
             ", xf86audiomute, exec, pulsemixer --toggle-mute"
             ", xf86monbrightnessup, exec, xbacklight -inc 10"
             ", xf86monbrightnessdown, exec, xbacklight -dec 10"
