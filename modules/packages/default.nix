@@ -139,6 +139,7 @@
             arp-scan
             ffmpeg
             gemini-cli
+            claude-code
             imagemagick
             libnotify
             libqalculate
