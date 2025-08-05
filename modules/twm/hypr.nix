@@ -14,7 +14,6 @@
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
           "NIXOS_OZONE_WL,1"
-          "XKB_DEFAULT_OPTIONS,compose:ralt"
           # Force Firefox to use Wayland
           "MOZ_ENABLE_WAYLAND,1"
           "MOZ_USE_XINPUT2,1"
@@ -52,7 +51,7 @@
         input = {
           kb_layout = "us,us";
           kb_variant = "dvorak,";
-          kb_options = "caps:escape,compose:ralt";
+          kb_options = "caps:escape,compose:ins";
 
           follow_mouse = 1;
 
