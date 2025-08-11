@@ -73,7 +73,6 @@
         VISUAL = "nvim";
         BROWSER = "brave";
         TERMINAL = "foot";
-        AMD_VULKAN_ICD = "AMDVLK";
       };
 
       shellAliases = {
