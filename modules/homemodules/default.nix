@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   imports = [
@@ -21,7 +22,10 @@
   programs = {
     spotify-player = {
       enable = true;
-      settings.client_id_command = "~/OneDrive/Documents/Stuff/ProgrammingOrCodes/psswd/spotify_id.sh";
+      settings = {
+        client_id_command = "${config.home.homeDirectory}/documents/gh/k/spotify_id.sh";
+        client_secret_command = "${config.home.homeDirectory}/documents/gh/k/spotify_secret.sh";
+      };
     };
     vesktop = {
       enable = true;

@@ -32,27 +32,5 @@
         };
       };
     };
-
-    home-manager.users.joshammer = {pkgs, ...}: {
-      systemd.user.services = {
-        spotifyplayer = {
-          Unit = {
-            Description = "Spotify player daemon";
-            After = ["network-online.target"];
-            Wants = ["network-online.target"];
-          };
-
-          Install = {
-            WantedBy = ["default.target"];
-          };
-
-          Service = {
-            ExecStart = "${pkgs.spotify-player}/bin/spotify-player";
-            Restart = "always";
-            RestartSec = 1;
-          };
-        };
-      };
-    };
   };
 }

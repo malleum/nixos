@@ -97,7 +97,7 @@
       cmp_luasnip.enable = true; # snippets
       lspkind = {
         enable = true;
-        extraOptions = {
+        settings = {
           maxwidth = 50;
           ellipsis_char = "...";
         };
