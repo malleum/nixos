@@ -23,8 +23,10 @@
     spotify-player = {
       enable = true;
       settings = {
-        client_id_command = "${config.home.homeDirectory}/documents/gh/k/spotify_id.sh";
-        client_secret_command = "${config.home.homeDirectory}/documents/gh/k/spotify_secret.sh";
+        client_id_command = {
+          command = "cat";
+          args = ["${config.home.homeDirectory}/documents/gh/k/spotify_id"];
+        };
       };
     };
     vesktop = {
