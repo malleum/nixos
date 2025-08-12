@@ -5,7 +5,7 @@
         enable = true;
         extensions.fzf-native.enable = true;
         settings.defaults = {
-          border = false;
+          border = true;
           layout_config.horizontal = {
             prompt_position = "top";
             width = 0.95;
