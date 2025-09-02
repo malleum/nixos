@@ -193,29 +193,6 @@ in {
     extraPlugins = with pkgs.vimPlugins; [
       vim-visual-multi
       vim-indent-object
-      (pkgs.vimUtils.buildVimPlugin {
-        name = "grapplevim";
-        src = ./grapplevim;
-      })
     ];
-    extraConfigLua =
-      # lua
-      ''
-        require('grapplevim').setup({map_leader = "<Backspace>"})
-
-        vim.api.nvim_create_autocmd('BufWinEnter', {
-          pattern = '*',
-          callback = function()
-            if vim.bo.filetype == 'gdscript' and vim.wo.previewwindow then
-              vim.treesitter.start()
-            end
-          end,
-        })
-
-        vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-          pattern = '*.gd',
-          command = 'set filetype=gdscript',
-        })
-      '';
   };
 }
