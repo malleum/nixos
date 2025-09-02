@@ -42,7 +42,7 @@
             enable = true;
             extraOptions.offset_encoding = "utf-8";
             settings = {
-              exportPdf = "never";
+              exportPdf = "onSave";
               root_dir =
                 # lua
                 ''

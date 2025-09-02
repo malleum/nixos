@@ -18,19 +18,6 @@
           RestartSec = 3; # Add delay
         };
       };
-
-      # OneDrive sync - needs network
-      onedrive = {
-        description = "OneDrive sync";
-        wantedBy = ["default.target"];
-        after = ["network-online.target"]; # Wait for network
-        wants = ["network-online.target"];
-        serviceConfig = {
-          ExecStart = "${pkgs.onedrive}/bin/onedrive --monitor";
-          Restart = "always";
-          RestartSec = 5;
-        };
-      };
     };
   };
 }
