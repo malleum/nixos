@@ -39,6 +39,7 @@
             tiled
             godot
             haguichi
+            stable.globalprotect-openconnect
             lumafly
 
             prismlauncher
