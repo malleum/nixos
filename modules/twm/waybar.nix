@@ -3,8 +3,11 @@
   lib,
   ...
 }: let
-  monitorNames = ["DP-1" "eDP-1" "HDMI-A-1"]; # e.g., ["DP-1", "HDMI-A-1"]
-  primaryMonitor = "DP-1";
+  # monitorNames = ["DP-1" "eDP-1" "HDMI-A-1"]; # e.g., ["DP-1", "HDMI-A-1"]
+  # primaryMonitor = "DP-1";
+
+  monitorNames = ["HDMI-A-2"]; # e.g., ["DP-1", "HDMI-A-1"]
+  primaryMonitor = "HDMI-A-2";
   secondaryMonitors = lib.lists.filter (m: m != primaryMonitor) monitorNames;
 
   indexOf = list: item: let
