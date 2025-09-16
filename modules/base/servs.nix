@@ -6,7 +6,24 @@
   imports = [./keyboard.nix];
 
   config = lib.mkIf config.base.servs.enable {
+    virtualisation.docker = {
+      enable = true;
+      # Set up resource limits
+      daemon.settings = {
+        experimental = true;
+        default-address-pools = [
+          {
+            base = "172.30.0.0/16";
+            size = 24;
+          }
+        ];
+      };
+    };
     services = {
+      globalprotect = {
+        enable = true;
+      };
+
       # If using SSD
       fstrim.enable = true;
 

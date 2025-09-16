@@ -57,7 +57,10 @@
 
       pkgs = import inputs.unstable {
         inherit overlays system;
-        config.allowUnfree = true;
+        config = {
+          allowUnfree = true;
+          permittedInsecurePackages = ["qtwebengine-5.15.19"];
+        };
       };
     in
       pkgs;

@@ -28,19 +28,19 @@
         (
           ifopt config.packages.gui.enable
           [
+            cherry-studio
             code-cursor-fhs
+            globalprotect-openconnect
+            haguichi
             keyd
             losslesscut-bin
+            lumafly
             onedrive
             quickemu
-            vlc
-            vesktop
-            wdisplays
             tiled
-            godot
-            haguichi
-            stable.globalprotect-openconnect
-            lumafly
+            vesktop
+            vlc
+            wdisplays
 
             prismlauncher
             waywall-git

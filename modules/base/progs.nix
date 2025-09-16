@@ -7,7 +7,12 @@
   imports = [./firefox.nix];
 
   config = lib.mkIf config.base.progs.enable {
+
     programs = {
+      gnupg.agent = {
+        enable = true;
+        pinentryPackage = pkgs.pinentry-curses;
+      };
       obs-studio = {
         enable = true;
         plugins = with pkgs.obs-studio-plugins; [obs-pipewire-audio-capture wlrobs];
