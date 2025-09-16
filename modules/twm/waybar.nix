@@ -5,9 +5,14 @@
 }: let
   # monitorNames = ["DP-1" "eDP-1" "HDMI-A-1"]; # e.g., ["DP-1", "HDMI-A-1"]
   # primaryMonitor = "DP-1";
-
-  monitorNames = ["HDMI-A-2"]; # e.g., ["DP-1", "HDMI-A-1"]
-  primaryMonitor = "HDMI-A-2";
+  monitorNames =
+    if (config.networking.hostName == "magnus")
+    then ["HDMI-A-2"]
+    else ["eDP-1"]; # e.g., ["DP-1", "HDMI-A-1"]
+  primaryMonitor =
+    if (config.networking.hostName == "magnus")
+    then "HDMI-A-2"
+    else "eDP-1";
   secondaryMonitors = lib.lists.filter (m: m != primaryMonitor) monitorNames;
 
   indexOf = list: item: let
