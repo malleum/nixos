@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   config = let
@@ -10,6 +11,8 @@
     programs.hyprland.enable = true;
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
+      package = inputs.hypr.packages.${pkgs.system}.hyprland;
+      portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       settings = lib.mkForce {
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
@@ -118,7 +121,10 @@
         dwindle.preserve_split = true;
         binds.movefocus_cycles_fullscreen = true;
 
-        gestures.workspace_swipe = false;
+        gesture = [
+          "3, horizontal, workspace"
+          "3, vertical, move"
+        ];
         layerrule = "blur,rofi";
 
         windowrulev2 = [
@@ -143,16 +149,6 @@
 
           "float, title:^(.*(All|Save) Files?.*)$"
         ];
-
-        # Plugin configurations
-        plugin = {
-          hyprtrails = {
-            decay_factor = 0.95;
-            initial_alpha = 0.8;
-            length = 20;
-            color = "rgba(${config.stylix.base16Scheme.base0C}88)";
-          };
-        };
 
         bind = let
           wkspaces = {
@@ -242,8 +238,6 @@
           "SUPER, mouse:273, resizewindow"
         ];
       };
-
-      plugins = with pkgs; [hyprlandPlugins.hyprtrails];
     };
   };
 }

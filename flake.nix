@@ -17,6 +17,7 @@
     };
 
     crosshair.url = "github:malleum/crosshaircursor";
+    hypr.url = "github:hyprwm/Hyprland";
     nur.url = "github:nix-community/NUR";
     stylix.url = "github:danth/stylix";
     waywall = {
