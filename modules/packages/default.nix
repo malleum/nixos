@@ -30,7 +30,7 @@
           [
             cherry-studio
             code-cursor-fhs
-            globalprotect-openconnect
+            stable.globalprotect-openconnect
             haguichi
             keyd
             losslesscut-bin

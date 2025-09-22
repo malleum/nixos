@@ -4,7 +4,7 @@ in
     name = "iogii";
     src = builtins.fetchurl {
       url = "https://golfscript.com/iogii/iogii-1.1";
-      sha256 = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      sha256 = "sha256:0fv7myy1mcn9s5r46lbffqwhkkfb9p7582agbgp5c8zh3kdcmy5v";
     };
     buildInputs = [pkgs.ruby];
     unpackPhase = ":";
