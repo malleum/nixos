@@ -10,10 +10,10 @@
       inherit (config.lib.formats.rasi) mkLiteral;
     in {
       enable = true;
-      package = pkgs.rofi-wayland;
+      package = pkgs.rofi;
       terminal = "foot";
       location = "center";
-      plugins = with pkgs; [rofi-emoji-wayland (rofi-calc.override {rofi-unwrapped = pkgs.rofi-wayland-unwrapped;})];
+      plugins = with pkgs; [rofi-emoji rofi-calc];
 
       extraConfig = {
         kb-primary-paste = "Control+V,Shift+Insert";
