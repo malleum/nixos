@@ -17,8 +17,9 @@ in {
 
   stylix = {
     enable = true;
-    image = themes.${theme}.image;
-    base16Scheme = themes.${theme}.base16Scheme;
+    # image = themes.${theme}.image;
+    # base16Scheme = themes.${theme}.base16Scheme;
+    image = "./wallpapers/skyline.png";
 
     polarity = "dark";
 
