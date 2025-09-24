@@ -20,7 +20,7 @@
       };
     };
     services = {
-      # globalprotect.enable = true;
+      globalprotect.enable = true;
 
       # If using SSD
       fstrim.enable = true;
