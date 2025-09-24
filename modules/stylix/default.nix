@@ -7,18 +7,18 @@
   themes = import ./themes.nix {inherit pkgs;};
   mkStylixTheme = theme: {
     stylix = {
-      base16Scheme = lib.mkForce themes.${theme}.base16Scheme;
       image = lib.mkForce themes.${theme}.image;
+      base16Scheme = lib.mkForce themes.${theme}.base16Scheme;
     };
   };
-  theme = "skyline";
+  theme = "space";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
 
   stylix = {
     enable = true;
     image = themes.${theme}.image;
-    base16Scheme = lib.mkIf (themes.${theme}.base16Scheme != null) themes.${theme}.base16Scheme;
+    base16Scheme = themes.${theme}.base16Scheme;
 
     polarity = "dark";
 
