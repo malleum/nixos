@@ -3,18 +3,6 @@
   lib,
   ...
 }: let
-  # monitorNames = ["DP-1" "eDP-1" "HDMI-A-1"]; # e.g., ["DP-1", "HDMI-A-1"]
-  # primaryMonitor = "DP-1";
-  monitorNames =
-    if (config.networking.hostName == "magnus")
-    then ["HDMI-A-2"]
-    else ["eDP-1"]; # e.g., ["DP-1", "HDMI-A-1"]
-  primaryMonitor =
-    if (config.networking.hostName == "magnus")
-    then "HDMI-A-2"
-    else "eDP-1";
-  secondaryMonitors = lib.lists.filter (m: m != primaryMonitor) monitorNames;
-
   indexOf = list: item: let
     indexHelper = l: i:
       if l == []
@@ -109,7 +97,7 @@ in {
     programs.waybar = {
       enable = true;
       # The default config now explicitly creates a bar for each monitor.
-      settings = lib.lists.map (name: barSettings // {output = name;}) monitorNames;
+      settings."cio" = barSettings;
       # Your entire style section is unchanged.
       style =
         #css
@@ -256,12 +244,6 @@ in {
               background-color: #eb4d4b;
           }
         '';
-    };
-
-    # This creates the *second* config file for our script to use.
-    # It generates a config with bars only on the secondary monitors.
-    home.file.".config/waybar/secondary-only.jsonc" = {
-      text = builtins.toJSON (lib.lists.map (name: barSettings // {output = name;}) secondaryMonitors);
     };
   };
 }

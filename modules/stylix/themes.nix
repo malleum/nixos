@@ -24,22 +24,23 @@ in {
   };
   cybertruck = {
     base16Scheme = {
-      base00 = "021d32";
-      base01 = "36495a";
-      base02 = "506d8b";
-      base03 = "9f9bac";
-      base04 = "acbac5";
-      base05 = "dae3e8";
-      base06 = "d6e3e9";
-      base07 = "d7e1ea";
-      base08 = "948d9f";
-      base09 = "8990a2";
-      base0A = "6694c5";
-      base0B = "8292a2";
-      base0C = "7794a6";
-      base0D = "6696ba";
-      base0E = "7896b0";
-      base0F = "8393aa";
+      base00 = "12151a"; # Deep, cool black from the background shadows
+      base01 = "21262e"; # Dark grey from the surface
+      base02 = "3a424d"; # Muted grey from the floor texture
+      base03 = "6c7a8b"; # Softer grey for comments
+      base04 = "a1a9b3"; # Main color of the LEGO brick's shadow
+      base05 = "c5cbd3"; # Main color of the LEGO brick
+      base06 = "dfe4e9"; # Highlight color on the brick
+      base07 = "f0f3f5"; # Brightest highlight from the light reflection
+
+      base08 = "d18da4"; # Muted Rose (for Red) from subtle ambient light
+      base09 = "a8968e"; # Desaturated Taupe (for Orange) from the surface
+      base0A = "82a4b0"; # Slate Blue (for Yellow) from the lower haze
+      base0B = "74b3c4"; # Muted Teal (for Green) from the lower haze
+      base0C = "88c0d0"; # Icy Blue (for Cyan) from reflections
+      base0D = "5e9de5"; # Bright Blue (for Blue) from the lens flare
+      base0E = "a396c4"; # Muted Lavender (for Magenta) from the shadows
+      base0F = "8d827e"; # Desaturated Brown (for Brown) from floor texture    };
     };
     image = dim ./wallpapers/cybertruckLego.jpg "-20";
   };

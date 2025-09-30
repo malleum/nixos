@@ -11,7 +11,7 @@
       base16Scheme = lib.mkForce themes.${theme}.base16Scheme;
     };
   };
-  theme = "space";
+  theme = "cybertruck";
 in {
   imports = [inputs.stylix.nixosModules.stylix];
 
