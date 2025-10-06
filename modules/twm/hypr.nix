@@ -8,7 +8,11 @@
   config = let
     wallpaper = config.stylix.image;
   in {
-    programs.hyprland.enable = true;
+    programs.hyprland = {
+      enable = true;
+      package = inputs.hypr.packages.${pkgs.system}.hyprland;
+      portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+    };
     home-manager.users.joshammer.wayland.windowManager.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.system}.hyprland;
@@ -44,7 +48,7 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-          "${pkgs.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
+          "${inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
           "waybar"
