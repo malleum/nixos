@@ -6,7 +6,6 @@
   ...
 }: {
   imports = [
-    # ./keyd.nix
     inputs.home-manager.nixosModules.home-manager
   ];
 

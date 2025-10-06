@@ -14,10 +14,10 @@
     indexHelper list 0;
 
   colors = [
-    "#${config.stylix.base16Scheme.base09}"
     "#${config.stylix.base16Scheme.base0A}"
-    "#${config.stylix.base16Scheme.base0B}"
     "#${config.stylix.base16Scheme.base0C}"
+    "#${config.stylix.base16Scheme.base0D}"
+    "#${config.stylix.base16Scheme.base08}"
   ];
 
   mods =

@@ -8,17 +8,12 @@
       inputs.nixpkgs.follows = "unstable";
     };
 
-    determinix.url = "https://flakehub.com/f/DeterminateSystems/nix/*";
-    fix-python.url = "github:GuillaumeDesforges/fix-python";
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim = {
       url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "unstable";
     };
 
-    crosshair.url = "github:malleum/crosshaircursor";
     hypr.url = "github:hyprwm/Hyprland";
-    nur.url = "github:nix-community/NUR";
     stylix.url = "github:danth/stylix";
     waywall = {
       url = "github:malleum/waywall";

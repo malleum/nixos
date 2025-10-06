@@ -114,9 +114,9 @@
       fishPlugins.done
       fishPlugins.grc
       fishPlugins.puffer
+      fishPlugins.fzf-fish
 
       eza
-      fzf
       grc
     ];
   };

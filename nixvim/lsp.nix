@@ -5,19 +5,12 @@
       lsp = {
         enable = true;
         servers = {
-          clojure_lsp.enable = true;
           clangd.enable = true;
-          gdscript = {
-            enable = true;
-            package = null;
-          };
           gopls.enable = true;
           jdtls.enable = true;
           jsonls.enable = true;
           html.enable = true;
           ts_ls.enable = true;
-          kotlin_language_server.enable = true;
-          ltex.enable = true;
           lua_ls = {
             enable = true;
             settings.Lua = {

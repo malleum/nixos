@@ -4,8 +4,6 @@
   config,
   ...
 }: {
-  imports = [./firefox.nix];
-
   config = lib.mkIf config.base.progs.enable {
 
     programs = {

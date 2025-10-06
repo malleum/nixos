@@ -29,7 +29,6 @@
     console.keyMap = "dvorak";
 
     nix = {
-      package = lib.mkForce inputs.determinix.packages.${system}.default;
       settings = {
         auto-optimise-store = true;
         experimental-features = ["flakes" "nix-command"];
@@ -46,7 +45,6 @@
 
     nixpkgs.pkgs = let
       overlays = [
-        inputs.nur.overlays.default
         (final: prev: {
           stable = import inputs.stable {
             system = prev.system;

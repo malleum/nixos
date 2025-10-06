@@ -32,12 +32,9 @@
             code-cursor-fhs
             globalprotect-openconnect
             haguichi
-            keyd
             losslesscut-bin
             lumafly
-            onedrive
             quickemu
-            tiled
             vesktop
             vlc
             wdisplays
@@ -80,7 +77,6 @@
         ++ (
           ifopt config.packages.minimus.enable
           [
-            inputs.fix-python.packages.${pkgs.system}.default
             alejandra
             fastfetch
             killall
