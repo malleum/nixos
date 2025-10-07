@@ -26,11 +26,15 @@
     lib.mkIf config.packages.enable {
       environment.systemPackages = with pkgs;
         (
-          ifopt config.packages.gui.enable
+          (
+            if config.networking.hostName == "malleum"
+            then [globalprotect-openconnect]
+            else []
+          )
+          ++ ifopt config.packages.gui.enable
           [
             cherry-studio
             code-cursor-fhs
-            globalprotect-openconnect
             haguichi
             losslesscut-bin
             lumafly
@@ -134,12 +138,13 @@
             # cli
             acpi
             arp-scan
+            claude-code
             ffmpeg
             gemini-cli
-            claude-code
             imagemagick
             libnotify
             libqalculate
+            magic-wormhole
             networkmanagerapplet
             nitch
             nmap

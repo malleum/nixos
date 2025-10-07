@@ -81,6 +81,10 @@
           "col.active_border" = "rgba(${config.stylix.base16Scheme.base04}ff) rgba(${config.stylix.base16Scheme.base0C}ff) 30deg";
           "col.inactive_border" = "rgba(${config.stylix.base16Scheme.base01}aa)";
         };
+        ecosystem = {
+          no_update_news = true;
+          no_donation_nag = true;
+        };
 
         decoration = {
           rounding = 20;
