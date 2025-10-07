@@ -65,7 +65,7 @@
       format = "dato {:%m-%d} 󰸗";
     };
     cpu = {
-      format = "procesoro {usage: 2}% 󰍛";
+      format = "procesoro {usage:02}% 󰍛";
     };
     memory = {
       format = "memoro {used:0.1f}G 󰾅";
