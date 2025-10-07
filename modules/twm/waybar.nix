@@ -30,7 +30,7 @@
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 
   barSettings = {
-    height = 36;
+    height = 46;
     spacing = 8;
     layer = "top";
     position = "top";
@@ -59,33 +59,33 @@
     };
     clock = {
       interval = 1;
-      format = "horloĝo {:%H:%M:%S} 󰥔";
+      format = "tempo {:%H:%M} 󰥔";
     };
     "clock#c2" = {
       format = "dato {:%m-%d} 󰸗";
     };
     cpu = {
-      format = "procesoro {usage}% 󰍛";
+      format = "procesoro {usage: 2}% 󰍛";
     };
     memory = {
       format = "memoro {used:0.1f}G 󰾅";
     };
     disk = {
-      format = "disko {percentage_used}% 󰋊";
+      format = "disko {percentage_used:02}% 󰋊";
     };
     network = {
       interval = 1;
       tooltip-format = "{ifname} {ipaddr}/{cidr} |  ^ {bandwidthUpBits}, v {bandwidthDownBits} | {essid}";
       format-disconnected = "reto: malkonektita ⚠";
-      format-wifi = "reto {signalStrength}% ";
+      format-wifi = "reto {signalStrength:02}% ";
       format-ethernet = "reto: 󰈀";
       on-click = "nm-connection-editor";
     };
     pulseaudio = {
-      format = "aŭdio {volume}% {icon}";
-      format-bluetooth = "aŭdio {volume}% {icon} 󰂰";
+      format = "aŭdio {volume:02}% {icon}";
+      format-bluetooth = "aŭdio {volume:02}% {icon} 󰂰";
       format-muted = "aŭdio: mutita 󰝟";
-      format-source = "{volume}% ";
+      format-source = "{volume:02}% ";
       format-source-muted = "";
       on-click = "pavucontrol";
       format-icons = {
@@ -94,14 +94,14 @@
     };
     temperature = {
       critical-threshold = 80;
-      format = "temperaturo {temperatureC}°C {icon}";
+      format = "temperaturo {temperatureC:02}°C {icon}";
       format-icons = ["󰈸" "󰈸" "󰈸"]; # Using a consistent icon
     };
 
     # ADDED custom module definition
     "custom/chron" = {
       format = "chrono {} 󱑤";
-      exec = "chron";
+      exec = "chron | choose 0";
       interval = 1;
       return-type = "text";
     };
