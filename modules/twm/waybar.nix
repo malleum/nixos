@@ -22,227 +22,224 @@
 
   mods =
     if (config.networking.hostName == "magnus")
-    then ["battery" "tray" "pulseaudio" "network" "cpu" "temperature" "disk" "clock#c2" "clock"]
-    else ["tray" "pulseaudio" "network" "cpu" "temperature" "disk" "battery" "clock#c2" "clock"];
+    then ["battery" "tray" "pulseaudio" "network" "cpu" "memory" "disk" "clock#c2" "clock" "custom/chron"]
+    else ["tray" "pulseaudio" "network" "cpu" "memory" "disk" "battery" "clock#c2" "clock" "custom/chron"];
+
   modulo' = a: b: a - b * builtins.div a b;
   modulo = a: (modulo' a (builtins.length colors));
   c = lib.attrsets.genAttrs mods (mod: (builtins.elemAt colors (modulo (indexOf mods mod))));
 
-  # Define the settings for a SINGLE bar. We will reuse this.
   barSettings = {
-    height = 30;
-    spacing = 6;
+    height = 36;
+    spacing = 8;
     layer = "top";
     position = "top";
     modules-left = ["${config.wm}/workspaces"];
-    modules-center =
-      if (config.networking.hostName == "magnus")
-      then mods
-      else [];
-    modules-right =
-      if (config.networking.hostName != "magnus")
-      then mods
-      else [];
-
-    # Module definitions are unchanged
+    modules-right = mods;
     tray.spacing = 10;
+
     "${config.wm}/workspaces" = {
       format = "{icon}";
       format-icons = {
-        "1" = "𝋁";
-        "2" = "𝋂";
-        "3" = "𝋃";
-        "4" = "𝋄";
-        "5" = "𝋅";
+        "1" = "unu";
+        "2" = "du";
+        "3" = "tri";
+        "4" = "kvar";
+        "5" = "kvin";
+        "default" = "";
       };
     };
+
     battery = {
-      format = "{capacity}% {icon}";
-      format-charging = "{capacity}% ";
-      format-icons = ["" "" "" "" ""];
-      states.critical = 7;
+      format = "baterio {capacity}% {icon}";
+      format-charging = "baterio {capacity}% 󰂄";
+      format-plugged = "baterio {capacity}% 󰂄";
+      format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+      states.critical = 15;
     };
     clock = {
       interval = 1;
-      format = "{:%H:%M:%S}";
+      format = "horloĝo {:%H:%M:%S} 󰥔";
     };
-    "clock#c2".format = "{:%m-%d}";
-    cpu.format = "{usage}% ";
-    memory.format = "{}% ";
-    disk.format = "{percentage_used}% ⬤";
+    "clock#c2" = {
+      format = "dato {:%m-%d} 󰸗";
+    };
+    cpu = {
+      format = "procesoro {usage}% 󰍛";
+    };
+    memory = {
+      format = "memoro {used:0.1f}G 󰾅";
+    };
+    disk = {
+      format = "disko {percentage_used}% 󰋊";
+    };
     network = {
       interval = 1;
-      tooltip-format = "{ifname}: {ipaddr}/{cidr} |  ^ {bandwidthUpBits}, v {bandwidthDownBits} | {essid}";
-      format-disconnected = "⚠";
-      format-wifi = "{signalStrength} ";
+      tooltip-format = "{ifname} {ipaddr}/{cidr} |  ^ {bandwidthUpBits}, v {bandwidthDownBits} | {essid}";
+      format-disconnected = "reto: malkonektita ⚠";
+      format-wifi = "reto {signalStrength}% ";
+      format-ethernet = "reto: 󰈀";
       on-click = "nm-connection-editor";
     };
     pulseaudio = {
-      format = "{volume}% {icon} {format_source}";
-      format-bluetooth = "{volume}% {icon}  {format_source}";
-      format-muted = " {format_source}";
+      format = "aŭdio {volume}% {icon}";
+      format-bluetooth = "aŭdio {volume}% {icon} 󰂰";
+      format-muted = "aŭdio: mutita 󰝟";
       format-source = "{volume}% ";
       format-source-muted = "";
       on-click = "pavucontrol";
+      format-icons = {
+        default = ["" "" ""];
+      };
     };
     temperature = {
       critical-threshold = 80;
-      format = "{temperatureC}°C {icon}";
-      format-icons = ["" "" ""];
+      format = "temperaturo {temperatureC}°C {icon}";
+      format-icons = ["󰈸" "󰈸" "󰈸"]; # Using a consistent icon
+    };
+
+    # ADDED custom module definition
+    "custom/chron" = {
+      format = "chrono {} 󱑤";
+      exec = "chron";
+      interval = 1;
+      return-type = "text";
     };
   };
 in {
-  # This configures Waybar for Home Manager
   home-manager.users.joshammer = {
     programs.waybar = {
       enable = true;
-      # The default config now explicitly creates a bar for each monitor.
       settings."cio" = barSettings;
-      # Your entire style section is unchanged.
       style =
         #css
         ''
           * {
-              font-family: JetBrainsMono;
-              font-size: 16px;
+            font-family: JetBrainsMono Nerd Font; /* Ensure you have Nerd Font for icons */
+            font-size: 15px;
+            font-weight: bold;
           }
 
           window#waybar {
-              color: #ffffff;
-              background: transparent;
+            background: rgba(30, 30, 45, 0.85);
+            border-radius: 15px;
+            color: #${config.stylix.base16Scheme.base05};
           }
 
-          /* ... all your other CSS ... */
-          #workspaces  {
-              margin: 0 4px;
-              color: ${c.temperature};
-              border-bottom: none;
+          #workspaces {
+            background: #${config.stylix.base16Scheme.base01};
+            margin: 5px;
+            padding: 0px 5px;
+            border-radius: 10px;
+            border: 1px solid #${config.stylix.base16Scheme.base03};
           }
 
           #workspaces button {
-              padding: 0 3px;
-              margin: 0 5px;
-              border-radius: 0;
-              color: #ffffff;
-              border-bottom: none;
-              padding: 0 10px;
-              border-radius: 6px;
-              background-color: ${c."pulseaudio"};
+            padding: 0px 10px;
+            margin: 3px 3px;
+            border-radius: 8px;
+            color: #${config.stylix.base16Scheme.base04};
+            background: transparent;
+            transition: all 0.3s ease-in-out;
+          }
+
+          #workspaces button:hover {
+            background: #${config.stylix.base16Scheme.base02};
+            color: #${config.stylix.base16Scheme.base06};
           }
 
           #workspaces button.active {
-              color: #000000;
-              border-bottom: none;
-              background-color: ${c.clock};
+            color: #${config.stylix.base16Scheme.base07};
+            background-color: ${c.clock};
+            padding: 0px 15px;
           }
 
           #workspaces button.urgent {
-              color: ${c.temperature};
-              border-bottom: none;
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
 
+          /* General module styling */
           #clock,
+          #clock.c2,
           #battery,
           #cpu,
           #memory,
           #disk,
           #temperature,
-          #backlight,
           #network,
           #pulseaudio,
-          #wireplumber,
-          #tray {
-              padding: 0 10px;
-              border-radius: 6px;
+          #tray,
+          #custom-chron {
+            padding: 2px 12px;
+            margin: 6px 3px;
+            border-radius: 10px;
+            background-color: #${config.stylix.base16Scheme.base01};
+            color: #${config.stylix.base16Scheme.base06};
+            border: 2px solid #${config.stylix.base16Scheme.base02};
+            transition: all 0.3s ease-in-out;
           }
 
-          #clock {
-              background-color: ${c.clock};
-              color: #000000;
+          /* Add a hover effect to all modules */
+          #clock:hover,
+          #clock.c2:hover,
+          #battery:hover,
+          #cpu:hover,
+          #memory:hover,
+          #disk:hover,
+          #temperature:hover,
+          #network:hover,
+          #pulseaudio:hover,
+          #tray:hover,
+          #custom-chron:hover {
+             background-color: #${config.stylix.base16Scheme.base02};
+             border: 2px solid #${config.stylix.base16Scheme.base04};
           }
 
-          #clock.c2 {
-              background-color: ${c."clock#c2"};
-          }
 
-          #battery {
-              background-color: ${c.battery};
-              color: #000000;
-          }
+          /* Using border for the dynamic color accent */
+          #clock { border-left: 5px solid ${c.clock}; }
+          #clock.c2 { border-left: 5px solid ${c."clock#c2"}; }
+          #battery { border-left: 5px solid ${c.battery}; }
+          #cpu { border-left: 5px solid ${c.cpu}; }
+          #memory { border-left: 5px solid ${c.memory}; }
+          #disk { border-left: 5px solid ${c.disk}; }
+          #network { border-left: 5px solid ${c.network}; }
+          #pulseaudio { border-left: 5px solid ${c.pulseaudio}; }
+          /* #temperature { border-left: 5px solid {c.temperature}; } */
+          #tray { border-left: 5px solid ${c.tray}; }
+          /* Waybar changes custom/chron to custom-chron in CSS */
+          #custom-chron { border-left: 5px solid ${c."custom/chron"}; }
 
-          #battery.charging, #battery.plugged {
-              color: #ffffff;
-              background-color: ${c.battery};
-          }
 
+          /* Critical and special states styling */
           @keyframes blink {
-              to {
-                  background-color: #ffffff;
-                  color: #000000;
-              }
+            to {
+              background-color: #${config.stylix.base16Scheme.base09};
+              color: #${config.stylix.base16Scheme.base01};
+            }
           }
 
           #battery.critical:not(.charging) {
-              background-color: #f53c3c;
-              color: #ffffff;
-              animation-name: blink;
-              animation-duration: 0.5s;
-              animation-timing-function: linear;
-              animation-iteration-count: infinite;
-              animation-direction: alternate;
-          }
-
-          #cpu {
-              background-color: ${c.cpu};
-              color: #000000;
-          }
-
-          #disk {
-              background-color: ${c.disk};
-              color: #000000;
-          }
-
-          #network {
-              background-color: ${c.network};
-              color: #000000;
+            border: 2px solid #${config.stylix.base16Scheme.base08};
+            animation-name: blink;
+            animation-duration: 0.5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
           }
 
           #network.disconnected {
-              background-color: #f53c3c;
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
 
-          #pulseaudio {
-              background-color: ${c.pulseaudio};
-              color: #000000;
-          }
-
-          #pulseaudio.muted {
-              background-color: #${config.stylix.base16Scheme.base01};
-              color: #${config.stylix.base16Scheme.base07};
-          }
-
-          #temperature {
-              background-color: ${c.temperature};
-              color: #000000;
-          }
-
+          /*
           #temperature.critical {
-              background-color: #eb4d4b;
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
-
-          #tray {
-              background-color: ${c.tray};
-              color: #000000;
-          }
-
-          #tray > .passive {
-              -gtk-icon-effect: dim;
-          }
-
-          #tray > .needs-attention {
-              -gtk-icon-effect: highlight;
-              background-color: #eb4d4b;
-          }
+          */
         '';
     };
   };
