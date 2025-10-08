@@ -42,6 +42,6 @@ in {
       base0E = "a396c4"; # Muted Lavender (for Magenta) from the shadows
       base0F = "8d827e"; # Desaturated Brown (for Brown) from floor texture    };
     };
-    image = dim ./wallpapers/cybertruckLego.jpg "-20";
+    image = dim ./wallpapers/legotesla.png "-20";
   };
 }
