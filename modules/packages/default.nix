@@ -88,6 +88,7 @@
             choose
             btop
             file
+            fzf
             htop
             ouch
             rip2
@@ -106,7 +107,6 @@
           [
             cargo
             clang-tools
-            clojure
             gcc
             gdb
             gnumake
@@ -114,7 +114,6 @@
             gradle
             iogii
             jdk21
-            julia
             kotlin
             leiningen
             lua
