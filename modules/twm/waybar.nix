@@ -55,7 +55,7 @@
       format-charging = "baterio {capacity}% 󰂄";
       format-plugged = "baterio {capacity}% 󰂄";
       format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
-      states.critical = 15;
+      states.critical = 10;
     };
     clock = {
       interval = 1;
@@ -223,7 +223,7 @@ in {
           #battery.critical:not(.charging) {
             border: 2px solid #${config.stylix.base16Scheme.base08};
             animation-name: blink;
-            animation-duration: 0.5s;
+            animation-duration: 1s;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
             animation-direction: alternate;

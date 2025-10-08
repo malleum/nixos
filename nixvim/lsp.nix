@@ -27,6 +27,7 @@
           };
           nixd = {
             enable = true;
+            settings = {};
             extraOptions.offset_encoding = "utf-8";
           };
           pyright.enable = true;
