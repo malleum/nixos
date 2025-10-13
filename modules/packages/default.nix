@@ -82,24 +82,25 @@
           ifopt config.packages.minimus.enable
           [
             alejandra
-            fastfetch
-            killall
-            ripgrep
-            choose
+            bat
+            bc
             btop
+            choose
+            fastfetch
+            fd
+            feh
             file
             fzf
             htop
+            jq
+            killall
+            magic-wormhole
             ouch
             rip2
+            ripgrep
+            sd
             tldr
             wget
-            bat
-            feh
-            bc
-            fd
-            jq
-            sd
           ]
         )
         ++ (
