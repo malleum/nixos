@@ -118,6 +118,7 @@
             leiningen
             lua
             nodejs
+            pwntools
             python3
             rustc
             typst
@@ -143,6 +144,7 @@
             imagemagick
             libnotify
             libqalculate
+            ltrace
             magic-wormhole
             networkmanagerapplet
             nitch
@@ -175,6 +177,7 @@
             # visio
             awscli2
             openvpn
+            uv
           ]
         );
 
