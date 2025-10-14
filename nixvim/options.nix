@@ -29,10 +29,7 @@
 
     viAlias = true;
     luaLoader.enable = true;
-    performance.combinePlugins = {
-      enable = true;
-      standalonePlugins = ["oil.nvim"];
-    };
+    # performance.combinePlugins.enable = true;
 
     colorscheme = "tokyonight";
     colorschemes.tokyonight = {

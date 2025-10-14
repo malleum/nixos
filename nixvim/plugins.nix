@@ -28,8 +28,8 @@ in {
 
       treesitter = {
         enable = true;
+        settings.highlight.enable = true;
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
-        settings = {highlight.enable = true;};
       };
 
       conform-nvim = {
