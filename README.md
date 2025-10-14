@@ -1,3 +1,10 @@
+# TODO
+- [ ] better options
+- [ ] nvf
+- [ ] switch wallpaper
+- [ ] secrets
+- [ ] firefox
+
 ```nix
  .
 ├──  flake.lock
