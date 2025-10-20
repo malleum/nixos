@@ -7,21 +7,19 @@
 
 ```nix
  .
-├──  flake.lock
+├──  flake.lock
 ├──  flake.nix
 ├──  hosts
 │   ├──  magnus
 │   │   ├──  default.nix
 │   │   └──  hardware-configuration.nix
-│   ├──  malleum
-│   │   ├──  default.nix
-│   │   └──  hardware-configuration.nix
-│   └──  minimus
+│   └──  malleum
 │       ├──  default.nix
 │       └──  hardware-configuration.nix
 ├──  modules
 │   ├──  base
 │   │   ├──  default.nix
+│   │   ├──  keyboard.nix
 │   │   ├──  progs.nix
 │   │   ├──  servs.nix
 │   │   └──  user.nix
@@ -37,29 +35,40 @@
 │   │   ├──  scripts
 │   │   │   ├──  chron.nix
 │   │   │   ├──  cin.nix
-│   │   │   ├──  kaktovik.nix
+│   │   │   ├──  disfiles.nix
+│   │   │   ├──  duod.nix
 │   │   │   ├──  kls.nix
-│   │   │   └──  pyenv.nix
+│   │   │   ├──  ktv.nix
+│   │   │   ├──  pyenv.nix
+│   │   │   └──  themeswitcher.nix
+│   │   ├──  sh.nix
 │   │   ├──  shell.nix
 │   │   ├──  term.nix
-│   │   ├──  tmux.nix
-│   │   └──  zsh.nix
+│   │   └──  tmux.nix
 │   ├──  packages
-│   │   └──  default.nix
-│   ├──  stylix.nix
-│   ├──  vimium_c.json
-│   └──  wayland
-│       ├──  default.nix
-│       ├──  hypr.nix
-│       ├──  sway.nix
-│       └──  waybar.nix
+│   │   ├──  default.nix
+│   │   └──  iogii.nix
+│   ├──  stylix
+│   │   ├──  default.nix
+│   │   ├──  themes.nix
+│   │   └──  wallpapers
+│   │       ├──  grid.jpeg
+│   │       ├──  legotesla.png
+│   │       ├──  skyline.png
+│   │       ├──  space.png
+│   │       └──  tall_dark_sky_su57.jpg
+│   ├──  twm
+│   │   ├──  default.nix
+│   │   ├──  hypr.nix
+│   │   ├──  sway.nix
+│   │   └──  waybar.nix
+│   └──  vimium_c.json
+├──  nixvim
+│   ├──  default.nix
+│   ├──  lsp.nix
+│   ├──  options.nix
+│   ├──  plugins.nix
+│   └──  zoom.nix
 ├── 󰂺 README.md
-├──  shell.nix
-└──  wallpapers
-    ├──  cybertruckLego.jpg
-    ├──  dark_sky_su57.jpg
-    ├──  grass_su57.jpg
-    ├──  grid.jpeg
-    ├──  sky_su57.jpg
-    └──  tall_dark_sky_su57.jpg
+└──  shell.nix
 ```
