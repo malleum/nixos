@@ -9,10 +9,10 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
+        amd
         bat
-        cli
+        gam
         gui
-        cmp
         wrk
         ;
     };

@@ -5,7 +5,6 @@
   ...
 }: {
   config = lib.mkIf config.base.progs.enable {
-
     programs = {
       gnupg.agent = {
         enable = true;
