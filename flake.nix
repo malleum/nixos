@@ -8,9 +8,24 @@
       inputs.nixpkgs.follows = "unstable";
     };
 
+    flake-parts = {
+      url = "hercules-ci/flake-parts";
+      inputs.nixpkgs.follows = "unstable";
+    };
+
+    unify = {
+      url = "git+https://codeberg.org/quasigod/unify.git";
+      inputs = {
+        nixpkgs.follows = "unstable";
+        flake-parts.follows = "flake-parts";
+        home-manager.follows = "home-manager";
+      };
+    };
+
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim = {
       url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "unstable";
     };
 
     hypr.url = "github:hyprwm/Hyprland";
@@ -20,44 +35,11 @@
       inputs.nixpkgs.follows = "unstable";
     };
   };
-  outputs = {self, ...} @ inputs: let
-    inherit (inputs.unstable) lib;
-
-    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
-    pkgsFor = lib.genAttrs systems (
-      system:
-        import inputs.unstable {
-          inherit system;
-          config.allowUnfree = true;
-        }
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} (
+      inputs.import-tree [
+        ./hosts
+        ./modules
+      ]
     );
-    system = "x86_64-linux";
-  in {
-    devShells = forEachSystem (pkgs: {
-      default = import ./shell.nix {inherit pkgs;};
-      scripts = import ./modules/homemodules/shell.nix {inherit pkgs;};
-    });
-    apps.${system}.default = let
-      nixvimPackage =
-        lib.findFirst
-        (pkg: pkg.name == "nixvim")
-        null
-        self.nixosConfigurations.malleum.config.environment.systemPackages;
-    in
-      assert nixvimPackage != null; {
-        type = "app";
-        program = "${nixvimPackage}/bin/nvim";
-      };
-    nixosConfigurations = {
-      "malleum" = lib.nixosSystem {
-        specialArgs = {inherit inputs system;};
-        modules = [./hosts/malleum];
-      };
-      "magnus" = lib.nixosSystem {
-        specialArgs = {inherit inputs system;};
-        modules = [./hosts/magnus];
-      };
-    };
-  };
 }
