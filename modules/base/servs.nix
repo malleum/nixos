@@ -20,8 +20,6 @@
       };
     };
     services = {
-      globalprotect.enable = config.networking.hostName == "malleum";
-
       # If using SSD
       fstrim.enable = true;
 

@@ -26,12 +26,7 @@
     lib.mkIf config.packages.enable {
       environment.systemPackages = with pkgs;
         (
-          (
-            if config.networking.hostName == "malleum"
-            then [globalprotect-openconnect]
-            else []
-          )
-          ++ ifopt config.packages.gui.enable
+          ifopt config.packages.gui.enable
           [
             cherry-studio
             code-cursor-fhs
@@ -42,6 +37,7 @@
             vesktop
             vlc
             wdisplays
+            gpclient
 
             prismlauncher
             waywall-git

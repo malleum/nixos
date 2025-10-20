@@ -39,9 +39,13 @@ in {
   programs = {
     git = {
       enable = true;
-      userEmail = "jph33@outlook.com";
-      userName = "joshua hammer";
-      extraConfig.push.autoSetupRemote = true;
+      settings = {
+        user = {
+          email = "jph33@outlook.com";
+          name = "joshua hammer";
+        };
+        push.autoSetupRemote = true;
+      };
     };
 
     chromium = {
