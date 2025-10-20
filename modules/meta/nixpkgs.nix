@@ -6,7 +6,15 @@
   nixpkgs = {
     config.allowUnfree = true;
 
-    overlays = [self.overlays.default];
+    overlays = [
+      self.overlays.default
+      (final: prev: {
+        stable = import inputs.stable {
+          system = prev.system;
+          config.allowUnfree = true;
+        };
+      })
+    ];
   };
 in {
   imports = [inputs.flake-parts.flakeModules.easyOverlay];
