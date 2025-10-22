@@ -1,10 +1,12 @@
-{inputs, ...}: {
-  imports = [
-    ./lsp.nix
-    ./options.nix
-    ./plugins.nix
-    ./zoom.nix
-    inputs.nixvim.nixosModules.nixvim
-  ];
-  programs.nixvim.enable = true;
+{
+  unify.nixos = {inputs, ...}: {
+    imports = [
+      ./_lsp.nix
+      ./_options.nix
+      ./_plugins.nix
+      ./_zoom.nix
+      inputs.nixvim.nixosModules.nixvim
+    ];
+    programs.nixvim.enable = true;
+  };
 }
