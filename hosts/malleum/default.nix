@@ -10,9 +10,9 @@ in {
       inherit
         (modules)
         amd
-        bat
         gam
         gui
+        lap # laptop = (battery, bluetooth)
         wrk
         ;
     };

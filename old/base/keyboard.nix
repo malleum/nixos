@@ -83,6 +83,7 @@
 
     "lalt" = "aring";
   };
+  keyboard = lib.strings.concatLines [header (lib.strings.concatLines (lib.mapAttrsToList key layout)) footer];
 in {
   options.keyboard = lib.mkOption {default = "";};
   config.keyboard = lib.strings.concatLines [header (lib.strings.concatLines (lib.mapAttrsToList key layout)) footer];

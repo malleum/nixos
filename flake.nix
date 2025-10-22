@@ -9,7 +9,7 @@
     };
 
     flake-parts = {
-      url = "hercules-ci/flake-parts";
+      url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs.follows = "unstable";
     };
 
