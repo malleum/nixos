@@ -17,7 +17,7 @@ in {
         ;
     };
 
-    nixos.imports = [./hardware-configuration.nix];
+    nixos.imports = [./_hardware-configuration.nix];
     users.${username} = {inherit (config) modules;};
   };
 }
