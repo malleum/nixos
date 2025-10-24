@@ -5,7 +5,7 @@
     users.users.${username} = {
       description = name;
       isNormalUser = true;
-      extraGroups = ["adbusers" "libvirtd" "video" "wheel" "kvm"];
+      extraGroups = ["adbusers" "video" "wheel"];
     };
   };
 }
