@@ -10,6 +10,7 @@ in {
       inherit
         (modules)
         amd
+        efi
         gam
         gui
         lap # laptop = (battery, bluetooth)
