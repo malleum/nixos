@@ -8,10 +8,9 @@
       inputs.nixpkgs.follows = "unstable";
     };
 
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "unstable";
-    };
+    import-tree.url = "github:vic/import-tree";
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
     unify = {
       url = "git+https://codeberg.org/quasigod/unify.git";

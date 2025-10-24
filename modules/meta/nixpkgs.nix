@@ -21,7 +21,7 @@ in {
 
   perSystem = {system, ...}: {
     imports = [
-      "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
+      "${inputs.unstable}/nixos/modules/misc/nixpkgs.nix"
       {inherit nixpkgs;}
     ];
 
