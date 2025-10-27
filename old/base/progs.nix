@@ -15,7 +15,6 @@
         plugins = with pkgs.obs-studio-plugins; [obs-pipewire-audio-capture wlrobs];
       };
       adb.enable = true;
-      dconf.enable = true;
       nix-ld = {
         enable = true;
         libraries = with pkgs; [glib];
