@@ -1,7 +1,7 @@
 {config, ...}: let
   inherit (config.unify) modules;
 
-  hostName = "malleum";
+  hostName = "magnus";
 in {
   unify.hosts.nixos.${hostName} = {config, ...}: let
     inherit (config.user) username;
@@ -10,11 +10,10 @@ in {
       inherit
         (modules)
         amd
+        bio
         doc
-        efi
         gam
         gui
-        lap
         wrk
         ;
     };
