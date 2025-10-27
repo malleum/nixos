@@ -1,5 +1,5 @@
-{
-  unify.nixos = {inputs, ...}: {
+{inputs, ...}: {
+  unify.nixos = {
     imports = [
       ./_lsp.nix
       ./_options.nix

@@ -53,7 +53,7 @@
         })
       ];
 
-      pkgs = import inputs.unstable {
+      pkgs = import inputs.nixpkgs {
         inherit overlays system;
         config = {
           allowUnfree = true;

@@ -68,18 +68,21 @@ in {
         lintersByFt.python = ["ruff"];
       };
       lualine = let
-        # Define colors from your Stylix palette
+        getColorOrDefault = baseKey: defaultHex:
+          if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${baseKey}
+          then "#${config.stylix.base16Scheme.${baseKey}}"
+          else "#${defaultHex}";
         colors = {
-          bg = "#${config.stylix.base16Scheme.base00}";
-          bg_alt = "#${config.stylix.base16Scheme.base01}";
-          fg = "#${config.stylix.base16Scheme.base05}";
-          fg_dark = "#${config.stylix.base16Scheme.base03}";
+          bg = getColorOrDefault "base00" "12151a";
+          bg_alt = getColorOrDefault "base01" "21262e";
+          fg = getColorOrDefault "base05" "c5cbd3";
+          fg_dark = getColorOrDefault "base03" "6c7a8b";
 
-          red = "#${config.stylix.base16Scheme.base08}";
-          green = "#${config.stylix.base16Scheme.base0B}";
-          blue = "#${config.stylix.base16Scheme.base0D}";
-          yellow = "#${config.stylix.base16Scheme.base0A}";
-          magenta = "#${config.stylix.base16Scheme.base0E}";
+          red = getColorOrDefault "base08" "d18da4";
+          green = getColorOrDefault "base0B" "74b3c4";
+          blue = getColorOrDefault "base0D" "5e9de5";
+          yellow = getColorOrDefault "base0A" "82a4b0";
+          magenta = getColorOrDefault "base0E" "a396c4";
         };
       in {
         enable = true;
