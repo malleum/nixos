@@ -1,9 +1,9 @@
 {
-  unify.home = {config, ...}: {
+  unify.home = {hostConfig, ...}: {
     programs.git = {
       enable = true;
       settings = {
-        user = {inherit (config) email name;};
+        user = {inherit (hostConfig.user) email name;};
         push.autoSetupRemote = true;
       };
     };

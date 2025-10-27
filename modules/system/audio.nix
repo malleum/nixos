@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {hostConfig, ...}: {
+  unify.modules.gui.nixos = {config, ...}: {
     security.rtkit.enable = true;
 
     services = {
@@ -14,6 +14,6 @@
         wireplumber.enable = true;
       };
     };
-    users.users.${hostConfig.user.username}.extraGroups = ["audio"];
+    users.users.${config.user.username}.extraGroups = ["audio"];
   };
 }

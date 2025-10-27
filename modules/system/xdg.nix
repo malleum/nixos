@@ -1,6 +1,6 @@
 {
-  unify.home = {config, ...}: let
-    mkDirStr = dir: "${config.home.homeDirectory}/${dir}";
+  unify.home = {hostConfig, ...}: let
+    mkDirStr = dir: "${hostConfig.home.homeDirectory}/${dir}";
   in {
     xdg.userDirs = {
       enable = true;

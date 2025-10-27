@@ -1,11 +1,11 @@
 {
-  unify.modules.gui.home = {config, ...}: {
+  unify.modules.gui.home = {hostConfig, ...}: {
     programs.spotify-player = {
       enable = true;
       settings = {
         client_id_command = {
           command = "cat";
-          args = ["${config.homeDirectory}/documents/gh/k/spotify_id"];
+          args = ["${hostConfig.homeDirectory}/documents/gh/k/spotify_id"];
         };
       };
     };

@@ -1,6 +1,6 @@
 {
-  unify.modules.doc.nixos = {hostConfig, ...}: {
-    users.users.${hostConfig.user.username}.extraGroups = ["docker"];
+  unify.modules.doc.nixos = {config, ...}: {
+    users.users.${config.user.username}.extraGroups = ["docker"];
 
     virtualisation.docker = {
       enable = true;

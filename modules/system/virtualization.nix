@@ -1,7 +1,7 @@
 {
-  unify.nixos = {hostConfig, ...}: {
+  unify.nixos = {config, ...}: {
     boot.binfmt.emulatedSystems = ["aarch64-linux"]; # build arm packages
 
-    users.users.${hostConfig.user.username}.extraGroups = ["kvm" "libvirtd"];
+    users.users.${config.user.username}.extraGroups = ["kvm" "libvirtd"];
   };
 }
