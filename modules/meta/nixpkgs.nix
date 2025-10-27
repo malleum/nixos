@@ -7,7 +7,7 @@
     config.allowUnfree = true;
 
     overlays = [
-      self.overlays.default
+      self.overlays.default # TODO: what does this mean?
       (final: prev: {
         stable = import inputs.stable {
           system = prev.system;
@@ -17,13 +17,10 @@
     ];
   };
 in {
-  imports = [inputs.flake-parts.flakeModules.easyOverlay];
+  imports = [inputs.flake-parts.flakeModules.easyOverlay]; # TODO: what does this mean?
 
-  perSystem = {system, ...}: {
-    imports = [
-      "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
-      {inherit nixpkgs;}
-    ];
+  perSystem = {system, ...}: { # TODO: what does this mean?
+    imports = ["${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix" {inherit nixpkgs;}];
 
     nixpkgs.hostPlatform = {inherit system;};
   };
