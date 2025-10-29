@@ -1,8 +1,8 @@
 {
   unify.home = {pkgs, ...}: {
-
     home.packages = with pkgs; [
       acpi
+      age
       bat
       bc
       btop

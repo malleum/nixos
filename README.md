@@ -1,74 +1,108 @@
 # TODO
-- [ ] better options
+- [x] better options
+- [ ] secrets
 - [ ] nvf
 - [ ] switch wallpaper
-- [ ] secrets
 - [ ] firefox
 
 ```nix
- .
-├──  flake.lock
-├──  flake.nix
-├──  hosts
-│   ├──  magnus
-│   │   ├──  default.nix
-│   │   └──  hardware-configuration.nix
-│   └──  malleum
-│       ├──  default.nix
-│       └──  hardware-configuration.nix
-├──  modules
-│   ├──  base
-│   │   ├──  default.nix
-│   │   ├──  keyboard.nix
-│   │   ├──  progs.nix
-│   │   ├──  servs.nix
-│   │   └──  user.nix
-│   ├──  battery.nix
-│   ├──  boot.nix
-│   ├──  default.nix
-│   ├──  gpu.nix
-│   ├──  home.nix
-│   ├──  homemodules
-│   │   ├──  default.nix
-│   │   ├──  dunst.nix
-│   │   ├──  rofi.nix
-│   │   ├──  scripts
-│   │   │   ├──  chron.nix
-│   │   │   ├──  cin.nix
-│   │   │   ├──  disfiles.nix
-│   │   │   ├──  duod.nix
-│   │   │   ├──  kls.nix
-│   │   │   ├──  ktv.nix
-│   │   │   ├──  pyenv.nix
-│   │   │   └──  themeswitcher.nix
-│   │   ├──  sh.nix
-│   │   ├──  shell.nix
-│   │   ├──  term.nix
-│   │   └──  tmux.nix
-│   ├──  packages
-│   │   ├──  default.nix
-│   │   └──  iogii.nix
-│   ├──  stylix
-│   │   ├──  default.nix
-│   │   ├──  themes.nix
-│   │   └──  wallpapers
-│   │       ├──  grid.jpeg
-│   │       ├──  legotesla.png
-│   │       ├──  skyline.png
-│   │       ├──  space.png
-│   │       └──  tall_dark_sky_su57.jpg
-│   ├──  twm
-│   │   ├──  default.nix
-│   │   ├──  hypr.nix
-│   │   ├──  sway.nix
-│   │   └──  waybar.nix
-│   └──  vimium_c.json
-├──  nixvim
-│   ├──  default.nix
-│   ├──  lsp.nix
-│   ├──  options.nix
-│   ├──  plugins.nix
-│   └──  zoom.nix
-├── 󰂺 README.md
-└──  shell.nix
+.
+├── flake.lock
+├── flake.nix
+├── hosts
+│   ├── magnus
+│   │   ├── _hardware-configuration.nix
+│   │   └── magnus.nix
+│   └── malleum
+│       ├── _hardware-configuration.nix
+│       └── malleum.nix
+├── modules
+│   ├── hardware
+│   │   ├── amd.nix
+│   │   ├── battery.nix
+│   │   ├── bluetooth.nix
+│   │   ├── keyboard.nix
+│   │   ├── mcsr_keyboard.nix
+│   │   └── screen_light.nix
+│   ├── meta
+│   │   ├── flake.nix
+│   │   ├── flakepath.nix
+│   │   ├── home.nix
+│   │   ├── hostname.nix
+│   │   ├── nix.nix
+│   │   ├── nixpkgs.nix
+│   │   ├── stateversion.nix
+│   │   ├── user.nix
+│   │   └── userConfig.nix
+│   ├── nixvim
+│   │   ├── _lsp.nix
+│   │   ├── _options.nix
+│   │   ├── _plugins.nix
+│   │   ├── _zoom.nix
+│   │   └── default.nix
+│   ├── packages
+│   │   ├── cli.nix
+│   │   ├── fonts.nix
+│   │   ├── game.nix
+│   │   ├── gui.nix
+│   │   ├── iogii.nix
+│   │   ├── programming.nix
+│   │   ├── scripts.nix
+│   │   └── wayland.nix
+│   ├── programs
+│   │   ├── brave.nix
+│   │   ├── cli.nix
+│   │   ├── fish.nix
+│   │   ├── game.nix
+│   │   ├── git.nix
+│   │   ├── hypr.nix
+│   │   ├── nh.nix
+│   │   ├── nixhelpers.nix
+│   │   ├── obs.nix
+│   │   ├── rofi.nix
+│   │   ├── spotify_player.nix
+│   │   ├── starship.nix
+│   │   ├── term.nix
+│   │   ├── tmux.nix
+│   │   ├── vesktop.nix
+│   │   ├── virt.nix
+│   │   ├── waybar.nix
+│   │   └── work.nix
+│   ├── scripts
+│   │   ├── _chron.nix
+│   │   ├── _cin.nix
+│   │   ├── _disfiles.nix
+│   │   ├── _duod.nix
+│   │   ├── _ktv.nix
+│   │   ├── _pyenv.nix
+│   │   └── _themeswitcher.nix
+│   ├── secrets
+│   │   └── gpg.nix
+│   ├── services
+│   │   ├── clipboard.nix
+│   │   ├── dunst.nix
+│   │   ├── login_manager.nix
+│   │   ├── ssd.nix
+│   │   └── ssh.nix
+│   ├── style
+│   │   ├── _themes.nix
+│   │   ├── stylix.nix
+│   │   └── wallpapers
+│   │       ├── grid.jpeg
+│   │       ├── legotesla.png
+│   │       ├── skyline.png
+│   │       ├── space.png
+│   │       └── tall_dark_sky_su57.jpg
+│   └── system
+│       ├── audio.nix
+│       ├── bios.nix
+│       ├── docker.nix
+│       ├── efi.nix
+│       ├── locale.nix
+│       ├── network.nix
+│       ├── security.nix
+│       ├── virtualization.nix
+│       └── xdg.nix
+├── README.md
+└── vimium_c.json
 ```

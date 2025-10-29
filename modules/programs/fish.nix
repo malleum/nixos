@@ -9,9 +9,6 @@
         BROWSER = "brave";
         TERMINAL = "foot";
       };
-      shellAliases = {
-        sp = "spotify_player";
-      };
     };
 
     users.defaultUserShell = pkgs.fish;
@@ -35,6 +32,8 @@
           if test -f ~/documents/gh/k/abbr.fish
               source ~/documents/gh/k/abbr.fish
           end
+
+          alias la 'eza -lah'
         '';
       };
     };
