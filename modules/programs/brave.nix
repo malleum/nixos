@@ -1,22 +1,20 @@
 {
   unify.modules.gui.nixos = {
-    programs = {
-      chromium = {
-        enable = true;
-        extraOpts = {
-          "BraveVPNDisabled" = true;
-          "BraveWalletDisabled" = true;
-        };
+    programs.chromium = {
+      enable = true;
+      extraOpts = {
+        "BraveVPNDisabled" = true;
+        "BraveWalletDisabled" = true;
       };
     };
   };
 
   unify.modules.gui.home = {pkgs, ...}: {
-    chromium = {
+    programs.chromium = {
       enable = true;
       package = pkgs.brave;
       commandLineArgs = [
-        "--enable-features=UseOzonePlatform"  # TODO: Maybe these 2 were off for a reason
+        "--enable-features=UseOzonePlatform" # TODO: Maybe these 2 were off for a reason
         "--ozone-platform=wayland"
         "--password-store=basic"
       ];

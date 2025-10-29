@@ -3,8 +3,7 @@
     home.packages = with pkgs; [
       hyprland-qtutils
       hyprpicker
-      kdePackages.xwaylandvideobridge
-      qt6.qtwayland
+      kdePackages.qtwayland
       swww
       wdisplays
       wl-clipboard

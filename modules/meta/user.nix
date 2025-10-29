@@ -1,6 +1,6 @@
 {
-  unify.nixos = {config, ...}: let
-    inherit (config.user) name username;
+  unify.nixos = {hostConfig, ...}: let
+    inherit (hostConfig.user) name username;
   in {
     users.users.${username} = {
       description = name;

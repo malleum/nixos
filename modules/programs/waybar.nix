@@ -1,6 +1,6 @@
 {
   unify.modules.gui.home = {
-    hostConfig,
+    config,
     lib,
     ...
   }: let
@@ -15,10 +15,10 @@
       indexHelper list 0;
 
     colors = [
-      "#${hostConfig.stylix.base16Scheme.base0A}"
-      "#${hostConfig.stylix.base16Scheme.base0C}"
-      "#${hostConfig.stylix.base16Scheme.base0D}"
-      "#${hostConfig.stylix.base16Scheme.base08}"
+      "#${config.stylix.base16Scheme.base0A}"
+      "#${config.stylix.base16Scheme.base0C}"
+      "#${config.stylix.base16Scheme.base0D}"
+      "#${config.stylix.base16Scheme.base08}"
     ];
 
     mods = ["tray" "pulseaudio" "network" "cpu" "memory" "disk" "battery" "clock#c2" "clock" "custom/chron"];
@@ -120,40 +120,40 @@
           window#waybar {
             background: rgba(30, 30, 45, 0.85);
             border-radius: 15px;
-            color: #${hostConfig.stylix.base16Scheme.base05};
+            color: #${config.stylix.base16Scheme.base05};
           }
 
           #workspaces {
-            background: #${hostConfig.stylix.base16Scheme.base01};
+            background: #${config.stylix.base16Scheme.base01};
             margin: 5px;
             padding: 0px 5px;
             border-radius: 10px;
-            border: 1px solid #${hostConfig.stylix.base16Scheme.base03};
+            border: 1px solid #${config.stylix.base16Scheme.base03};
           }
 
           #workspaces button {
             padding: 0px 10px;
             margin: 3px 3px;
             border-radius: 8px;
-            color: #${hostConfig.stylix.base16Scheme.base04};
+            color: #${config.stylix.base16Scheme.base04};
             background: transparent;
             transition: all 0.3s ease-in-out;
           }
 
           #workspaces button:hover {
-            background: #${hostConfig.stylix.base16Scheme.base02};
-            color: #${hostConfig.stylix.base16Scheme.base06};
+            background: #${config.stylix.base16Scheme.base02};
+            color: #${config.stylix.base16Scheme.base06};
           }
 
           #workspaces button.active {
-            color: #${hostConfig.stylix.base16Scheme.base07};
+            color: #${config.stylix.base16Scheme.base07};
             background-color: ${c.clock};
             padding: 0px 15px;
           }
 
           #workspaces button.urgent {
-            background-color: #${hostConfig.stylix.base16Scheme.base08};
-            color: #${hostConfig.stylix.base16Scheme.base01};
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
 
           /* General module styling */
@@ -171,9 +171,9 @@
             padding: 2px 12px;
             margin: 6px 3px;
             border-radius: 10px;
-            background-color: #${hostConfig.stylix.base16Scheme.base01};
-            color: #${hostConfig.stylix.base16Scheme.base06};
-            border: 2px solid #${hostConfig.stylix.base16Scheme.base02};
+            background-color: #${config.stylix.base16Scheme.base01};
+            color: #${config.stylix.base16Scheme.base06};
+            border: 2px solid #${config.stylix.base16Scheme.base02};
             transition: all 0.3s ease-in-out;
           }
 
@@ -189,8 +189,8 @@
           #pulseaudio:hover,
           #tray:hover,
           #custom-chron:hover {
-             background-color: #${hostConfig.stylix.base16Scheme.base02};
-             border: 2px solid #${hostConfig.stylix.base16Scheme.base04};
+             background-color: #${config.stylix.base16Scheme.base02};
+             border: 2px solid #${config.stylix.base16Scheme.base04};
           }
 
 
@@ -212,13 +212,13 @@
           /* Critical and special states styling */
           @keyframes blink {
             to {
-              background-color: #${hostConfig.stylix.base16Scheme.base09};
-              color: #${hostConfig.stylix.base16Scheme.base01};
+              background-color: #${config.stylix.base16Scheme.base09};
+              color: #${config.stylix.base16Scheme.base01};
             }
           }
 
           #battery.critical:not(.charging) {
-            border: 2px solid #${hostConfig.stylix.base16Scheme.base08};
+            border: 2px solid #${config.stylix.base16Scheme.base08};
             animation-name: blink;
             animation-duration: 1s;
             animation-timing-function: linear;
@@ -227,14 +227,14 @@
           }
 
           #network.disconnected {
-            background-color: #${hostConfig.stylix.base16Scheme.base08};
-            color: #${hostConfig.stylix.base16Scheme.base01};
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
 
           /*
           #temperature.critical {
-            background-color: #${hostConfig.stylix.base16Scheme.base08};
-            color: #${hostConfig.stylix.base16Scheme.base01};
+            background-color: #${config.stylix.base16Scheme.base08};
+            color: #${config.stylix.base16Scheme.base01};
           }
           */
         '';

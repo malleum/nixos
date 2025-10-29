@@ -1,5 +1,5 @@
 {
-  unify.modules.wok.home = {pkgs, ...}: {
+  unify.modules.wrk.home = {pkgs, ...}: {
     programs.fish.shellInit = ''
       abbr -a stag "STAGING_BRANCH=(git branch --show-current)"
       abbr -a prod 'VS_RUN_PROD=1'

@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  unify.modules.gui.home = {pkgs, ...}: {
     services.dunst = {
       enable = true;
       iconTheme = {

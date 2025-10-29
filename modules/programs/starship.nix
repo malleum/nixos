@@ -1,6 +1,6 @@
 {
   unify.home = {lib, ...}: {
-    starship = {
+    programs.starship = {
       enable = true;
       enableFishIntegration = true;
       settings = {

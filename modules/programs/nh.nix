@@ -1,10 +1,10 @@
 {
-  unify.nixos = {config, ...}: {
+  unify.nixos = {hostConfig, ...}: {
     programs = {
       nh = {
         enable = true;
         clean.enable = true;
-        flake = "${config.configHome}/nixos";
+        flake = "${hostConfig.user.configHome}/nixos";
       };
     };
   };

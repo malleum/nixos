@@ -5,7 +5,7 @@
       settings = {
         client_id_command = {
           command = "cat";
-          args = ["${hostConfig.homeDirectory}/documents/gh/k/spotify_id"];
+          args = ["${hostConfig.user.homeDirectory}/documents/gh/k/spotify_id"];
         };
       };
     };

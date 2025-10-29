@@ -59,7 +59,7 @@
   };
 
   unify.modules.gui.home = {lib, ...}: {
-    targets = {
+    stylix.targets = {
       fish.enable = false;
       hyprpaper.enable = lib.mkForce false;
       nixvim.enable = false;

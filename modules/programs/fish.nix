@@ -39,7 +39,7 @@
       };
     };
 
-    packages = with pkgs; [
+    home.packages = with pkgs; [
       fishPlugins.autopair
       fishPlugins.colored-man-pages
       fishPlugins.done

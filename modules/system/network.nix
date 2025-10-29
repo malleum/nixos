@@ -1,7 +1,7 @@
 {
-  unify.modules.laptop.nixos = {config, ...}: {
+  unify.modules.laptop.nixos = {hostConfig, ...}: {
     networking.networkmanager.enable = true;
 
-    users.users.${config.user.username}.extraGroups = ["networkmanager"];
+    users.users.${hostConfig.user.username}.extraGroups = ["networkmanager"];
   };
 }

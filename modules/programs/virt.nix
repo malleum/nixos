@@ -1,19 +1,17 @@
 {
-  unify.nixos = {
-    pkgs,
-    config,
-    ...
-  }: {
+  unify.nixos = {hostConfig, ...}: {
     programs.adb.enable = true;
 
-    users.users.${config.user.username}.extraGroups = ["adbuser"];
+    users.users.${hostConfig.user.username}.extraGroups = ["adbuser"];
+  };
 
+  unify.home = {pkgs, ...}: {
     dconf.settings = {
       "org/virt-manager/virt-manager/connections" = {
         autoconnect = ["qemu:///system"];
         uris = ["qemu:///system"];
       };
     };
-    environment.systemPackages = with pkgs; [quickemu];
+    home.packages = with pkgs; [quickemu];
   };
 }
