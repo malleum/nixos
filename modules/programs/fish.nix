@@ -32,9 +32,10 @@
           if test -f ~/documents/gh/k/abbr.fish
               source ~/documents/gh/k/abbr.fish
           end
-
-          alias la 'eza -lah'
         '';
+        shellAliases = {
+          la = "eza -lah";
+        };
       };
     };
 

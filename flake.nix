@@ -26,11 +26,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sops-file = {
-      url = "github:nix-community/sops-file";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim = {
       url = "github:nix-community/nixvim";
