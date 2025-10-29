@@ -1,0 +1,36 @@
+{
+  unify.home = {pkgs, ...}: {
+
+    home.packages = with pkgs; [
+      acpi
+      bat
+      bc
+      btop
+      choose
+      fastfetch
+      fd
+      feh
+      ffmpeg
+      file
+      fzf
+      htop
+      imagemagick
+      jq
+      killall
+      libnotify
+      libqalculate
+      ltrace
+      magic-wormhole
+      nitch
+      nmap
+      openssl
+      ouch
+      rip2
+      ripgrep
+      sd
+      speedtest-cli
+      tldr
+      wget
+    ];
+  };
+}

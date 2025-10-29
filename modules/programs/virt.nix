@@ -1,6 +1,12 @@
 {
-  unify.nixos = {pkgs, ...}: {
+  unify.nixos = {
+    pkgs,
+    config,
+    ...
+  }: {
     programs.adb.enable = true;
+
+    users.users.${config.user.username}.extraGroups = ["adbuser"];
 
     dconf.settings = {
       "org/virt-manager/virt-manager/connections" = {

@@ -1,19 +1,21 @@
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}: {
-  config = let
-    wallpaper = config.stylix.image;
-  in {
+{inputs, ...}: {
+  unify.modules.gui.nixos = {pkgs, ...}: {
     programs.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
     };
-    home-manager.users.joshammer.wayland.windowManager.hyprland = {
+  };
+
+  unify.modules.gui.home = {
+    hostConfig,
+    lib,
+    pkgs,
+    ...
+  }: let
+    wallpaper = hostConfig.stylix.image;
+  in {
+    wayland.windowManager.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
@@ -33,7 +35,7 @@
           "LIBVA_DRIVER_NAME,radeonsi"
         ];
         monitor = (
-          if config.networking.hostName == "magnus"
+          if hostConfig.networking.hostName == "magnus"
           then [
             # "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
             "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x0,1"
@@ -78,8 +80,8 @@
           border_size = 2;
           layout = "dwindle";
 
-          "col.active_border" = "rgba(${config.stylix.base16Scheme.base04}ff) rgba(${config.stylix.base16Scheme.base0C}ff) 30deg";
-          "col.inactive_border" = "rgba(${config.stylix.base16Scheme.base01}aa)";
+          "col.active_border" = "rgba(${hostConfig.stylix.base16Scheme.base04}ff) rgba(${hostConfig.stylix.base16Scheme.base0C}ff) 30deg";
+          "col.inactive_border" = "rgba(${hostConfig.stylix.base16Scheme.base01}aa)";
         };
         ecosystem = {
           no_update_news = true;
@@ -112,7 +114,7 @@
 
           animation = let
             slide = "${
-              if config.networking.hostName == "magnus"
+              if hostConfig.networking.hostName == "magnus"
               then "slidevert"
               else "slide"
             }";

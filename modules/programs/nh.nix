@@ -8,4 +8,13 @@
       };
     };
   };
+
+  unify.home = {pkgs, ...}: {
+    home.packages = with pkgs; [
+      nix-prefetch-github
+      nix-output-monitor
+      nixos-shell
+      nvd
+    ];
+  };
 }
