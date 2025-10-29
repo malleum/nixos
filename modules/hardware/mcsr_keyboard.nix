@@ -1,5 +1,5 @@
 {
-  unify.modules.nixos.gam = {lib, ...}: let
+  unify.modules.gam.nixos = {lib, ...}: let
     header = ''
       default partial alphanumeric_keys
       xkb_symbols "mcsr" {
@@ -86,7 +86,7 @@
     };
     keyboard = lib.strings.concatLines [header (lib.strings.concatLines (lib.mapAttrsToList key layout)) footer];
   in {
-    xserver.xkb.extraLayouts = {
+    services.xserver.xkb.extraLayouts = {
       mcsr = {
         description = "MCSR Custom Layout";
         languages = ["eng"];
