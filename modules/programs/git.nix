@@ -1,5 +1,9 @@
 {
-  unify.home = {hostConfig, config, ...}: {
+  unify.home = {
+    hostConfig,
+    config,
+    ...
+  }: {
     programs.git = {
       enable = true;
       settings = {
@@ -10,11 +14,16 @@
 
     programs.gh.enable = true;
 
-    home.file."${hostConfig.user.configHome}/gh/hosts.yml" = {
-      text = ''
+    sops.templates."gh-hosts" = {
+      path = "${hostConfig.user.configHome}/gh/hosts.yml";
+      content = ''
         github.com:
-              user: ${hostConfig.user.gitusername}
-              oauth_token: ${config.sops.secrets.github_token.path}
+            users:
+                malleum:
+                    oauth_token: ${config.sops.placeholder.github_token}
+            git_protocol: https
+            oauth_token: ${config.sops.placeholder.github_token}
+            user: malleum
       '';
     };
   };
