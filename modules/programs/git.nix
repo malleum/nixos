@@ -12,19 +12,19 @@
       };
     };
 
-    programs.gh.enable = true;
-
-    sops.templates."gh-hosts" = {
-      path = "${hostConfig.user.configHome}/gh/hosts.yml";
-      content = ''
-        github.com:
-            users:
-                malleum:
-                    oauth_token: ${config.sops.placeholder.github_token}
-            git_protocol: https
-            oauth_token: ${config.sops.placeholder.github_token}
-            user: malleum
-      '';
-    };
+    # programs.gh.enable = true;
+    #
+    # sops.templates."gh-hosts" = {
+    #   path = "${hostConfig.user.configHome}/gh/hosts.yml";
+    #   content = ''
+    #     github.com:
+    #         users:
+    #             malleum:
+    #                 oauth_token: ${config.sops.placeholder.github_token}
+    #         git_protocol: https
+    #         oauth_token: ${config.sops.placeholder.github_token}
+    #         user: malleum
+    #   '';
+    # };
   };
 }
