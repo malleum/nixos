@@ -28,6 +28,7 @@
       rip2
       ripgrep
       sd
+      sops
       speedtest-cli
       tldr
       wget
