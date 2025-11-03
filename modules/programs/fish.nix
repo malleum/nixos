@@ -35,6 +35,8 @@
         '';
         shellAliases = {
           la = "eza -lah";
+          cat = "bat";
+          choose = "choose -x";
         };
       };
     };
