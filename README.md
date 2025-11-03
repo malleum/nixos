@@ -1,9 +1,18 @@
 # TODO
-- [x] better options
+- [x] Dendritic with unify
 - [ ] secrets
+    - [ ] age personal key
+    - [ ] ssh keys x3
+    - [ ] github token
+    - [ ] gpg keys
+    - [ ] gitlab key
+- [ ] outputs
+    - [ ] nixvim
+    - [ ] scripts
+- [ ] hm config for oracle
+- [ ] firefox
 - [ ] nvf
 - [ ] switch wallpaper
-- [ ] firefox
 
 ```nix
 .
@@ -42,6 +51,7 @@
 │   │   └── default.nix
 │   ├── packages
 │   │   ├── cli.nix
+│   │   ├── coreutils.nix
 │   │   ├── fonts.nix
 │   │   ├── game.nix
 │   │   ├── gui.nix
@@ -77,7 +87,9 @@
 │   │   ├── _pyenv.nix
 │   │   └── _themeswitcher.nix
 │   ├── secrets
-│   │   └── gpg.nix
+│   │   ├── default.yaml
+│   │   ├── gpg.nix
+│   │   └── sops.nix
 │   ├── services
 │   │   ├── clipboard.nix
 │   │   ├── dunst.nix
