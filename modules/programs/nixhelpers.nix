@@ -1,8 +1,5 @@
 {inputs, ...}: {
-  unify.nixos = {
-    pkgs,
-    ...
-  }: {
+  unify.nixos = {pkgs, ...}: {
     programs = {
       nix-ld = {
         enable = true;

@@ -96,10 +96,9 @@
         format-icons = ["󰈸" "󰈸" "󰈸"]; # Using a consistent icon
       };
 
-      # ADDED custom module definition
       "custom/chron" = {
-        format = "chrono {} 󱑤";
-        exec = "chron | choose 0";
+        format = "duodo {} 󱑤";
+        exec = "duod | choose -c 0..4";
         interval = 1;
         return-type = "text";
       };
