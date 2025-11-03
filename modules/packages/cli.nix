@@ -33,6 +33,7 @@
       speedtest-cli
       tldr
       wget
+      xan
     ];
   };
 }

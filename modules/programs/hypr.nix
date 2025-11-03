@@ -16,6 +16,18 @@
   }: let
     wallpaper = config.stylix.image;
   in {
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
+        xdg-desktop-portal-gtk
+      ];
+      # This ensures Hyprland's portal is the default
+      config.common.default = [
+        "hyprland"
+        "gtk"
+      ];
+    };
     wayland.windowManager.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -24,12 +36,6 @@
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
           "NIXOS_OZONE_WL,1"
-          # Force Firefox to use Wayland
-          "MOZ_ENABLE_WAYLAND,1"
-          "MOZ_USE_XINPUT2,1"
-          # Hardware acceleration
-          "MOZ_WEBRENDER,1"
-          "MOZ_ACCELERATED,1"
           # Hyprland specific
           "GDK_BACKEND,wayland,x11" # Prefer Wayland, fallback to X11
           # VAAPI for hardware video decoding
@@ -51,7 +57,7 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-          "${inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
+          # "${inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
           "waybar"
@@ -159,6 +165,8 @@
           "workspace 5, title:^(.*MainPicker.*)$"
 
           "float, title:^(.*(All|Save) Files?.*)$"
+          "noblur, class:^(firefox-beta)$"
+          "noshadow, class:^(firefox-beta)$"
         ];
 
         bind = let

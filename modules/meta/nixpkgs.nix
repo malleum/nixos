@@ -3,6 +3,8 @@
     config.allowUnfree = true;
 
     overlays = [
+      inputs.nur.overlays.default
+
       (final: prev: {
         stable = import inputs.stable {
           system = prev.stdenv.hostPlatform.system;
