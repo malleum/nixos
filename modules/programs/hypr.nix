@@ -2,8 +2,8 @@
   unify.modules.gui.nixos = {pkgs, ...}: {
     programs.hyprland = {
       enable = true;
-      package = inputs.hypr.packages.${pkgs.system}.hyprland;
-      portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
   };
 
@@ -18,8 +18,8 @@
   in {
     wayland.windowManager.hyprland = {
       enable = true;
-      package = inputs.hypr.packages.${pkgs.system}.hyprland;
-      portalPackage = inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       settings = lib.mkForce {
         env = [
           "WLR_NO_HARDWARE_CURSORS,1"
@@ -51,7 +51,7 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-          "${inputs.hypr.packages.${pkgs.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
+          "${inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
           "waybar"

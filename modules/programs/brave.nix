@@ -14,7 +14,7 @@
       enable = true;
       package = pkgs.brave;
       commandLineArgs = [
-        "--enable-features=UseOzonePlatform" # TODO: Maybe these 2 were off for a reason
+        "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
         "--password-store=basic"
       ];

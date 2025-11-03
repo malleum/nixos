@@ -1,8 +1,8 @@
 {inputs, ...}: {
   unify.modules.gam.home = {pkgs, ...}: let
-    glfwww = inputs.waywall.packages.${pkgs.system}.glfw;
-    ninjabrainbot = inputs.waywall.packages.${pkgs.system}.ninjabrainbot;
-    waywall-git = inputs.waywall.packages.${pkgs.system}.waywall;
+    glfwww = inputs.waywall.packages.${pkgs.stdenv.hostPlatform.system}.glfw;
+    ninjabrainbot = inputs.waywall.packages.${pkgs.stdenv.hostPlatform.system}.ninjabrainbot;
+    waywall-git = inputs.waywall.packages.${pkgs.stdenv.hostPlatform.system}.waywall;
   in {
     home = {
       packages = with pkgs; [

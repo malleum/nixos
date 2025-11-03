@@ -1,25 +1,20 @@
-{
-  inputs,
-  self,
-  ...
-}: let
+{inputs, ...}: let
   nixpkgs = {
     config.allowUnfree = true;
 
     overlays = [
-      self.overlays.default # TODO: what does this mean?
       (final: prev: {
         stable = import inputs.stable {
-          system = prev.system;
+          system = prev.stdenv.hostPlatform.system;
           config.allowUnfree = true;
         };
       })
     ];
   };
 in {
-  imports = [inputs.flake-parts.flakeModules.easyOverlay]; # TODO: what does this mean?
+  imports = [inputs.flake-parts.flakeModules.easyOverlay];
 
-  perSystem = {system, ...}: { # TODO: what does this mean?
+  perSystem = {system, ...}: {
     imports = ["${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix" {inherit nixpkgs;}];
 
     nixpkgs.hostPlatform = {inherit system;};

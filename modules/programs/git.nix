@@ -13,7 +13,7 @@
     };
 
     programs.gh.enable = true;
-    
+
     sops.templates."gh-hosts" = {
       path = "${hostConfig.user.configHome}/gh/hosts.yml";
       content = ''
