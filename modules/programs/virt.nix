@@ -12,6 +12,9 @@
         uris = ["qemu:///system"];
       };
     };
-    home.packages = with pkgs; [quickemu];
+    home.packages = with pkgs; [
+      nixos-shell
+      quickemu
+    ];
   };
 }

@@ -22,6 +22,7 @@
       ltrace
       magic-wormhole
       nitch
+      nix-prefetch-github
       nmap
       openssl
       ouch
