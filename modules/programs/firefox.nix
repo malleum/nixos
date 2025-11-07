@@ -31,6 +31,7 @@
       "app.update.channel" = "default"; # Disable updates (pointless in Nix)
       "extensions.update.enabled" = false;
       "browser.discovery.enabled" = false;
+      "browser.startup.homepage" = "about:newtab";
       "browser.newtabpage.activity-stream.default.sites" = "";
       "browser.newtabpage.activity-stream.feeds.topsites" = false;
       "browser.newtabpage.activity-stream.showSponsored" = false;
@@ -74,23 +75,23 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
-      "widget.dmabuf.force-enabled" = true; # Force-enables DMABUF for zero-copy GPU/compositor sharing
       "media.ffmpeg.vaapi.enabled" = true; # This is the main one: enables VA-API (video decoding)
       "media.ffvpx.enabled" = false; # Disables the built-in VP8/VP9 decoder to force VA-API
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
+
+      "widget.wayland.opaque-region.enabled" = false;
     };
   in {
     home.sessionVariables = {
       # Force Firefox to use Wayland
       MOZ_ENABLE_WAYLAND = "1";
-      MOZ_USE_XINPUT2 = "1";
       # Hardware acceleration
       MOZ_WEBRENDER = "1";
       MOZ_ACCELERATED = "1";
     };
 
     stylix.targets.firefox = {
-      # enable = true;
+      enable = false;
       profileNames = ["default"];
     };
 

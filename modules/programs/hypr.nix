@@ -165,8 +165,8 @@
           "workspace 5, title:^(.*MainPicker.*)$"
 
           "float, title:^(.*(All|Save) Files?.*)$"
-          "noblur, class:^(firefox-beta)$"
-          "noshadow, class:^(firefox-beta)$"
+          "noblur, title:^(.*Firefox.*)$"
+          "noshadow, title:^(.*Firefox.*)$"
         ];
 
         bind = let
