@@ -106,7 +106,7 @@
     };
 
     stylix.targets.firefox = {
-      enable = false;
+      enable = true;
       profileNames = ["default"];
     };
 
