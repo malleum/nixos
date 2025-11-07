@@ -2,7 +2,7 @@
   unify.modules.gui.home = {pkgs, ...}: let
     myExtensions = with pkgs.nur.repos.rycee.firefox-addons; [
       bitwarden
-      # darkreader
+      darkreader
       # auto-accepts cookies, use only with privacy-badger & ublock-origin
       istilldontcareaboutcookies
       link-cleaner
@@ -20,7 +20,7 @@
       "browser.download.useDownloadDir" = true;
       "browser.tabs.loadInBackground" = true;
       "browser.ctrlTab.recentlyUsedOrder" = false;
-      "general.autoScroll" = true; # Middle-click auto-scroll
+      "general.autoScroll" = false; # Middle-click auto-scroll
       "ui.systemUsesDarkTheme" = 1; # Enable Firefox's built-in dark UI
 
       # --- Disable Telemetry & Bloat ---
@@ -63,6 +63,9 @@
       "browser.urlbar.suggest.quickactions" = false;
       "browser.urlbar.showSearchSuggestionsFirst" = false;
 
+      "browser.urlbar.trimURLs" = false; # Show https://, www., etc.
+      "browser.urlbar.maxRichResults" = 15; # Show more dropdown results
+
       # --- Privacy ---
       "browser.contentblocking.category" = "standard"; # "strict" can break sites
       "dom.forms.autocomplete.formautofill" = false;
@@ -80,6 +83,18 @@
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
 
       "widget.wayland.opaque-region.enabled" = false;
+
+      # --- Auto-Enable Extensions & Hide Prompts ---
+      "extensions.startupScanScopes" = 1;
+      "extensions.showDomainRestrictions" = false;
+
+      # --- Hide Bookmarks Bar ---
+      "browser.toolbars.bookmarks.visibility" = "never";
+
+      # --- Disable Welcome, Hints, and Tours ---
+      "browser.startup.homepage_override.mstone" = "ignore";
+      "browser.tabs.firefox-view" = false;
+      "browser.tabs.firefox-view-newIcon" = false;
     };
   in {
     home.sessionVariables = {
