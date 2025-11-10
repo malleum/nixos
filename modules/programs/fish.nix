@@ -6,7 +6,8 @@
       variables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
-        BROWSER = "brave";
+        BROWSER = "firefox-beta";
+        BROWSER2 = "brave";
         TERMINAL = "foot";
       };
     };

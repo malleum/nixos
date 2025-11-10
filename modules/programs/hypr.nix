@@ -188,10 +188,10 @@
           [
             "SUPER, return, exec, foot"
             "SUPER SHIFT, return, exec, kitty"
-            "SUPER, b, exec, brave"
-            "SUPER SHIFT, b, exec, firefox"
+            "SUPER, b, exec, $BROWSER"
+            "SUPER SHIFT, b, exec, $BROWSER2"
             "SUPER, d, exec, vesktop"
-            "SUPER SHIFT, d, exec, brave 'https://teams.microsoft.com/v2/'"
+            "SUPER SHIFT, d, exec, $BROWSER 'https://teams.microsoft.com/v2/'"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
             "SUPER SHIFT, x, exec, wl-copy 'Neida, jeg ville vinne'"
