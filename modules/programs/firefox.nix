@@ -9,7 +9,7 @@
       privacy-badger
       ublock-origin
       unpaywall
-      vimium
+      tridactyl
     ];
 
     # Combined and cleaned-up settings
