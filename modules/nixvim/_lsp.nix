@@ -6,6 +6,7 @@
         enable = true;
         servers = {
           clangd.enable = true;
+          clojure_lsp.enable = true;
           gopls.enable = true;
           jdtls.enable = true;
           jsonls.enable = true;

@@ -32,10 +32,7 @@
     };
 
     nix-alien.url = "github:thiagokokada/nix-alien";
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixvim.url = "github:nix-community/nixvim";
 
     hypr.url = "github:hyprwm/Hyprland";
     stylix.url = "github:danth/stylix";

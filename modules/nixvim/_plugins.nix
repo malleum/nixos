@@ -18,6 +18,7 @@ in {
       oil.enable = true;
       neogit.enable = true;
       comment.enable = true;
+      conjure.enable = true;
       diffview.enable = true;
       gitsigns.enable = true;
       nvim-autopairs.enable = true;
@@ -196,6 +197,9 @@ in {
     extraPlugins = with pkgs.vimPlugins; [
       vim-visual-multi
       vim-indent-object
+
+      vim-sexp
+      vim-sexp-mappings-for-regular-people
     ];
   };
 }
