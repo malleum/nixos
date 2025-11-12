@@ -22,6 +22,8 @@
       "browser.ctrlTab.recentlyUsedOrder" = false;
       "general.autoScroll" = false; # Middle-click auto-scroll
       "ui.systemUsesDarkTheme" = 1; # Enable Firefox's built-in dark UI
+      "browser.ssb.enabled" = false;
+      "ui.key.menuAccessKey" = 0;
 
       # --- Disable Telemetry & Bloat ---
       "app.normandy.first_run" = false;
