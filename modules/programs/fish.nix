@@ -1,14 +1,18 @@
 {
-  unify.nixos = {pkgs, ...}: {
+  unify.nixos = {
+    pkgs,
+    hostConfig,
+    ...
+  }: {
     programs.fish.enable = true;
     environment = {
       shells = [pkgs.fish];
       variables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
-        BROWSER = "firefox-beta";
-        BROWSER2 = "brave";
         TERMINAL = "foot";
+        BROWSER = hostConfig.user.browser;
+        BROWSER2 = hostConfig.user.browser2;
       };
     };
 

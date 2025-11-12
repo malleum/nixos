@@ -11,10 +11,12 @@
   gitusername = "malleum";
   homeDirectory = "/home/${username}";
   configHome = "${homeDirectory}/.config";
+  browser = "firefox-beta";
+  browser2 = "brave";
 in {
   options.user = mkOption {
     type = types.attrsOf types.str;
-    default = {inherit email name username homeDirectory configHome gitusername;};
+    default = {inherit email name username homeDirectory configHome gitusername browser browser2;};
   };
 
   config.unify.options.user = mkOption {

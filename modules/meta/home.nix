@@ -5,7 +5,7 @@
       lib,
       ...
     }: let
-      inherit (hostConfig.user) username homeDirectory configHome;
+      inherit (hostConfig.user) username homeDirectory configHome browser;
     in {
       home = {
         inherit username homeDirectory;
@@ -20,12 +20,16 @@
       xdg = {
         enable = true;
         inherit configHome;
+        mimeApps.defaultApplications = {
+          "text/html" = "${browser}.desktop";
+          "x-scheme-handler/http" = "${browser}.desktop";
+          "x-scheme-handler/https" = "${browser}.desktop";
+        };
       };
     };
 
     nixos.home-manager = {
-      backupFileExtension = "bakup";
-
+      backupFileExtension = "";
       useGlobalPkgs = true;
       useUserPackages = true;
     };
