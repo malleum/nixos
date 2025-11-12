@@ -18,7 +18,7 @@ in {
       oil.enable = true;
       neogit.enable = true;
       comment.enable = true;
-      conjure.enable = true;
+      # conjure.enable = true;
       diffview.enable = true;
       gitsigns.enable = true;
       nvim-autopairs.enable = true;
