@@ -1,5 +1,14 @@
-{
-  unify.home = {pkgs, ...}: {
+{inputs, ...}: {
+  unify.home = {pkgs, ...}: let
+    inherit (pkgs.stdenv.hostPlatform) system;
+    nixvim' = inputs.nixvim.legacyPackages.${system};
+    nixvimModule = {
+      inherit system;
+      module = import ../../nixvim;
+      extraSpecialArgs = {inherit pkgs system;};
+    };
+    nixvimPackage = nixvim'.makeNixvimWithModule nixvimModule;
+  in {
     home.packages = with pkgs; [
       acpi
       age
@@ -23,6 +32,7 @@
       magic-wormhole
       nitch
       nix-prefetch-github
+      nixvimPackage
       nmap
       openssl
       ouch

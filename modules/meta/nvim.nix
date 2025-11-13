@@ -1,23 +1,18 @@
-{
-  self,
-  inputs,
-  ...
-}: {
+{inputs, ...}: {
   perSystem = {
     pkgs,
     system,
     ...
   }: let
-    nixvimConfig = {
-      imports = [
-        self.nixosModules.nixvim
-        inputs.nixvim.nixosModules.nixvim
-      ];
+    nixvim' = inputs.nixvim.legacyPackages.${system};
+    nixvimModule = {
+      inherit system;
+      module = import ../../nixvim;
+      extraSpecialArgs = {
+        inherit pkgs system;
+      };
     };
-    nixvimPackage = inputs.nixvim.lib.${system}.nixvim-build {
-      inherit pkgs;
-      module = nixvimConfig;
-    };
+    nixvimPackage = nixvim'.makeNixvimWithModule nixvimModule;
   in {
     apps.default = {
       type = "app";
@@ -26,4 +21,3 @@
     packages.default = nixvimPackage;
   };
 }
-
