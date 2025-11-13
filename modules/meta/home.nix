@@ -29,7 +29,7 @@
     };
 
     nixos.home-manager = {
-      backupFileExtension = "";
+      backupFileExtension = "bak";
       useGlobalPkgs = true;
       useUserPackages = true;
     };
