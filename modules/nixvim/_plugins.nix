@@ -4,8 +4,6 @@
   ...
 }: let
   alejandra = "${pkgs.alejandra}/bin/alejandra";
-  cljfmt = "${pkgs.cljfmt}/bin/cljfmt";
-  gdformat = "${pkgs.gdtoolkit_4}/bin/gdformat";
   gofmt = "${pkgs.go}/bin/gofmt";
   goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
   isort = "${pkgs.isort}/bin/isort";
@@ -38,8 +36,6 @@ in {
         settings = {
           formatters = {
             alejandra.command = alejandra;
-            cljfmt.command = cljfmt;
-            gdformat.command = gdformat;
             gofmt.command = gofmt;
             goimports.command = goimports;
             isort.command = isort;
@@ -52,8 +48,6 @@ in {
           };
           formatters_by_ft = {
             "*" = ["trim_whitespace"];
-            clojure = ["cljfmt"];
-            gdscript = ["gdformat"];
             go = ["goimports" "gofmt"];
             javascript = ["prettierd"];
             lua = ["stylua"];
@@ -187,19 +181,13 @@ in {
         key = "<leader>g";
         action = "<cmd>Neogit<cr>";
       }
-      {
-        mode = "n";
-        key = "<leader>ut";
-        action = "<cmd>UndotreeToggle<cr>";
-      }
     ];
 
     extraPlugins = with pkgs.vimPlugins; [
       vim-visual-multi
       vim-indent-object
 
-      vim-sexp
-      vim-sexp-mappings-for-regular-people
+      # vim-sexp vim-sexp-mappings-for-regular-people
     ];
   };
 }

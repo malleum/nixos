@@ -20,9 +20,10 @@
       "browser.download.useDownloadDir" = true; # Save files to Downloads folder
       "browser.tabs.loadInBackground" = true; # Open new tabs in background
       "browser.ctrlTab.recentlyUsedOrder" = false; # Cycle tabs in visual order, not LRU
+      "browser.ssb.enabled" = false; # Disable "Site Specific Browser" (PWA-like) feature
+      "browser.sessionstore.resume_from_crash" = false; # Never auto-restore session after a crash
       "general.autoScroll" = false; # Middle-click auto-scroll
       "ui.systemUsesDarkTheme" = 1; # Enable Firefox's built-in dark UI
-      "browser.ssb.enabled" = false; # Disable "Site Specific Browser" (PWA-like) feature
       "ui.key.menuAccessKey" = 0; # Disable Alt key opening menu
 
       # --- Disable Telemetry & Bloat ---
