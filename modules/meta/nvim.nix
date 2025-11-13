@@ -1,16 +1,29 @@
-{self, ...}: {
-  systems = ["x86_64-linux" "aarch64-linux"];
-  perSystem = {lib, ...}: {
-    apps.default = let
-      nixvimPackage =
-        lib.findFirst
-        (pkg: pkg.name == "nixvim")
-        null
-        self.nixosConfigurations.malleum.config.environment.systemPackages;
-    in
-      assert nixvimPackage != null; {
-        type = "app";
-        program = "${nixvimPackage}/bin/nvim";
-      };
+{
+  self,
+  inputs,
+  ...
+}: {
+  perSystem = {
+    pkgs,
+    system,
+    ...
+  }: let
+    nixvimConfig = {
+      imports = [
+        self.nixosModules.nixvim
+        inputs.nixvim.nixosModules.nixvim
+      ];
+    };
+    nixvimPackage = inputs.nixvim.lib.${system}.nixvim-build {
+      inherit pkgs;
+      module = nixvimConfig;
+    };
+  in {
+    apps.default = {
+      type = "app";
+      program = "${nixvimPackage}/bin/nvim";
+    };
+    packages.default = nixvimPackage;
   };
 }
+
