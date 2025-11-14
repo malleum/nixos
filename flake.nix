@@ -33,6 +33,8 @@
 
     nix-alien.url = "github:thiagokokada/nix-alien";
     nixvim.url = "github:nix-community/nixvim";
+    nvf.url = "github:notashelf/nvf";
+    neovim-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     hypr.url = "github:hyprwm/Hyprland";
     stylix.url = "github:danth/stylix";

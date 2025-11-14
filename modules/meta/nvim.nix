@@ -4,20 +4,28 @@
     system,
     ...
   }: let
-    nixvim' = inputs.nixvim.legacyPackages.${system};
-    nixvimModule = {
+    nixvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
       module = import ../../nixvim;
-      extraSpecialArgs = {
-        inherit pkgs system;
-      };
+      extraSpecialArgs = {inherit pkgs inputs;};
     };
-    nixvimPackage = nixvim'.makeNixvimWithModule nixvimModule;
+
+    nvf =
+      (inputs.nvf.lib.neovimConfiguration {
+        inherit pkgs;
+        modules = [(import ../../nvf {inherit inputs pkgs;})];
+      }).neovim;
   in {
     apps.default = {
       type = "app";
-      program = "${nixvimPackage}/bin/nvim";
+      program = "${nvf}/bin/nvim";
     };
-    packages.default = nixvimPackage;
+    packages.default = nvf;
+
+    apps.nvim = {
+      type = "app";
+      program = "${nixvim}/bin/nvim";
+    };
+    packages.nvim = nixvim;
   };
 }
