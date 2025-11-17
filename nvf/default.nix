@@ -12,7 +12,6 @@
     theme = {
       enable = true;
       name = "tokyonight";
-      style = "night";
     };
 
     statusline.lualine.enable = true;
@@ -27,6 +26,9 @@
 
     lsp = {
       enable = true;
+      formatOnSave = true;
+      inlayHints.enable = true;
+      lspSignature.enable = true;
     };
 
     languages = {
@@ -34,7 +36,10 @@
       enableTreesitter = true;
       enableExtraDiagnostics = true;
 
-      nix.enable = true;
+      nix = {
+        enable = true;
+        lsp.server = "nixd";
+      };
     };
 
     options = {
@@ -69,11 +74,7 @@
           expr = true;
           silent = true;
           lua = true;
-          action =
-            /*
-            lua
-            */
-            "function () return 'mz' .. vim.v.count1 .. 'J`z' end";
+          action = "function () return 'mz' .. vim.v.count1 .. 'J`z' end";
         };
       };
       visual = {
