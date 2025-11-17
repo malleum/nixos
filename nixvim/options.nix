@@ -52,13 +52,13 @@
 
   keymaps = [
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<Space>";
       action = "<Nop>";
       options.silent = true;
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<S-cr>";
       action = "<Nop>";
       options.silent = true;
@@ -97,72 +97,72 @@
       action = "\"_d";
     }
     {
-      mode = [ "x" ];
+      mode = ["x"];
       key = "<leader>p";
       action = "\"_dP";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "N";
       action = "Nzz";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "n";
       action = "nzz";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<C-u>";
       action = "<C-u>zz";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<C-d>";
       action = "<C-d>zz";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "J";
       action = "mzJ1`z";
     }
     {
-      mode = [ "v" ];
+      mode = ["v"];
       key = "K";
       action = ":m '<-2<CR>gv=gv";
     }
     {
-      mode = [ "v" ];
+      mode = ["v"];
       key = "J";
       action = ":m '>+1<CR>gv=gv";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "Y";
       action = "y$";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<Esc>";
       action = "<cmd>nohlsearch<CR><Esc>";
     }
     {
-      mode = [ "c" ];
+      mode = ["c"];
       key = "W";
       action = "w";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "-";
       action = "<cmd>Oil<cr>";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<C-j>";
       action = "<cmd>cn<cr>";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<C-k>";
       action = "<cmd>cp<cr>";
     }

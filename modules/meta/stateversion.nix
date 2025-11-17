@@ -1,9 +1,8 @@
 let
   stateVersion = "23.11";
-in
-{
+in {
   unify = {
-    home.home = { inherit stateVersion; };
-    nixos.system = { inherit stateVersion; };
+    home.home = {inherit stateVersion;};
+    nixos.system = {inherit stateVersion;};
   };
 }

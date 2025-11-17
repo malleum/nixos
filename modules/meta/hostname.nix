@@ -1,7 +1,5 @@
 {
-  unify.nixos =
-    { hostConfig, ... }:
-    {
-      networking.hostName = hostConfig.name;
-    };
+  unify.nixos = {hostConfig, ...}: {
+    networking.hostName = hostConfig.name;
+  };
 }

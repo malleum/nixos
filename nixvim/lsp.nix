@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   plugins = {
     fidget.enable = true;
     lsp = {
@@ -16,7 +15,7 @@
           enable = true;
           settings.Lua = {
             runtime.version = "LuaJIT";
-            diagnostics.globals = [ "vim" ];
+            diagnostics.globals = ["vim"];
             workspace = {
               checkThirdParty = false;
               library = [
@@ -28,7 +27,7 @@
         };
         nixd = {
           enable = true;
-          settings = { };
+          settings = {};
           extraOptions.offset_encoding = "utf-8";
         };
         pyright.enable = true;
@@ -111,19 +110,17 @@
         ];
 
         sources = [
-          { name = "nvim_lsp"; }
-          { name = "luasnip"; }
-          { name = "nvim_lua"; }
-          { name = "calc"; }
-          { name = "path"; }
-          { name = "buffer"; }
+          {name = "nvim_lsp";}
+          {name = "luasnip";}
+          {name = "nvim_lua";}
+          {name = "calc";}
+          {name = "path";}
+          {name = "buffer";}
         ];
         mapping = {
           "<CR>" = "cmp.mapping.confirm({ select = true })";
-          "<C-p>" =
-            "cmp.mapping(function() if cmp.visible() then cmp.select_prev_item({behavior = 'select'}) else cmp.complete() end end)";
-          "<C-n>" =
-            "cmp.mapping(function() if cmp.visible() then cmp.select_next_item({behavior = 'select'}) else cmp.complete() end end)";
+          "<C-p>" = "cmp.mapping(function() if cmp.visible() then cmp.select_prev_item({behavior = 'select'}) else cmp.complete() end end)";
+          "<C-n>" = "cmp.mapping(function() if cmp.visible() then cmp.select_next_item({behavior = 'select'}) else cmp.complete() end end)";
         };
         window = {
           completion = {

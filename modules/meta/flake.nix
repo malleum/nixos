@@ -1,6 +1,5 @@
-{ inputs, ... }:
-{
-  imports = [ inputs.unify.flakeModule ];
+{inputs, ...}: {
+  imports = [inputs.unify.flakeModule];
 
   debug = false;
 

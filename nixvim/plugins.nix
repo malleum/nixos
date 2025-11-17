@@ -2,17 +2,15 @@
   pkgs,
   config,
   ...
-}:
-let
-  nixfmt = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+}: let
+  alejandra = "${pkgs.alejandra}/bin/alejandra";
   gofmt = "${pkgs.go}/bin/gofmt";
   goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
   isort = "${pkgs.isort}/bin/isort";
   prettierd = "${pkgs.prettierd}/bin/prettierd";
   ruff = "${pkgs.ruff}/bin/ruff";
   stylua = "${pkgs.stylua}/bin/stylua";
-in
-{
+in {
   plugins = {
     oil.enable = true;
     neogit.enable = true;
@@ -73,26 +71,26 @@ in
       enable = true;
       settings = {
         formatters = {
-          nixfmt.command = nixfmt;
+          alejandra.command = alejandra;
           gofmt.command = gofmt;
           goimports.command = goimports;
           isort.command = isort;
           prettierd.command = prettierd;
           ruff_format = {
             command = ruff;
-            prepend_args = [ "format" ];
+            prepend_args = ["format"];
           };
           stylua.command = stylua;
         };
         formatters_by_ft = {
-          "*" = [ "trim_whitespace" ];
+          "*" = ["trim_whitespace"];
           go = [
             "goimports"
             "gofmt"
           ];
-          javascript = [ "prettierd" ];
-          lua = [ "stylua" ];
-          nix = [ "nixfmt" ];
+          javascript = ["prettierd"];
+          lua = ["stylua"];
+          nix = ["alejandra"];
           python = [
             "isort"
             "ruff_format"
@@ -104,127 +102,123 @@ in
     lint = {
       enable = true;
       linters.ruff.cmd = ruff;
-      lintersByFt.python = [ "ruff" ];
+      lintersByFt.python = ["ruff"];
     };
-    lualine =
-      let
-        getColorOrDefault =
-          baseKey: defaultHex:
-          if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${baseKey} then
-            "#${config.stylix.base16Scheme.${baseKey}}"
-          else
-            "#${defaultHex}";
-        colors = {
-          bg = getColorOrDefault "base00" "12151a";
-          bg_alt = getColorOrDefault "base01" "21262e";
-          fg = getColorOrDefault "base05" "c5cbd3";
-          fg_dark = getColorOrDefault "base03" "6c7a8b";
+    lualine = let
+      getColorOrDefault = baseKey: defaultHex:
+        if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${baseKey}
+        then "#${config.stylix.base16Scheme.${baseKey}}"
+        else "#${defaultHex}";
+      colors = {
+        bg = getColorOrDefault "base00" "12151a";
+        bg_alt = getColorOrDefault "base01" "21262e";
+        fg = getColorOrDefault "base05" "c5cbd3";
+        fg_dark = getColorOrDefault "base03" "6c7a8b";
 
-          red = getColorOrDefault "base08" "d18da4";
-          green = getColorOrDefault "base0B" "74b3c4";
-          blue = getColorOrDefault "base0D" "5e9de5";
-          yellow = getColorOrDefault "base0A" "82a4b0";
-          magenta = getColorOrDefault "base0E" "a396c4";
+        red = getColorOrDefault "base08" "d18da4";
+        green = getColorOrDefault "base0B" "74b3c4";
+        blue = getColorOrDefault "base0D" "5e9de5";
+        yellow = getColorOrDefault "base0A" "82a4b0";
+        magenta = getColorOrDefault "base0E" "a396c4";
+      };
+    in {
+      enable = true;
+      settings = {
+        options = {
+          theme = {
+            normal = {
+              a = {
+                fg = colors.bg;
+                bg = colors.blue;
+                gui = "bold";
+              };
+              b = {
+                fg = colors.fg;
+                bg = colors.bg_alt;
+              };
+              c = {
+                fg = colors.fg;
+                bg = colors.bg;
+              };
+            };
+            insert = {
+              a = {
+                fg = colors.bg;
+                bg = colors.green;
+                gui = "bold";
+              };
+            };
+            visual = {
+              a = {
+                fg = colors.bg;
+                bg = colors.magenta;
+                gui = "bold";
+              };
+            };
+            replace = {
+              a = {
+                fg = colors.bg;
+                bg = colors.red;
+                gui = "bold";
+              };
+            };
+            command = {
+              a = {
+                fg = colors.bg;
+                bg = colors.yellow;
+                gui = "bold";
+              };
+            };
+            inactive = {
+              a = {
+                fg = colors.fg;
+                bg = colors.bg;
+                gui = "bold";
+              };
+              b = {
+                fg = colors.fg_dark;
+                bg = colors.bg;
+              };
+              c = {
+                fg = colors.fg_dark;
+                bg = colors.bg;
+              };
+            };
+          };
+          section_separators = {
+            left = "";
+            right = "";
+          };
+          component_separators = {
+            left = "";
+            right = "";
+          };
+          always_divide_middle = true;
         };
-      in
-      {
-        enable = true;
-        settings = {
-          options = {
-            theme = {
-              normal = {
-                a = {
-                  fg = colors.bg;
-                  bg = colors.blue;
-                  gui = "bold";
-                };
-                b = {
-                  fg = colors.fg;
-                  bg = colors.bg_alt;
-                };
-                c = {
-                  fg = colors.fg;
-                  bg = colors.bg;
-                };
-              };
-              insert = {
-                a = {
-                  fg = colors.bg;
-                  bg = colors.green;
-                  gui = "bold";
-                };
-              };
-              visual = {
-                a = {
-                  fg = colors.bg;
-                  bg = colors.magenta;
-                  gui = "bold";
-                };
-              };
-              replace = {
-                a = {
-                  fg = colors.bg;
-                  bg = colors.red;
-                  gui = "bold";
-                };
-              };
-              command = {
-                a = {
-                  fg = colors.bg;
-                  bg = colors.yellow;
-                  gui = "bold";
-                };
-              };
-              inactive = {
-                a = {
-                  fg = colors.fg;
-                  bg = colors.bg;
-                  gui = "bold";
-                };
-                b = {
-                  fg = colors.fg_dark;
-                  bg = colors.bg;
-                };
-                c = {
-                  fg = colors.fg_dark;
-                  bg = colors.bg;
-                };
-              };
-            };
-            section_separators = {
-              left = "";
-              right = "";
-            };
-            component_separators = {
-              left = "";
-              right = "";
-            };
-            always_divide_middle = true;
-          };
 
-          sections = {
-            lualine_a = [ "mode" ];
-            lualine_b = [
-              "branch"
-              "diff"
-            ];
-            lualine_c = [ "diagnostics" ];
-            lualine_x = [ "filetype" ];
-            lualine_y = [ "progress" ];
-            lualine_z = [ "location" ];
-          };
+        sections = {
+          lualine_a = ["mode"];
+          lualine_b = [
+            "branch"
+            "diff"
+          ];
+          lualine_c = ["diagnostics"];
+          lualine_x = ["filetype"];
+          lualine_y = ["progress"];
+          lualine_z = ["location"];
+        };
 
-          # CORRECTED: Use an empty list `[]` for empty sections, not `{}`.
-          inactive_sections = {
-            lualine_a = [ ];
-            lualine_b = [ ];
-            lualine_c = [ "filename" ];
-            lualine_x = [ "location" ];
-            lualine_y = [ ];
-            lualine_z = [ ];
-          };
+        # CORRECTED: Use an empty list `[]` for empty sections, not `{}`.
+        inactive_sections = {
+          lualine_a = [];
+          lualine_b = [];
+          lualine_c = ["filename"];
+          lualine_x = ["location"];
+          lualine_y = [];
+          lualine_z = [];
         };
       };
+    };
   };
   keymaps = [
     {

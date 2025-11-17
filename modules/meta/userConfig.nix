@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) mkOption types;
 
   email = "jph33@outlook.com";
@@ -14,8 +13,7 @@ let
   configHome = "${homeDirectory}/.config";
   browser = "firefox-beta";
   browser2 = "brave";
-in
-{
+in {
   options.user = mkOption {
     type = types.attrsOf types.str;
     default = {

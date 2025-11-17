@@ -1,11 +1,8 @@
-{ pkgs, ... }:
-let
-  dim =
-    image: brightness:
-    pkgs.runCommand "wallpaper.jpg" { }
-      ''${pkgs.imagemagick}/bin/magick "${image}" -brightness-contrast ${brightness},0 $out '';
-in
-{
+{pkgs, ...}: let
+  dim = image: brightness:
+    pkgs.runCommand "wallpaper.jpg" {}
+    ''${pkgs.imagemagick}/bin/magick "${image}" -brightness-contrast ${brightness},0 $out '';
+in {
   # space = {
   #   base16Scheme = {
   #     base00 = "001f26";

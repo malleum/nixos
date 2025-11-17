@@ -9,23 +9,21 @@
     };
   };
 
-  unify.modules.gui.home =
-    { pkgs, ... }:
-    {
-      programs.chromium = {
-        enable = true;
-        package = pkgs.brave;
-        commandLineArgs = [
-          "--enable-features=UseOzonePlatform"
-          "--ozone-platform=wayland"
-          "--password-store=basic"
-        ];
-        extensions = [
-          "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
-          "hfjbmagddngcpeloejdejnfgbamkjaeg" # vimium c
-          "nacjakoppgmdcpemlfnfegmlhipddanj" # pdf vimium c
-          "nngceckbapebfimnlniiiahkandclblb" # bitwarden
-        ];
-      };
+  unify.modules.gui.home = {pkgs, ...}: {
+    programs.chromium = {
+      enable = true;
+      package = pkgs.brave;
+      commandLineArgs = [
+        "--enable-features=UseOzonePlatform"
+        "--ozone-platform=wayland"
+        "--password-store=basic"
+      ];
+      extensions = [
+        "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
+        "hfjbmagddngcpeloejdejnfgbamkjaeg" # vimium c
+        "nacjakoppgmdcpemlfnfegmlhipddanj" # pdf vimium c
+        "nngceckbapebfimnlniiiahkandclblb" # bitwarden
+      ];
     };
+  };
 }

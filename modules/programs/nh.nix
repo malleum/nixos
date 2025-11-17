@@ -1,20 +1,18 @@
 {
-  unify.nixos =
-    { hostConfig, ... }:
-    {
-      environment.variables = {
-        NH_NO_CHECKS = 1;
-      };
+  unify.nixos = {hostConfig, ...}: {
+    environment.variables = {
+      NH_NO_CHECKS = 1;
+    };
 
-      programs = {
-        nh = {
+    programs = {
+      nh = {
+        enable = true;
+        clean = {
           enable = true;
-          clean = {
-            enable = true;
-            extraArgs = "--keep 2 --keep-since 3d";
-          };
-          flake = hostConfig.flakePath;
+          extraArgs = "--keep 2 --keep-since 3d";
         };
+        flake = hostConfig.flakePath;
       };
     };
+  };
 }

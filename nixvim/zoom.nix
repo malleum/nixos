@@ -73,22 +73,22 @@
       action.__raw = "function() require'harpoon':list():select(4) end";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<leader>pt";
       action = "<cmd>TodoTelescope<cr>";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<leader>pS";
       action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<leader>pw";
       action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
     }
     {
-      mode = [ "n" ];
+      mode = ["n"];
       key = "<leader>pW";
       action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
     }
@@ -111,7 +111,7 @@
       action = "<cmd>lua require('flash').treesitter()<cr>";
     }
     {
-      mode = [ "o" ];
+      mode = ["o"];
       key = "r";
       action = "<cmd>lua require('flash').remote()<cr>";
     }

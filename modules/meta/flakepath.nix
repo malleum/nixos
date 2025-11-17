@@ -2,12 +2,10 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (config.user) configHome;
   inherit (lib) mkOption types;
-in
-{
+in {
   options.flakePath = mkOption {
     type = types.str;
 

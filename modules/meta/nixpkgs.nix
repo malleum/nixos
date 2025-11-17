@@ -1,5 +1,4 @@
-{ inputs, ... }:
-let
+{inputs, ...}: let
   nixpkgs = {
     config.allowUnfree = true;
 
@@ -14,20 +13,17 @@ let
       })
     ];
   };
-in
-{
-  imports = [ inputs.flake-parts.flakeModules.easyOverlay ];
+in {
+  imports = [inputs.flake-parts.flakeModules.easyOverlay];
 
-  perSystem =
-    { system, ... }:
-    {
-      imports = [
-        "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
-        { inherit nixpkgs; }
-      ];
+  perSystem = {system, ...}: {
+    imports = [
+      "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
+      {inherit nixpkgs;}
+    ];
 
-      nixpkgs.hostPlatform = { inherit system; };
-    };
+    nixpkgs.hostPlatform = {inherit system;};
+  };
 
-  unify.nixos = { inherit nixpkgs; };
+  unify.nixos = {inherit nixpkgs;};
 }
