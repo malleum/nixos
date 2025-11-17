@@ -1,9 +1,11 @@
 {
-  unify.home = {
-    pkgs,
-    lib,
-    ...
-  }: {
-    home.packages = map (a: pkgs.callPackage a {}) (lib.filesystem.listFilesRecursive ../scripts);
-  };
+  unify.home =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      home.packages = map (a: pkgs.callPackage a { }) (lib.filesystem.listFilesRecursive ../scripts);
+    };
 }

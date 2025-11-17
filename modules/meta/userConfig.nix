@@ -2,7 +2,8 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) mkOption types;
 
   email = "jph33@outlook.com";
@@ -13,10 +14,22 @@
   configHome = "${homeDirectory}/.config";
   browser = "firefox-beta";
   browser2 = "brave";
-in {
+in
+{
   options.user = mkOption {
     type = types.attrsOf types.str;
-    default = {inherit email name username homeDirectory configHome gitusername browser browser2;};
+    default = {
+      inherit
+        email
+        name
+        username
+        homeDirectory
+        configHome
+        gitusername
+        browser
+        browser2
+        ;
+    };
   };
 
   config.unify.options.user = mkOption {

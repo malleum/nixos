@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 pkgs.writeShellScriptBin "ktv" ''
   s=""
   if [ $# -eq 0 ]; then

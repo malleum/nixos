@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 pkgs.writeShellScriptBin "pyenv" ''
   ppkgs=()
   for el in "$@"; do

@@ -1,27 +1,29 @@
 {
-  unify.modules.gui.home = {pkgs, ...}: {
-    home.packages = with pkgs; [
-      cherry-studio
-      code-cursor-fhs
-      losslesscut-bin
-      vlc
+  unify.modules.gui.home =
+    { pkgs, ... }:
+    {
+      home.packages = with pkgs; [
+        cherry-studio
+        code-cursor-fhs
+        losslesscut-bin
+        vlc
 
-      gpclient
-      networkmanagerapplet
+        gpclient
+        networkmanagerapplet
 
-      hunspellDicts.en-us
-      libreoffice
-      hunspell
-      pandoc
-      gimp
+        hunspellDicts.en-us
+        libreoffice
+        hunspell
+        pandoc
+        gimp
 
-      pavucontrol
-      pulsemixer
-      pasystray
+        pavucontrol
+        pulsemixer
+        pasystray
 
-      nwg-look
-      gtk4
-      gtk3
-    ];
-  };
+        nwg-look
+        gtk4
+        gtk3
+      ];
+    };
 }

@@ -1,10 +1,12 @@
 {
-  unify.nixos = {pkgs, ...}: {
-    programs.gnupg = {
-      agent = {
-        enable = true;
-        pinentryPackage = pkgs.pinentry-curses;
+  unify.nixos =
+    { pkgs, ... }:
+    {
+      programs.gnupg = {
+        agent = {
+          enable = true;
+          pinentryPackage = pkgs.pinentry-curses;
+        };
       };
     };
-  };
 }
