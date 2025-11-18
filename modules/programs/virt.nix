@@ -19,6 +19,7 @@
     home.packages = with pkgs; [
       nixos-shell
       quickemu
+      vagrant
     ];
   };
 }
