@@ -23,48 +23,12 @@ in {
     todo-comments.enable = true;
     typst-preview.enable = true;
     web-devicons.enable = true;
+    quicker.enable = true;
 
     treesitter = {
       enable = true;
       settings.highlight.enable = true;
-      grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
-        bash
-        gdscript
-        cmake
-        c-sharp
-        css
-        dockerfile
-        go
-        gomod
-        gosum
-        gowork
-        html
-        java
-        javascript
-        jq
-        json
-        json5
-        jsonc
-        kotlin
-        lua
-        markdown
-        nix
-        ocaml
-        php
-        python
-        query
-        ruby
-        rust
-        scala
-        scss
-        svelte
-        toml
-        typst
-        typescript
-        vim
-        yaml
-        zig
-      ];
+      grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
     };
 
     conform-nvim = {
@@ -84,17 +48,11 @@ in {
         };
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
-          go = [
-            "goimports"
-            "gofmt"
-          ];
+          go = ["goimports" "gofmt"];
           javascript = ["prettierd"];
           lua = ["stylua"];
           nix = ["alejandra"];
-          python = [
-            "isort"
-            "ruff_format"
-          ];
+          python = ["isort" "ruff_format"];
         };
       };
     };

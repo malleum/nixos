@@ -1,15 +1,14 @@
 {
+  inputs,
+  pkgs,
+  ...
+}: {
   opts = {
-    completeopt = [
-      "menuone"
-      "noselect"
-      "noinsert"
-    ];
+    completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
     cursorline = true;
     expandtab = true;
     ignorecase = true;
-    incsearch = true;
     mouse = "";
     number = true;
     relativenumber = true;
@@ -27,10 +26,10 @@
     updatetime = 50;
     winborder = "rounded";
     wrap = false;
-    writebackup = false;
   };
 
   viAlias = true;
+  package = inputs.neovim-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
   luaLoader.enable = true;
   # performance.combinePlugins.enable = true;
 
@@ -52,47 +51,22 @@
 
   keymaps = [
     {
-      mode = ["n"];
-      key = "<Space>";
-      action = "<Nop>";
-      options.silent = true;
-    }
-    {
-      mode = ["n"];
-      key = "<S-cr>";
-      action = "<Nop>";
-      options.silent = true;
-    }
-
-    {
-      mode = [
-        "n"
-        "v"
-      ];
+      mode = ["n" "v"];
       key = "<leader>Y";
       action = "\"+y$";
     }
     {
-      mode = [
-        "n"
-        "v"
-      ];
+      mode = ["n" "v"];
       key = "<leader>y";
       action = "\"+y";
     }
     {
-      mode = [
-        "n"
-        "v"
-      ];
+      mode = ["n" "v"];
       key = "<leader>D";
       action = "\"_D";
     }
     {
-      mode = [
-        "n"
-        "v"
-      ];
+      mode = ["n" "v"];
       key = "<leader>d";
       action = "\"_d";
     }
@@ -124,17 +98,8 @@
     {
       mode = ["n"];
       key = "J";
-      action = "mzJ1`z";
-    }
-    {
-      mode = ["v"];
-      key = "K";
-      action = ":m '<-2<CR>gv=gv";
-    }
-    {
-      mode = ["v"];
-      key = "J";
-      action = ":m '>+1<CR>gv=gv";
+      options.silent = true;
+      action.__raw = "function () return 'mz' .. vim.v.count1 .. 'J`z' end";
     }
     {
       mode = ["n"];
@@ -155,16 +120,6 @@
       mode = ["n"];
       key = "-";
       action = "<cmd>Oil<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<C-j>";
-      action = "<cmd>cn<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<C-k>";
-      action = "<cmd>cp<cr>";
     }
   ];
 }

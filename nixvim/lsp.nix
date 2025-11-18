@@ -103,11 +103,7 @@
         snippet.expand = "luasnip";
         experimental.ghost_text = true;
         preselect = "cmp.PreselectMode.Item";
-        formatting.fields = [
-          "kind"
-          "abbr"
-          "menu"
-        ];
+        formatting.fields = ["kind" "abbr" "menu"];
 
         sources = [
           {name = "nvim_lsp";}
