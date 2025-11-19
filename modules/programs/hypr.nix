@@ -142,31 +142,29 @@
           "3, horizontal, workspace"
           "3, vertical, move"
         ];
-        layerrule = "blur,rofi";
+        layerrule = "blur on, match:namespace rofi";
 
-        windowrulev2 = [
-          "workspace 1, title:^(.*Brave.*)$"
-          "workspace 1, title:^(.*Firefox.*)$"
-          "workspace 1, title:^(.*Ninjabrain Bot.*)$"
-          "workspace 1, title:^(.*e4mc.*)$"
-          "workspace 2, title:^(.*Discord.*)$"
-          "workspace 2, title:^(.*vesktop.*)$"
-          "workspace 2, title:^(.*Microsoft Teams.*)$"
-          "workspace 3, title:^(kitty)$"
-          "workspace 3, title:^(foot)$"
-          "workspace 4, title:^(.*Steam.*)$"
-          "workspace 4, title:^(.*Minecraft.*)$"
-          "workspace 4 silent, title:^(waywall)$"
-          "fullscreen, title:^(waywall)$"
-          "workspace 4, title:^(.*Prism Launcher.*)$"
-          "workspace 4, title:^(.*Terraria.*)$"
-          "workspace 4, title:^(.*War.*)$"
-          "workspace 5, title:^(.*OBS.*)$"
-          "workspace 5, title:^(.*MainPicker.*)$"
+        windowrule = [
+          "workspace 1, match:title ^(.*Brave.*)$"
+          "workspace 1, match:title ^(.*Firefox.*)$"
+          "workspace 1, match:title ^(.*Ninjabrain Bot.*)$"
+          "workspace 1, match:title ^(.*e4mc.*)$"
+          "workspace 2, match:title ^(.*Discord.*)$"
+          "workspace 2, match:title ^(.*vesktop.*)$"
+          "workspace 2, match:title ^(.*Microsoft Teams.*)$"
+          "workspace 3, match:title ^(kitty)$"
+          "workspace 3, match:title ^(foot)$"
+          "workspace 4, match:title ^(.*Steam.*)$"
+          "workspace 4, match:title ^(.*Minecraft.*)$"
+          "workspace 4 silent, match:title ^(waywall)$"
+          "fullscreen on, match:title ^(waywall)$"
+          "workspace 4, match:title ^(.*Prism Launcher.*)$"
+          "workspace 4, match:title ^(.*Terraria.*)$"
+          "workspace 4, match:title ^(.*War.*)$"
+          "workspace 5, match:title ^(.*OBS.*)$"
+          "workspace 5, match:title ^(.*MainPicker.*)$"
 
-          "float, title:^(.*(All|Save) Files?.*)$"
-          "noblur, title:^(.*Firefox.*)$"
-          "noshadow, title:^(.*Firefox.*)$"
+          "float on, match:title ^(.*(All|Save) Files?.*)$"
         ];
 
         bind = let
