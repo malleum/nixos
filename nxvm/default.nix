@@ -69,19 +69,18 @@ in {
         "<C-A-s>" = "<cmd>lua require('harpoon'):list():select(4)<cr>";
         "<C-A-t>" = "<cmd>lua require('harpoon'):list():select(2)<cr>";
 
-        "<leader>pt" = "<cmd>TodoTelescope<cr>";
-        "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
-        "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
         "<leader>pw" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
+        "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
+        "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
 
         "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
         "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
 
-        "Y" = "y$";
         "<C-d>" = "<C-d>zz";
         "<C-u>" = "<C-u>zz";
         "N" = "Nzz";
         "n" = "nzz";
+        "Y" = "y$";
       };
 
       "nv" = {
@@ -91,78 +90,80 @@ in {
         "<leader>Y" = "\"+y$";
       };
 
-      "c" = {
-        "W" = "w";
-      };
-
       "x" = {
         "<leader>p" = "\"_dP";
+      };
+
+      "c" = {
+        "W" = "w";
       };
     };
   in
     lib.flatten (lib.mapAttrsToList
       (
         mode: mappings:
-          lib.mapAttrsToList
-          (key: action: {
+          lib.mapAttrsToList (key: action: {
             mode = lib.stringToCharacters mode;
             inherit key action;
           })
           mappings
       )
       maps);
-  plugins = {
-    fidget.enable = true;
-    lsp = {
-      enable = true;
-      servers = {
-        clangd.enable = true;
-        clojure_lsp.enable = true;
-        gopls.enable = true;
-        jdtls.enable = true;
-        jsonls.enable = true;
-        html.enable = true;
-        ts_ls.enable = true;
-        lua_ls.enable = true;
-        nixd = {
-          enable = true;
-          settings = {};
-          extraOptions.offset_encoding = "utf-8";
-        };
-        pyright.enable = true;
-        sqls.enable = true;
-        tinymist = {
-          enable = true;
-          extraOptions.offset_encoding = "utf-8";
-          settings = {
-            exportPdf = "onSave";
-            root_dir = ''function(_, bufnr) return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h") end'';
-          };
-        };
-        zls.enable = true;
-      };
-      inlayHints = true;
-      keymaps = {
-        diagnostic = {
-          "[d" = "goto_prev";
-          "]d" = "goto_next";
-          "gl" = "open_float";
-        };
-        lspBuf = {
-          "K" = "hover";
-          "gd" = "definition";
-          "gD" = "declaration";
-          "gi" = "implementation";
-          "go" = "type_definition";
-          "gr" = "references";
-          "gs" = "signature_help";
 
-          "<leader>rn" = "rename";
-          "<leader>ra" = "code_action";
-          "<leader>rr" = "references";
+  lsp = {
+    inlayHints.enable = true;
+    servers = {
+      clangd.enable = true;
+      clojure_lsp.enable = true;
+      gopls.enable = true;
+      jdtls.enable = true;
+      jsonls.enable = true;
+      html.enable = true;
+      ts_ls.enable = true;
+      lua_ls.enable = true;
+      nixd = {
+        enable = true;
+        config.offset_encoding = "utf-8";
+      };
+      pyright.enable = true;
+      sqls.enable = true;
+      tinymist = {
+        enable = true;
+        config = {
+          exportPdf = "onSave";
+          offset_encoding = "utf-8";
+          root_dir = ''function(_, bufnr) return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h") end'';
         };
       };
+      zls.enable = true;
     };
+    keymaps = let
+      default = {
+        "[d" = "<cmd>lua vim.diagnostic.goto_prev()<cr>";
+        "]d" = "<cmd>lua vim.diagnostic.goto_next()<cr>";
+        "gl" = "<cmd>lua vim.diagnostic.open_float()<cr>";
+
+        "gd" = lib.nixvim.mkRaw "require('telescope.builtin').lsp_definitions";
+        "gr" = lib.nixvim.mkRaw "require('telescope.builtin').lsp_references";
+      };
+      lspBuf = {
+        "K" = "hover";
+        "gD" = "definition";
+        "go" = "type_definition";
+        "gR" = "references";
+        "gs" = "signature_help";
+
+        "<leader>rn" = "rename";
+        "<leader>ra" = "code_action";
+        "<leader>rr" = "references";
+      };
+    in
+      (lib.mapAttrsToList (key: lspBufAction: {inherit key lspBufAction;}) lspBuf)
+      ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
+  };
+
+  plugins = {
+    lspconfig.enable = true;
     luasnip = {
       enable = true;
       settings = {
@@ -181,6 +182,7 @@ in {
     cmp-buffer.enable = true;
     cmp-path.enable = true; # file system paths
     cmp_luasnip.enable = true; # snippets
+
     lspkind = {
       enable = true;
       settings = {
@@ -188,6 +190,7 @@ in {
         ellipsis_char = "...";
       };
     };
+
     cmp = {
       enable = true;
       settings = {
@@ -229,6 +232,8 @@ in {
     '';
 
   plugins = {
+    fidget.enable = true;
+
     oil.enable = true;
     neogit.enable = true;
     comment.enable = true;
@@ -318,6 +323,7 @@ in {
         "<leader>pr" = "lsp_references";
         "<leader>pd" = "diagnostics";
         "<leader>ph" = "help_tags";
+        "<leader>pt" = "todo-comments";
       };
     };
 
