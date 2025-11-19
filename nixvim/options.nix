@@ -1,8 +1,4 @@
 {
-  inputs,
-  pkgs,
-  ...
-}: {
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
@@ -29,8 +25,8 @@
   };
 
   viAlias = true;
-  package = inputs.neovim-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
   luaLoader.enable = true;
+  # package = inputs.neovim-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
   # performance.combinePlugins.enable = true;
 
   colorscheme = "tokyonight";
@@ -99,7 +95,7 @@
       mode = ["n"];
       key = "J";
       options.silent = true;
-      action.__raw = "function () return 'mz' .. vim.v.count1 .. 'J`z' end";
+      action.__raw = ''function () return 'mz' .. vim.v.count1 .. 'J`z' end'';
     }
     {
       mode = ["n"];
