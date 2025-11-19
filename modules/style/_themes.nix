@@ -3,46 +3,25 @@
     pkgs.runCommand "wallpaper.jpg" {}
     ''${pkgs.imagemagick}/bin/magick "${image}" -brightness-contrast ${brightness},0 $out '';
 in {
-  # space = {
-  #   base16Scheme = {
-  #     base00 = "001f26";
-  #     base01 = "334e3b";
-  #     base02 = "1e7a37";
-  #     base03 = "999f9f";
-  #     base04 = "97c0c6";
-  #     base05 = "cecece";
-  #     base06 = "c4d4d1";
-  #     base07 = "b8d3dc";
-  #     base08 = "53a364";
-  #     base09 = "449caa";
-  #     base0A = "84938e";
-  #     base0B = "37a38c";
-  #     base0C = "A34C51";
-  #     base0D = "6996ab";
-  #     base0E = "539d9c";
-  #     base0F = "7c997a";
-  #   };
-  #   image = dim ./wallpapers/space.png "-10";
-  # };
   cybertruck = {
     base16Scheme = {
-      base00 = "12151a"; # Deep, cool black from the background shadows
-      base01 = "21262e"; # Dark grey from the surface
-      base02 = "3a424d"; # Muted grey from the floor texture
-      base03 = "6c7a8b"; # Softer grey for comments
-      base04 = "a1a9b3"; # Main color of the LEGO brick's shadow
-      base05 = "c5cbd3"; # Main color of the LEGO brick
-      base06 = "dfe4e9"; # Highlight color on the brick
-      base07 = "f0f3f5"; # Brightest highlight from the light reflection
+      base00 = "1a1b26"; # Main Background (bg)
+      base01 = "16161e"; # Darker Background / Statusline (bg_dark)
+      base02 = "292e42"; # Selection / Highlight Background (bg_highlight)
+      base03 = "565f89"; # Comments (comment)
+      base04 = "737aa2"; # Dark Foreground / UI Elements (dark5)
+      base05 = "c0caf5"; # Main Foreground (fg)
+      base06 = "a9b1d6"; # Secondary Foreground (fg_dark)
+      base07 = "c0caf5"; # Lightest Foreground (fg - reused as max brightness)
 
-      base08 = "d18da4"; # Muted Rose (for Red) from subtle ambient light
-      base09 = "a8968e"; # Desaturated Taupe (for Orange) from the surface
-      base0A = "82a4b0"; # Slate Blue (for Yellow) from the lower haze
-      base0B = "74b3c4"; # Muted Teal (for Green) from the lower haze
-      base0C = "88c0d0"; # Icy Blue (for Cyan) from reflections
-      base0D = "5e9de5"; # Bright Blue (for Blue) from the lens flare
-      base0E = "a396c4"; # Muted Lavender (for Magenta) from the shadows
-      base0F = "8d827e"; # Desaturated Brown (for Brown) from floor texture    };
+      base08 = "f7768e"; # Red (red) - Variables, XML Tags, Diff Deleted
+      base09 = "ff9e64"; # Orange (orange) - Integers, Boolean, Constants
+      base0A = "e0af68"; # Yellow (yellow) - Classes, Search Text
+      base0B = "9ece6a"; # Green (green) - Strings, Diff Inserted
+      base0C = "7dcfff"; # Cyan (cyan) - Regex, Escape Characters
+      base0D = "7aa2f7"; # Blue (blue) - Functions, Methods, Headings
+      base0E = "bb9af7"; # Magenta (magenta) - Keywords, Storage, Diff Changed
+      base0F = "1abc9c"; # Teal (teal) - Deprecated, Embedded Language Tags
     };
     image = dim ./wallpapers/legotesla.png "-20";
   };

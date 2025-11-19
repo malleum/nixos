@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}: let
+{pkgs, ...}: let
   alejandra = "${pkgs.alejandra}/bin/alejandra";
   gofmt = "${pkgs.go}/bin/gofmt";
   goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
@@ -43,10 +39,7 @@ in {
   colorscheme = "tokyonight";
   colorschemes.tokyonight = {
     enable = true;
-    settings = {
-      style = "night";
-      transparent = true;
-    };
+    settings.style = "night";
   };
 
   globals = {
@@ -106,26 +99,6 @@ in {
       mode = ["n"];
       key = "<leader>pW";
       action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
-    }
-    {
-      mode = ["n" "x" "o"];
-      key = "s";
-      action = "<cmd>lua require('flash').jump()<cr>";
-    }
-    {
-      mode = ["n" "x" "o"];
-      key = "S";
-      action = "<cmd>lua require('flash').treesitter()<cr>";
-    }
-    {
-      mode = ["o"];
-      key = "r";
-      action = "<cmd>lua require('flash').remote()<cr>";
-    }
-    {
-      mode = ["x" "o"];
-      key = "R";
-      action = "<cmd>lua require('flash').treesitter_search()<cr>";
     }
     {
       mode = "n";
@@ -219,20 +192,7 @@ in {
         jsonls.enable = true;
         html.enable = true;
         ts_ls.enable = true;
-        lua_ls = {
-          enable = true;
-          settings.Lua = {
-            runtime.version = "LuaJIT";
-            diagnostics.globals = ["vim"];
-            workspace = {
-              checkThirdParty = false;
-              library = [
-                "${pkgs.neovim-unwrapped}/share/nvim/runtime/lua"
-                "${pkgs.neovim-unwrapped}/share/nvim/runtime/plugin"
-              ];
-            };
-          };
-        };
+        lua_ls.enable = true;
         nixd = {
           enable = true;
           settings = {};
@@ -245,13 +205,7 @@ in {
           extraOptions.offset_encoding = "utf-8";
           settings = {
             exportPdf = "onSave";
-            root_dir =
-              # lua
-              ''
-                function(_, bufnr)
-                  return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h")
-                end
-              '';
+            root_dir = ''function(_, bufnr) return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h") end'';
           };
         };
         zls.enable = true;
@@ -361,7 +315,7 @@ in {
     treesitter = {
       enable = true;
       settings.highlight.enable = true;
-      grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
+      # grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
     };
 
     conform-nvim = {
@@ -396,117 +350,16 @@ in {
       lintersByFt.python = ["ruff"];
     };
     lualine = let
-      getColorOrDefault = baseKey: defaultHex:
-        if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${baseKey}
-        then "#${config.stylix.base16Scheme.${baseKey}}"
-        else "#${defaultHex}";
-      colors = {
-        bg = getColorOrDefault "base00" "12151a";
-        bg_alt = getColorOrDefault "base01" "21262e";
-        fg = getColorOrDefault "base05" "c5cbd3";
-        fg_dark = getColorOrDefault "base03" "6c7a8b";
-
-        red = getColorOrDefault "base08" "d18da4";
-        green = getColorOrDefault "base0B" "74b3c4";
-        blue = getColorOrDefault "base0D" "5e9de5";
-        yellow = getColorOrDefault "base0A" "82a4b0";
-        magenta = getColorOrDefault "base0E" "a396c4";
-      };
     in {
       enable = true;
       settings = {
-        options = {
-          theme = {
-            normal = {
-              a = {
-                fg = colors.bg;
-                bg = colors.blue;
-                gui = "bold";
-              };
-              b = {
-                fg = colors.fg;
-                bg = colors.bg_alt;
-              };
-              c = {
-                fg = colors.fg;
-                bg = colors.bg;
-              };
-            };
-            insert = {
-              a = {
-                fg = colors.bg;
-                bg = colors.green;
-                gui = "bold";
-              };
-            };
-            visual = {
-              a = {
-                fg = colors.bg;
-                bg = colors.magenta;
-                gui = "bold";
-              };
-            };
-            replace = {
-              a = {
-                fg = colors.bg;
-                bg = colors.red;
-                gui = "bold";
-              };
-            };
-            command = {
-              a = {
-                fg = colors.bg;
-                bg = colors.yellow;
-                gui = "bold";
-              };
-            };
-            inactive = {
-              a = {
-                fg = colors.fg;
-                bg = colors.bg;
-                gui = "bold";
-              };
-              b = {
-                fg = colors.fg_dark;
-                bg = colors.bg;
-              };
-              c = {
-                fg = colors.fg_dark;
-                bg = colors.bg;
-              };
-            };
-          };
-          section_separators = {
-            left = "";
-            right = "";
-          };
-          component_separators = {
-            left = "";
-            right = "";
-          };
-          always_divide_middle = true;
-        };
-
         sections = {
           lualine_a = ["mode"];
-          lualine_b = [
-            "branch"
-            "diff"
-          ];
+          lualine_b = ["branch" "diff"];
           lualine_c = ["diagnostics"];
           lualine_x = ["filetype"];
           lualine_y = ["progress"];
           lualine_z = ["location"];
-        };
-
-        # CORRECTED: Use an empty list `[]` for empty sections, not `{}`.
-        inactive_sections = {
-          lualine_a = [];
-          lualine_b = [];
-          lualine_c = ["filename"];
-          lualine_x = ["location"];
-          lualine_y = [];
-          lualine_z = [];
         };
       };
     };
@@ -546,17 +399,6 @@ in {
       settings.menu = {
         width = 100;
         height = 6;
-      };
-    };
-
-    flash = {
-      enable = true;
-      settings = {
-        label.rainbow.enabled = true;
-        modes = {
-          search.enabled = false;
-          char.enabled = false;
-        };
       };
     };
   };
