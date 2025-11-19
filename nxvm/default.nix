@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   alejandra = "${pkgs.alejandra}/bin/alejandra";
   gofmt = "${pkgs.go}/bin/gofmt";
   goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
@@ -51,133 +55,62 @@ in {
     loaded_netrwPlugin = 1;
   };
 
-  keymaps = [
-    {
-      mode = "n";
-      key = "<leader>a";
-      action = "<cmd>lua require('harpoon'):list():add()<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader>o";
-      action = "<cmd>lua require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())<cr>";
-    }
-    {
-      mode = "n";
-      key = "<C-A-h>";
-      action = "<cmd>lua require('harpoon'):list():select(1)<cr>";
-    }
-    {
-      mode = "n";
-      key = "<C-A-t>";
-      action = "<cmd>lua require('harpoon'):list():select(2)<cr>";
-    }
-    {
-      mode = "n";
-      key = "<C-A-n>";
-      action = "<cmd>lua require('harpoon'):list():select(3)<cr>";
-    }
-    {
-      mode = "n";
-      key = "<C-A-s>";
-      action = "<cmd>lua require('harpoon'):list():select(4)<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<leader>pt";
-      action = "<cmd>TodoTelescope<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<leader>pS";
-      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<leader>pw";
-      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
-    }
-    {
-      mode = ["n"];
-      key = "<leader>pW";
-      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
-    }
-    {
-      mode = "n";
-      key = "<leader>g";
-      action = "<cmd>Neogit<cr>";
-    }
-    {
-      mode = ["n" "v"];
-      key = "<leader>Y";
-      action = "\"+y$";
-    }
-    {
-      mode = ["n" "v"];
-      key = "<leader>y";
-      action = "\"+y";
-    }
-    {
-      mode = ["n" "v"];
-      key = "<leader>D";
-      action = "\"_D";
-    }
-    {
-      mode = ["n" "v"];
-      key = "<leader>d";
-      action = "\"_d";
-    }
-    {
-      mode = ["x"];
-      key = "<leader>p";
-      action = "\"_dP";
-    }
-    {
-      mode = ["n"];
-      key = "N";
-      action = "Nzz";
-    }
-    {
-      mode = ["n"];
-      key = "n";
-      action = "nzz";
-    }
-    {
-      mode = ["n"];
-      key = "<C-u>";
-      action = "<C-u>zz";
-    }
-    {
-      mode = ["n"];
-      key = "<C-d>";
-      action = "<C-d>zz";
-    }
-    {
-      mode = ["n"];
-      key = "J";
-      action = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
-    }
-    {
-      mode = ["n"];
-      key = "Y";
-      action = "y$";
-    }
-    {
-      mode = ["n"];
-      key = "<Esc>";
-      action = "<cmd>nohlsearch<CR><Esc>";
-    }
-    {
-      mode = ["c"];
-      key = "W";
-      action = "w";
-    }
-    {
-      mode = ["n"];
-      key = "-";
-      action = "<cmd>Oil<cr>";
-    }
-  ];
+  keymaps = let
+    maps = {
+      "n" = {
+        "-" = "<cmd>Oil<cr>";
+        "<leader>g" = "<cmd>Neogit<cr>";
+        "<leader>f" = "<cmd>lua require('conform').format({ async = true, lsp_fallback = true })<cr>";
+
+        "<leader>a" = "<cmd>lua require('harpoon'):list():add()<cr>";
+        "<leader>o" = "<cmd>lua require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())<cr>";
+        "<C-A-h>" = "<cmd>lua require('harpoon'):list():select(1)<cr>";
+        "<C-A-n>" = "<cmd>lua require('harpoon'):list():select(3)<cr>";
+        "<C-A-s>" = "<cmd>lua require('harpoon'):list():select(4)<cr>";
+        "<C-A-t>" = "<cmd>lua require('harpoon'):list():select(2)<cr>";
+
+        "<leader>pt" = "<cmd>TodoTelescope<cr>";
+        "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
+        "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
+        "<leader>pw" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
+
+        "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
+        "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
+
+        "Y" = "y$";
+        "<C-d>" = "<C-d>zz";
+        "<C-u>" = "<C-u>zz";
+        "N" = "Nzz";
+        "n" = "nzz";
+      };
+
+      "nv" = {
+        "<leader>d" = "\"_d";
+        "<leader>D" = "\"_D";
+        "<leader>y" = "\"+y";
+        "<leader>Y" = "\"+y$";
+      };
+
+      "c" = {
+        "W" = "w";
+      };
+
+      "x" = {
+        "<leader>p" = "\"_dP";
+      };
+    };
+  in
+    lib.flatten (lib.mapAttrsToList
+      (
+        mode: mappings:
+          lib.mapAttrsToList
+          (key: action: {
+            mode = lib.stringToCharacters mode;
+            inherit key action;
+          })
+          mappings
+      )
+      maps);
   plugins = {
     fidget.enable = true;
     lsp = {
@@ -229,7 +162,6 @@ in {
           "<leader>rr" = "references";
         };
       };
-      onAttach = ''vim.keymap.set("n", "<leader>f", function() require("conform").format({ async = true, lsp_fallback = true }) end) '';
     };
     luasnip = {
       enable = true;
