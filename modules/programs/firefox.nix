@@ -3,8 +3,8 @@
     system.userActivationScripts = {
       removeConflictingFiles = {
         text = ''
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4'
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak'
+          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
+          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
         '';
       };
     };
