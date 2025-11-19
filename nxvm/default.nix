@@ -2,17 +2,8 @@
   pkgs,
   lib,
   ...
-}: let
-  alejandra = "${pkgs.alejandra}/bin/alejandra";
-  gofmt = "${pkgs.go}/bin/gofmt";
-  goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
-  isort = "${pkgs.isort}/bin/isort";
-  prettierd = "${pkgs.prettierd}/bin/prettierd";
-  ruff = "${pkgs.ruff}/bin/ruff";
-  stylua = "${pkgs.stylua}/bin/stylua";
-in {
-  # vim-sexp vim-sexp-mappings-for-regular-people
-  # conjure.enable = true;
+}: {
+  # vim-sexp vim-sexp-mappings-for-regular-people conjure.enable = true;
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
@@ -97,6 +88,10 @@ in {
       "c" = {
         "W" = "w";
       };
+
+      "i" = {
+        "<A-c>" = "<C-o>S<C-r>=<C-r>\"<CR>";
+      };
     };
   in
     lib.flatten (lib.mapAttrsToList
@@ -164,6 +159,7 @@ in {
 
   plugins = {
     lspconfig.enable = true;
+
     luasnip = {
       enable = true;
       settings = {
@@ -177,96 +173,69 @@ in {
         }
       ];
     };
-    cmp-nvim-lsp.enable = true; # lsp
-    cmp-calc.enable = true;
-    cmp-buffer.enable = true;
-    cmp-path.enable = true; # file system paths
-    cmp_luasnip.enable = true; # snippets
 
-    lspkind = {
+    blink-cmp = {
       enable = true;
       settings = {
-        maxwidth = 50;
-        ellipsis_char = "...";
-      };
-    };
-
-    cmp = {
-      enable = true;
-      settings = {
-        autoEnableSources = true;
-        snippet.expand = "luasnip";
-        experimental.ghost_text = true;
-        preselect = "cmp.PreselectMode.Item";
-        formatting.fields = ["kind" "abbr" "menu"];
-
-        sources = [
-          {name = "nvim_lsp";}
-          {name = "luasnip";}
-          {name = "nvim_lua";}
-          {name = "calc";}
-          {name = "path";}
-          {name = "buffer";}
-        ];
-        mapping = {
-          "<CR>" = "cmp.mapping.confirm({ select = true })";
-          "<C-p>" = "cmp.mapping(function() if cmp.visible() then cmp.select_prev_item({behavior = 'select'}) else cmp.complete() end end)";
-          "<C-n>" = "cmp.mapping(function() if cmp.visible() then cmp.select_next_item({behavior = 'select'}) else cmp.complete() end end)";
+        snippets.preset = "luasnip";
+        keymap = {
+          preset = "default";
+          "<C-p>" = ["select_prev" "fallback"];
+          "<C-n>" = ["select_next" "fallback"];
+          "<CR>" = ["accept" "fallback"];
+          "<C-b>" = ["scroll_documentation_up" "fallback"];
+          "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
-        window = {
-          completion = {
+        appearance = {
+          # use_nvim_cmp_as_default = true;
+          nerd_font_variant = "mono";
+        };
+
+        sources.default = ["lsp" "path" "snippets" "buffer"];
+
+        completion = {
+          menu = {
             border = "rounded";
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None";
+            # draw = { columns = [ {__unkeyed-1 = "kind_icon";} { __unkeyed-1 = "label"; __unkeyed-2 = "label_description"; gap = 1; } {__unkeyed-1 = "kind";} ]; };
           };
-          documentation.border = "rounded";
+          documentation = {
+            window.border = "rounded";
+            auto_show = true;
+            auto_show_delay_ms = 500;
+          };
+          ghost_text.enabled = true;
         };
+        signature.enabled = true;
       };
     };
   };
-  extraConfigLua =
-    #lua
-    ''
-      vim.diagnostic.config{
-        float = { border = _border }
-      }
-    '';
+
+  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
 
   plugins = {
-    fidget.enable = true;
-
-    oil.enable = true;
-    neogit.enable = true;
     comment.enable = true;
     diffview.enable = true;
+    fidget.enable = true;
     gitsigns.enable = true;
+    neogit.enable = true;
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
+    oil.enable = true;
+    quicker.enable = true;
     todo-comments.enable = true;
     typst-preview.enable = true;
     web-devicons.enable = true;
-    quicker.enable = true;
 
     treesitter = {
       enable = true;
+      settings.indent.enable = true;
       settings.highlight.enable = true;
-      # grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
     };
 
     conform-nvim = {
       enable = true;
+      autoInstall.enable = true;
       settings = {
-        formatters = {
-          alejandra.command = alejandra;
-          gofmt.command = gofmt;
-          goimports.command = goimports;
-          isort.command = isort;
-          prettierd.command = prettierd;
-          ruff_format = {
-            command = ruff;
-            prepend_args = ["format"];
-          };
-          stylua.command = stylua;
-        };
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
           go = ["goimports" "gofmt"];
@@ -280,11 +249,10 @@ in {
 
     lint = {
       enable = true;
-      linters.ruff.cmd = ruff;
+      linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
       lintersByFt.python = ["ruff"];
     };
-    lualine = let
-    in {
+    lualine = {
       enable = true;
       settings = {
         sections = {
@@ -297,14 +265,7 @@ in {
         };
       };
     };
-  };
 
-  extraPlugins = with pkgs.vimPlugins; [
-    vim-visual-multi
-    vim-indent-object
-  ];
-
-  plugins = {
     telescope = {
       enable = true;
       extensions.fzf-native.enable = true;
