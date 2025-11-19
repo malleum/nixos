@@ -7,6 +7,8 @@
   ruff = "${pkgs.ruff}/bin/ruff";
   stylua = "${pkgs.stylua}/bin/stylua";
 in {
+  # vim-sexp vim-sexp-mappings-for-regular-people
+  # conjure.enable = true;
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
@@ -44,7 +46,7 @@ in {
 
   globals = {
     mapleader = " ";
-    maplocalleader = ",";
+    maplocalleader = " ";
     loaded_netrw = 1;
     loaded_netrwPlugin = 1;
   };
@@ -53,32 +55,32 @@ in {
     {
       mode = "n";
       key = "<leader>a";
-      action.__raw = "function() require'harpoon':list():add() end";
+      action = "<cmd>lua require('harpoon'):list():add()<cr>";
     }
     {
       mode = "n";
       key = "<leader>o";
-      action.__raw = "function() require'harpoon'.ui:toggle_quick_menu(require'harpoon':list()) end";
+      action = "<cmd>lua require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())<cr>";
     }
     {
       mode = "n";
       key = "<C-A-h>";
-      action.__raw = "function() require'harpoon':list():select(1) end";
+      action = "<cmd>lua require('harpoon'):list():select(1)<cr>";
     }
     {
       mode = "n";
       key = "<C-A-t>";
-      action.__raw = "function() require'harpoon':list():select(2) end";
+      action = "<cmd>lua require('harpoon'):list():select(2)<cr>";
     }
     {
       mode = "n";
       key = "<C-A-n>";
-      action.__raw = "function() require'harpoon':list():select(3) end";
+      action = "<cmd>lua require('harpoon'):list():select(3)<cr>";
     }
     {
       mode = "n";
       key = "<C-A-s>";
-      action.__raw = "function() require'harpoon':list():select(4) end";
+      action = "<cmd>lua require('harpoon'):list():select(4)<cr>";
     }
     {
       mode = ["n"];
@@ -153,11 +155,7 @@ in {
     {
       mode = ["n"];
       key = "J";
-      options = {
-        silent = true;
-        expr = true;
-      };
-      action.__raw = "function() return 'mz' .. vim.v.count1 .. 'J`z' end";
+      action = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
     }
     {
       mode = ["n"];
@@ -302,7 +300,6 @@ in {
     oil.enable = true;
     neogit.enable = true;
     comment.enable = true;
-    # conjure.enable = true;
     diffview.enable = true;
     gitsigns.enable = true;
     nvim-autopairs.enable = true;
@@ -368,8 +365,6 @@ in {
   extraPlugins = with pkgs.vimPlugins; [
     vim-visual-multi
     vim-indent-object
-
-    # vim-sexp vim-sexp-mappings-for-regular-people
   ];
 
   plugins = {

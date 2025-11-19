@@ -3,6 +3,7 @@
     home = {
       hostConfig,
       lib,
+      pkgs,
       ...
     }: let
       inherit
@@ -26,10 +27,17 @@
       xdg = {
         enable = true;
         inherit configHome;
-        mimeApps.defaultApplications = {
-          "text/html" = "${browser}.desktop";
-          "x-scheme-handler/http" = "${browser}.desktop";
-          "x-scheme-handler/https" = "${browser}.desktop";
+        mimeApps = {
+          enable = true;
+          defaultApplications = let
+            browserdesktop = "${pkgs.${browser}}/share/applications/${browser}.desktop";
+          in {
+            "text/html" = browserdesktop;
+            "x-scheme-handler/http" = browserdesktop;
+            "x-scheme-handler/https" = browserdesktop;
+            "x-scheme-handler/about" = browserdesktop;
+            "x-scheme-handler/unknown" = browserdesktop;
+          };
         };
       };
     };

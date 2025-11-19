@@ -15,24 +15,13 @@
       indexHelper list 0;
 
     colors = [
-      "#${config.stylix.base16Scheme.base0A}"
-      "#${config.stylix.base16Scheme.base0C}"
+      "#${config.stylix.base16Scheme.base0E}"
       "#${config.stylix.base16Scheme.base0D}"
-      "#${config.stylix.base16Scheme.base08}"
+      "#${config.stylix.base16Scheme.base0C}"
+      "#${config.stylix.base16Scheme.base0F}"
     ];
 
-    mods = [
-      "tray"
-      "pulseaudio"
-      "network"
-      "cpu"
-      "memory"
-      "disk"
-      "battery"
-      "clock#c2"
-      "clock"
-      "custom/chron"
-    ];
+    mods = ["tray" "pulseaudio" "network" "cpu" "memory" "disk" "battery" "clock#c2" "clock" "custom/chron"];
 
     modulo' = a: b: a - b * builtins.div a b;
     modulo = a: (modulo' a (builtins.length colors));
@@ -63,18 +52,7 @@
         format = "baterio {capacity}% {icon}";
         format-charging = "baterio {capacity}% 󰂄";
         format-plugged = "baterio {capacity}% 󰂄";
-        format-icons = [
-          "󰁺"
-          "󰁻"
-          "󰁼"
-          "󰁽"
-          "󰁾"
-          "󰁿"
-          "󰂀"
-          "󰂁"
-          "󰂂"
-          "󰁹"
-        ];
+        format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         states.critical = 10;
       };
       clock = {
@@ -109,21 +87,13 @@
         format-source-muted = "";
         on-click = "pavucontrol";
         format-icons = {
-          default = [
-            ""
-            ""
-            ""
-          ];
+          default = ["" "" ""];
         };
       };
       temperature = {
         critical-threshold = 80;
         format = "temperaturo {temperatureC:02}°C {icon}";
-        format-icons = [
-          "󰈸"
-          "󰈸"
-          "󰈸"
-        ]; # Using a consistent icon
+        format-icons = ["󰈸" "󰈸" "󰈸"]; # Using a consistent icon
       };
 
       "custom/chron" = {
@@ -260,12 +230,6 @@
             color: #${config.stylix.base16Scheme.base01};
           }
 
-          /*
-          #temperature.critical {
-            background-color: #${config.stylix.base16Scheme.base08};
-            color: #${config.stylix.base16Scheme.base01};
-          }
-          */
         '';
     };
   };
