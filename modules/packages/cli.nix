@@ -1,6 +1,6 @@
 {self, ...}: {
   unify.home = {pkgs, ...}: let
-    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.nvim;
+    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     home.packages = with pkgs; [
       acpi

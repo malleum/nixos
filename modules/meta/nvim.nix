@@ -10,22 +10,22 @@
       extraSpecialArgs = {inherit pkgs inputs;};
     };
 
-    nvf =
-      (inputs.nvf.lib.neovimConfiguration {
-        inherit pkgs;
-        modules = [(import ../../nvf {inherit inputs pkgs;})];
-      }).neovim;
+    nxvm = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
+      inherit system;
+      module = import ../../nxvm;
+      extraSpecialArgs = {inherit pkgs inputs;};
+    };
   in {
     apps.default = {
       type = "app";
-      program = "${nvf}/bin/nvim";
+      program = "${nixvim}/bin/nvim";
     };
-    packages.default = nvf;
+    packages.default = nixvim;
 
     apps.nvim = {
       type = "app";
-      program = "${nixvim}/bin/nvim";
+      program = "${nxvm}/bin/nvim";
     };
-    packages.nvim = nixvim;
+    packages.nvim = nxvm;
   };
 }

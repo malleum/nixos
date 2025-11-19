@@ -1,0 +1,563 @@
+{
+  pkgs,
+  config,
+  ...
+}: let
+  alejandra = "${pkgs.alejandra}/bin/alejandra";
+  gofmt = "${pkgs.go}/bin/gofmt";
+  goimports = "${pkgs.goimports-reviser}/bin/goimports-reviser";
+  isort = "${pkgs.isort}/bin/isort";
+  prettierd = "${pkgs.prettierd}/bin/prettierd";
+  ruff = "${pkgs.ruff}/bin/ruff";
+  stylua = "${pkgs.stylua}/bin/stylua";
+in {
+  opts = {
+    completeopt = ["menuone" "noselect" "noinsert"];
+    cursorcolumn = true;
+    cursorline = true;
+    expandtab = true;
+    ignorecase = true;
+    mouse = "";
+    number = true;
+    relativenumber = true;
+    ruler = false;
+    scrolloff = 7;
+    shiftwidth = 4;
+    showmode = false;
+    signcolumn = "yes";
+    smartcase = true;
+    softtabstop = 4;
+    swapfile = false;
+    tabstop = 4;
+    termguicolors = true;
+    undofile = true;
+    updatetime = 50;
+    winborder = "rounded";
+    wrap = false;
+  };
+
+  viAlias = true;
+  luaLoader.enable = true;
+  # performance.combinePlugins.enable = true;
+
+  colorscheme = "tokyonight";
+  colorschemes.tokyonight = {
+    enable = true;
+    settings = {
+      style = "night";
+      transparent = true;
+    };
+  };
+
+  globals = {
+    mapleader = " ";
+    maplocalleader = ",";
+    loaded_netrw = 1;
+    loaded_netrwPlugin = 1;
+  };
+
+  keymaps = [
+    {
+      mode = "n";
+      key = "<leader>a";
+      action.__raw = "function() require'harpoon':list():add() end";
+    }
+    {
+      mode = "n";
+      key = "<leader>o";
+      action.__raw = "function() require'harpoon'.ui:toggle_quick_menu(require'harpoon':list()) end";
+    }
+    {
+      mode = "n";
+      key = "<C-A-h>";
+      action.__raw = "function() require'harpoon':list():select(1) end";
+    }
+    {
+      mode = "n";
+      key = "<C-A-t>";
+      action.__raw = "function() require'harpoon':list():select(2) end";
+    }
+    {
+      mode = "n";
+      key = "<C-A-n>";
+      action.__raw = "function() require'harpoon':list():select(3) end";
+    }
+    {
+      mode = "n";
+      key = "<C-A-s>";
+      action.__raw = "function() require'harpoon':list():select(4) end";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>pt";
+      action = "<cmd>TodoTelescope<cr>";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>pS";
+      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>pw";
+      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
+    }
+    {
+      mode = ["n"];
+      key = "<leader>pW";
+      action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
+    }
+    {
+      mode = ["n" "x" "o"];
+      key = "s";
+      action = "<cmd>lua require('flash').jump()<cr>";
+    }
+    {
+      mode = ["n" "x" "o"];
+      key = "S";
+      action = "<cmd>lua require('flash').treesitter()<cr>";
+    }
+    {
+      mode = ["o"];
+      key = "r";
+      action = "<cmd>lua require('flash').remote()<cr>";
+    }
+    {
+      mode = ["x" "o"];
+      key = "R";
+      action = "<cmd>lua require('flash').treesitter_search()<cr>";
+    }
+    {
+      mode = "n";
+      key = "<leader>g";
+      action = "<cmd>Neogit<cr>";
+    }
+    {
+      mode = ["n" "v"];
+      key = "<leader>Y";
+      action = "\"+y$";
+    }
+    {
+      mode = ["n" "v"];
+      key = "<leader>y";
+      action = "\"+y";
+    }
+    {
+      mode = ["n" "v"];
+      key = "<leader>D";
+      action = "\"_D";
+    }
+    {
+      mode = ["n" "v"];
+      key = "<leader>d";
+      action = "\"_d";
+    }
+    {
+      mode = ["x"];
+      key = "<leader>p";
+      action = "\"_dP";
+    }
+    {
+      mode = ["n"];
+      key = "N";
+      action = "Nzz";
+    }
+    {
+      mode = ["n"];
+      key = "n";
+      action = "nzz";
+    }
+    {
+      mode = ["n"];
+      key = "<C-u>";
+      action = "<C-u>zz";
+    }
+    {
+      mode = ["n"];
+      key = "<C-d>";
+      action = "<C-d>zz";
+    }
+    {
+      mode = ["n"];
+      key = "J";
+      options = {
+        silent = true;
+        expr = true;
+      };
+      action.__raw = "function() return 'mz' .. vim.v.count1 .. 'J`z' end";
+    }
+    {
+      mode = ["n"];
+      key = "Y";
+      action = "y$";
+    }
+    {
+      mode = ["n"];
+      key = "<Esc>";
+      action = "<cmd>nohlsearch<CR><Esc>";
+    }
+    {
+      mode = ["c"];
+      key = "W";
+      action = "w";
+    }
+    {
+      mode = ["n"];
+      key = "-";
+      action = "<cmd>Oil<cr>";
+    }
+  ];
+  plugins = {
+    fidget.enable = true;
+    lsp = {
+      enable = true;
+      servers = {
+        clangd.enable = true;
+        clojure_lsp.enable = true;
+        gopls.enable = true;
+        jdtls.enable = true;
+        jsonls.enable = true;
+        html.enable = true;
+        ts_ls.enable = true;
+        lua_ls = {
+          enable = true;
+          settings.Lua = {
+            runtime.version = "LuaJIT";
+            diagnostics.globals = ["vim"];
+            workspace = {
+              checkThirdParty = false;
+              library = [
+                "${pkgs.neovim-unwrapped}/share/nvim/runtime/lua"
+                "${pkgs.neovim-unwrapped}/share/nvim/runtime/plugin"
+              ];
+            };
+          };
+        };
+        nixd = {
+          enable = true;
+          settings = {};
+          extraOptions.offset_encoding = "utf-8";
+        };
+        pyright.enable = true;
+        sqls.enable = true;
+        tinymist = {
+          enable = true;
+          extraOptions.offset_encoding = "utf-8";
+          settings = {
+            exportPdf = "onSave";
+            root_dir =
+              # lua
+              ''
+                function(_, bufnr)
+                  return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h")
+                end
+              '';
+          };
+        };
+        zls.enable = true;
+      };
+      inlayHints = true;
+      keymaps = {
+        diagnostic = {
+          "[d" = "goto_prev";
+          "]d" = "goto_next";
+          "gl" = "open_float";
+        };
+        lspBuf = {
+          "K" = "hover";
+          "gd" = "definition";
+          "gD" = "declaration";
+          "gi" = "implementation";
+          "go" = "type_definition";
+          "gr" = "references";
+          "gs" = "signature_help";
+
+          "<leader>rn" = "rename";
+          "<leader>ra" = "code_action";
+          "<leader>rr" = "references";
+        };
+      };
+      onAttach = ''vim.keymap.set("n", "<leader>f", function() require("conform").format({ async = true, lsp_fallback = true }) end) '';
+    };
+    luasnip = {
+      enable = true;
+      settings = {
+        enable_autosnippets = true;
+        store_selection_keys = "<Tab>";
+      };
+      fromVscode = [
+        {
+          lazyLoad = true;
+          paths = "${pkgs.vimPlugins.friendly-snippets}";
+        }
+      ];
+    };
+    cmp-nvim-lsp.enable = true; # lsp
+    cmp-calc.enable = true;
+    cmp-buffer.enable = true;
+    cmp-path.enable = true; # file system paths
+    cmp_luasnip.enable = true; # snippets
+    lspkind = {
+      enable = true;
+      settings = {
+        maxwidth = 50;
+        ellipsis_char = "...";
+      };
+    };
+    cmp = {
+      enable = true;
+      settings = {
+        autoEnableSources = true;
+        snippet.expand = "luasnip";
+        experimental.ghost_text = true;
+        preselect = "cmp.PreselectMode.Item";
+        formatting.fields = ["kind" "abbr" "menu"];
+
+        sources = [
+          {name = "nvim_lsp";}
+          {name = "luasnip";}
+          {name = "nvim_lua";}
+          {name = "calc";}
+          {name = "path";}
+          {name = "buffer";}
+        ];
+        mapping = {
+          "<CR>" = "cmp.mapping.confirm({ select = true })";
+          "<C-p>" = "cmp.mapping(function() if cmp.visible() then cmp.select_prev_item({behavior = 'select'}) else cmp.complete() end end)";
+          "<C-n>" = "cmp.mapping(function() if cmp.visible() then cmp.select_next_item({behavior = 'select'}) else cmp.complete() end end)";
+        };
+        window = {
+          completion = {
+            border = "rounded";
+            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None";
+          };
+          documentation.border = "rounded";
+        };
+      };
+    };
+  };
+  extraConfigLua =
+    #lua
+    ''
+      vim.diagnostic.config{
+        float = { border = _border }
+      }
+    '';
+
+  plugins = {
+    oil.enable = true;
+    neogit.enable = true;
+    comment.enable = true;
+    # conjure.enable = true;
+    diffview.enable = true;
+    gitsigns.enable = true;
+    nvim-autopairs.enable = true;
+    nvim-surround.enable = true;
+    todo-comments.enable = true;
+    typst-preview.enable = true;
+    web-devicons.enable = true;
+    quicker.enable = true;
+
+    treesitter = {
+      enable = true;
+      settings.highlight.enable = true;
+      grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [bash gdscript cmake c-sharp css dockerfile go gomod gosum gowork html java javascript jq json json5 jsonc kotlin lua markdown nix ocaml php python query ruby rust scala scss svelte toml typst typescript vim yaml zig];
+    };
+
+    conform-nvim = {
+      enable = true;
+      settings = {
+        formatters = {
+          alejandra.command = alejandra;
+          gofmt.command = gofmt;
+          goimports.command = goimports;
+          isort.command = isort;
+          prettierd.command = prettierd;
+          ruff_format = {
+            command = ruff;
+            prepend_args = ["format"];
+          };
+          stylua.command = stylua;
+        };
+        formatters_by_ft = {
+          "*" = ["trim_whitespace"];
+          go = ["goimports" "gofmt"];
+          javascript = ["prettierd"];
+          lua = ["stylua"];
+          nix = ["alejandra"];
+          python = ["isort" "ruff_format"];
+        };
+      };
+    };
+
+    lint = {
+      enable = true;
+      linters.ruff.cmd = ruff;
+      lintersByFt.python = ["ruff"];
+    };
+    lualine = let
+      getColorOrDefault = baseKey: defaultHex:
+        if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${baseKey}
+        then "#${config.stylix.base16Scheme.${baseKey}}"
+        else "#${defaultHex}";
+      colors = {
+        bg = getColorOrDefault "base00" "12151a";
+        bg_alt = getColorOrDefault "base01" "21262e";
+        fg = getColorOrDefault "base05" "c5cbd3";
+        fg_dark = getColorOrDefault "base03" "6c7a8b";
+
+        red = getColorOrDefault "base08" "d18da4";
+        green = getColorOrDefault "base0B" "74b3c4";
+        blue = getColorOrDefault "base0D" "5e9de5";
+        yellow = getColorOrDefault "base0A" "82a4b0";
+        magenta = getColorOrDefault "base0E" "a396c4";
+      };
+    in {
+      enable = true;
+      settings = {
+        options = {
+          theme = {
+            normal = {
+              a = {
+                fg = colors.bg;
+                bg = colors.blue;
+                gui = "bold";
+              };
+              b = {
+                fg = colors.fg;
+                bg = colors.bg_alt;
+              };
+              c = {
+                fg = colors.fg;
+                bg = colors.bg;
+              };
+            };
+            insert = {
+              a = {
+                fg = colors.bg;
+                bg = colors.green;
+                gui = "bold";
+              };
+            };
+            visual = {
+              a = {
+                fg = colors.bg;
+                bg = colors.magenta;
+                gui = "bold";
+              };
+            };
+            replace = {
+              a = {
+                fg = colors.bg;
+                bg = colors.red;
+                gui = "bold";
+              };
+            };
+            command = {
+              a = {
+                fg = colors.bg;
+                bg = colors.yellow;
+                gui = "bold";
+              };
+            };
+            inactive = {
+              a = {
+                fg = colors.fg;
+                bg = colors.bg;
+                gui = "bold";
+              };
+              b = {
+                fg = colors.fg_dark;
+                bg = colors.bg;
+              };
+              c = {
+                fg = colors.fg_dark;
+                bg = colors.bg;
+              };
+            };
+          };
+          section_separators = {
+            left = "";
+            right = "";
+          };
+          component_separators = {
+            left = "";
+            right = "";
+          };
+          always_divide_middle = true;
+        };
+
+        sections = {
+          lualine_a = ["mode"];
+          lualine_b = [
+            "branch"
+            "diff"
+          ];
+          lualine_c = ["diagnostics"];
+          lualine_x = ["filetype"];
+          lualine_y = ["progress"];
+          lualine_z = ["location"];
+        };
+
+        # CORRECTED: Use an empty list `[]` for empty sections, not `{}`.
+        inactive_sections = {
+          lualine_a = [];
+          lualine_b = [];
+          lualine_c = ["filename"];
+          lualine_x = ["location"];
+          lualine_y = [];
+          lualine_z = [];
+        };
+      };
+    };
+  };
+
+  extraPlugins = with pkgs.vimPlugins; [
+    vim-visual-multi
+    vim-indent-object
+
+    # vim-sexp vim-sexp-mappings-for-regular-people
+  ];
+
+  plugins = {
+    telescope = {
+      enable = true;
+      extensions.fzf-native.enable = true;
+      settings.defaults = {
+        border = true;
+        layout_config.horizontal = {
+          prompt_position = "top";
+          width = 0.95;
+          height = 0.85;
+        };
+      };
+      keymaps = {
+        "<leader>h" = "find_files";
+        "<leader>pg" = "git_files";
+        "<leader>ps" = "live_grep";
+        "<leader>pr" = "lsp_references";
+        "<leader>pd" = "diagnostics";
+        "<leader>ph" = "help_tags";
+      };
+    };
+
+    harpoon = {
+      enable = true;
+      settings.menu = {
+        width = 100;
+        height = 6;
+      };
+    };
+
+    flash = {
+      enable = true;
+      settings = {
+        label.rainbow.enabled = true;
+        modes = {
+          search.enabled = false;
+          char.enabled = false;
+        };
+      };
+    };
+  };
+}

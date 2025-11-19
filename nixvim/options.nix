@@ -95,6 +95,7 @@
       mode = ["n"];
       key = "J";
       options.silent = true;
+      options.expr = true;
       action.__raw = ''function () return 'mz' .. vim.v.count1 .. 'J`z' end'';
     }
     {
