@@ -38,7 +38,7 @@
           "$zig"
           "$line_break"
         ];
-        scan_timeout = 10;
+        scan_timeout = 50;
         character = {
           error_symbol = "[✗](bold red)";
         };
