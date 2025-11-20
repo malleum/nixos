@@ -31,7 +31,10 @@
 
   viAlias = true;
   luaLoader.enable = true;
-  # performance.combinePlugins.enable = true;
+  performance.combinePlugins = {
+    enable = true;
+    standalonePlugins = ["oil.nvim" "conform.nvim" "typst-preview.nvim"];
+  };
 
   colorscheme = "tokyonight";
   colorschemes.tokyonight = {
@@ -91,6 +94,11 @@
 
       "i" = {
         "<A-c>" = "<C-o>S<C-r>=<C-r>\"<CR>";
+      };
+
+      "is" = {
+        "<C-j>" = "<cmd>lua require('luasnip').jump(1)<cr>";
+        "<C-k>" = "<cmd>lua require('luasnip').jump(-1)<cr>";
       };
     };
   in
@@ -157,6 +165,8 @@
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
+  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
+
   plugins = {
     lspconfig.enable = true;
 
@@ -165,6 +175,8 @@
       settings = {
         enable_autosnippets = true;
         store_selection_keys = "<Tab>";
+        history = true;
+        update_events = "TextChanged,TextChangedI";
       };
       fromVscode = [
         {
@@ -180,42 +192,41 @@
         snippets.preset = "luasnip";
         keymap = {
           preset = "default";
-          "<C-p>" = ["select_prev" "fallback"];
-          "<C-n>" = ["select_next" "fallback"];
+          "<C-p>" = ["select_prev" "show"];
+          "<C-n>" = ["select_next" "show"];
           "<CR>" = ["accept" "fallback"];
           "<C-b>" = ["scroll_documentation_up" "fallback"];
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
-        appearance = {
-          # use_nvim_cmp_as_default = true;
-          nerd_font_variant = "mono";
-        };
-
         sources.default = ["lsp" "path" "snippets" "buffer"];
-
         completion = {
           menu = {
             border = "rounded";
-            # draw = { columns = [ {__unkeyed-1 = "kind_icon";} { __unkeyed-1 = "label"; __unkeyed-2 = "label_description"; gap = 1; } {__unkeyed-1 = "kind";} ]; };
+            draw = {
+              columns = [
+                {__unkeyed-1 = "kind_icon";}
+                {
+                  __unkeyed-1 = "label";
+                  __unkeyed-2 = "label_description";
+                  gap = 1;
+                }
+                {__unkeyed-1 = "kind";}
+              ];
+            };
           };
           documentation = {
             window.border = "rounded";
             auto_show = true;
-            auto_show_delay_ms = 500;
+            auto_show_delay_ms = 200;
           };
           ghost_text.enabled = true;
         };
         signature.enabled = true;
       };
     };
-  };
 
-  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
-
-  plugins = {
     comment.enable = true;
     diffview.enable = true;
-    fidget.enable = true;
     gitsigns.enable = true;
     neogit.enable = true;
     nvim-autopairs.enable = true;
@@ -228,7 +239,6 @@
 
     treesitter = {
       enable = true;
-      settings.indent.enable = true;
       settings.highlight.enable = true;
     };
 
