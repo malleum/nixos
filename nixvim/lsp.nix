@@ -11,6 +11,10 @@
         jsonls.enable = true;
         html.enable = true;
         ts_ls.enable = true;
+        ltex_plus = {
+          enable = true;
+          package = pkgs.ltex-ls-plus;
+        };
         lua_ls = {
           enable = true;
           settings.Lua = {
