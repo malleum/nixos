@@ -3,7 +3,6 @@
   lib,
   ...
 }: {
-  # vim-sexp vim-sexp-mappings-for-regular-people conjure.enable = true;
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
@@ -70,6 +69,9 @@
         "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
         "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
 
+        "<C-j>" = "<cmd>cn<cr>";
+        "<C-k>" = "<cmd>cp<cr>";
+
         "<C-d>" = "<C-d>zz";
         "<C-u>" = "<C-u>zz";
         "N" = "Nzz";
@@ -83,6 +85,8 @@
         "<leader>y" = "\"+y";
         "<leader>Y" = "\"+y$";
       };
+
+      "nxo" = {"s" = "<cmd>lua require('flash').jump()<cr>";};
 
       "x" = {"<leader>p" = "\"_dP";};
 
@@ -114,19 +118,26 @@
       jsonls.enable = true;
       html.enable = true;
       ts_ls.enable = true;
+      ltex_plus = {
+        enable = true;
+        package = pkgs.ltex-ls-plus;
+      };
       lua_ls.enable = true;
       nixd = {
         enable = true;
         config.offset_encoding = "utf-8";
       };
       pyright.enable = true;
+      rust_analyzer.enable = true;
       sqls.enable = true;
       tinymist = {
         enable = true;
         config = {
-          exportPdf = "onSave";
           offset_encoding = "utf-8";
-          root_dir = ''function(_, bufnr) return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h") end'';
+          settings = {
+            exportPdf = "onSave";
+            root_dir = ''function(_, bufnr) return vim.fs.root(bufnr, { ".git" }) or vim.fn.expand("%:p:h") end'';
+          };
         };
       };
       zls.enable = true;
@@ -227,6 +238,18 @@
     todo-comments.enable = true;
     typst-preview.enable = true;
     web-devicons.enable = true;
+    quickmath.enable = true;
+
+    flash = {
+      enable = true;
+      settings = {
+        label.rainbow.enabled = true;
+        modes = {
+          search.enabled = false;
+          char.enabled = false;
+        };
+      };
+    };
 
     treesitter = {
       enable = true;
@@ -244,6 +267,8 @@
           lua = ["stylua"];
           nix = ["alejandra"];
           python = ["isort" "ruff_format"];
+          rust = ["rustfmt"];
+          typst = ["typstyle"];
         };
       };
     };
