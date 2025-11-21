@@ -84,17 +84,11 @@
         "<leader>Y" = "\"+y$";
       };
 
-      "x" = {
-        "<leader>p" = "\"_dP";
-      };
+      "x" = {"<leader>p" = "\"_dP";};
 
-      "c" = {
-        "W" = "w";
-      };
+      "c" = {"W" = "w";};
 
-      "i" = {
-        "<A-c>" = "<C-o>S<C-r>=<C-r>\"<CR>";
-      };
+      "i" = {"<A-c>" = "<C-o>S<C-r>=<C-r>\"<CR>";};
 
       "is" = {
         "<C-j>" = "<cmd>lua require('luasnip').jump(1)<cr>";
@@ -102,16 +96,13 @@
       };
     };
   in
-    lib.flatten (lib.mapAttrsToList
-      (
-        mode: mappings:
-          lib.mapAttrsToList (key: action: {
-            mode = lib.stringToCharacters mode;
-            inherit key action;
-          })
-          mappings
-      )
-      maps);
+    lib.flatten (lib.mapAttrsToList (mode: mappings:
+      lib.mapAttrsToList (key: action: {
+        mode = lib.stringToCharacters mode;
+        inherit key action;
+      })
+      mappings)
+    maps);
 
   lsp = {
     inlayHints.enable = true;
