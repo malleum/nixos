@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  plena ? true,
   ...
 }: {
   opts = {
@@ -53,6 +54,7 @@
       "n" = {
         "-" = "<cmd>Oil<cr>";
         "<leader>g" = "<cmd>Neogit<cr>";
+        "<leader>q" = "<cmd>lua require('quicker').toggle()<cr>";
         "<leader>f" = "<cmd>lua require('conform').format({ async = true, lsp_fallback = true })<cr>";
 
         "<leader>a" = "<cmd>lua require('harpoon'):list():add()<cr>";
@@ -66,16 +68,6 @@
         "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
         "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
 
-        "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
-        "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
-
-        "<C-j>" = "<cmd>cn<cr>";
-        "<C-k>" = "<cmd>cp<cr>";
-
-        "<C-d>" = "<C-d>zz";
-        "<C-u>" = "<C-u>zz";
-        "N" = "Nzz";
-        "n" = "nzz";
         "Y" = "y$";
       };
 
@@ -84,11 +76,24 @@
         "<leader>D" = "\"_D";
         "<leader>y" = "\"+y";
         "<leader>Y" = "\"+y$";
+
+        "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
+        "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
+        "s" = "<cmd>lua require('flash').jump()<cr>";
+
+        "<C-j>" = "<cmd>cn<cr>";
+        "<C-k>" = "<cmd>cp<cr>";
+
+        "<C-d>" = "<C-d>zz";
+        "<C-u>" = "<C-u>zz";
+        "N" = "Nzz";
+        "n" = "nzz";
       };
 
-      "nxo" = {"s" = "<cmd>lua require('flash').jump()<cr>";};
-
-      "x" = {"<leader>p" = "\"_dP";};
+      "x" = {
+        "<leader>p" = "\"_dP";
+        "<leader>h" = "lua require('telescope.builtin').grep_string({ search = vim.fn.getreg('\"') })";
+      };
 
       "c" = {"W" = "w";};
 
@@ -110,7 +115,7 @@
 
   lsp = {
     inlayHints.enable = true;
-    servers = {
+    servers = lib.mkIf plena {
       clangd.enable = true;
       clojure_lsp.enable = true;
       gopls.enable = true;
@@ -148,19 +153,17 @@
         "]d" = "<cmd>lua vim.diagnostic.goto_next()<cr>";
         "gl" = "<cmd>lua vim.diagnostic.open_float()<cr>";
 
-        "gd" = lib.nixvim.mkRaw "require('telescope.builtin').lsp_definitions";
-        "gr" = lib.nixvim.mkRaw "require('telescope.builtin').lsp_references";
+        "gd" = "<cmd>lua require('telescope.builtin').lsp_definitions()<cr>";
+        "gr" = "<cmd>lua require('telescope.builtin').lsp_references()<cr>";
       };
       lspBuf = {
         "K" = "hover";
         "gD" = "definition";
         "go" = "type_definition";
         "gR" = "references";
-        "gs" = "signature_help";
 
         "<leader>rn" = "rename";
         "<leader>ra" = "code_action";
-        "<leader>rr" = "references";
       };
     in
       (lib.mapAttrsToList (key: lspBufAction: {inherit key lspBufAction;}) lspBuf)
@@ -170,9 +173,9 @@
   extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
 
   plugins = {
-    lspconfig.enable = true;
+    lspconfig.enable = plena;
 
-    luasnip = {
+    luasnip = lib.mkIf plena {
       enable = true;
       settings = {
         enable_autosnippets = true;
@@ -191,7 +194,7 @@
     blink-cmp = {
       enable = true;
       settings = {
-        snippets.preset = "luasnip";
+        snippets = lib.mkIf plena {preset = "luasnip";};
         keymap = {
           preset = "default";
           "<C-p>" = ["select_prev" "show"];
@@ -227,18 +230,18 @@
       };
     };
 
-    comment.enable = true;
     diffview.enable = true;
     gitsigns.enable = true;
+    harpoon.enable = true;
     neogit.enable = true;
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
     oil.enable = true;
     quicker.enable = true;
+    quickmath.enable = true;
     todo-comments.enable = true;
     typst-preview.enable = true;
     web-devicons.enable = true;
-    quickmath.enable = true;
 
     flash = {
       enable = true;
@@ -251,14 +254,14 @@
       };
     };
 
-    treesitter = {
+    treesitter = lib.mkIf plena {
       enable = true;
       settings.highlight.enable = true;
     };
 
     conform-nvim = {
       enable = true;
-      autoInstall.enable = true;
+      autoInstall.enable = plena;
       settings = {
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
@@ -273,7 +276,7 @@
       };
     };
 
-    lint = {
+    lint = lib.mkIf plena {
       enable = true;
       linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
       lintersByFt.python = ["ruff"];
@@ -296,14 +299,13 @@
       enable = true;
       extensions.fzf-native.enable = true;
       settings.defaults = {
-        border = true;
         layout_config.horizontal = {
           prompt_position = "top";
           width = 0.95;
-          height = 0.85;
         };
       };
       keymaps = {
+
         "<leader>h" = "find_files";
         "<leader>pg" = "git_files";
         "<leader>ps" = "live_grep";
@@ -311,14 +313,6 @@
         "<leader>pd" = "diagnostics";
         "<leader>ph" = "help_tags";
         "<leader>pt" = "todo-comments";
-      };
-    };
-
-    harpoon = {
-      enable = true;
-      settings.menu = {
-        width = 100;
-        height = 6;
       };
     };
   };
