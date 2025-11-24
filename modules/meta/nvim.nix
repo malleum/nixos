@@ -7,20 +7,15 @@
     nixvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
       module = import ../../nixvim;
-      extraSpecialArgs = {inherit pkgs inputs;};
-    };
-
-    nxvm = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
-      inherit system;
-      module = import ../../nxvm;
-      extraSpecialArgs = {inherit pkgs inputs;
+      extraSpecialArgs = {
+        inherit pkgs inputs;
         plena = true;
       };
     };
 
     mvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
-      module = import ../../nxvm;
+      module = import ../../nixvim;
       extraSpecialArgs = {
         inherit pkgs inputs;
         plena = false;
@@ -31,13 +26,13 @@
       type = "app";
       program = "${nixvim}/bin/nvim";
     };
-    packages.default = nxvm;
+    packages.default = nixvim;
 
     apps.nvim = {
       type = "app";
-      program = "${nxvm}/bin/nvim";
+      program = "${nixvim}/bin/nvim";
     };
-    packages.nvim = nxvm;
+    packages.nvim = nixvim;
 
     apps.mvim = {
       type = "app";

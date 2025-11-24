@@ -7,12 +7,13 @@
     - [ ] gpg keys
     - [ ] gitlab key
 - [ ] outputs
-    - [ ] nixvim
+    - [x] nixvim
     - [ ] scripts
 - [ ] hm config for oracle
-- [ ] firefox
-- [ ] nvf
+- [x] firefox
+- [x] new nixvim
 - [ ] switch wallpaper
+- [ ] debug spotify_player
 
 ```nix
 .
@@ -40,15 +41,10 @@
 │   │   ├── hostname.nix
 │   │   ├── nix.nix
 │   │   ├── nixpkgs.nix
+│   │   ├── nvim.nix
 │   │   ├── stateversion.nix
 │   │   ├── user.nix
 │   │   └── userConfig.nix
-│   ├── nixvim
-│   │   ├── _lsp.nix
-│   │   ├── _options.nix
-│   │   ├── _plugins.nix
-│   │   ├── _zoom.nix
-│   │   └── default.nix
 │   ├── packages
 │   │   ├── cli.nix
 │   │   ├── coreutils.nix
@@ -62,6 +58,7 @@
 │   ├── programs
 │   │   ├── brave.nix
 │   │   ├── cli.nix
+│   │   ├── firefox.nix
 │   │   ├── fish.nix
 │   │   ├── game.nix
 │   │   ├── git.nix
@@ -115,6 +112,7 @@
 │       ├── security.nix
 │       ├── virtualization.nix
 │       └── xdg.nix
-├── README.md
-└── vimium_c.json
+├── nixvim
+│   └── default.nix
+└── README.md
 ```
