@@ -6,8 +6,32 @@
         profiles.user.user_id = "@malleum:malleum.us";
         layout.style = "restore";
         settings = {
+          message_user_color = true;
           notifications.enabled = true;
-          image_preview.protocol.type = "sixel";
+          username_display = "localpart";
+          image_preview = {
+            protocol = {
+              type = "sixel";
+              font_size = [11 26];
+            };
+          };
+          users = {
+            "@malleum:malleum.us".color = "blue";
+            "@tczcatlipoca:malleum.us".color = "yellow";
+            "@sintfoap:malleum.us".color = "red";
+          };
+        };
+
+        macros = {
+          normal = {
+            "gc" = ":chats<Enter>";
+            "-" = ":chats<Enter>";
+            "ga" = "<C-W>m";
+            "s" = "<C-W>m";
+            "<C-g>" = "<C-W>mG<C-W>m";
+            "gr" = ":react ";
+            "ge" = ":edit ";
+          };
         };
       };
     };
