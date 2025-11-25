@@ -11,6 +11,7 @@
         EDITOR = "nvim";
         VISUAL = "nvim";
         TERMINAL = "foot";
+        TERM = "foot";
         BROWSER = hostConfig.user.browser;
         BROWSER2 = hostConfig.user.browser2;
       };

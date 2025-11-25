@@ -3,7 +3,6 @@
     home.packages = with pkgs; [
       cherry-studio
       code-cursor-fhs
-      iamb
       losslesscut-bin
       vlc
 
