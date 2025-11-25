@@ -9,12 +9,7 @@
           message_user_color = true;
           notifications.enabled = true;
           username_display = "localpart";
-          image_preview = {
-            protocol = {
-              type = "sixel";
-              font_size = [11 26];
-            };
-          };
+          image_preview = {};
           users = {
             "@malleum:malleum.us".color = "blue";
             "@tczcatlipoca:malleum.us".color = "yellow";
