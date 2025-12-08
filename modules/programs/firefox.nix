@@ -1,16 +1,9 @@
 {
-  unify.modules.gui.nixos = {hostConfig, ...}: {
-    system.userActivationScripts = {
-      removeConflictingFiles = {
-        text = ''
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
-        '';
-      };
-    };
-  };
-
-  unify.modules.gui.home = {pkgs, ...}: let
+  unify.modules.gui.home = {
+    pkgs,
+    hostConfig,
+    ...
+  }: let
     myExtensions = with pkgs.nur.repos.rycee.firefox-addons; [
       bitwarden # Password manager
       darkreader # Dark mode for all websites
@@ -112,6 +105,17 @@
       "browser.tabs.firefox-view-newIcon" = false; # Disable the "Firefox View" icon
     };
   in {
+    home.activation = {
+      removeFirefoxSearchFiles = {
+        after = [];
+        before = ["linkGeneration"];
+        body = ''
+          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
+          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
+        '';
+      };
+    };
+
     home.sessionVariables = {
       # Force Firefox to use Wayland
       MOZ_ENABLE_WAYLAND = "1";
