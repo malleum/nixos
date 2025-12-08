@@ -2,6 +2,7 @@
   unify.modules.gui.home = {
     pkgs,
     hostConfig,
+    lib,
     ...
   }: let
     myExtensions = with pkgs.nur.repos.rycee.firefox-addons; [
@@ -106,7 +107,7 @@
     };
   in {
     home.activation = {
-      removeFirefoxSearchFiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      removeFirefoxSearchFiles = lib.hm.dag.entryBefore ["writeBoundary"] ''
         run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
         run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
       '';
