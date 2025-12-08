@@ -106,14 +106,10 @@
     };
   in {
     home.activation = {
-      removeFirefoxSearchFiles = {
-        after = [];
-        before = ["linkGeneration"];
-        body = ''
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
-          rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
-        '';
-      };
+      removeFirefoxSearchFiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
+        run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
+      '';
     };
 
     home.sessionVariables = {
