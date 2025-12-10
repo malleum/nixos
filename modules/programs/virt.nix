@@ -1,10 +1,7 @@
 {
   unify.nixos = {hostConfig, ...}: {
     programs.adb.enable = true;
-    virtualisation.virtualbox.host = {
-      enable = true;
-      # enableKvm = true;
-    };
+    virtualisation.virtualbox.host = {enable = true;};
 
     users.users.${hostConfig.user.username}.extraGroups = ["adbuser" "vboxusers"];
   };
