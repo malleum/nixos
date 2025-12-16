@@ -20,12 +20,10 @@
       enable = true;
       extraPortals = with pkgs; [
         inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
-        xdg-desktop-portal-gtk
       ];
       # This ensures Hyprland's portal is the default
       config.common.default = [
         "hyprland"
-        "gtk"
       ];
     };
     wayland.windowManager.hyprland = {
