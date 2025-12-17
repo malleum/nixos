@@ -1,8 +1,5 @@
 {
   unify.nixos = {
-    console = {
-      keyMap = "dvorak";
-      useXkbConfig = true;
-    };
+    console.keyMap = "dvorak";
   };
 }
