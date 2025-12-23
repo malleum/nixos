@@ -114,6 +114,8 @@
   lsp = {
     inlayHints.enable = true;
     servers = lib.mkIf plena {
+      elmls.enable = true;
+      elixir.enable = true;
       clangd.enable = true;
       clojure_lsp.enable = true;
       gopls.enable = true;
@@ -270,6 +272,8 @@
           python = ["isort" "ruff_format"];
           rust = ["rustfmt"];
           typst = ["typstyle"];
+          elixir = ["mix"];
+          elm = ["elm_format"];
         };
       };
     };
