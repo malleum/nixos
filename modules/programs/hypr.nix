@@ -5,10 +5,6 @@
       package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
-    xdg.portal = {
-      enable = true;
-      extraPortals = [inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland];
-    };
   };
 
   unify.modules.gui.home = {
@@ -26,11 +22,6 @@
         inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
         pkgs.xdg-desktop-portal-gtk
       ];
-      config = {
-        common = {
-          default = [ "hyprland" "gtk" ];
-        };
-      };
     };
     wayland.windowManager.hyprland = {
       enable = true;
