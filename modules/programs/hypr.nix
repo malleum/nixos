@@ -18,13 +18,9 @@
   in {
     xdg.portal = {
       enable = true;
-      extraPortals = with pkgs; [
-        inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
-      ];
+      extraPortals = [inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland];
       # This ensures Hyprland's portal is the default
-      config.common.default = [
-        "hyprland"
-      ];
+      # config.common.default = [ "hyprland" ];
     };
     wayland.windowManager.hyprland = {
       enable = true;
