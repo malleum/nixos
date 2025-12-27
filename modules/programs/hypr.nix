@@ -5,6 +5,10 @@
       package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
+    xdg.portal = {
+      enable = true;
+      extraPortals = [inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland];
+    };
   };
 
   unify.modules.gui.home = {
@@ -18,9 +22,15 @@
   in {
     xdg.portal = {
       enable = true;
-      extraPortals = [inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland];
-      # This ensures Hyprland's portal is the default
-      # config.common.default = [ "hyprland" ];
+      extraPortals = [
+        inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
+        pkgs.xdg-desktop-portal-gtk
+      ];
+      config = {
+        common = {
+          default = [ "hyprland" "gtk" ];
+        };
+      };
     };
     wayland.windowManager.hyprland = {
       enable = true;
@@ -38,8 +48,8 @@
         monitor = (
           if hostConfig.name == "magnus"
           then [
-            # "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
-            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,0x0,1"
+            "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
+            "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
           ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
@@ -51,7 +61,6 @@
         exec-once = [
           "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-          # "${inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland}/libexec/xdg-desktop-portal-hyprland"
           "vesktop"
           "nm-applet"
           "waybar"
