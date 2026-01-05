@@ -132,7 +132,7 @@
         enable = true;
         config.offset_encoding = "utf-8";
       };
-      pyright.enable = true;
+      ty.enable = true;
       rust_analyzer.enable = true;
       sqls.enable = true;
       tinymist = {
@@ -278,11 +278,11 @@
       };
     };
 
-    lint = lib.mkIf plena {
-      enable = true;
-      linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
-      lintersByFt.python = ["ruff"];
-    };
+    # lint = lib.mkIf plena {
+    #   enable = true;
+    #   linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
+    #   lintersByFt.python = ["ruff"];
+    # };
     lualine = {
       enable = true;
       settings = {
