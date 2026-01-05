@@ -10,6 +10,15 @@
         user = {inherit (hostConfig.user) email name;};
         push.autoSetupRemote = true;
       };
+      includes = [
+        {
+          condition = "gitdir:${hostConfig.user.homeDirectory}/documents/visiostack/";
+          contents.user = {
+            name = "Joshua Hammer";
+            email = "jhammer@visiostack.com";
+          };
+        }
+      ];
     };
 
     programs.gh.enable = true;
