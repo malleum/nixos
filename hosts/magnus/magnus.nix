@@ -14,6 +14,7 @@ in {
         doc
         gam
         gui
+        vrt
         wrk
         ;
     };

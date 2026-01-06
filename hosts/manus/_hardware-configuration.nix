@@ -2,9 +2,7 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }: {
@@ -15,7 +13,6 @@
   boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
-  # boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_13;
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/eca2365f-faf7-40bb-ac3a-7e6a55ae1ddf";

@@ -11,7 +11,7 @@
   gitusername = "malleum";
   homeDirectory = "/home/${username}";
   configHome = "${homeDirectory}/.config";
-  browser = "firefox-beta";
+  browser = "firefox";
   browser2 = "brave";
 in {
   options.user = mkOption {
