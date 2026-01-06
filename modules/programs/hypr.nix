@@ -42,6 +42,12 @@
             "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001,1920x1080@180.00,0x0,1"
             "desc:HP Inc. HP V222vb 3CQ1261KNM,1920x1080,-1920x0,1"
           ]
+          else if hostConfig.name == "manus"
+          then [
+            "desc:Samsung Display Corp. 0x4165,1920x1200@60.00,0x0,1"
+            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
+            ",preferred,auto,1"
+          ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
             "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
