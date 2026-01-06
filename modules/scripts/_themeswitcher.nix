@@ -3,7 +3,10 @@
   lib,
   ...
 }: let
-  themes = import ../style/_themes.nix {inherit pkgs;};
+  themes = import ../style/_themes.nix {
+    inherit pkgs;
+    name = "malleum";
+  };
 
   wallpaper-script = lib.concatMapStringsSep "\n" (name: ''
     case "${name}"; swww img "${themes.${name}.image}" --transition-type any --transition-fps 60

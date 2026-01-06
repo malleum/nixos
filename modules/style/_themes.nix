@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  name,
+  ...
+}: let
   dim = image: brightness:
     pkgs.runCommand "wallpaper.jpg" {}
     ''${pkgs.imagemagick}/bin/magick "${image}" -brightness-contrast ${brightness},0 $out '';
@@ -23,6 +27,10 @@ in {
       base0E = "bb9af7"; # Magenta (magenta) - Keywords, Storage, Diff Changed
       base0F = "1abc9c"; # Teal (teal) - Deprecated, Embedded Language Tags
     };
-    image = dim ./wallpapers/legotesla.png "-20";
+    image = dim (
+      if name == "manus"
+      then ./wallpapers/legotrain.png
+      else ./wallpapers/legotesla.png
+    ) "-20";
   };
 }

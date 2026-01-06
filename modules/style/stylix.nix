@@ -2,9 +2,13 @@
   unify.modules.gui.nixos = {
     pkgs,
     lib,
+    hostConfig,
     ...
   }: let
-    themes = import ./_themes.nix {inherit pkgs;};
+    themes = import ./_themes.nix {
+      inherit pkgs;
+      name = hostConfig.name;
+    };
     mkStylixTheme = theme: {
       stylix = {
         image = lib.mkForce themes.${theme}.image;

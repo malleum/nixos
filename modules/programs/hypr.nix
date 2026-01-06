@@ -225,7 +225,7 @@
 
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000"
 
-            "SUPER, bracketleft, exec, swww kill; swww-daemon"
+            "SUPER, bracketleft, exec, swww kill; swww-daemon && swww img ${wallpaper}"
             "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
             "SUPER CONTROL, bracketleft, exec, swww kill"
             "SUPER CONTROL, bracketright, exec, killall .waybar-wrapped"
