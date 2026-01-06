@@ -5,3 +5,4 @@ creation_rules:
           - "age1tgengcm9ph3zc96f5gpkkad6at6zru5tkclh3dy953yw0fdl950smww7ha"
         ssh:
           - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/mm/sBk/Rgd3mnxxfrNQl88tfLX9NzQlqJZiXUp+LK root@malleum"
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINAAPjcsuackKrwN4fa/xFlpU7xEhV8MHEpI3k1XfBcy root@manus"

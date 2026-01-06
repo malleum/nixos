@@ -1,4 +1,4 @@
-{
+{inputs, ...}: {
   unify.modules.wrk.home = {pkgs, ...}: {
     programs.fish.shellInit = ''
       abbr -a stag "STAGING_BRANCH=(git branch --show-current)"
@@ -9,6 +9,7 @@
       awscli2
       openvpn
       uv
+      inputs.fix-python.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
 }
