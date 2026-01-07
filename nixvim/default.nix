@@ -278,11 +278,11 @@
       };
     };
 
-    # lint = lib.mkIf plena {
-    #   enable = true;
-    #   linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
-    #   lintersByFt.python = ["ruff"];
-    # };
+    lint = lib.mkIf plena {
+      enable = true;
+      linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
+      lintersByFt.python = ["ruff"];
+    };
     lualine = {
       enable = true;
       settings = {

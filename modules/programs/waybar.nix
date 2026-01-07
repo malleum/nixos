@@ -21,7 +21,7 @@
       "#${config.stylix.base16Scheme.base0F}"
     ];
 
-    mods = ["tray" "pulseaudio" "network" "cpu" "memory" "disk" "battery" "clock#c2" "clock" "custom/chron"];
+    mods = ["tray" "pulseaudio" "network" "cpu" "memory" "disk" "battery" "clock" "custom/duod"];
 
     modulo' = a: b: a - b * builtins.div a b;
     modulo = a: (modulo' a (builtins.length colors));
@@ -54,19 +54,21 @@
         format-plugged = "baterio {capacity}% 󰂄";
         format-icons = ["󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
         states.critical = 10;
+        on-click-middle = "poweroff";
       };
       clock = {
-        interval = 1;
-        format = "tempo {:%H:%M} 󰥔";
-      };
-      "clock#c2" = {
+        on-click = "foot fish -C cal";
+        on-click-right = "$BROWSER https://calendar.google.com/";
         format = "dato {:%m-%d} 󰸗";
+        tooltip = true;
+        tooltip-format = "tempo {:%H:%M} 󰥔";
       };
       cpu = {
         format = "procesoro {usage:02}% 󰍛";
       };
       memory = {
         format = "memoro {used:0.1f}G 󰾅";
+        on-click = "foot fish -C btop";
       };
       disk = {
         format = "disko {percentage_used:02}% 󰋊";
@@ -96,11 +98,13 @@
         format-icons = ["󰈸" "󰈸" "󰈸"]; # Using a consistent icon
       };
 
-      "custom/chron" = {
+      "custom/duod" = {
         format = "duodo {} 󱑤";
-        exec = "duod | choose -c 0..4";
-        interval = 1;
+        exec = "duod | choose -c 0..5";
+        interval = "once";
+        signal = 1;
         return-type = "text";
+        on-click = "$BROWSER https://grapple.joshammer.com/";
       };
     };
   in {
@@ -157,7 +161,6 @@
 
           /* General module styling */
           #clock,
-          #clock.c2,
           #battery,
           #cpu,
           #memory,
@@ -166,7 +169,7 @@
           #network,
           #pulseaudio,
           #tray,
-          #custom-chron {
+          #custom-duod {
             padding: 2px 12px;
             margin: 6px 3px;
             border-radius: 10px;
@@ -178,7 +181,6 @@
 
           /* Add a hover effect to all modules */
           #clock:hover,
-          #clock.c2:hover,
           #battery:hover,
           #cpu:hover,
           #memory:hover,
@@ -187,7 +189,7 @@
           #network:hover,
           #pulseaudio:hover,
           #tray:hover,
-          #custom-chron:hover {
+          #custom-duod:hover {
              background-color: #${config.stylix.base16Scheme.base02};
              border: 2px solid #${config.stylix.base16Scheme.base04};
           }
@@ -195,7 +197,6 @@
 
           /* Using border for the dynamic color accent */
           #clock { border-left: 5px solid ${c.clock}; }
-          #clock.c2 { border-left: 5px solid ${c."clock#c2"}; }
           #battery { border-left: 5px solid ${c.battery}; }
           #cpu { border-left: 5px solid ${c.cpu}; }
           #memory { border-left: 5px solid ${c.memory}; }
@@ -204,8 +205,8 @@
           #pulseaudio { border-left: 5px solid ${c.pulseaudio}; }
           /* #temperature { border-left: 5px solid {c.temperature}; } */
           #tray { border-left: 5px solid ${c.tray}; }
-          /* Waybar changes custom/chron to custom-chron in CSS */
-          #custom-chron { border-left: 5px solid ${c."custom/chron"}; }
+          /* Waybar changes custom/duod to custom-duod in CSS */
+          #custom-duod { border-left: 5px solid ${c."custom/duod"}; }
 
 
           /* Critical and special states styling */
@@ -231,6 +232,18 @@
           }
 
         '';
+    };
+  };
+
+  unify.modules.gui.nixos = {pkgs, ...}: {
+    systemd.user.services.waybar-duod-update = {
+      description = "Update Waybar duodecimal clock";
+      wantedBy = ["graphical-session.target"];
+      after = ["waybar.service"];
+      serviceConfig = {
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.procps}/bin/pkill -RTMIN+1 waybar; ${pkgs.coreutils}/bin/sleep .34722; done'";
+        Restart = "always";
+      };
     };
   };
 }
