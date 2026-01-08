@@ -45,12 +45,11 @@
           else if hostConfig.name == "manus"
           then [
             "desc:Samsung Display Corp. 0x4165,1920x1200@60.00,0x0,1"
-            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
+            "desc:LG Electronics LG ULTRAGEAR 0x0004A026,2560x1440@60.00Hz,-2560x-240,1" # left monitor
             ",preferred,auto,1"
           ]
           else [
             "desc:LG Display 0x06F9,preferred,0x0,1" # laptop screen
-            "desc:LG Electronics LG ULTRAGEAR 406NTUW8X142,highres,auto-left,1,transform,1" # left monitor
             ",preferred,auto,1"
           ]
         );

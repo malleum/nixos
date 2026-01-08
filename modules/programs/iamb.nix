@@ -1,7 +1,7 @@
 {
   unify.modules.gui.home = {pkgs, ...}: {
     home = {
-      packages = with pkgs; [iamb element-desktop];
+      packages = with pkgs; [iamb element-desktop signal-desktop];
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
         profiles.user.user_id = "@malleum:malleum.us";
         layout.style = "restore";
