@@ -241,7 +241,7 @@
       wantedBy = ["graphical-session.target"];
       after = ["waybar.service"];
       serviceConfig = {
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.procps}/bin/pkill -RTMIN+1 waybar; ${pkgs.coreutils}/bin/sleep .34722; done'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.procps}/bin/pkill -RTMIN+1 waybar; ${pkgs.coreutils}/bin/sleep .067; done'";
         Restart = "always";
       };
     };
