@@ -319,6 +319,10 @@
   };
 
   extraFiles = {
+    "lua/penger.lua".source = ./penger.lua;
+    "plugin/penger_init.lua".text = ''
+      require("penger").setup()
+    '';
     "ftdetect/ago.lua".text = ''
       vim.filetype.add({
         extension = {
