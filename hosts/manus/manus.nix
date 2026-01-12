@@ -13,6 +13,7 @@ in {
         efi
         gui
         lap
+        wif
         wrk
         ;
     };
