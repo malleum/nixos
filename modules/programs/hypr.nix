@@ -59,7 +59,7 @@
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "vesktop"
           "nm-applet"
-          "waybar"
+          "waybar > /tmp/waybar.log 2>&1"
           "swww-daemon && swww img ${wallpaper}"
         ];
 
