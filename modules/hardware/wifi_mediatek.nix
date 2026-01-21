@@ -17,17 +17,17 @@
 
     # Ensure proper MAC address handling (helps with some roaming issues)
     networking.networkmanager.wifi.macAddress = "preserve";
+    networking.networkmanager.wifi.scanRandMacAddress = false;
 
-    # Kernel parameters to help with MT7925 stability
-    boot.kernelParams = [
-      # Disable PCIe ASPM for the WiFi device (can cause timing issues)
-      "pcie_aspm=off"
-    ];
+    # Kernel/module parameters to help with MT7925 stability
+    boot.extraModprobeConfig = ''
+      options mt7925e disable_aspm=1
+    '';
 
     # Disable WiFi power saving after powertop runs (fixes MT7925 issues)
     systemd.services.wifi-powersave-off = {
       description = "Disable WiFi power saving";
-      wantedBy = ["multi-user.target"];
+      wantedBy = ["NetworkManager.service"];
       after = ["NetworkManager.service" "powertop.service"];
       serviceConfig = {
         Type = "oneshot";
