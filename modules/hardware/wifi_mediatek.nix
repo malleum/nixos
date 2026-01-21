@@ -35,5 +35,17 @@
         RemainAfterExit = true;
       };
     };
+
+    # Pin to a stable 5GHz BSSID to avoid 6GHz roam/auth failures.
+    systemd.services.nm-wifi-stability = {
+      description = "Pin NetworkManager profile to stable BSSID";
+      wantedBy = ["NetworkManager.service"];
+      after = ["NetworkManager.service"];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.networkmanager}/bin/nmcli -t -f UUID connection show | ${pkgs.gnugrep}/bin/grep -Fx \"e7109b19-9567-4f16-b1bd-c1a312d5619e\" >/dev/null && ${pkgs.networkmanager}/bin/nmcli connection modify \"e7109b19-9567-4f16-b1bd-c1a312d5619e\" 802-11-wireless.bssid \"a6:05:d6:69:1f:c7\" 802-11-wireless.band \"a\" 802-11-wireless.powersave 2 || true'";
+        RemainAfterExit = true;
+      };
+    };
   };
 }
