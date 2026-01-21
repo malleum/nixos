@@ -35,6 +35,10 @@
           "GDK_BACKEND,wayland,x11" # Prefer Wayland, fallback to X11
           # VAAPI for hardware video decoding
           "LIBVA_DRIVER_NAME,radeonsi"
+          # Firefox settings
+          "MOZ_ENABLE_WAYLAND,0"
+          "MOZ_WEBRENDER,1"
+          "MOZ_ACCELERATED,1"
         ];
         monitor = (
           if hostConfig.name == "magnus"

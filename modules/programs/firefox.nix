@@ -113,14 +113,6 @@
       '';
     };
 
-    home.sessionVariables = {
-      # Force Firefox to use Wayland
-      MOZ_ENABLE_WAYLAND = "1";
-      # Hardware acceleration
-      MOZ_WEBRENDER = "1";
-      MOZ_ACCELERATED = "1";
-    };
-
     stylix.targets.firefox = {
       enable = true;
       profileNames = ["default"];
