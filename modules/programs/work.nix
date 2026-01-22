@@ -7,9 +7,10 @@
 
     home.packages = with pkgs; [
       awscli2
+      glab
+      inputs.fix-python.packages.${pkgs.stdenv.hostPlatform.system}.default
       openvpn
       uv
-      inputs.fix-python.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
 }
