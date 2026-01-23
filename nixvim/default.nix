@@ -66,6 +66,7 @@
         "<C-A-s>" = "<cmd>lua require('harpoon'):list():select(4)<cr>";
         "<C-A-t>" = "<cmd>lua require('harpoon'):list():select(2)<cr>";
 
+        "<leader>t" = "<cmd>lua require('telescope.builtin').find_files({ cwd = vim.fn.expand('%:p:h') })<cr>";
         "<leader>pw" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<cr>";
         "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
         "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
