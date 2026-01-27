@@ -36,7 +36,7 @@
           # VAAPI for hardware video decoding
           "LIBVA_DRIVER_NAME,radeonsi"
           # Firefox settings
-          "MOZ_ENABLE_WAYLAND,0"
+          "MOZ_ENABLE_WAYLAND,1"
           "MOZ_WEBRENDER,1"
           "MOZ_ACCELERATED,1"
         ];
