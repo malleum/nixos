@@ -91,7 +91,11 @@
       "media.ffvpx.enabled" = false; # Disables the built-in VP8/VP9 decoder to force VA-API
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
 
-      "widget.wayland.opaque-region.enabled" = false; # Fix for Wayland (e.g., KDE) transparency bugs
+      # --- Wayland-specific fixes ---
+      "widget.wayland.opaque-region.enabled" = true; # Required for proper Wayland compositing
+      "widget.wayland-dmabuf-vaapi.enabled" = true; # Enable DMA-BUF for VA-API on Wayland
+      "gfx.x11-egl.force-enabled" = false; # Don't force X11 EGL on Wayland
+      "widget.dmabuf.force-enabled" = true; # Force DMA-BUF buffer sharing
 
       # --- Auto-Enable Extensions & Hide Prompts ---
       "extensions.startupScanScopes" = 1; # Allow extensions from user profile
@@ -131,10 +135,28 @@
         search = {
           default = "Brave Search";
           engines = {
-            "Brave Search" = {
+            "brave" = {
               urls = [{template = "https://search.brave.com/search?q={searchTerms}";}];
               icon = "${pkgs.brave}/share/pixmaps/brave.png";
               definedAliases = ["@brave"];
+            };
+            "wikipedia" = {
+              urls = [{template = "https://en.wikipedia.org/wiki/Special:Search?search={searchTerms}";}];
+              definedAliases = ["@w"];
+            };
+            "NixOS Packages" = {
+              urls = [{template = "https://search.nixos.org/packages?query={searchTerms}";}];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+            "NixOS Options" = {
+              urls = [{template = "https://search.nixos.org/options?query={searchTerms}";}];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@no"];
+            };
+            "Home Manager Options" = {
+              urls = [{template = "https://home-manager-options.extranix.com/?query={searchTerms}&release=master";}];
+              definedAliases = ["@hm"];
             };
             "google".metaData.hidden = false;
             # This removes the other default search engines

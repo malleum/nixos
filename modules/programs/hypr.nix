@@ -36,7 +36,7 @@
           # VAAPI for hardware video decoding
           "LIBVA_DRIVER_NAME,radeonsi"
           # Firefox settings
-          "MOZ_ENABLE_WAYLAND,0"
+          "MOZ_ENABLE_WAYLAND,1"
           "MOZ_WEBRENDER,1"
           "MOZ_ACCELERATED,1"
         ];
@@ -59,11 +59,9 @@
         );
 
         exec-once = [
-          "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORM"
-          "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
           "vesktop"
           "nm-applet"
-          "waybar > /tmp/waybar.log 2>&1"
+          "waybar"
           "swww-daemon && swww img ${wallpaper}"
         ];
 
