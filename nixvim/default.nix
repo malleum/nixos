@@ -236,6 +236,7 @@
       };
     };
 
+    csvview.enable = true;
     diffview.enable = true;
     gitsigns.enable = true;
     harpoon.enable = true;
