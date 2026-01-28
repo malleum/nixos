@@ -1,6 +1,8 @@
 {
   unify.modules.gui.nixos = {
-    services.displayManager.ly.enable = true;
-    services.displayManager.defaultSession = "hyprland";
+    services.displayManager.ly = {
+      enable = true;
+      settings.save = true;
+    };
   };
 }
