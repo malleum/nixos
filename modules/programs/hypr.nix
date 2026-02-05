@@ -157,8 +157,6 @@
           "workspace 3, match:title ^(foot)$"
           "workspace 4, match:title ^(.*Steam.*)$"
           "workspace 4, match:title ^(.*Minecraft.*)$"
-          "workspace 4 silent, match:title ^(waywall)$"
-          "fullscreen on, match:title ^(waywall)$"
           "workspace 4, match:title ^(.*Prism Launcher.*)$"
           "workspace 4, match:title ^(.*Terraria.*)$"
           "workspace 4, match:title ^(.*War.*)$"
