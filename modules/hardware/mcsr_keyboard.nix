@@ -74,7 +74,7 @@
       "o" = "t";
       "e" = "d"; # will be replaced with Backspace
       "u" = "h";
-      "i" = "w";
+      "i" = "g";
 
       ";" = "s";
       "q" = "a";
