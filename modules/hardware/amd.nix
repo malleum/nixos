@@ -1,6 +1,12 @@
 {
-  unify.modules.amd.nixos = {pkgs, ...}: {
+  unify.modules.amd.nixos = {
+    pkgs,
+    hostConfig,
+    ...
+  }: {
     services.xserver.videoDrivers = ["amdgpu"];
+
+    users.users.${hostConfig.user.username}.extraGroups = ["render"];
 
     systemd.tmpfiles.rules = [
       "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"

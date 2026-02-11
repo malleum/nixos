@@ -35,6 +35,7 @@
       sops
       speedtest-cli
       tldr
+      universal-ctags
       wget
       xan
     ];

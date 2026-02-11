@@ -10,6 +10,7 @@ in {
       inherit
         (modules)
         amd
+        doc
         efi
         gui
         lap
