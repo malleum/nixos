@@ -2,6 +2,7 @@
   unify.modules.gui.home = {
     config,
     lib,
+    pkgs,
     ...
   }: let
     indexOf = list: item: let
@@ -110,6 +111,7 @@
   in {
     programs.waybar = {
       enable = true;
+      systemd.enable = true;
       settings."cio" = barSettings;
       style =
         #css
@@ -233,17 +235,22 @@
 
         '';
     };
-  };
 
-  unify.modules.gui.nixos = {pkgs, ...}: {
+    # Tell systemd that SIGRTMIN+1 is expected (used by custom/duod signal updates),
+    # so it doesn't treat it as a crash and restart-loop waybar.
+    systemd.user.services.waybar.Service.SuccessExitStatus = "RTMIN+1";
+
     systemd.user.services.waybar-duod-update = {
-      description = "Update Waybar duodecimal clock";
-      wantedBy = ["graphical-session.target"];
-      after = ["waybar.service"];
-      serviceConfig = {
-        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.procps}/bin/pkill -RTMIN+1 waybar; ${pkgs.coreutils}/bin/sleep .067; done'";
+      Unit = {
+        Description = "Update Waybar duodecimal clock";
+        After = ["waybar.service"];
+        Requires = ["waybar.service"];
+      };
+      Service = {
+        ExecStart = "${pkgs.bash}/bin/bash -c 'while true; do ${pkgs.procps}/bin/pkill -RTMIN+1 .waybar-wrapped; ${pkgs.coreutils}/bin/sleep .067; done'";
         Restart = "always";
       };
+      Install.WantedBy = ["graphical-session.target"];
     };
   };
 }

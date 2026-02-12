@@ -61,7 +61,6 @@
         exec-once = [
           "vesktop"
           "nm-applet"
-          "waybar"
           "swww-daemon && swww img ${wallpaper}"
         ];
 
@@ -225,9 +224,9 @@
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000"
 
             "SUPER, bracketleft, exec, swww kill; swww-daemon && swww img ${wallpaper}"
-            "SUPER, bracketright, exec, killall .waybar-wrapped; waybar"
+            "SUPER, bracketright, exec, systemctl --user restart waybar"
             "SUPER CONTROL, bracketleft, exec, swww kill"
-            "SUPER CONTROL, bracketright, exec, killall .waybar-wrapped"
+            "SUPER CONTROL, bracketright, exec, systemctl --user stop waybar"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 
