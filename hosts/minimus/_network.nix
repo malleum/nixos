@@ -1,8 +1,5 @@
 # Oracle Cloud static networking; open ports in VCN Security List (Ingress Rules) as needed
-{
-  lib,
-  ...
-}: {
+{lib, ...}: {
   networking = {
     networkmanager.enable = lib.mkForce false;
     defaultGateway = "10.0.0.1";

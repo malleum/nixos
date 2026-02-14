@@ -27,4 +27,7 @@
   networking.useDHCP = false;
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+
+  # Native aarch64: do not register binfmt for aarch64 (avoids assertion in binfmt.nix)
+  boot.binfmt.emulatedSystems = lib.mkForce [];
 }
