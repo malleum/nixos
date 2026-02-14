@@ -15,11 +15,14 @@
     fsType = "ext4";
   };
 
-  fileSystems."/boot" = {
+  fileSystems."/boot/efi" = {
     device = "/dev/disk/by-uuid/0CF4-0388";
     fsType = "vfat";
     options = ["fmask=0022" "dmask=0022"];
   };
+
+  # EFI partition is at /boot/efi; systemd-boot needs this to install
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   swapDevices = [];
 
