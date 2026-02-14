@@ -21,8 +21,15 @@
     options = ["fmask=0022" "dmask=0022"];
   };
 
-  # EFI partition is at /boot/efi; systemd-boot needs this to install
+  # EFI partition is at /boot/efi; 98MB is too small for systemd-boot (kernel+initrd on ESP)
+  # Use GRUB so kernel/initrd stay on root; ESP only holds the GRUB EFI binary (~few MB)
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    device = "nodev";
+  };
 
   swapDevices = [];
 
