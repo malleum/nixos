@@ -8,14 +8,10 @@ in {
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = true;
+      PasswordAuthentication = false;
       PermitRootLogin = "yes";
     };
   };
-
-  # Default password for initial login (change after first login): minimus-setup
-  users.users.root.hashedPassword = "$6$cvDv8MHETjaPUI8m$OcEsvrrFl3sQ7gy43HAVfht.Kw4H.YvPTUSGZFsa/LJopZtU1wrsoCJKxobFBh1qeyUdkcS4MP2OuyPrLD8OB.";
-  users.users.joshammer.hashedPassword = "$6$cvDv8MHETjaPUI8m$OcEsvrrFl3sQ7gy43HAVfht.Kw4H.YvPTUSGZFsa/LJopZtU1wrsoCJKxobFBh1qeyUdkcS4MP2OuyPrLD8OB.";
 
   users.users.root.openssh.authorizedKeys.keys = [oraclePublicKey];
   users.users.joshammer.openssh.authorizedKeys.keys = [oraclePublicKey];
