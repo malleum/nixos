@@ -11,14 +11,8 @@
       age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       age.keyFile = "${hostConfig.user.configHome}/sops/age/keys.txt";
 
-      secrets =
-        {}
-        // lib.optionalAttrs (hostConfig.name == "minimus") {
-          oracle_ssh_public = {
-            sopsFile = ./oracle-ssh.yaml;
-            key = "public_key";
-          };
-        };
+      # Minimus uses authorizedKeys.keys (literal) to avoid /run path at build time
+      secrets = {};
     };
   };
 
