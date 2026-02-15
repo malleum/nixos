@@ -2,6 +2,9 @@
 # After first deploy, add root@minimus to .sops.yaml oracle-ssh rule and run: sops updatekeys modules/secrets/oracle-ssh.yaml
 # Bootstrap step 1: leave keyFiles commented so first deploy doesn't need sops; uncomment after sops updatekeys.
 {config, ...}: {
+  # Avoid "Too many open files" during nix build on small VMs
+  systemd.services.nix-daemon.serviceConfig.LimitNOFILE = 65536;
+
   services.openssh = {
     enable = true;
     settings = {
@@ -14,11 +17,10 @@
   users.users.root.hashedPassword = "$6$cvDv8MHETjaPUI8m$OcEsvrrFl3sQ7gy43HAVfht.Kw4H.YvPTUSGZFsa/LJopZtU1wrsoCJKxobFBh1qeyUdkcS4MP2OuyPrLD8OB.";
   users.users.joshammer.hashedPassword = "$6$cvDv8MHETjaPUI8m$OcEsvrrFl3sQ7gy43HAVfht.Kw4H.YvPTUSGZFsa/LJopZtU1wrsoCJKxobFBh1qeyUdkcS4MP2OuyPrLD8OB.";
 
-  # Uncomment after bootstrap (add root@minimus to .sops.yaml + sops updatekeys)
-  # users.users.root.openssh.authorizedKeys.keyFiles = [
-  #   config.sops.secrets.oracle_ssh_public.path
-  # ];
-  # users.users.joshammer.openssh.authorizedKeys.keyFiles = [
-  #   config.sops.secrets.oracle_ssh_public.path
-  # ];
+  users.users.root.openssh.authorizedKeys.keyFiles = [
+    config.sops.secrets.oracle_ssh_public.path
+  ];
+  users.users.joshammer.openssh.authorizedKeys.keyFiles = [
+    config.sops.secrets.oracle_ssh_public.path
+  ];
 }

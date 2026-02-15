@@ -11,14 +11,14 @@
       age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       age.keyFile = "${hostConfig.user.configHome}/sops/age/keys.txt";
 
-      # Bootstrap step 1: leave oracle_ssh_public commented so first minimus deploy doesn't need decrypt; uncomment after sops updatekeys.
-      secrets = {};
-      # // lib.optionalAttrs (hostConfig.name == "minimus") {
-      #   oracle_ssh_public = {
-      #     sopsFile = ./oracle-ssh.yaml;
-      #     key = "public_key";
-      #   };
-      # };
+      secrets =
+        {}
+        // lib.optionalAttrs (hostConfig.name == "minimus") {
+          oracle_ssh_public = {
+            sopsFile = ./oracle-ssh.yaml;
+            key = "public_key";
+          };
+        };
     };
   };
 

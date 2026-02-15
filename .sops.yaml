@@ -8,6 +8,7 @@ creation_rules:
           - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/mm/sBk/Rgd3mnxxfrNQl88tfLX9NzQlqJZiXUp+LK root@malleum"
           - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINAAPjcsuackKrwN4fa/xFlpU7xEhV8MHEpI3k1XfBcy root@manus"
           - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9xoe74pMWH327f6wlYradsL9dd3Ed7YfApoxLAAXi/ root@magnus"
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6Z2xMaLOJDTmpCqAcX27wnJx0fSIBN9UB25RWR9U2i root@minimus"
   - path_regex: modules/secrets/.*\.yaml$
     key_groups:
       - age:
