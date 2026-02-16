@@ -29,6 +29,11 @@ in {
     welcomeBgUrl = if elementWelcomeBackground == null then null
       else if builtins.isPath elementWelcomeBackground then "https://${matrixDomain}/custom/welcome-bg"
       else elementWelcomeBackground;
+    # Directory with custom/welcome-bg so nginx can use root (avoids alias path-traversal warning)
+    welcomeBgRoot = pkgs.runCommand "element-welcome-bg-root" { } ''
+      mkdir -p $out/custom
+      cp ${elementWelcomeBackground} $out/custom/welcome-bg
+    '';
     # Element Web with ws42.top as default homeserver (login/signup pre-configured)
     elementWeb = pkgs.element-web.override {
       conf = {
@@ -38,6 +43,7 @@ in {
             server_name = matrixDomain;
           };
         };
+        default_theme = "dark";
         branding = pkgs.lib.optionalAttrs (welcomeBgUrl != null) {
           welcome_background_url = welcomeBgUrl;
         };
@@ -229,9 +235,9 @@ in {
           };
         }
         // (pkgs.lib.optionalAttrs (builtins.isPath elementWelcomeBackground) {
-          "/custom/welcome-bg" = {
-            alias = "${elementWelcomeBackground}";
-            extraConfig = "default_type image/jpeg;";
+          "/custom/" = {
+            root = welcomeBgRoot;
+            extraConfig = "default_type image/png;";
           };
         });
       };
