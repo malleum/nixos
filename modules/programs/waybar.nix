@@ -2,9 +2,10 @@
   unify.modules.gui.home = {
     config,
     lib,
-    pkgs,
+    hostConfig,
     ...
   }: let
+    browser = hostConfig.user.browser;
     indexOf = list: item: let
       indexHelper = l: i:
         if l == []
@@ -59,7 +60,7 @@
       };
       clock = {
         on-click = "foot fish -C cal";
-        on-click-right = "$BROWSER https://calendar.google.com/";
+        on-click-right = "${browser} https://calendar.google.com/";
         format = "dato {:%m-%d} 󰸗";
         tooltip = true;
         tooltip-format = "tempo {:%H:%M} 󰥔";
@@ -101,17 +102,17 @@
 
       "custom/duod" = {
         format = "duodo {} 󱑤";
-        exec = "duod | choose -c 0..5";
+        exec = "duod | choose -c 0..4";
         interval = 1;
         return-type = "text";
-        on-click = "$BROWSER https://joshammer.com/";
+        on-click = "${browser} https://joshammer.com/";
       };
     };
   in {
     programs.waybar = {
       enable = true;
       systemd.enable = true;
-      settings."cio" = barSettings;
+      settings."main" = barSettings;
       style =
         #css
         ''
