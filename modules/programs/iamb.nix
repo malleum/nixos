@@ -3,7 +3,7 @@
     home = {
       packages = with pkgs; [iamb element-desktop signal-desktop];
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
-        profiles.user.user_id = "@malleum:malleum.us";
+        profiles.user.user_id = "@malleum:ws42.top";
         layout.style = "restore";
         settings = {
           message_user_color = true;
@@ -11,17 +11,15 @@
           username_display = "localpart";
           image_preview = {};
           users = {
-            "@malleum:malleum.us".color = "blue";
-            "@tczcatlipoca:malleum.us".color = "yellow";
-            "@sintfoap:malleum.us".color = "red";
+            "@malleum:ws42.top".color = "blue";
+            "@tczcatlipoca:ws42.top".color = "yellow";
+            "@sintfoap:ws42.top".color = "red";
           };
         };
 
         macros = {
           normal = {
-            "gc" = ":chats<Enter>";
             "-" = ":chats<Enter>";
-            "ga" = "<C-W>m";
             "s" = "<C-W>m";
             "<C-g>" = "<C-W>mG<C-W>m";
             "gr" = ":react ";
