@@ -7,7 +7,7 @@ in {
     inherit (config.user) username;
   in {
     modules = builtins.attrValues {
-      inherit (modules) efi;
+      inherit (modules) efi matrix;
     };
 
     nixos.imports = [
