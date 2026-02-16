@@ -44,6 +44,15 @@ in {
           };
         };
         default_theme = "dark";
+        # On mobile: stay on the web app for sign-up/login instead of prompting to download the app
+        mobile_guide_toast = false;
+        # When they do choose "Get the app", recommend Element Classic (not Element X)
+        mobile_guide_app_variant = "element-classic";
+        mobile_builds = {
+          ios = "https://apps.apple.com/app/element-messenger/id1083446067";
+          android = "https://play.google.com/store/apps/details?id=im.vector.app";
+          fdroid = "https://f-droid.org/en/packages/im.vector.app/";
+        };
         branding = pkgs.lib.optionalAttrs (welcomeBgUrl != null) {
           welcome_background_url = welcomeBgUrl;
         };
@@ -210,6 +219,16 @@ in {
             default_type application/json;
             add_header Access-Control-Allow-Origin *;
           '';
+          };
+          # Element Classic (and some clients) open this URL for sign-up; Synapse no longer serves it.
+          # Redirect straight to Element Web sign-up so users land on the form (smooth for non-tech users).
+          "/_matrix/static/client/register" = {
+            return = "302 https://${matrixDomain}/#/register";
+            extraConfig = "add_header Cache-Control \"no-store\";";
+          };
+          "/_matrix/static/client/register/" = {
+            return = "302 https://${matrixDomain}/#/register";
+            extraConfig = "add_header Cache-Control \"no-store\";";
           };
           "/_matrix/" = {
             proxyPass = "http://127.0.0.1:8008";
