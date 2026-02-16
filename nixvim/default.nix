@@ -29,13 +29,13 @@
     wrap = false;
   };
 
-  package = pkgs.stable.neovim-unwrapped;
+  package = pkgs.neovim-unwrapped;
 
   viAlias = true;
   luaLoader.enable = true;
   performance.combinePlugins = {
     enable = true;
-    standalonePlugins = ["oil.nvim" "conform.nvim" "typst-preview.nvim" "codecompanion.nvim"];
+    standalonePlugins = ["oil.nvim" "conform.nvim" "typst-preview.nvim"];
   };
 
   colorscheme = "tokyonight";
@@ -71,11 +71,9 @@
         "<leader>pW" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<cr>";
         "<leader>pS" = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input({ prompt = ' > ' }) })<cr>";
 
-        "<leader>mc" = "<cmd>CodeCompanionChat Toggle<cr>";
       };
 
       "nv" = {
-        "<leader>ma" = "<cmd>CodeCompanionActions<cr>";
         "<leader>d" = "\"_d";
         "<leader>D" = "\"_D";
         "<leader>y" = "\"+y";
@@ -97,7 +95,6 @@
       "x" = {
         "<leader>p" = "\"_dP";
         "<leader>h" = "lua require('telescope.builtin').grep_string({ search = vim.fn.getreg('\"') })";
-        "<leader>me" = "<cmd>CodeCompanion<cr>";
       };
 
       "c" = {"W" = "w";};
@@ -329,71 +326,5 @@
         "<leader>pt" = "todo-comments";
       };
     };
-
-    codecompanion = {
-      enable = true;
-      settings = {
-        # Using DeepSeek via Ollama
-        adapters = {
-          ollama = {
-            __raw = ''
-              function()
-                return require('codecompanion.adapters').extend('ollama', {
-                  env = {
-                    url = "http://127.0.0.1:11434",
-                  },
-                  schema = {
-                    model = {
-                      default = "deepseek-r1:14b",
-                    },
-                    num_ctx = {
-                      default = 16384,
-                    },
-                  },
-                })
-              end
-            '';
-          };
-        };
-
-        # Set Ollama as the default for all interaction styles
-        strategies = {
-          chat.adapter = "ollama";
-          inline.adapter = "ollama";
-          agent.adapter = "ollama";
-        };
-
-        opts = {
-          log_level = "ERROR";
-          send_code = true;
-          use_default_actions = true;
-          use_default_prompts = true;
-        };
-
-        display = {
-          chat = {
-            window = {
-              layout = "vertical"; # Keeps chat on the side so you can type in code
-              width = 0.35;
-            };
-          };
-        };
-      };
-    };
-  };
-
-  extraFiles = {
-    "lua/penger.lua".source = ./penger.lua;
-    "plugin/penger_init.lua".text = ''
-      require("penger").setup()
-    '';
-    "ftdetect/ago.lua".text = ''
-      vim.filetype.add({
-        extension = {
-          ago = "ago",
-        },
-      })
-    '';
-    "syntax/ago.vim".source = ./ago.vim;
   };
 }
