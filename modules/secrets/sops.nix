@@ -7,36 +7,33 @@
       age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       age.keyFile = "${hostConfig.user.configHome}/sops/age/keys.txt";
 
-      # Minimus uses authorizedKeys.keys (literal) to avoid /run path at build time
       secrets = {};
     };
   };
 
-  unify.home = {
-    hostConfig,
-    lib,
-    ...
-  }: {
+  unify.home = {hostConfig, ...}: {
     imports = [inputs.sops-nix.homeManagerModules.sops];
     sops = {
       defaultSopsFile = ./default.yaml;
       age.keyFile = "${hostConfig.user.configHome}/sops/age/keys.txt";
 
-      secrets =
-        {
-          spotify_client_id = {};
-          github_token = {};
-        }
-        // lib.optionalAttrs (hostConfig.name != "minimus") {
-          oracle_ssh_private = {
-            sopsFile = ./oracle-ssh.yaml;
-            key = "private_key";
-            path = "${hostConfig.user.homeDirectory}/.ssh/oracle";
-          };
+      secrets = {
+        spotify_client_id = {};
+        github_token = {};
+        oracle_ssh_private = {
+          sopsFile = ./oracle-ssh.yaml;
+          key = "private_key";
+          path = "${hostConfig.user.homeDirectory}/.ssh/oracle";
         };
+        vs_gitlab_private = {
+          sopsFile = ./vs-gitlab.yaml;
+          key = "private_key";
+          path = "${hostConfig.user.homeDirectory}/.ssh/vs_gitlab";
+        };
+      };
     };
 
-    programs.ssh = lib.mkIf (hostConfig.name != "minimus") {
+    programs.ssh = {
       extraConfig = ''
         Host oracle minimus
           IdentityFile ${hostConfig.user.homeDirectory}/.ssh/oracle
