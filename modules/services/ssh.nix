@@ -1,5 +1,11 @@
 {
-  unify.modules.gui.nixos = {
-    services.openssh.enable = true;
+  unify.nixos = {
+    services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = false;
+        PermitRootLogin = "yes";
+      };
+    };
   };
 }

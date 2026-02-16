@@ -5,14 +5,6 @@ in {
   # Avoid "Too many open files" during nix build on small VMs
   systemd.services.nix-daemon.serviceConfig.LimitNOFILE = 65536;
 
-  services.openssh = {
-    enable = true;
-    settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "yes";
-    };
-  };
-
   users.users.root.openssh.authorizedKeys.keys = [oraclePublicKey];
   users.users.joshammer.openssh.authorizedKeys.keys = [oraclePublicKey];
 }
