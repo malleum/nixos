@@ -1,14 +1,4 @@
 creation_rules:
-  # Oracle SSH key pair: add root@minimus after first minimus deploy, then run: sops updatekeys modules/secrets/oracle-ssh.yaml
-  - path_regex: modules/secrets/oracle-ssh\.yaml$
-    key_groups:
-      - age:
-          - "age1tgengcm9ph3zc96f5gpkkad6at6zru5tkclh3dy953yw0fdl950smww7ha"
-        ssh:
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/mm/sBk/Rgd3mnxxfrNQl88tfLX9NzQlqJZiXUp+LK root@malleum"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINAAPjcsuackKrwN4fa/xFlpU7xEhV8MHEpI3k1XfBcy root@manus"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9xoe74pMWH327f6wlYradsL9dd3Ed7YfApoxLAAXi/ root@magnus"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6Z2xMaLOJDTmpCqAcX27wnJx0fSIBN9UB25RWR9U2i root@minimus"
   - path_regex: modules/secrets/.*\.yaml$
     key_groups:
       - age:

@@ -26,11 +26,14 @@ in {
   }: let
     acmeEmail = config.user.email or "admin@ws42.top";
     # Optional welcome background: URL to use in Element config (null = no custom branding)
-    welcomeBgUrl = if elementWelcomeBackground == null then null
-      else if builtins.isPath elementWelcomeBackground then "https://${matrixDomain}/custom/welcome-bg"
+    welcomeBgUrl =
+      if elementWelcomeBackground == null
+      then null
+      else if builtins.isPath elementWelcomeBackground
+      then "https://${matrixDomain}/custom/welcome-bg"
       else elementWelcomeBackground;
     # Directory with custom/welcome-bg so nginx can use root (avoids alias path-traversal warning)
-    welcomeBgRoot = pkgs.runCommand "element-welcome-bg-root" { } ''
+    welcomeBgRoot = pkgs.runCommand "element-welcome-bg-root" {} ''
       mkdir -p $out/custom
       cp ${elementWelcomeBackground} $out/custom/welcome-bg
     '';
@@ -202,63 +205,64 @@ in {
         # Element Web at / – login/signup with homeserver already set to ws42.top
         root = elementWeb;
         # SPA: serve index.html for client-side routes (e.g. /login, /register)
-        locations = {
-          "/" = {
-            tryFiles = "$uri $uri/ /index.html";
-          };
-          "/.well-known/matrix/client" = {
-          return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}}'";
-          extraConfig = ''
-            default_type application/json;
-            add_header Access-Control-Allow-Origin *;
-          '';
-          };
-          "/.well-known/matrix/server" = {
-          return = "200 '{\"m.server\": \"${matrixDomain}:443\"}'";
-          extraConfig = ''
-            default_type application/json;
-            add_header Access-Control-Allow-Origin *;
-          '';
-          };
-          # Element Classic (and some clients) open this URL for sign-up; Synapse no longer serves it.
-          # Redirect straight to Element Web sign-up so users land on the form (smooth for non-tech users).
-          "/_matrix/static/client/register" = {
-            return = "302 https://${matrixDomain}/#/register";
-            extraConfig = "add_header Cache-Control \"no-store\";";
-          };
-          "/_matrix/static/client/register/" = {
-            return = "302 https://${matrixDomain}/#/register";
-            extraConfig = "add_header Cache-Control \"no-store\";";
-          };
-          "/_matrix/" = {
-            proxyPass = "http://127.0.0.1:8008";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-              proxy_set_header Host $host;
-              proxy_connect_timeout 10s;
-              proxy_read_timeout 60s;
-            '';
-          };
-          "/_synapse/client/" = {
-            proxyPass = "http://127.0.0.1:8008";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-              proxy_set_header Host $host;
-              proxy_connect_timeout 10s;
-              proxy_read_timeout 60s;
-            '';
-          };
-        }
-        // (pkgs.lib.optionalAttrs (builtins.isPath elementWelcomeBackground) {
-          "/custom/" = {
-            root = welcomeBgRoot;
-            extraConfig = "default_type image/png;";
-          };
-        });
+        locations =
+          {
+            "/" = {
+              tryFiles = "$uri $uri/ /index.html";
+            };
+            "/.well-known/matrix/client" = {
+              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}}'";
+              extraConfig = ''
+                default_type application/json;
+                add_header Access-Control-Allow-Origin *;
+              '';
+            };
+            "/.well-known/matrix/server" = {
+              return = "200 '{\"m.server\": \"${matrixDomain}:443\"}'";
+              extraConfig = ''
+                default_type application/json;
+                add_header Access-Control-Allow-Origin *;
+              '';
+            };
+            # Element Classic (and some clients) open this URL for sign-up; Synapse no longer serves it.
+            # Redirect straight to Element Web sign-up so users land on the form (smooth for non-tech users).
+            "/_matrix/static/client/register" = {
+              return = "302 https://${matrixDomain}/#/register";
+              extraConfig = "add_header Cache-Control \"no-store\";";
+            };
+            "/_matrix/static/client/register/" = {
+              return = "302 https://${matrixDomain}/#/register";
+              extraConfig = "add_header Cache-Control \"no-store\";";
+            };
+            "/_matrix/" = {
+              proxyPass = "http://127.0.0.1:8008";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Host $host;
+                proxy_connect_timeout 10s;
+                proxy_read_timeout 60s;
+              '';
+            };
+            "/_synapse/client/" = {
+              proxyPass = "http://127.0.0.1:8008";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Host $host;
+                proxy_connect_timeout 10s;
+                proxy_read_timeout 60s;
+              '';
+            };
+          }
+          // (pkgs.lib.optionalAttrs (builtins.isPath elementWelcomeBackground) {
+            "/custom/" = {
+              root = welcomeBgRoot;
+              extraConfig = "default_type image/png;";
+            };
+          });
       };
 
       # --- Admin portal at admin.malleum.us (distinct vhost; same backend) ---
