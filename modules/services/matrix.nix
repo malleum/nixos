@@ -17,7 +17,7 @@ let
   # Optional: custom background for Element login/startup page.
   # Set to a store path (e.g. ./my-bg.jpg) or a URL string (e.g. "https://example.com/bg.jpg").
   # Leave null for the default Element background.
-  elementWelcomeBackground = null;
+  elementWelcomeBackground = ../style/wallpapers/ws42.png;
 in {
   unify.modules.matrix.nixos = {
     pkgs,
