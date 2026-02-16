@@ -48,7 +48,7 @@
           ]
           else if hostConfig.name == "manus"
           then [
-            "desc:Samsung Display Corp. 0x4165,1920x1200@60.00,0x0,1"
+            "desc:Lenovo Group Limited 0x4146,1920x1200@60.00,0x0,1"
             "desc:LG Electronics LG ULTRAGEAR 0x0004A026,2560x1440@60.00Hz,-2560x-240,1" # left monitor
             ",preferred,auto,1"
           ]
