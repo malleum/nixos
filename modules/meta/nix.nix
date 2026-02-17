@@ -1,7 +1,18 @@
 {
-  unify.nixos = let
+  unify.nixos = {config, ...}: let
     allowed-users = ["@wheel"];
   in {
+    sops.templates.nix-access-tokens = {
+      content = "access-tokens = github.com=${config.sops.placeholder.github_token}";
+      owner = "root";
+      group = "wheel";
+      mode = "0440";
+    };
+
+    nix.extraOptions = ''
+      !include ${config.sops.templates.nix-access-tokens.path}
+    '';
+
     nix.settings = {
       inherit allowed-users;
       trusted-users = allowed-users;

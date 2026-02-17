@@ -41,6 +41,11 @@
       url = "github:malleum/waywall";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    grapple = {
+      url = "github:malleum/malleusite";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (
