@@ -1,7 +1,12 @@
-{
+{inputs, ...}: {
   unify.modules.gui.home = {pkgs, ...}: {
     home = {
-      packages = with pkgs; [iamb element-desktop signal-desktop];
+      packages = with pkgs; [
+        inputs.iamb.packages.${pkgs.stdenv.hostPlatform.system}.default
+        iamb
+        element-desktop
+        signal-desktop
+      ];
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
         profiles.user.user_id = "@malleum:ws42.top";
         layout.style = "restore";
@@ -12,6 +17,9 @@
             enabled = true;
             via = "desktop";
             sound_hint = "message-new-instant";
+          };
+          dirs = {
+            download = "/tmp/iamb/";
           };
           username_display = "localpart";
           user_gutter_width = 16;

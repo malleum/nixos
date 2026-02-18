@@ -37,6 +37,10 @@
 
     hypr.url = "github:hyprwm/Hyprland";
     stylix.url = "github:danth/stylix";
+    iamb = {
+      url = "github:malleum/iamb";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     waywall = {
       url = "github:malleum/waywall";
       inputs.nixpkgs.follows = "nixpkgs";
