@@ -7,7 +7,7 @@
         layout.style = "restore";
         settings = {
           message_user_color = true;
-          timestamp_command = ["echo"];
+          timestamp_command = ["duod" "-u"];
           notifications = {
             enabled = true;
             via = "desktop";
