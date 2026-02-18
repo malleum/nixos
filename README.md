@@ -7,9 +7,9 @@
     - [x] vs key
     - [ ] gpg keys
     - [ ] gitlab key
-- [ ] outputs
+- [x] outputs
     - [x] nixvim
-    - [ ] scripts
+    - [x] scripts
 - [x] config for oracle
 - [x] firefox
 - [x] new nixvim

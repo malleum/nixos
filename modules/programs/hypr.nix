@@ -62,6 +62,7 @@
           "vesktop"
           "nm-applet"
           "swww-daemon && swww img ${wallpaper}"
+          "waybar"
         ];
 
         input = {
@@ -225,9 +226,9 @@
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000"
 
             "SUPER, bracketleft, exec, swww kill; swww-daemon && swww img ${wallpaper}"
-            "SUPER, bracketright, exec, systemctl --user restart waybar"
+            "SUPER, bracketright, exec, pkill waybar; sleep 0.5 && waybar"
             "SUPER CONTROL, bracketleft, exec, swww kill"
-            "SUPER CONTROL, bracketright, exec, systemctl --user stop waybar"
+            "SUPER CONTROL, bracketright, exec, pkill waybar"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"
 
