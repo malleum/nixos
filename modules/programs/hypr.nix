@@ -194,8 +194,9 @@
             "SUPER SHIFT, x, exec, wl-copy 'Neida, jeg ville vinne'"
             "SUPER CONTROL, x, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
 
-            "SUPER, n, exec, dunstctl close-all"
-            "SUPER SHIFT, n, exec, dunstctl set-paused toggle"
+            "SUPER, n, exec, swaync-client --close-all"
+            "SUPER SHIFT, n, exec, swaync-client --toggle-dnd"
+            "SUPER CONTROL, n, exec, swaync-client -a 0"
 
             "SUPER, backslash, exec, hyprctl switchxkblayout all next"
 
