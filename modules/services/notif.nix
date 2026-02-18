@@ -1,5 +1,9 @@
 {
-  unify.modules.gui.home = {pkgs, ...}: {
+  unify.modules.gui.home = {
+    hostConfig,
+    pkgs,
+    ...
+  }: {
     home.packages = [pkgs.sound-theme-freedesktop];
     services.swaync = {
       enable = true;
@@ -8,7 +12,13 @@
         positionX = "right";
         positionY = "top";
         layer = "overlay";
-        timeout = 4239;
+        timeout = 4;
+        timeout-low = 2;
+        timeout-critical = 10;
+        monitor =
+          if hostConfig.name == "magnus"
+          then "HDMI-1"
+          else "eDP-1";
 
         scripts = [
           {
@@ -19,7 +29,7 @@
             event = "notification_hint_sound";
             command = ''
               if [[ "$SWAYNC_NOTIF_HINT_SOUND" == "message-new-instant" ]]; then
-                ${pkgs.pipewire}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message-new-instant.ogg &
+                XDG_RUNTIME_DIR=/run/user/$UID ${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message-new-instant.oga &
               fi
             '';
           }

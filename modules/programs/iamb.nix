@@ -10,6 +10,9 @@
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
         profiles.user.user_id = "@malleum:ws42.top";
         layout.style = "restore";
+        dirs = {
+          downloads = "/tmp/iamb/";
+        };
         settings = {
           message_user_color = true;
           timestamp_command = ["duod" "-u"];
@@ -17,9 +20,6 @@
             enabled = true;
             via = "desktop";
             sound_hint = "message-new-instant";
-          };
-          dirs = {
-            download = "/tmp/iamb/";
           };
           username_display = "localpart";
           user_gutter_width = 16;
