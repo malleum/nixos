@@ -22,7 +22,7 @@
 
         scripts = {
           message-sound = {
-            exec = "${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message-new-instant.oga";
+            exec = "${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/window-attention.oga";
             app-name = "^j?iamb$";
           };
         };

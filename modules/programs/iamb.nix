@@ -19,7 +19,6 @@
           notifications = {
             enabled = true;
             via = "desktop";
-            sound_hint = "message-new-instant";
           };
           username_display = "localpart";
           user_gutter_width = 16;
