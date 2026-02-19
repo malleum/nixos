@@ -2,21 +2,17 @@
   domain = "joshammer.com";
   port = 3000;
 in {
-  unify.modules.grapple.nixos = {
-    pkgs,
-    config,
-    ...
-  }: {
+  unify.modules.grapple.nixos = {pkgs, ...}: let
+    grapplePkg = inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  in {
     # --- Grapple User & Group ---
     users.groups.grapple = {};
     users.users.grapple = {
       isSystemUser = true;
       group = "grapple";
       description = "Grapple Game Service User";
-      # Adding user joshammer to the group allows access if needed
     };
 
-    # Add joshammer to grapple group (user requested)
     users.users.joshammer.extraGroups = ["grapple"];
 
     # --- Systemd Service ---
@@ -26,8 +22,8 @@ in {
       wantedBy = ["multi-user.target"];
 
       serviceConfig = {
-        ExecStart = "${inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/malleusite-grapple";
-        WorkingDirectory = "${inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default}/share";
+        ExecStart = "${grapplePkg}/bin/grapple-game";
+        WorkingDirectory = "${grapplePkg}/share";
         Restart = "always";
         User = "grapple";
         Group = "grapple";

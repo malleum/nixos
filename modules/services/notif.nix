@@ -20,20 +20,12 @@
           then "HDMI-1"
           else "eDP-1";
 
-        scripts = [
-          {
-            event = "notification_closed";
-            command = "rm $SWAYNC_NOTIF_SOUND_FILE"; # Clean up temporary sound files, if any were created
-          }
-          {
-            event = "notification_hint_sound";
-            command = ''
-              if [[ "$SWAYNC_NOTIF_HINT_SOUND" == "message-new-instant" ]]; then
-                XDG_RUNTIME_DIR=/run/user/$UID ${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message-new-instant.oga &
-              fi
-            '';
-          }
-        ];
+        scripts = {
+          message-sound = {
+            exec = "${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message-new-instant.oga";
+            app-name = "^j?iamb$";
+          };
+        };
         # Keep config fairly close to swaync defaults, but
         # we can tweak a few UX bits here if desired later.
 
