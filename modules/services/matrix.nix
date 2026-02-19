@@ -265,37 +265,16 @@ in {
           });
       };
 
-      # --- Admin portal at admin.malleum.us (distinct vhost; same backend) ---
+      # --- Synapse Admin UI at admin.ws42.top ---
       virtualHosts.${adminDomain} = {
         forceSSL = true;
         enableACME = true;
 
-        root = pkgs.writeTextDir "index.html" ''
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Matrix Admin – ws42.top</title>
-            <style>
-              body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
-              a { color: #0d6efd; }
-              code { background: #f5f5f5; padding: .2em .4em; border-radius: 3px; }
-              ul { margin: .5em 0; }
-            </style>
-          </head>
-          <body>
-            <h1>Matrix Admin</h1>
-            <p>Homeserver: <strong>ws42.top</strong></p>
-            <ul>
-              <li><a href="https://ws42.top">Element / Client</a> – use Matrix at ws42.top</li>
-              <li><a href="https://ws42.top/_synapse/admin">Synapse Admin API</a> – raw API (admin auth required)</li>
-            </ul>
-            <p>Create registration tokens and manage users via the Admin API or <code>register_new_matrix_user</code> on the server.</p>
-          </body>
-          </html>
-        '';
+        root = pkgs.synapse-admin;
 
+        locations."/" = {
+          tryFiles = "$uri $uri/ /index.html";
+        };
         locations."/_matrix/" = {
           proxyPass = "http://127.0.0.1:8008";
           proxyWebsockets = true;

@@ -59,10 +59,11 @@
         );
 
         exec-once = [
-          "vesktop"
           "nm-applet"
           "swww-daemon && swww img ${wallpaper}"
           "waybar"
+          "vesktop"
+          "element-desktop --hidden"
         ];
 
         input = {
