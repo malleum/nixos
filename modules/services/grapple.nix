@@ -27,7 +27,11 @@ in {
         Restart = "always";
         User = "grapple";
         Group = "grapple";
-        Environment = ["PORT=${toString port}"];
+        StateDirectory = "grapple";
+        Environment = [
+          "PORT=${toString port}"
+          "HOME=/var/lib/grapple"
+        ];
 
         # Hardening
         ProtectSystem = "full";
