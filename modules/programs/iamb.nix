@@ -58,6 +58,8 @@
             "ge" = ":edit<Enter>";
             "gr" = ":react ";
             "gu" = ":unreact<Enter>";
+            "gx" = ":open<Enter>";
+            "gX" = ":download<Enter>";
             "gy" = "\"+y";
             "gp" = "\"+p";
             "gP" = "\"+P";
