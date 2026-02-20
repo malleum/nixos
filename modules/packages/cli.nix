@@ -1,6 +1,14 @@
 {self, ...}: {
-  unify.home = {pkgs, ...}: let
-    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  unify.home = {
+    pkgs,
+    hostConfig,
+    ...
+  }: let
+    variant =
+      if hostConfig.name == "minimus"
+      then "mvim"
+      else "nvim";
+    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.${variant};
   in {
     home.packages = with pkgs; [
       acpi
