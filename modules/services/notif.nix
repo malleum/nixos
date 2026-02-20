@@ -15,9 +15,13 @@
         timeout = 4;
         timeout-low = 2;
         timeout-critical = 10;
-        monitor =
+        notification-window-preferred-output =
           if hostConfig.name == "magnus"
-          then "HDMI-1"
+          then "HDMI-A-1"
+          else "eDP-1";
+        control-center-preferred-output =
+          if hostConfig.name == "magnus"
+          then "HDMI-A-1"
           else "eDP-1";
 
         scripts = {
