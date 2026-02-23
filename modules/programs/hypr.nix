@@ -62,6 +62,7 @@
           "nm-applet"
           "swww-daemon && swww img ${wallpaper}"
           "waybar"
+          "sleep 2"
           "vesktop"
           "element-desktop --hidden"
         ];
