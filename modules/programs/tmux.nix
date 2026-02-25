@@ -39,6 +39,9 @@
         set -g mouse on
         set-option -ga terminal-overrides ",xterm-256color:Tc"
 
+        bind -T copy-mode-vi v send -X begin-selection
+        bind -T copy-mode-vi y send -X copy-selection-and-cancel
+
         bind v split-window -h -c '#{pane_current_path}'
         bind s split-window -v -c '#{pane_current_path}'
         bind c new-window -c '#{pane_current_path}'

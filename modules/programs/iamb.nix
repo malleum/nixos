@@ -1,9 +1,20 @@
-{inputs, ...}: {
-  unify.modules.gui.home = {pkgs, ...}: {
+{
+  unify.modules.gui.home = {pkgs, ...}: let
+    jiamb = pkgs.iamb.overrideAttrs (oldAttrs: rec {
+      pname = "iamb";
+      version = "0.0.11";
+      src = pkgs.fetchFromGitHub {
+        owner = "malleum";
+        repo = "iamb";
+        rev = "06fb132341d004e9bb7f67879cdbfdffc611ac60";
+        hash = "sha256-Q5vn7429hJ6iX4NlO4s8MsLhez4KnRxjX37wJPfOfTQ=";
+      };
+      cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
+    });
+  in {
     home = {
       packages = with pkgs; [
-        inputs.iamb.packages.${pkgs.stdenv.hostPlatform.system}.default
-        iamb
+        jiamb
         element-desktop
         signal-desktop
       ];

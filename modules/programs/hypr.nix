@@ -64,7 +64,8 @@
           "waybar"
           "sleep 2"
           "vesktop"
-          "element-desktop --hidden"
+          "signal-desktop"
+          "iamb"
         ];
 
         input = {
@@ -148,13 +149,13 @@
         layerrule = "blur on, match:namespace rofi";
 
         windowrule = [
+          "workspace 2, match:title ^(.*Microsoft Teams.*)$"
+
           "workspace 1, match:title ^(.*Brave.*)$"
           "workspace 1, match:title ^(.*Firefox.*)$"
           "workspace 1, match:title ^(.*Ninjabrain Bot.*)$"
           "workspace 1, match:title ^(.*e4mc.*)$"
-          "workspace 2, match:title ^(.*Discord.*)$"
-          "workspace 2, match:title ^(.*vesktop.*)$"
-          "workspace 2, match:title ^(.*Microsoft Teams.*)$"
+          "workspace 2, match:title ^(iamb.*)$"
           "workspace 3, match:title ^(kitty)$"
           "workspace 3, match:title ^(foot)$"
           "workspace 4, match:title ^(.*Steam.*)$"
@@ -164,6 +165,8 @@
           "workspace 4, match:title ^(.*War.*)$"
           "workspace 5, match:title ^(.*OBS.*)$"
           "workspace 5, match:title ^(.*MainPicker.*)$"
+          "workspace 5, match:title ^(Signal)$"
+          "workspace 5, match:title ^(.*Discord.*)$"
 
           "float on, match:title ^(.*(All|Save) Files?.*)$"
         ];
@@ -192,14 +195,17 @@
             "SUPER SHIFT, b, exec, $BROWSER2"
             "SUPER, d, exec, vesktop"
             "SUPER SHIFT, d, exec, $BROWSER 'https://teams.microsoft.com/v2/'"
+            "SUPER, i, exec, iamb"
+            "SUPER SHIFT, i, exec, signal-desktop"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
             "SUPER SHIFT, x, exec, wl-copy 'Neida, jeg ville vinne'"
             "SUPER CONTROL, x, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
 
             "SUPER, n, exec, swaync-client --close-all"
-            "SUPER SHIFT, n, exec, swaync-client --toggle-dnd"
-            "SUPER CONTROL, n, exec, swaync-client -a 0"
+            "SUPER SHIFT, n, exec, swaync-client --dnd-off"
+            "SUPER CONTROL, n, exec, swaync-client --dnd-on"
+            "SUPER SHIFT CONTROL, n, exec, swaync-client -a 0"
 
             "SUPER, backslash, exec, hyprctl switchxkblayout all next"
 
