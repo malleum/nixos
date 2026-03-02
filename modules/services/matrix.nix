@@ -61,6 +61,13 @@ in {
         };
       };
     };
+
+    # Synapse Admin with ws42.top as default homeserver (using the main domain for API)
+    synapseAdmin = pkgs.runCommand "synapse-admin-configured" {} ''
+      cp -r ${pkgs.synapse-admin} $out
+      chmod -R +w $out
+      echo '{"defaultHomeserver": "https://${matrixDomain}"}' > $out/config.json
+    '';
   in {
     # --- Sops: Matrix secrets (DB password, registration shared secret) ---
     sops.secrets.matrix-db-password = {
@@ -130,6 +137,8 @@ in {
         server_name = matrixDomain;
         public_baseurl = "https://${matrixDomain}/";
         enable_registration = true;
+        # Synapse Admin UI and other clients (CORS)
+        cors_origins = ["https://${matrixDomain}" "https://${adminDomain}"];
         # Newer Element mobile: sign up only with a registration token (create via admin API / register_new_matrix_user -c).
         registration_requires_token = true;
         # Federation disabled: do not send or accept federation.
@@ -256,6 +265,17 @@ in {
                 proxy_read_timeout 60s;
               '';
             };
+            "/_synapse/admin/" = {
+              proxyPass = "http://127.0.0.1:8008";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Host $host;
+                proxy_connect_timeout 10s;
+                proxy_read_timeout 60s;
+              '';
+            };
           }
           // (pkgs.lib.optionalAttrs (builtins.isPath elementWelcomeBackground) {
             "/custom/" = {
@@ -270,7 +290,7 @@ in {
         forceSSL = true;
         enableACME = true;
 
-        root = pkgs.synapse-admin;
+        root = synapseAdmin;
 
         locations."/" = {
           tryFiles = "$uri $uri/ /index.html";
@@ -281,7 +301,9 @@ in {
           extraConfig = ''
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header Host $host;
+            proxy_set_header Host ${matrixDomain};
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 60s;
           '';
         };
         locations."/_synapse/" = {
@@ -290,7 +312,9 @@ in {
           extraConfig = ''
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header Host $host;
+            proxy_set_header Host ${matrixDomain};
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 60s;
           '';
         };
       };
