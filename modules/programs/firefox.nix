@@ -90,6 +90,7 @@
       "media.ffmpeg.vaapi.enabled" = true; # This is the main one: enables VA-API (video decoding)
       "media.ffvpx.enabled" = false; # Disables the built-in VP8/VP9 decoder to force VA-API
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
+      "media.webrtc.pipewire.enabled" = true;
 
       # --- Wayland-specific fixes ---
       "widget.wayland.opaque-region.enabled" = true; # Required for proper Wayland compositing
