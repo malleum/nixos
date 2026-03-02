@@ -247,9 +247,6 @@ in {
               proxyPass = "http://127.0.0.1:8008";
               proxyWebsockets = true;
               extraConfig = ''
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_set_header Host $host;
                 proxy_connect_timeout 10s;
                 proxy_read_timeout 60s;
               '';
@@ -258,9 +255,6 @@ in {
               proxyPass = "http://127.0.0.1:8008";
               proxyWebsockets = true;
               extraConfig = ''
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_set_header Host $host;
                 proxy_connect_timeout 10s;
                 proxy_read_timeout 60s;
               '';
