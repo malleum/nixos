@@ -63,9 +63,8 @@
           "swww-daemon && swww img ${wallpaper}"
           "waybar"
           "sleep 2"
-          "vesktop"
           "signal-desktop"
-          "iamb"
+          "foot iamb"
         ];
 
         input = {
@@ -195,7 +194,7 @@
             "SUPER SHIFT, b, exec, $BROWSER2"
             "SUPER, d, exec, vesktop"
             "SUPER SHIFT, d, exec, $BROWSER 'https://teams.microsoft.com/v2/'"
-            "SUPER, i, exec, iamb"
+            "SUPER, i, exec, foot iamb"
             "SUPER SHIFT, i, exec, signal-desktop"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"
