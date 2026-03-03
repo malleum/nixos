@@ -49,5 +49,12 @@ in {
         proxyWebsockets = true;
       };
     };
+
+    # Redirect joshammer.xyz -> joshammer.com (301 permanent)
+    services.nginx.virtualHosts."joshammer.xyz" = {
+      forceSSL = true;
+      enableACME = true;
+      globalRedirect = "joshammer.com";
+    };
   };
 }
