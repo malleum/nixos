@@ -1,11 +1,11 @@
 # Matrix Synapse server (minimus-only).
 # Serves client and federation on 80/443 via nginx; Synapse listens on localhost:8008.
-# Secrets (DB password, registration) are in sops: modules/secrets/matrix.yaml.
+# Secrets (DB password, registration, livekit key) are in sops: modules/secrets/matrix.yaml.
 #
 # Before first deploy:
 # 1. Put your generated secrets in modules/secrets/matrix.yaml (replace placeholders).
 # 2. Encrypt: sops -e -i modules/secrets/matrix.yaml
-# 3. Point DNS for ws42.top and admin.ws42.top to this host; open 80, 443, UDP 3478/5349 and 49152-65535 in Oracle VCN.
+# 3. Point DNS for ws42.top and admin.ws42.top to this host; open 80, 443, UDP 50000-51000 in Oracle VCN.
 #
 # If Element shows "Cannot reach homeserver": from the server run
 #   curl -sI https://ws42.top/_matrix/client/versions
@@ -69,7 +69,7 @@ in {
       echo '{"defaultHomeserver": "https://${matrixDomain}"}' > $out/config.json
     '';
   in {
-    # --- Sops: Matrix secrets (DB password, registration shared secret) ---
+    # --- Sops: Matrix secrets (DB password, registration shared secret, LiveKit key) ---
     sops.secrets.matrix-db-password = {
       sopsFile = matrixSecretsFile;
       key = "matrix_db_password";
@@ -79,21 +79,16 @@ in {
       key = "matrix_registration_secret";
       restartUnits = ["matrix-synapse.service"];
     };
-    sops.secrets.matrix-turn-secret = {
+    sops.secrets.matrix-livekit-key = {
       sopsFile = matrixSecretsFile;
-      key = "matrix_turn_secret";
-      restartUnits = ["matrix-synapse.service" "coturn.service"];
-      group = "turnserver";
-      mode = "0440";
+      key = "matrix_livekit_key";
+      restartUnits = ["livekit.service" "lk-jwt-service.service"];
     };
 
-    # Template: Synapse extra config (registration_shared_secret, database, turn_shared_secret from sops).
-    # Include the full database block here so the extra file does not replace and drop "name" from the main config.
-    # matrix-synapse runs as User=matrix-synapse and must be able to read this file.
+    # Template: Synapse extra config (registration_shared_secret, database).
     sops.templates.matrix-synapse-secrets = {
       content = ''
         registration_shared_secret: "${config.sops.placeholder.matrix-registration-secret}"
-        turn_shared_secret: "${config.sops.placeholder.matrix-turn-secret}"
         database:
           name: psycopg2
           args:
@@ -168,29 +163,34 @@ in {
         url_preview_enabled = true;
         report_stats = false;
         presence.enabled = true;
-        # Encrypted voice/video: TURN (coturn) so clients can connect for calls
-        turn_uris = [
-          "turn:${matrixDomain}:3478?transport=udp"
-          "turn:${matrixDomain}:3478?transport=tcp"
-          "turns:${matrixDomain}:5349?transport=tcp"
-        ];
-        # turn_shared_secret comes from extraConfigFiles (matrix-synapse-secrets template)
+
+        # Experimental features (needed for Element Call native support)
+        experimental_features = {
+          msc3266_enabled = true;
+        };
       };
     };
 
-    # --- Coturn (TURN/STUN for Matrix voice/video) ---
-    services.coturn = {
+    # --- LiveKit (SFU for Matrix voice/video via Element Call) ---
+    services.livekit = {
       enable = true;
-      use-auth-secret = true;
-      static-auth-secret-file = config.sops.secrets.matrix-turn-secret.path;
-      realm = matrixDomain;
-      no-tls = false;
-      no-udp = false;
-      no-tcp-relay = false;
-      listening-port = 3478;
-      tls-listening-port = 5349;
-      min-port = 49152;
-      max-port = 65535;
+      keyFile = config.sops.secrets.matrix-livekit-key.path;
+      settings = {
+        port = 7880;
+        rtc = {
+          port_range_start = 50000;
+          port_range_end = 51000;
+          use_external_ip = true; # Necessary for Oracle VCN / NAT
+        };
+      };
+    };
+
+    # --- LiveKit JWT Service ---
+    services.lk-jwt-service = {
+      enable = true;
+      keyFile = config.sops.secrets.matrix-livekit-key.path;
+      livekitUrl = "wss://${matrixDomain}/_livekit/";
+      port = 8080;
     };
 
     # --- TLS with ACME (Let's Encrypt); use your userconfig email ---
@@ -220,7 +220,7 @@ in {
               tryFiles = "$uri $uri/ /index.html";
             };
             "/.well-known/matrix/client" = {
-              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}}'";
+              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}, \"org.matrix.msc4143.rtc_foci\": [{\"type\": \"livekit\", \"livekit_service_url\": \"https://${matrixDomain}/_lk-jwt/\"}]}'";
               extraConfig = ''
                 default_type application/json;
                 add_header Access-Control-Allow-Origin *;
@@ -270,6 +270,24 @@ in {
                 proxy_read_timeout 60s;
               '';
             };
+            # LiveKit proxy (websocket support via proxyWebsockets)
+            "/_livekit/" = {
+              proxyPass = "http://127.0.0.1:7880/";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_connect_timeout 10s;
+                proxy_read_timeout 60s;
+              '';
+            };
+            # lk-jwt-service proxy
+            "/_lk-jwt/" = {
+              proxyPass = "http://127.0.0.1:8080/";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_connect_timeout 10s;
+                proxy_read_timeout 60s;
+              '';
+            };
           }
           // (pkgs.lib.optionalAttrs (builtins.isPath elementWelcomeBackground) {
             "/custom/" = {
@@ -314,16 +332,16 @@ in {
       };
     };
 
-    # --- Firewall: HTTP/HTTPS and TURN (UDP 3478, 5349, relay range) ---
+    # --- Firewall: HTTP/HTTPS and LiveKit (UDP 50000-51000) ---
     networking.firewall = {
       allowedTCPPorts = [80 443];
-      allowedUDPPorts = [3478 5349];
       allowedUDPPortRanges = [
         {
-          from = 49152;
-          to = 65535;
+          from = 50000;
+          to = 51000;
         }
       ];
     };
   };
 }
+
