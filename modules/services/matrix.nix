@@ -181,6 +181,12 @@ in {
           port_range_start = 50000;
           port_range_end = 51000;
           use_external_ip = true; # Necessary for Oracle VCN / NAT
+          node_ip = "158.101.121.4";
+        };
+        turn = {
+          enabled = true;
+          udp_port = 3478;
+          tls_port = 5349;
         };
       };
     };
@@ -334,8 +340,12 @@ in {
 
     # --- Firewall: HTTP/HTTPS and LiveKit (UDP 50000-51000) ---
     networking.firewall = {
-      allowedTCPPorts = [80 443];
+      allowedTCPPorts = [80 443 5349];
       allowedUDPPortRanges = [
+        {
+          from = 3478;
+          to = 3478;
+        }
         {
           from = 50000;
           to = 51000;
