@@ -1,5 +1,5 @@
 {
-  unify.home = {pkgs, ...}: {
+  unify.modules.gui.home = {pkgs, ...}: {
     home.packages = with pkgs; [
       cursor-cli
       gemini-cli

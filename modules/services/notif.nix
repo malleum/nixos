@@ -27,7 +27,7 @@
         scripts = {
           message-sound = {
             exec = "${pkgs.pulseaudio}/bin/paplay ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/window-attention.oga";
-            app-name = "^j?iamb$";
+            app-name = "^iamb$";
           };
         };
         # Keep config fairly close to swaync defaults, but

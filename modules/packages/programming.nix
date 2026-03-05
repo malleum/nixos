@@ -1,5 +1,5 @@
 {
-  unify.home = {pkgs, ...}: let
+  unify.modules.gui.home = {pkgs, ...}: let
     iogii = pkgs.stdenv.mkDerivation {
       name = "iogii";
       src = builtins.fetchurl {
