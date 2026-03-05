@@ -268,7 +268,7 @@
       settings.highlight.enable = true;
     };
 
-    conform-nvim = {
+    conform-nvim = lib.mkIf plena {
       enable = true;
       autoInstall.enable = plena;
       settings = {
