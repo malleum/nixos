@@ -9,6 +9,10 @@
 
       secrets = {
         github_token = {};
+        oracle_ssh_public = {
+          sopsFile = ./oracle-ssh.yaml;
+          key = "public_key";
+        };
       };
     };
   };
