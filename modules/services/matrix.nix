@@ -5,7 +5,7 @@
 # Before first deploy:
 # 1. Put your generated secrets in modules/secrets/matrix.yaml (replace placeholders).
 # 2. Encrypt: sops -e -i modules/secrets/matrix.yaml
-# 3. Point DNS for ws42.top and admin.ws42.top to this host; open 80, 443, UDP 50000-51000 in Oracle VCN.
+# 3. Point DNS for ws42.top and admin.ws42.top to this host; open 80, 443, 5349/tcp, 3478/udp, UDP 50000-51000 in Oracle VCN.
 #
 # If Element shows "Cannot reach homeserver": from the server run
 #   curl -sI https://ws42.top/_matrix/client/versions
@@ -13,7 +13,7 @@
 let
   matrixDomain = "ws42.top";
   adminDomain = "admin.ws42.top";
-  matrixSecretsFile = ./. + "/../secrets/matrix.yaml";
+  matrixSecretsFile = ../secrets/matrix.yaml;
   # Optional: custom background for Element login/startup page.
   # Set to a store path (e.g. ./my-bg.jpg) or a URL string (e.g. "https://example.com/bg.jpg").
   # Leave null for the default Element background.
@@ -24,7 +24,7 @@ in {
     config,
     ...
   }: let
-    acmeEmail = config.user.email or "admin@ws42.top";
+    acmeEmail = config.user.email;
     # Optional welcome background: URL to use in Element config (null = no custom branding)
     welcomeBgUrl =
       if elementWelcomeBackground == null
@@ -33,7 +33,7 @@ in {
       then "https://${matrixDomain}/custom/welcome-bg"
       else elementWelcomeBackground;
     # Directory with custom/welcome-bg so nginx can use root (avoids alias path-traversal warning)
-    welcomeBgRoot = pkgs.runCommand "element-welcome-bg-root" {} ''
+    welcomeBgRoot = pkgs.runCommandLocal "element-welcome-bg-root" {} ''
       mkdir -p $out/custom
       cp ${elementWelcomeBackground} $out/custom/welcome-bg
     '';
@@ -63,10 +63,10 @@ in {
     };
 
     # Synapse Admin with ws42.top as default homeserver (using the main domain for API)
-    synapseAdmin = pkgs.runCommand "synapse-admin-configured" {} ''
+    synapseAdmin = pkgs.runCommandLocal "synapse-admin-configured" {} ''
       cp -r ${pkgs.synapse-admin} $out
       chmod -R +w $out
-      echo '{"defaultHomeserver": "https://${matrixDomain}"}' > $out/config.json
+      echo '{"restrictBaseUrl": "https://${matrixDomain}"}' > $out/config.json
     '';
   in {
     # --- Sops: Matrix secrets (DB password, registration shared secret, LiveKit key) ---
@@ -106,7 +106,7 @@ in {
     # Template: PostgreSQL init script (DB password from sops)
     sops.templates.matrix-db-init = {
       content = ''
-        CREATE ROLE "matrix-synapse" WITH LOGIN PASSWORD '${config.sops.placeholder.matrix-db-password}';
+        CREATE ROLE "matrix-synapse" WITH LOGIN PASSWORD $sops$${config.sops.placeholder.matrix-db-password}$sops$;
         CREATE DATABASE "matrix-synapse" WITH OWNER "matrix-synapse"
           TEMPLATE template0
           LC_COLLATE = "C"
@@ -123,6 +123,9 @@ in {
       enable = true;
       initialScript = config.sops.templates.matrix-db-init.path;
     };
+    # Ensure sops renders the DB init script before PostgreSQL first starts
+    systemd.services.postgresql.after = ["sops-nix.service"];
+    systemd.services.postgresql.wants = ["sops-nix.service"];
 
     # --- Synapse ---
     services.matrix-synapse = {
@@ -132,8 +135,6 @@ in {
         server_name = matrixDomain;
         public_baseurl = "https://${matrixDomain}/";
         enable_registration = true;
-        # Synapse Admin UI and other clients (CORS)
-        cors_origins = ["https://${matrixDomain}" "https://${adminDomain}"];
         # Newer Element mobile: sign up only with a registration token (create via admin API / register_new_matrix_user -c).
         registration_requires_token = true;
         # Federation disabled: do not send or accept federation.
@@ -151,10 +152,6 @@ in {
                 names = ["client"];
                 compress = true;
               }
-              {
-                names = ["federation"];
-                compress = false;
-              }
             ];
           }
         ];
@@ -164,14 +161,36 @@ in {
         report_stats = false;
         presence.enabled = true;
 
-        # Experimental features (needed for Element Call native support)
+        # Experimental features (needed for Element Call / MatrixRTC)
         experimental_features = {
-          msc3266_enabled = true;
+          msc3266_enabled = true; # Room summary API
+          msc4222_enabled = true; # SyncV2 state_after (reliable call state tracking)
+        };
+
+        # MSC4140: delayed events for call participation signalling (prevents stuck calls)
+        max_event_delay_duration = "24h";
+
+        # Rate limits tuned for call heartbeats / E2EE key sharing
+        rc_message = {
+          per_second = 0.5;
+          burst_count = 30;
+        };
+        rc_delayed_event_mgmt = {
+          per_second = 1;
+          burst_count = 20;
         };
       };
     };
 
     # --- LiveKit (SFU for Matrix voice/video via Element Call) ---
+    # Shared group so both nginx and livekit can read the ACME TLS certs (needed for TURN TLS)
+    users.groups.acme-ws42 = {};
+    security.acme.certs.${matrixDomain}.group = "acme-ws42";
+    users.users.nginx.extraGroups = ["acme-ws42"];
+    systemd.services.livekit.serviceConfig.SupplementaryGroups = ["acme-ws42"];
+    # Restart livekit when certs renew so it picks up the new files
+    security.acme.certs.${matrixDomain}.reloadServices = ["livekit.service"];
+
     services.livekit = {
       enable = true;
       keyFile = config.sops.secrets.matrix-livekit-key.path;
@@ -185,8 +204,11 @@ in {
         };
         turn = {
           enabled = true;
+          domain = matrixDomain;
           udp_port = 3478;
           tls_port = 5349;
+          cert_file = "/var/lib/acme/${matrixDomain}/fullchain.pem";
+          key_file = "/var/lib/acme/${matrixDomain}/key.pem";
         };
       };
     };
@@ -232,13 +254,6 @@ in {
                 add_header Access-Control-Allow-Origin *;
               '';
             };
-            "/.well-known/matrix/server" = {
-              return = "200 '{\"m.server\": \"${matrixDomain}:443\"}'";
-              extraConfig = ''
-                default_type application/json;
-                add_header Access-Control-Allow-Origin *;
-              '';
-            };
             # Element Classic (and some clients) open this URL for sign-up; Synapse no longer serves it.
             # Redirect straight to Element Web sign-up so users land on the form (smooth for non-tech users).
             "/_matrix/static/client/register" = {
@@ -269,6 +284,9 @@ in {
               proxyPass = "http://127.0.0.1:8008";
               proxyWebsockets = true;
               extraConfig = ''
+                allow 127.0.0.1;
+                allow ::1;
+                deny all;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
                 proxy_set_header Host $host;
@@ -354,4 +372,3 @@ in {
     };
   };
 }
-
