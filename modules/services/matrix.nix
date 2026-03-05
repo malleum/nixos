@@ -67,7 +67,7 @@ in {
     synapseAdmin = pkgs.runCommandLocal "synapse-admin-configured" {} ''
       cp -r ${pkgs.synapse-admin} $out
       chmod -R +w $out
-      echo '{"restrictBaseUrl": "https://${matrixDomain}"}' > $out/config.json
+      echo '{"restrictBaseUrl": "https://${adminDomain}"}' > $out/config.json
     '';
   in {
     # --- Sops: Matrix secrets (DB password, registration shared secret, LiveKit key) ---
