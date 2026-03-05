@@ -51,6 +51,8 @@
             "@crazy_happiness:ws42.top".color = "light-magenta";
             "@tarkus:ws42.top".color = "cyan";
             "@izzo:ws42.top".color = "light-cyan";
+            "@mr_vermillion:ws42.top".color = "dark-gray";
+            "@generic_eric:ws42.top".color = "gray";
           };
         };
 
