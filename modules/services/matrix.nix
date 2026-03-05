@@ -21,10 +21,11 @@ let
 in {
   unify.modules.matrix.nixos = {
     pkgs,
+    hostConfig,
     config,
     ...
   }: let
-    acmeEmail = config.user.email;
+    acmeEmail = hostConfig.user.email;
     # Optional welcome background: URL to use in Element config (null = no custom branding)
     welcomeBgUrl =
       if elementWelcomeBackground == null
@@ -185,11 +186,13 @@ in {
     # --- LiveKit (SFU for Matrix voice/video via Element Call) ---
     # Shared group so both nginx and livekit can read the ACME TLS certs (needed for TURN TLS)
     users.groups.acme-ws42 = {};
-    security.acme.certs.${matrixDomain}.group = "acme-ws42";
+    security.acme.certs.${matrixDomain} = {
+      group = "acme-ws42";
+      # Restart livekit when certs renew so it picks up the new files
+      reloadServices = ["livekit.service"];
+    };
     users.users.nginx.extraGroups = ["acme-ws42"];
     systemd.services.livekit.serviceConfig.SupplementaryGroups = ["acme-ws42"];
-    # Restart livekit when certs renew so it picks up the new files
-    security.acme.certs.${matrixDomain}.reloadServices = ["livekit.service"];
 
     services.livekit = {
       enable = true;
