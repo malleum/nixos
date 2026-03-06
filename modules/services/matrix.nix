@@ -60,6 +60,17 @@ in {
         branding = pkgs.lib.optionalAttrs (welcomeBgUrl != null) {
           welcome_background_url = welcomeBgUrl;
         };
+        # Element Call: use LiveKit-backed calls instead of Jitsi
+        element_call = {
+          url = "https://call.element.io";
+          use_exclusively = true;
+          brand = "Element Call";
+        };
+        features = {
+          feature_group_calls = true;
+          feature_video_rooms = true;
+          feature_element_call_video_rooms = true;
+        };
       };
     };
 
