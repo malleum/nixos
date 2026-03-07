@@ -213,7 +213,10 @@ in {
         rtc = {
           port_range_start = 50000;
           port_range_end = 51000;
-          use_external_ip = true; # Necessary for Oracle VCN / NAT
+          # use_external_ip = true ignores node_ip and uses STUN, which can
+          # advertise the wrong relay address on Oracle Cloud NAT.  Setting it
+          # false forces LiveKit (and its built-in TURN) to use the explicit IP.
+          use_external_ip = false;
           node_ip = "158.101.121.4";
         };
         turn = {
@@ -221,6 +224,9 @@ in {
           domain = matrixDomain;
           udp_port = 3478;
           tls_port = 5349;
+          # TURN relay range must match firewall — default is 1024-30000 which is blocked
+          relay_range_start = 50000;
+          relay_range_end = 51000;
           cert_file = "/var/lib/acme/${matrixDomain}/fullchain.pem";
           key_file = "/var/lib/acme/${matrixDomain}/key.pem";
         };
@@ -262,7 +268,7 @@ in {
               tryFiles = "$uri $uri/ /index.html";
             };
             "/.well-known/matrix/client" = {
-              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}, \"org.matrix.msc4143.rtc_foci\": [{\"type\": \"livekit\", \"livekit_service_url\": \"https://${matrixDomain}/_lk-jwt/\"}]}'";
+              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}, \"org.matrix.msc4143.rtc_foci\": [{\"type\": \"livekit\", \"livekit_service_url\": \"https://${matrixDomain}/_lk-jwt/\"}], \"io.element.call_widget_url\": \"https://call.element.io\"}'";
               extraConfig = ''
                 default_type application/json;
                 add_header Access-Control-Allow-Origin *;
@@ -314,7 +320,7 @@ in {
               proxyWebsockets = true;
               extraConfig = ''
                 proxy_connect_timeout 10s;
-                proxy_read_timeout 60s;
+                proxy_read_timeout 86400s;
               '';
             };
             # lk-jwt-service proxy
