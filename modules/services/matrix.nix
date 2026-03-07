@@ -372,7 +372,7 @@ in {
 
     # --- Firewall: HTTP/HTTPS and LiveKit (UDP 50000-51000) ---
     networking.firewall = {
-      allowedTCPPorts = [80 443 5349];
+      allowedTCPPorts = [80 443 3478 5349];
       allowedUDPPortRanges = [
         {
           from = 3478;
