@@ -218,7 +218,6 @@ in {
           # This mapping is needed for TURN relay to work on Oracle Cloud NAT.
           use_external_ip = true;
           node_ip = "158.101.121.4";
-          tcp_fallback_port = 7881;
         };
         turn = {
           enabled = true;
