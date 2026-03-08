@@ -275,7 +275,7 @@ in {
               '';
             };
             "/.well-known/matrix/client" = {
-              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}, \"org.matrix.msc4143.rtc_foci\": [{\"type\": \"livekit\", \"livekit_service_url\": \"https://${matrixDomain}/_lk-jwt/\"}], \"io.element.call_widget_url\": \"https://call.element.io\"}'";
+              return = "200 '{\"m.homeserver\": {\"base_url\": \"https://${matrixDomain}\"}, \"org.matrix.msc4143.rtc_foci\": [{\"type\": \"livekit\", \"livekit_service_url\": \"https://${matrixDomain}/_lk-jwt/\"}], \"io.element.call_widget_url\": \"https://call.element.io\", \"io.element.call\": {\"url\": \"https://call.element.io\", \"use_exclusively\": true}}'";
               extraConfig = ''
                 default_type application/json;
                 add_header Access-Control-Allow-Origin *;
