@@ -213,11 +213,12 @@ in {
         rtc = {
           port_range_start = 50000;
           port_range_end = 51000;
-          # use_external_ip = true ignores node_ip and uses STUN, which can
-          # advertise the wrong relay address on Oracle Cloud NAT.  Setting it
-          # false forces LiveKit (and its built-in TURN) to use the explicit IP.
-          use_external_ip = false;
+          # STUN discovers external IP and creates NAT mapping (158.101.121.4/10.0.0.221)
+          # so LiveKit binds to the internal IP but advertises the external one.
+          # This mapping is needed for TURN relay to work on Oracle Cloud NAT.
+          use_external_ip = true;
           node_ip = "158.101.121.4";
+          tcp_fallback_port = 7881;
         };
         turn = {
           enabled = true;
@@ -385,7 +386,7 @@ in {
 
     # --- Firewall: HTTP/HTTPS and LiveKit (UDP 50000-51000) ---
     networking.firewall = {
-      allowedTCPPorts = [80 443 3478 5349];
+      allowedTCPPorts = [80 443 3478 5349 7881];
       allowedUDPPortRanges = [
         {
           from = 3478;
