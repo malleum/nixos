@@ -15,7 +15,25 @@
     home = {
       packages = with pkgs; [
         jiamb
-        element-desktop
+        (element-desktop.override {
+          element-web = element-web.override {
+            conf = {
+              default_server_config."m.homeserver" = {
+                base_url = "https://ws42.top";
+                server_name = "ws42.top";
+              };
+              element_call = {
+                url = "https://call.element.io";
+                use_exclusively = true;
+              };
+              features = {
+                feature_group_calls = true;
+                feature_video_rooms = true;
+                feature_element_call_video_rooms = true;
+              };
+            };
+          };
+        })
         signal-desktop
       ];
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
