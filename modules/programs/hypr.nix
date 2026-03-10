@@ -225,7 +225,7 @@
             "SUPER CONTROL, s, exec, wl-paste | ${pkgs.swappy}/bin/swappy -f -"
 
             "SUPER, space, togglefloating,"
-            "SUPER, t, togglesplit,"
+            "SUPER, t, layoutmsg, togglesplit"
 
             "SUPER, f, fullscreen, 1"
             "SUPER SHIFT, f, fullscreen, 0"
