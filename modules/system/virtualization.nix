@@ -10,6 +10,7 @@
     users.users.${hostConfig.user.username}.extraGroups = [
       "kvm"
       "libvirtd"
+      "input"
     ];
   };
 }
