@@ -743,15 +743,15 @@
       "locked": {
         "lastModified": 1773324457,
         "narHash": "sha256-u6ciojIpDJs5H2514DARSLopLI2N4NjxnsLjAu5+J6M=",
-        "ref": "refs/heads/main",
+        "owner": "malleum",
+        "repo": "mcsr_stats",
         "rev": "1d0963e32375ddfb9be36ccd9708b424075b09cd",
-        "revCount": 7,
-        "type": "git",
-        "url": "file:///home/joshammer/documents/gh/mcsr_stats"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/joshammer/documents/gh/mcsr_stats"
+        "owner": "malleum",
+        "repo": "mcsr_stats",
+        "type": "github"
       }
     },
     "nix-alien": {

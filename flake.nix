@@ -48,7 +48,7 @@
     };
 
     mcsr-stats = {
-      url = "git+file:///home/joshammer/documents/gh/mcsr_stats";
+      url = "github:malleum/mcsr_stats";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
