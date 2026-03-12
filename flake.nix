@@ -46,6 +46,11 @@
       url = "github:malleum/malleusite";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    mcsr-stats = {
+      url = "git+file:///home/joshammer/documents/gh/mcsr_stats";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (
