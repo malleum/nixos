@@ -21,7 +21,6 @@ let
 in {
   unify.modules.matrix.nixos = {
     pkgs,
-    lib,
     hostConfig,
     config,
     ...
@@ -391,7 +390,7 @@ in {
     # --- Suppress Element Call unread counts for all users ---
     # No upstream push rule exists for org.matrix.msc3401.call.member events,
     # so this timer periodically sets one for every local user via the admin API.
-    systemd.services.matrix-call-push-rules = lib.mkIf (config.networking.hostName == "minimus") {
+    systemd.services.matrix-call-push-rules = {
       description = "Suppress Element Call events from unread counts";
       after = ["matrix-synapse.service"];
       requires = ["matrix-synapse.service"];
@@ -400,6 +399,15 @@ in {
       script = ''
         BASE="http://127.0.0.1:8008"
         ADMIN_TOKEN=$(cat ${config.sops.secrets.matrix-admin-token.path})
+
+        # Wait for Synapse to be ready (up to 30s)
+        for i in {1..30}; do
+          if curl -sf "$BASE/_matrix/client/versions" >/dev/null; then
+            break
+          fi
+          echo "Waiting for Synapse API on $BASE... ($i/30)"
+          sleep 1
+        done
 
         # Fetch all local users
         USERS=$(curl -sf -H "Authorization: Bearer $ADMIN_TOKEN" \
@@ -433,7 +441,7 @@ in {
       '';
     };
 
-    systemd.timers.matrix-call-push-rules = lib.mkIf (config.networking.hostName == "minimus") {
+    systemd.timers.matrix-call-push-rules = {
       wantedBy = ["timers.target"];
       timerConfig = {
         OnBootSec = "5min";
