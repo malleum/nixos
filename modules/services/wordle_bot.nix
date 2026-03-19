@@ -140,7 +140,10 @@ in {
 
             client = AsyncClient(HOMESERVER, BOT_USER)
             client.access_token = token
-            bot = WordleBot(client, "${wordle-hax}/bin/wordle_hax")
+            bot = WordleBot(
+                client,
+                "${wordle-hax}/bin/wordle_hax"
+            )
             client.add_event_callback(bot.message_callback, RoomMessageText)
 
             # Initial setup
