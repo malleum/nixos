@@ -76,7 +76,7 @@ in {
                         return room_id
 
                 print(f"Creating new room with {NYT_BOT}...")
-                resp = await self.client.room_create(direct=True, invite=[NYT_BOT])
+                resp = await self.client.room_create(is_direct=True, invite=[NYT_BOT])
                 self.target_room_id = resp.room_id
                 return resp.room_id
 
