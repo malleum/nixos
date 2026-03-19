@@ -425,7 +425,9 @@ in {
             }'
 
           # Clean up temporary token
-          curl -sf -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout" || true
+          if ! curl -sf -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout"; then
+            echo "WARNING: failed to logout token for $USER — token may remain active" >&2
+          fi
         done
       '';
     };
