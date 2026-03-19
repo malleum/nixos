@@ -19,8 +19,9 @@ in {
         import asyncio
         import os
         import re
-        import sys
         import subprocess
+        import sys
+
         from nio import AsyncClient, MatrixRoom, RoomMessageText
 
         # Ensure logs are visible immediately
@@ -36,13 +37,18 @@ in {
         Y = "🟨"
         W = ["⬜", "⬛", "▫️", "▪️"]
 
+
         def parse_squares(s):
             res = ""
             for char in s:
-                if char == G: res += "g"
-                elif char == Y: res += "y"
-                elif char in W: res += "w"
+                if char == G:
+                    res += "g"
+                elif char == Y:
+                    res += "y"
+                elif char in W:
+                    res += "w"
             return res
+
 
         class WordleBot:
             def __init__(self, client, wordle_hax_bin):
@@ -64,7 +70,7 @@ in {
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
-                    bufsize=1
+                    bufsize=1,
                 )
                 await asyncio.sleep(1)
 
@@ -72,7 +78,7 @@ in {
                 if not self.process:
                     print("Error: process not started")
                     return None
-                
+
                 if result_code:
                     print(f"Feeding result to hax: {result_code}")
                     self.process.stdin.write(f"{result_code}\n")
@@ -99,7 +105,8 @@ in {
                     if "Wordle" in body and ("Guess the" in body or "attempts" in body):
                         if self.guessed_count == 0:
                             print("Game start detected. Making first guess.")
-                            if not self.process: await self.start_hax()
+                            if not self.process:
+                                await self.start_hax()
                             guess = self.get_next_guess()
                             if guess:
                                 self.last_guess = guess
@@ -107,40 +114,41 @@ in {
                                 await self.client.room_send(
                                     room_id,
                                     "m.room.message",
-                                    {"msgtype": "m.text", "body": guess}
+                                    {"msgtype": "m.text", "body": guess},
                                 )
                     return
 
-                print(f"Board detected. Found {len(matches)} guesses. We sent {self.guessed_count}.")
-                
+                print(
+                    f"Board detected. Found {len(matches)} guesses. We sent {self.guessed_count}."
+                )
+
                 if len(matches) >= self.guessed_count:
                     last_word, last_squares = matches[-1]
                     result_code = parse_squares(last_squares)
-                    
+
                     if result_code == "ggggg":
                         print(f"Wordle solved: {last_word}")
                         self.game_solved = True
-                        if self.process: self.process.terminate()
+                        if self.process:
+                            self.process.terminate()
                         return
 
                     if len(matches) > self.guessed_count or (
-                        len(matches) == 1 and 
-                        self.guessed_count == 1 and 
-                        self.last_guess == matches[0][0].lower()
+                        len(matches) == 1
+                        and self.guessed_count == 1
+                        and self.last_guess == matches[0][0].lower()
                     ):
                         if not self.process:
                             await self.start_hax()
                             for i in range(len(matches) - 1):
                                 self.get_next_guess(parse_squares(matches[i][1]))
-                        
+
                         guess = self.get_next_guess(result_code)
                         if guess:
                             self.last_guess = guess
                             self.guessed_count = len(matches) + 1
                             await self.client.room_send(
-                                room_id,
-                                "m.room.message",
-                                {"msgtype": "m.text", "body": guess}
+                                room_id, "m.room.message", {"msgtype": "m.text", "body": guess}
                             )
 
             async def find_or_create_room(self):
@@ -165,9 +173,16 @@ in {
             for i in range(30):
                 try:
                     import requests
-                    if requests.get(f"{HOMESERVER}/_matrix/client/versions", timeout=2).status_code == 200:
+
+                    if (
+                        requests.get(
+                            f"{HOMESERVER}/_matrix/client/versions", timeout=2
+                        ).status_code
+                        == 200
+                    ):
                         break
-                except: pass
+                except Exception:
+                    pass
                 print(f"Waiting for Synapse... ({i}/30)")
                 await asyncio.sleep(1)
 
@@ -178,7 +193,7 @@ in {
             client.access_token = token
             bot = WordleBot(
                 client,
-                "${wordle-hax}/bin/wordle_hax"  # noqa: E501
+                "${wordle-hax}/bin/wordle_hax",  # noqa: E501
             )
             client.add_event_callback(bot.message_callback, RoomMessageText)
 
@@ -187,13 +202,12 @@ in {
 
             # Initial trigger
             await client.room_send(
-                room_id, 
-                "m.room.message", 
-                {"msgtype": "m.text", "body": "wordle"}
+                room_id, "m.room.message", {"msgtype": "m.text", "body": "wordle"}
             )
 
             for _ in range(60):
-                if bot.game_solved: break
+                if bot.game_solved:
+                    break
                 await asyncio.sleep(5)
 
             sync_task.cancel()
