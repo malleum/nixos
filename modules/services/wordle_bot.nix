@@ -141,12 +141,13 @@ in {
                         return
 
                     if len(matches) > self.guessed_count or (
-                        len(matches) == 1
-                        and self.guessed_count == 1
-                        and self.last_guess == matches[0][0].lower()
+                        len(matches) == self.guessed_count
+                        and self.last_guess
+                        and self.last_guess == matches[-1][0].lower()
                     ):
                         if not self.process:
                             await self.start_hax()
+                            self.get_next_guess()  # consume initial auto-select
                             for i in range(len(matches) - 1):
                                 self.get_next_guess(
                                     parse_squares(matches[i][1])
