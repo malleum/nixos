@@ -411,7 +411,7 @@ in {
 
         # Fetch all local users
         echo "Fetching user list..."
-        USERS_JSON=$(curl -s --fail-with-body -H "Authorization: Bearer $ADMIN_TOKEN" \
+        USERS_JSON=$(curl -s -H "Authorization: Bearer $ADMIN_TOKEN" \
           "$BASE/_synapse/admin/v2/users?limit=10000")
         echo "Users response: $USERS_JSON" | head -c 500
         USERS=$(echo "$USERS_JSON" | jq -r '.users[].name')
@@ -419,19 +419,20 @@ in {
         for USER in $USERS; do
           echo "Processing $USER..."
           # Get a temporary token for this user
-          TOKEN=$(curl -s --fail-with-body -X POST \
+          LOGIN_RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $ADMIN_TOKEN" \
             -H "Content-Type: application/json" \
             "$BASE/_synapse/admin/v1/users/$USER/login" \
-            -d '{}' | jq -r '.access_token')
+            -d '{}')
+          TOKEN=$(echo "$LOGIN_RESP" | jq -r '.access_token')
 
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "  Skipping $USER — no token"
+            echo "  Skipping $USER — login failed: $LOGIN_RESP"
             continue
           fi
 
           # Set the push rule (PUT is idempotent)
-          RESULT=$(curl -s --fail-with-body -X PUT \
+          RESULT=$(curl -s -X PUT \
             -H "Authorization: Bearer $TOKEN" \
             -H "Content-Type: application/json" \
             "$BASE/_matrix/client/v3/pushrules/global/override/.m.rule.call.member" \
@@ -442,9 +443,8 @@ in {
           echo "  Push rule for $USER: $RESULT"
 
           # Clean up temporary token
-          if ! curl -s --fail-with-body -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout"; then
-            echo "WARNING: failed to logout token for $USER — token may remain active" >&2
-          fi
+          curl -s -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout" >/dev/null || \
+            echo "WARNING: failed to logout token for $USER" >&2
         done
         echo "Done."
       '';
