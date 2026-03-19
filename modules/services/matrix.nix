@@ -410,34 +410,43 @@ in {
         done
 
         # Fetch all local users
-        USERS=$(curl -sf -H "Authorization: Bearer $ADMIN_TOKEN" \
-          "$BASE/_synapse/admin/v2/users?limit=10000" | jq -r '.users[].name')
+        echo "Fetching user list..."
+        USERS_JSON=$(curl -s --fail-with-body -H "Authorization: Bearer $ADMIN_TOKEN" \
+          "$BASE/_synapse/admin/v2/users?limit=10000")
+        echo "Users response: $USERS_JSON" | head -c 500
+        USERS=$(echo "$USERS_JSON" | jq -r '.users[].name')
 
         for USER in $USERS; do
+          echo "Processing $USER..."
           # Get a temporary token for this user
-          TOKEN=$(curl -sf -X POST \
+          TOKEN=$(curl -s --fail-with-body -X POST \
             -H "Authorization: Bearer $ADMIN_TOKEN" \
             -H "Content-Type: application/json" \
             "$BASE/_synapse/admin/v1/users/$USER/login" \
             -d '{}' | jq -r '.access_token')
 
-          [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ] && continue
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "  Skipping $USER — no token"
+            continue
+          fi
 
           # Set the push rule (PUT is idempotent)
-          curl -sf -X PUT \
+          RESULT=$(curl -s --fail-with-body -X PUT \
             -H "Authorization: Bearer $TOKEN" \
             -H "Content-Type: application/json" \
             "$BASE/_matrix/client/v3/pushrules/global/override/.m.rule.call.member" \
             -d '{
               "conditions": [{"kind":"event_match","key":"type","pattern":"org.matrix.msc3401.call.member"}],
               "actions": ["dont_notify"]
-            }'
+            }')
+          echo "  Push rule for $USER: $RESULT"
 
           # Clean up temporary token
-          if ! curl -sf -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout"; then
+          if ! curl -s --fail-with-body -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout"; then
             echo "WARNING: failed to logout token for $USER — token may remain active" >&2
           fi
         done
+        echo "Done."
       '';
     };
 
