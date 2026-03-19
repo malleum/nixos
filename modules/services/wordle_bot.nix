@@ -142,7 +142,7 @@ in {
             client.access_token = token
             bot = WordleBot(
                 client,
-                "${wordle-hax}/bin/wordle_hax"
+                "${wordle-hax}/bin/wordle_hax"  # noqa: E501
             )
             client.add_event_callback(bot.message_callback, RoomMessageText)
 
