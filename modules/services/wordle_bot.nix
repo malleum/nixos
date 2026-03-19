@@ -165,6 +165,9 @@ in {
                                 "m.room.message",
                                 {"msgtype": "m.text", "body": guess},
                             )
+                        else:
+                            print("Solver failed — giving up")
+                            self.game_solved = True
 
             async def find_or_create_room(self):
                 await self.client.sync(timeout=3000)
@@ -275,7 +278,6 @@ in {
       wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = "*-*-* 06:00:00 US/Eastern";
-        Persistent = true;
         Unit = "matrix-wordle-bot.service";
       };
     };
