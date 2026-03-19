@@ -90,6 +90,9 @@ in {
                     if not line:
                         print("Hax process closed stdout")
                         break
+                    if "No candidates remaining" in line:
+                        print("Solver has no candidates — state is inconsistent")
+                        return None
                     if "[AUTO-SELECTED]:" in line:
                         match = re.search(
                             r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line
@@ -266,12 +269,12 @@ in {
       };
     };
 
-    # --- Systemd Timer: Run daily at 09:00 ---
+    # --- Systemd Timer: Run daily at 6:00 AM EST (11:00 UTC) ---
     systemd.timers.matrix-wordle-bot = {
       description = "Timer for Daily Wordle Hax";
       wantedBy = ["timers.target"];
       timerConfig = {
-        OnCalendar = "*-*-* 09:00:00";
+        OnCalendar = "*-*-* 06:00:00 US/Eastern";
         Persistent = true;
         Unit = "matrix-wordle-bot.service";
       };
