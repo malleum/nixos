@@ -96,10 +96,6 @@ in {
       key = "matrix_livekit_key";
       restartUnits = ["livekit.service" "lk-jwt-service.service"];
     };
-    sops.secrets.matrix-admin-token = {
-      sopsFile = matrixSecretsFile;
-      key = "matrix_admin_token";
-    };
 
     # Template: Synapse extra config (registration_shared_secret, database).
     sops.templates.matrix-synapse-secrets = {
@@ -387,76 +383,9 @@ in {
       };
     };
 
-    # --- Suppress Element Call unread counts for all users ---
-    # No upstream push rule exists for org.matrix.msc3401.call.member events,
-    # so this timer periodically sets one for every local user via the admin API.
-    systemd.services.matrix-call-push-rules = {
-      description = "Suppress Element Call events from unread counts";
-      after = ["matrix-synapse.service"];
-      requires = ["matrix-synapse.service"];
-      serviceConfig.Type = "oneshot";
-      path = [pkgs.curl pkgs.jq];
-      script = ''
-        BASE="http://127.0.0.1:8008"
-        ADMIN_TOKEN=$(cat ${config.sops.secrets.matrix-admin-token.path})
-
-        # Wait for Synapse to be ready (up to 30s)
-        for i in {1..30}; do
-          if curl -sf "$BASE/_matrix/client/versions" >/dev/null; then
-            break
-          fi
-          echo "Waiting for Synapse API on $BASE... ($i/30)"
-          sleep 1
-        done
-
-        # Fetch all local users
-        echo "Fetching user list..."
-        USERS_JSON=$(curl -s -H "Authorization: Bearer $ADMIN_TOKEN" \
-          "$BASE/_synapse/admin/v2/users?limit=10000")
-        echo "Users response: $USERS_JSON" | head -c 500
-        USERS=$(echo "$USERS_JSON" | jq -r '.users[].name')
-
-        for USER in $USERS; do
-          echo "Processing $USER..."
-          # Get a temporary token for this user
-          LOGIN_RESP=$(curl -s -X POST \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -H "Content-Type: application/json" \
-            "$BASE/_synapse/admin/v1/users/$USER/login" \
-            -d '{}')
-          TOKEN=$(echo "$LOGIN_RESP" | jq -r '.access_token')
-
-          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "  Skipping $USER — login failed: $LOGIN_RESP"
-            continue
-          fi
-
-          # Set the push rule (PUT is idempotent)
-          RESULT=$(curl -s -X PUT \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            "$BASE/_matrix/client/v3/pushrules/global/override/suppress.call.member" \
-            -d '{
-              "conditions": [{"kind":"event_match","key":"type","pattern":"org.matrix.msc3401.call.member"}],
-              "actions": ["dont_notify"]
-            }')
-          echo "  Push rule for $USER: $RESULT"
-
-          # Clean up temporary token
-          curl -s -X POST -H "Authorization: Bearer $TOKEN" "$BASE/_matrix/client/v3/logout" >/dev/null || \
-            echo "WARNING: failed to logout token for $USER" >&2
-        done
-        echo "Done."
-      '';
-    };
-
-    systemd.timers.matrix-call-push-rules = {
-      wantedBy = ["timers.target"];
-      timerConfig = {
-        OnBootSec = "5min";
-        OnUnitActiveSec = "1d";
-      };
-    };
+    # Push rules for call suppression already applied to all current users.
+    # To apply for new users, log in as @admin:ws42.top via Element and use
+    # the admin API manually. No persistent admin token stored.
 
     # --- Firewall: HTTP/HTTPS and LiveKit (UDP 50000-51000) ---
     networking.firewall = {
