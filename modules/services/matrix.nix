@@ -21,6 +21,7 @@ let
 in {
   unify.modules.matrix.nixos = {
     pkgs,
+    lib,
     hostConfig,
     config,
     ...
@@ -390,7 +391,7 @@ in {
     # --- Suppress Element Call unread counts for all users ---
     # No upstream push rule exists for org.matrix.msc3401.call.member events,
     # so this timer periodically sets one for every local user via the admin API.
-    systemd.services.matrix-call-push-rules = {
+    systemd.services.matrix-call-push-rules = lib.mkIf (config.networking.hostName == "minimus") {
       description = "Suppress Element Call events from unread counts";
       after = ["matrix-synapse.service"];
       requires = ["matrix-synapse.service"];
@@ -432,7 +433,7 @@ in {
       '';
     };
 
-    systemd.timers.matrix-call-push-rules = {
+    systemd.timers.matrix-call-push-rules = lib.mkIf (config.networking.hostName == "minimus") {
       wantedBy = ["timers.target"];
       timerConfig = {
         OnBootSec = "5min";

@@ -3,6 +3,7 @@
 in {
   unify.modules.wordle-bot.nixos = {
     pkgs,
+    lib,
     config,
     ...
   }: let
@@ -179,7 +180,7 @@ in {
     };
 
     # --- Systemd Service ---
-    systemd.services.matrix-wordle-bot = {
+    systemd.services.matrix-wordle-bot = lib.mkIf (config.networking.hostName == "minimus") {
       description = "Wordle Hax Matrix Bot - Daily Play";
       after = ["network.target" "matrix-synapse.service"];
 
@@ -197,7 +198,7 @@ in {
     };
 
     # --- Systemd Timer: Run daily at 09:00 ---
-    systemd.timers.matrix-wordle-bot = {
+    systemd.timers.matrix-wordle-bot = lib.mkIf (config.networking.hostName == "minimus") {
       description = "Timer for Daily Wordle Hax";
       wantedBy = ["timers.target"];
       timerConfig = {
