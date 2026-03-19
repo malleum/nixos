@@ -1340,11 +1340,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773925684,
-        "narHash": "sha256-yKf+lJ47tUcRGBWXvYCddOYTvxH+o6OvjyZPrOzCsLI=",
+        "lastModified": 1773934007,
+        "narHash": "sha256-WiVXWXdPnQceyP63znykSHLdz41mVTq76rYU+PFtrSc=",
         "owner": "malleum",
         "repo": "wordle_hax",
-        "rev": "0331e57302d83b1bf342074a5c43c0e110b58b0f",
+        "rev": "6dcd75132f2bcbf593ae30258bc7760301a9c295",
         "type": "github"
       },
       "original": {
