@@ -19,9 +19,8 @@ in {
         import asyncio
         import os
         import re
-        import sys
         import subprocess
-        from nio import AsyncClient, MatrixRoom, RoomMessageText, InviteEvent
+        from nio import AsyncClient, MatrixRoom, RoomMessageText
 
         # Configuration
         HOMESERVER = "https://ws42.top"
@@ -29,6 +28,7 @@ in {
         NYT_BOT = "@nyt-games-bot:ws42.top"
 
         SQUARES = {"🟩": "g", "🟨": "y", "⬜": "w"}
+
 
         class WordleBot:
             def __init__(self, client, wordle_hax_bin):
@@ -52,21 +52,24 @@ in {
                 await asyncio.sleep(0.5)
 
             def get_next_guess(self, result_code=None):
-                if not self.process: return None
+                if not self.process:
+                    return None
                 if result_code:
                     self.process.stdin.write(f"{result_code}\n")
                     self.process.stdin.flush()
 
                 while True:
                     line = self.process.stdout.readline()
-                    if not line: break
+                    if not line:
+                        break
                     if "[AUTO-SELECTED]:" in line:
                         match = re.search(r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line)
-                        if match: return match.group(1).lower()
+                        if match:
+                            return match.group(1).lower()
                 return None
 
             async def find_or_create_room(self):
-                sync_resp = await self.client.sync(timeout=3000)
+                await self.client.sync(timeout=3000)
                 for room_id, room in self.client.rooms.items():
                     if NYT_BOT in room.users:
                         self.target_room_id = room_id
@@ -77,36 +80,59 @@ in {
                 self.target_room_id = resp.room_id
                 return resp.room_id
 
-            async def message_callback(self, room: MatrixRoom, event: RoomMessageText) -> None:
+            async def message_callback(
+                self,
+                room: MatrixRoom,
+                event: RoomMessageText
+            ) -> None:
                 if event.sender != NYT_BOT or room.room_id != self.target_room_id:
                     return
 
                 body = event.body
-                if "Wordle" in body and ("Guess the" in body or "attempts" in body or any(s in body for s in SQUARES)):
+                is_wordle = "Wordle" in body
+                has_prompt = "Guess the" in body or "attempts" in body
+                has_squares = any(s in body for s in SQUARES)
+
+                if is_wordle and (has_prompt or has_squares):
                     lines = body.strip().split("\n")
                     last_guess_line = None
                     for line in reversed(lines):
-                        if any(s in line for s in SQUARES) and re.search(r"[A-Z]{5}", line):
+                        has_sq = any(s in line for s in SQUARES)
+                        has_wd = re.search(r"[A-Z]{5}", line)
+                        if has_sq and has_wd:
                             last_guess_line = line
                             break
 
                     if not last_guess_line:
-                        if not self.process: await self.start_hax()
+                        if not self.process:
+                            await self.start_hax()
                         guess = self.get_next_guess()
                         if guess:
-                            await self.client.room_send(room.room_id, "m.room.message", {"msgtype": "m.text", "body": guess})
+                            await self.client.room_send(
+                                room.room_id,
+                                "m.room.message",
+                                {"msgtype": "m.text", "body": guess}
+                            )
                     else:
-                        match = re.search(r"([A-Z]{5})\s+([🟩🟨⬜]{5})", last_guess_line)
+                        pattern = r"([A-Z]{5})\s+([🟩🟨⬜]{5})"
+                        match = re.search(pattern, last_guess_line)
                         if match:
                             word, squares = match.groups()
-                            result_code = "".join(SQUARES.get(s, "w") for s in squares)
+                            result_code = "".join(
+                                SQUARES.get(s, "w") for s in squares
+                            )
                             if result_code == "ggggg":
                                 print("Solved!")
                                 self.game_solved = True
                             else:
                                 guess = self.get_next_guess(result_code)
                                 if guess:
-                                    await self.client.room_send(room.room_id, "m.room.message", {"msgtype": "m.text", "body": guess})
+                                    await self.client.room_send(
+                                        room.room_id,
+                                        "m.room.message",
+                                        {"msgtype": "m.text", "body": guess}
+                                    )
+
 
         async def main():
             with open(os.environ["BOT_TOKEN_FILE"], "r") as f:
@@ -124,11 +150,16 @@ in {
             sync_task = asyncio.create_task(client.sync_forever(timeout=30000))
 
             # Trigger the game
-            await client.room_send(room_id, "m.room.message", {"msgtype": "m.text", "body": "wordle"})
+            await client.room_send(
+                room_id,
+                "m.room.message",
+                {"msgtype": "m.text", "body": "wordle"}
+            )
 
             # Wait until solved or timeout (5 mins)
             for _ in range(60):
-                if bot.game_solved: break
+                if bot.game_solved:
+                    break
                 await asyncio.sleep(5)
 
             sync_task.cancel()
