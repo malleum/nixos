@@ -176,6 +176,7 @@ in {
     sops.secrets.matrix-wordle-hax-token = {
       sopsFile = matrixSecretsFile;
       key = "matrix_wordle_hax_token";
+      owner = "matrix-synapse";
     };
 
     # --- Systemd Service ---
