@@ -51,6 +51,11 @@
       url = "github:malleum/mcsr_stats";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    wordle-hax = {
+      url = "github:malleum/wordle_hax";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (

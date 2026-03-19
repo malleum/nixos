@@ -13,6 +13,7 @@ in {
         matrix
         grapple
         mcsr-stats
+        wordle-bot
         ;
     };
 
