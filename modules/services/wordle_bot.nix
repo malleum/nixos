@@ -91,7 +91,9 @@ in {
                         print("Hax process closed stdout")
                         break
                     if "[AUTO-SELECTED]:" in line:
-                        match = re.search(r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line)
+                        match = re.search(
+                            r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line
+                        )
                         if match:
                             guess = match.group(1).lower()
                             print(f"Hax recommended: {guess}")
@@ -100,9 +102,13 @@ in {
 
             async def handle_board(self, room_id, body):
                 # Extract all guesses and results from the board
-                matches = re.findall(r"([A-Z]{5})\s+([🟩🟨⬜⬛▫️▪️]{5})", body)
+                matches = re.findall(
+                    r"([A-Z]{5})\s+([🟩🟨⬜⬛▫️▪️]{5})", body
+                )
                 if not matches:
-                    if "Wordle" in body and ("Guess the" in body or "attempts" in body):
+                    if "Wordle" in body and (
+                        "Guess the" in body or "attempts" in body
+                    ):
                         if self.guessed_count == 0:
                             print("Game start detected. Making first guess.")
                             if not self.process:
@@ -119,7 +125,8 @@ in {
                     return
 
                 print(
-                    f"Board detected. Found {len(matches)} guesses. We sent {self.guessed_count}."
+                    f"Board detected. Found {len(matches)} guesses."
+                    f" We sent {self.guessed_count}."
                 )
 
                 if len(matches) >= self.guessed_count:
@@ -141,14 +148,18 @@ in {
                         if not self.process:
                             await self.start_hax()
                             for i in range(len(matches) - 1):
-                                self.get_next_guess(parse_squares(matches[i][1]))
+                                self.get_next_guess(
+                                    parse_squares(matches[i][1])
+                                )
 
                         guess = self.get_next_guess(result_code)
                         if guess:
                             self.last_guess = guess
                             self.guessed_count = len(matches) + 1
                             await self.client.room_send(
-                                room_id, "m.room.message", {"msgtype": "m.text", "body": guess}
+                                room_id,
+                                "m.room.message",
+                                {"msgtype": "m.text", "body": guess},
                             )
 
             async def find_or_create_room(self):
@@ -159,14 +170,22 @@ in {
                         return room_id
 
                 print(f"Creating new room with {NYT_BOT}...")
-                resp = await self.client.room_create(is_direct=True, invite=[NYT_BOT])
+                resp = await self.client.room_create(
+                    is_direct=True, invite=[NYT_BOT]
+                )
                 self.target_room_id = resp.room_id
                 return resp.room_id
 
-            async def message_callback(self, room: MatrixRoom, event: RoomMessageText) -> None:
-                if event.sender != NYT_BOT or room.room_id != self.target_room_id:
+            async def message_callback(
+                self, room: MatrixRoom, event: RoomMessageText
+            ) -> None:
+                if (
+                    event.sender != NYT_BOT
+                    or room.room_id != self.target_room_id
+                ):
                     return
                 await self.handle_board(room.room_id, event.body)
+
 
         async def main():
             # Wait for Synapse ready
@@ -176,7 +195,8 @@ in {
 
                     if (
                         requests.get(
-                            f"{HOMESERVER}/_matrix/client/versions", timeout=2
+                            f"{HOMESERVER}/_matrix/client/versions",
+                            timeout=2,
                         ).status_code
                         == 200
                     ):
@@ -202,7 +222,9 @@ in {
 
             # Initial trigger
             await client.room_send(
-                room_id, "m.room.message", {"msgtype": "m.text", "body": "wordle"}
+                room_id,
+                "m.room.message",
+                {"msgtype": "m.text", "body": "wordle"},
             )
 
             for _ in range(60):
@@ -212,6 +234,7 @@ in {
 
             sync_task.cancel()
             await client.close()
+
 
         if __name__ == "__main__":
             asyncio.run(main())
