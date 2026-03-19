@@ -435,7 +435,7 @@ in {
           RESULT=$(curl -s -X PUT \
             -H "Authorization: Bearer $TOKEN" \
             -H "Content-Type: application/json" \
-            "$BASE/_matrix/client/v3/pushrules/global/override/.m.rule.call.member" \
+            "$BASE/_matrix/client/v3/pushrules/global/override/suppress.call.member" \
             -d '{
               "conditions": [{"kind":"event_match","key":"type","pattern":"org.matrix.msc3401.call.member"}],
               "actions": ["dont_notify"]
