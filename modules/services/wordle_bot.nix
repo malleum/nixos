@@ -19,8 +19,12 @@ in {
         import asyncio
         import os
         import re
+        import sys
         import subprocess
         from nio import AsyncClient, MatrixRoom, RoomMessageText
+
+        # Ensure logs are visible immediately
+        sys.stdout.reconfigure(line_buffering=True)
 
         # Configuration
         HOMESERVER = "https://ws42.top"
@@ -39,33 +43,41 @@ in {
                 self.game_solved = False
 
             async def start_hax(self):
+                print(f"Starting hax process: {self.wordle_hax_bin}")
                 if self.process:
                     self.process.terminate()
                 self.process = subprocess.Popen(
-                    [self.wordle_hax_bin],
+                    [self.wordle_hax_bin, "--auto-select"],
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
                     bufsize=1
                 )
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)
 
             def get_next_guess(self, result_code=None):
                 if not self.process:
+                    print("Error: process not started")
                     return None
                 if result_code:
+                    print(f"Sending result to hax: {result_code}")
                     self.process.stdin.write(f"{result_code}\n")
                     self.process.stdin.flush()
 
+                print("Waiting for next guess from hax...")
                 while True:
                     line = self.process.stdout.readline()
                     if not line:
+                        print("Hax process closed stdout")
                         break
+                    # print(f"Hax DEBUG: {line.strip()}")
                     if "[AUTO-SELECTED]:" in line:
                         match = re.search(r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line)
                         if match:
-                            return match.group(1).lower()
+                            guess = match.group(1).lower()
+                            print(f"Hax recommended: {guess}")
+                            return guess
                 return None
 
             async def find_or_create_room(self):
