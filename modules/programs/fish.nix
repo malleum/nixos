@@ -10,7 +10,7 @@
       variables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
-        TERMINAL = "kitty";
+        TERMINAL = "foot";
         BROWSER = hostConfig.user.browser;
         BROWSER2 = hostConfig.user.browser2;
       };

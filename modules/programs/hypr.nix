@@ -189,7 +189,7 @@
         in
           [
             "SUPER, return, exec, $TERMINAL"
-            "SUPER SHIFT, return, exec, foot"
+            "SUPER SHIFT, return, exec, kitty"
             "SUPER, b, exec, $BROWSER"
             "SUPER SHIFT, b, exec, $BROWSER2"
             "SUPER, d, exec, vesktop"
