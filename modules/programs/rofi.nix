@@ -8,7 +8,7 @@
       inherit (config.lib.formats.rasi) mkLiteral;
     in {
       enable = true;
-      terminal = "foot";
+      terminal = "$TERMINAL";
       location = "center";
       plugins = with pkgs; [
         rofi-emoji

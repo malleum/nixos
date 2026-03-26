@@ -1,5 +1,5 @@
 let
-  stateVersion = "23.11";
+  stateVersion = "26.05";
 in {
   unify = {
     home.home = {inherit stateVersion;};

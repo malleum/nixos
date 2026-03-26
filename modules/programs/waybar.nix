@@ -59,7 +59,7 @@
         on-click-middle = "poweroff";
       };
       clock = {
-        on-click = "foot fish -C cal";
+        on-click = "$TERMINAL fish -C cal";
         on-click-right = "${browser} https://calendar.google.com/";
         format = "dato {:%m-%d} 󰸗";
         tooltip = true;
@@ -70,7 +70,7 @@
       };
       memory = {
         format = "memoro {used:0.1f}G 󰾅";
-        on-click = "foot fish -C btop";
+        on-click = "$TERMINAL fish -C btop";
       };
       disk = {
         format = "disko {percentage_used:02}% 󰋊";

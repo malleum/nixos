@@ -19,6 +19,10 @@
         enableNixpkgsReleaseCheck = false;
       };
 
+      gtk.gtk4.theme = null;
+      xdg.userDirs.setSessionVariables = false;
+      programs.git.signing.format = null;
+
       news = {
         display = "silent";
         entries = lib.mkForce [];

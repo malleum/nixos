@@ -64,7 +64,7 @@
           "waybar"
           "sleep 2"
           "signal-desktop"
-          "foot iamb"
+          "$TERMINAL iamb"
         ];
 
         input = {
@@ -188,13 +188,13 @@
             lib.attrsets.mapAttrsToList (key: num: "${mod},${key},${action},${num}") set;
         in
           [
-            "SUPER, return, exec, foot"
-            "SUPER SHIFT, return, exec, kitty"
+            "SUPER, return, exec, $TERMINAL"
+            "SUPER SHIFT, return, exec, foot"
             "SUPER, b, exec, $BROWSER"
             "SUPER SHIFT, b, exec, $BROWSER2"
             "SUPER, d, exec, vesktop"
             "SUPER SHIFT, d, exec, $BROWSER 'https://teams.microsoft.com/v2/'"
-            "SUPER, i, exec, foot iamb"
+            "SUPER, i, exec, $TERMINAL iamb"
             "SUPER SHIFT, i, exec, signal-desktop"
 
             "SUPER, x, exec, wl-copy 'https://xkcd.com/1475/'"

@@ -132,7 +132,7 @@
       };
       lua_ls = {
         enable = true;
-        settings.Lua.diagnostics.globals = ["vim"];
+        config.settings.Lua.diagnostics.globals = ["vim"];
       };
       nixd = {
         enable = true;
