@@ -1,7 +1,6 @@
 {
   unify.modules.gui.home = {pkgs, ...}: {
     home.packages = with pkgs; [
-      cherry-studio
       code-cursor-fhs
       losslesscut-bin
       vlc

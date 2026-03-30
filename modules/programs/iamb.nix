@@ -1,6 +1,6 @@
 {
   unify.modules.gui.home = {pkgs, ...}: let
-    jiamb = pkgs.iamb.overrideAttrs (oldAttrs: rec {
+    jiamb = pkgs.stable.iamb.overrideAttrs (oldAttrs: rec {
       pname = "iamb";
       version = "0.0.11";
       src = pkgs.fetchFromGitHub {
