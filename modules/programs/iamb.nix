@@ -1,15 +1,18 @@
 {
   unify.modules.gui.home = {pkgs, ...}: let
-    jiamb = pkgs.stable.iamb.overrideAttrs (oldAttrs: rec {
+    jiamb = pkgs.iamb.overrideAttrs (oldAttrs: rec {
       pname = "iamb";
       version = "0.0.11";
       src = pkgs.fetchFromGitHub {
         owner = "malleum";
         repo = "iamb";
-        rev = "4ada706110fc1afb894af9d5cbf7db52230a19a1";
-        hash = "sha256-dhW5Jfs80qhVIOYvKDYbp6ckzCIsubmQ89KXMIwydQg=";
+        rev = "acf44cd767cc2bd482ec47ced324d078b60c282c";
+        hash = "sha256-hKBdj1JZMuuaWBL8K4bfwABgw1FnAIknTpU0k6v2KBk=";
       };
       cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
+      postPatch = (oldAttrs.postPatch or "") + ''
+        sed -i '1i #![recursion_limit = "256"]' src/main.rs
+      '';
     });
   in {
     home = {
