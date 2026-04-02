@@ -208,7 +208,7 @@ in {
     services.livekit = {
       enable = true;
       keyFile = config.sops.secrets.matrix-livekit-key.path;
-      config = {
+      settings = {
         port = 7880;
         rtc = {
           port_range_start = 50000;
