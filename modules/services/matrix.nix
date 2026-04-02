@@ -133,6 +133,8 @@ in {
     # --- PostgreSQL for Synapse ---
     services.postgresql = {
       enable = true;
+      package = pkgs.postgresql_15;
+      dataDir = "/var/lib/postgresql/15";
       initialScript = config.sops.templates.matrix-db-init.path;
     };
     # Ensure sops renders the DB init script before PostgreSQL first starts
