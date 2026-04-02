@@ -7,12 +7,14 @@
         owner = "malleum";
         repo = "iamb";
         rev = "acf44cd767cc2bd482ec47ced324d078b60c282c";
-        hash = "sha256-hKBdj1JZMuuaWBL8K4bfwABgw1FnAIknTpU0k6v2KBk=";
+        hash = "sha256-4fcfu+qcbjksVBjMKolL49ZqRCp9v8l4OHbU4U7H1zA=";
       };
       cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
-      postPatch = (oldAttrs.postPatch or "") + ''
-        sed -i '1i #![recursion_limit = "256"]' src/main.rs
-      '';
+      postPatch =
+        (oldAttrs.postPatch or "")
+        + ''
+          sed -i '1i #![recursion_limit = "256"]' src/main.rs
+        '';
     });
   in {
     home = {

@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {
+  unify.modules.jay.home = {
     config,
     hostConfig,
     pkgs,
