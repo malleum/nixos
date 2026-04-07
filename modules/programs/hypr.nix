@@ -60,7 +60,7 @@
 
         exec-once = [
           "nm-applet"
-          "swww-daemon && swww img ${wallpaper}"
+          "awww-daemon && awww img ${wallpaper}"
           "waybar"
           "sleep 2"
           "signal-desktop"
@@ -202,8 +202,8 @@
             "SUPER CONTROL, x, exec, wl-copy '\"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?\"'"
 
             "SUPER, n, exec, swaync-client --close-all"
-            "SUPER SHIFT, n, exec, swaync-client --dnd-off"
-            "SUPER CONTROL, n, exec, swaync-client --dnd-on"
+            "SUPER SHIFT, n, exec, swaync-client --dnd-off && notify-send 'Notifications Enabled' -t 1000"
+            "SUPER CONTROL, n, exec, notify-send 'Notifications Disabled' -t 300; sleep 0.3; swaync-client --dnd-on"
             "SUPER SHIFT CONTROL, n, exec, swaync-client -a 0"
 
             "SUPER, backslash, exec, hyprctl switchxkblayout all next"
@@ -232,9 +232,9 @@
 
             "SUPER, Backspace, exec, ${pkgs.swaylock}/bin/swaylock -c 000000"
 
-            "SUPER, bracketleft, exec, swww kill; swww-daemon && swww img ${wallpaper}"
+            "SUPER, bracketleft, exec, awww kill; awww-daemon && awww img ${wallpaper}"
             "SUPER, bracketright, exec, pkill waybar; sleep 0.5 && waybar"
-            "SUPER CONTROL, bracketleft, exec, swww kill"
+            "SUPER CONTROL, bracketleft, exec, awww kill"
             "SUPER CONTROL, bracketright, exec, pkill waybar"
             "SUPER CONTROL, d, exec, killall electron"
             "SUPER CONTROL SHIFT, d, exec, killall .electron-wrapp; killall electron"

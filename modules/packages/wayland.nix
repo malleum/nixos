@@ -4,7 +4,7 @@
       hyprland-qtutils
       hyprpicker
       kdePackages.qtwayland
-      swww
+      awww
       wdisplays
       wl-clipboard
       wlrctl
