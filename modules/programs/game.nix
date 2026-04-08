@@ -1,5 +1,5 @@
 {
-  unify.modules.gam.nixos = { pkgs, ... }: {
+  unify.modules.gam.nixos = {pkgs, ...}: {
     services.flatpak.enable = true;
     programs.steam = {
       enable = true;

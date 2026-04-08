@@ -499,7 +499,7 @@
         enabled = true
       '';
   in {
-    home.packages = [ pkgs.jay ];
+    home.packages = [pkgs.jay];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 
