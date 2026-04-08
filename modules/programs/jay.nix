@@ -1,5 +1,5 @@
 {
-  unify.modules.jay.home = {
+  unify.modules.gui.home = {
     config,
     hostConfig,
     pkgs,
@@ -7,6 +7,7 @@
   }: let
     wallpaper = config.stylix.image;
     browser = hostConfig.user.browser;
+    mod = "logo";
 
     # Jay status bar script using i3bar JSON protocol
     # bash
@@ -247,7 +248,6 @@
         on-graphics-initialized = [
           { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
           { type = "exec", exec = ["${pkgs.swaybg}/bin/swaybg", "-i", "${wallpaper}", "-m", "fill"] },
-          { type = "exec", exec = "${pkgs.mako}/bin/mako" },
           { type = "exec", exec = "signal-desktop" },
           { type = "exec", exec = { shell = "$TERMINAL iamb" } },
         ]
@@ -267,107 +267,108 @@
         [shortcuts]
 
         # ─ App launchers ─
-        logo-Return = "$launch-terminal"
-        logo-shift-Return = "$launch-kitty"
-        logo-b = "$launch-browser"
-        logo-shift-b = "$launch-browser2"
-        logo-d = "$launch-vesktop"
-        logo-shift-d = "$launch-teams"
-        logo-i = "$launch-iamb"
-        logo-shift-i = "$launch-signal"
+        ${mod}-Return = "$launch-terminal"
+        ${mod}-shift-Return = "$launch-kitty"
+        ${mod}-b = "$launch-browser"
+        ${mod}-shift-b = "$launch-browser2"
+        ${mod}-d = "$launch-vesktop"
+        ${mod}-shift-d = "$launch-teams"
+        ${mod}-i = "$launch-iamb"
+        ${mod}-shift-i = "$launch-signal"
 
         # ─ Clipboard copypaste ─
-        logo-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "https://xkcd.com/1475/"] }
-        logo-shift-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "Neida, jeg ville vinne"] }
+        ${mod}-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "https://xkcd.com/1475/"] }
+        ${mod}-shift-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "Neida, jeg ville vinne"] }
 
         # ─ Notifications (swaync) ─
-        logo-n = { type = "exec", exec = ["swaync-client", "--close-all"] }
-        logo-shift-n = { type = "exec", exec = ["swaync-client", "--dnd-off"] }
-        logo-ctrl-n = { type = "exec", exec = ["swaync-client", "--dnd-on"] }
+        ${mod}-n = { type = "exec", exec = ["swaync-client", "--close-all"] }
+        ${mod}-shift-n = { type = "exec", exec = { shell = "swaync-client --dnd-off && notify-send 'Notifications Enabled' -t 1000" } }
+        ${mod}-ctrl-n = { type = "exec", exec = { shell = "notify-send 'Notifications Disabled' -t 300; sleep 0.3; swaync-client --dnd-on" } }
+        ${mod}-ctrl-shift-n = { type = "exec", exec = ["swaync-client", "-a", "0"] }
 
-        # ─ App launcher (bemenu) ─
-        logo-s = { type = "exec", exec = { shell = "${pkgs.bemenu}/bin/bemenu-run --fn 'JetBrainsMono Nerd Font 13' -p 'run:' --tb '#${config.stylix.base16Scheme.base01}' --tf '#${config.stylix.base16Scheme.base0D}' --fb '#${config.stylix.base16Scheme.base01}' --ff '#${config.stylix.base16Scheme.base05}' --nb '#${config.stylix.base16Scheme.base01}' --nf '#${config.stylix.base16Scheme.base05}' --hb '#${config.stylix.base16Scheme.base0D}' --hf '#${config.stylix.base16Scheme.base01}' --sb '#${config.stylix.base16Scheme.base0D}' --sf '#${config.stylix.base16Scheme.base01}' --list 10 --center --width-factor 0.4 --border 2 --bdr '#${config.stylix.base16Scheme.base0D}'" } }
+        # ─ App launcher (rofi) ─
+        ${mod}-s = { type = "exec", exec = { shell = "rofi -show drun" } }
 
         # ─ Clipboard history ─
-        logo-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | ${pkgs.bemenu}/bin/bemenu --fn 'JetBrainsMono Nerd Font 13' -p 'clip:' --list 10 --center --width-factor 0.5 --tb '#${config.stylix.base16Scheme.base01}' --hb '#${config.stylix.base16Scheme.base0D}' --hf '#${config.stylix.base16Scheme.base01}' --nb '#${config.stylix.base16Scheme.base01}' --nf '#${config.stylix.base16Scheme.base05}' | ${pkgs.cliphist}/bin/cliphist decode | ${pkgs.wl-clipboard}/bin/wl-copy" } }
+        ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy" } }
 
         # ─ Calculator (rofi-calc with live preview) ─
-        logo-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary ${pkgs.libqalculate}/bin/qalc | ${pkgs.wl-clipboard}/bin/wl-copy" } }
+        ${mod}-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy" } }
 
         # ─ Emoji picker ─
-        logo-shift-e = { type = "exec", exec = ["rofi", "-modi", "emoji", "-show", "emoji"] }
+        ${mod}-shift-e = { type = "exec", exec = ["rofi", "-modi", "emoji", "-show", "emoji"] }
 
         # ─ Keyboard layout switching ─
-        logo-backslash = { type = "set-keymap", keymap.name = "qwerty" }
-        logo-shift-backslash = { type = "set-keymap", keymap.name = "dvorak" }
+        ${mod}-backslash = { type = "set-keymap", keymap.name = "qwerty" }
+        ${mod}-shift-backslash = { type = "set-keymap", keymap.name = "dvorak" }
 
         # ─ Window management ─
-        logo-shift-q = "close"
-        logo-ctrl-shift-semicolon = "quit"
-        logo-shift-z = { type = "exec", exec = "poweroff" }
-        logo-ctrl-z = { type = "exec", exec = "reboot" }
+        ${mod}-shift-q = "close"
+        ${mod}-ctrl-shift-semicolon = "quit"
+        ${mod}-shift-z = { type = "exec", exec = "poweroff" }
+        ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
 
         # ─ Screenshots ─
-        Print = { type = "exec", exec = { shell = "${pkgs.jay}/bin/jay screenshot --format png /tmp/jay-screenshot.png && ${pkgs.wl-clipboard}/bin/wl-copy < /tmp/jay-screenshot.png && rm /tmp/jay-screenshot.png" } }
-        shift-Print = { type = "exec", exec = { shell = "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy" } }
-        logo-shift-s = { type = "exec", exec = { shell = "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy" } }
-        logo-ctrl-s = { type = "exec", exec = { shell = "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.swappy}/bin/swappy -f - -o ~/downloads/swappy-$(date +%Y%m%d-%H%M%S).png" } }
+        Print = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m active -z --clipboard-only" } }
+        shift-Print = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region -z --clipboard-only" } }
+        ${mod}-shift-s = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only" } }
+        ${mod}-ctrl-s = { type = "exec", exec = { shell = "wl-paste | ${pkgs.swappy}/bin/swappy -f -" } }
 
         # ─ Floating / layout ─
-        logo-a = "focus-parent"
-        logo-space = "toggle-floating"
-        logo-t = "toggle-split"
-        logo-f = "toggle-mono"
-        logo-shift-f = "toggle-fullscreen"
+        ${mod}-a = "focus-parent"
+        ${mod}-space = "toggle-floating"
+        ${mod}-t = "toggle-split"
+        ${mod}-f = "toggle-mono"
+        ${mod}-shift-f = "toggle-fullscreen"
 
         # ─ Screen lock ─
-        logo-BackSpace = { type = "exec", exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true } }
+        ${mod}-BackSpace = { type = "exec", exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true } }
 
         # ─ Wallpaper restart ─
-        logo-bracketleft = { type = "exec", exec = { shell = "pkill swaybg; ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill &" } }
+        ${mod}-bracketleft = { type = "exec", exec = { shell = "pkill swaybg; ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill &" } }
 
         # ─ Kill electron ─
-        logo-ctrl-d = { type = "exec", exec = { shell = "killall electron" } }
-        logo-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
+        ${mod}-ctrl-d = { type = "exec", exec = { shell = "killall electron" } }
+        ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
         # ─ Move workspace to other output ─
-        logo-o = { type = "move-to-output", direction = "right" }
-        logo-shift-o = { type = "move-to-output", direction = "left" }
+        ${mod}-o = { type = "move-to-output", direction = "right" }
+        ${mod}-shift-o = { type = "move-to-output", direction = "left" }
 
         # ─ Focus movement (vim-style) ─
-        logo-h = "focus-left"
-        logo-j = "focus-down"
-        logo-k = "focus-up"
-        logo-l = "focus-right"
+        ${mod}-h = "focus-left"
+        ${mod}-j = "focus-down"
+        ${mod}-k = "focus-up"
+        ${mod}-l = "focus-right"
 
         # ─ Move windows (vim-style) ─
-        logo-shift-h = "move-left"
-        logo-shift-j = "move-down"
-        logo-shift-k = "move-up"
-        logo-shift-l = "move-right"
+        ${mod}-shift-h = "move-left"
+        ${mod}-shift-j = "move-down"
+        ${mod}-shift-k = "move-up"
+        ${mod}-shift-l = "move-right"
 
         # ─ Workspaces (dvorak home row: ' , . p y) ─
-        logo-apostrophe = { type = "show-workspace", name = "1" }
-        logo-comma = { type = "show-workspace", name = "2" }
-        logo-period = { type = "show-workspace", name = "3" }
-        logo-p = { type = "show-workspace", name = "4" }
-        logo-y = { type = "show-workspace", name = "5" }
+        ${mod}-apostrophe = { type = "show-workspace", name = "1" }
+        ${mod}-comma = { type = "show-workspace", name = "2" }
+        ${mod}-period = { type = "show-workspace", name = "3" }
+        ${mod}-p = { type = "show-workspace", name = "4" }
+        ${mod}-y = { type = "show-workspace", name = "5" }
 
-        logo-shift-apostrophe = { type = "move-to-workspace", name = "1" }
-        logo-shift-comma = { type = "move-to-workspace", name = "2" }
-        logo-shift-period = { type = "move-to-workspace", name = "3" }
-        logo-shift-p = { type = "move-to-workspace", name = "4" }
-        logo-shift-y = { type = "move-to-workspace", name = "5" }
+        ${mod}-shift-apostrophe = { type = "move-to-workspace", name = "1" }
+        ${mod}-shift-comma = { type = "move-to-workspace", name = "2" }
+        ${mod}-shift-period = { type = "move-to-workspace", name = "3" }
+        ${mod}-shift-p = { type = "move-to-workspace", name = "4" }
+        ${mod}-shift-y = { type = "move-to-workspace", name = "5" }
 
         # ─ Split direction ─
-        logo-minus = "split-horizontal"
-        logo-shift-minus = "split-vertical"
+        ${mod}-minus = "split-horizontal"
+        ${mod}-shift-minus = "split-vertical"
 
         # ─ Reload config ─
-        logo-shift-r = "reload-config-toml"
+        ${mod}-shift-r = "reload-config-toml"
 
         # ─ Toggle bar / titles ─
-        logo-ctrl-b = "toggle-bar"
+        ${mod}-ctrl-b = "toggle-bar"
 
         # ── Complex Shortcuts (media keys regardless of modifiers) ──
         [complex-shortcuts.XF86AudioLowerVolume]
@@ -498,17 +499,7 @@
         enabled = true
       '';
   in {
-    home.packages = with pkgs; [
-      jay
-      bemenu
-      grim
-      libqalculate
-      slurp
-      swaybg
-      swappy
-      swaylock
-      mako
-    ];
+    home.packages = [ pkgs.jay ];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 
