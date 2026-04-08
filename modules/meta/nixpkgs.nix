@@ -26,6 +26,21 @@
           vendorHash = "sha256-WzM1SzWvTeiygrt/TYjXXTG/LO2Wsp28Mf3PZMl0qmY=";
         });
       })
+
+      (final: prev: {
+        jay = prev.jay.overrideAttrs (old: rec {
+          version = "1.12.0";
+          src = prev.fetchFromGitHub {
+            owner = "mahkoh";
+            repo = "jay";
+            rev = "v${version}";
+            hash = "sha256-JOt3xEONGDmLovk72hX0d3De01zTd51d2/J4HziBE9I=";
+          };
+          cargoDeps = prev.rustPlatform.importCargoLock {
+            lockFile = "${src}/Cargo.lock";
+          };
+        });
+      })
     ];
   };
 in {
