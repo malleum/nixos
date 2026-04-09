@@ -56,6 +56,7 @@
     };
 
     # Jay status bar script using i3bar JSON protocol
+    # Reads from /proc and /sys directly where possible to minimize subprocess spawning.
     # bash
     jayStatusScript = pkgs.writeShellScript "jay-status" ''
       echo '{"version":1}'
@@ -64,40 +65,21 @@
       while true; do
         pieces=()
 
-        # System tray is built into jay's bar, no need for tray module
-
-        # Audio (pulseaudio)
-        vol=$(${pkgs.pulsemixer}/bin/pulsemixer --get-volume 2>/dev/null | ${pkgs.gawk}/bin/awk '{print $1}')
-        mute=$(${pkgs.pulsemixer}/bin/pulsemixer --get-mute 2>/dev/null)
+        # Audio (pulseaudio) — two quick pulsemixer calls with timeout
+        vol=$(timeout 1 ${pkgs.pulsemixer}/bin/pulsemixer --get-volume 2>/dev/null | ${pkgs.gawk}/bin/awk '{print $1}')
+        mute=$(timeout 1 ${pkgs.pulsemixer}/bin/pulsemixer --get-mute 2>/dev/null)
         if [ "$mute" = "1" ]; then
           pieces+=("{\"name\":\"pulseaudio\",\"full_text\":\"audio: muted 󰝟\"}")
         else
           icon=""
-          [ "$vol" -gt 50 ] 2>/dev/null && icon=""
-          [ "$vol" -gt 75 ] 2>/dev/null && icon=""
+          [ "''${vol:-0}" -gt 50 ] 2>/dev/null && icon=""
+          [ "''${vol:-0}" -gt 75 ] 2>/dev/null && icon=""
           pieces+=("{\"name\":\"pulseaudio\",\"full_text\":\"audio ''${vol:-?}% $icon\"}")
         fi
 
-        # Network
-        net_info=$(${pkgs.networkmanager}/bin/nmcli -t -f TYPE,STATE,CONNECTION device 2>/dev/null | ${pkgs.gnugrep}/bin/grep -m1 ':connected:')
-        if [ -n "$net_info" ]; then
-          net_type=$(echo "$net_info" | cut -d: -f1)
-          net_name=$(echo "$net_info" | cut -d: -f3)
-          if [ "$net_type" = "wifi" ]; then
-            signal=$(${pkgs.networkmanager}/bin/nmcli -t -f IN-USE,SIGNAL dev wifi 2>/dev/null | ${pkgs.gnugrep}/bin/grep '^\*' | cut -d: -f2)
-            pieces+=("{\"name\":\"network\",\"full_text\":\"net ''${signal:-?}% \"}")
-          else
-            pieces+=("{\"name\":\"network\",\"full_text\":\"net: 󰈀\"}")
-          fi
-        else
-          pieces+=("{\"name\":\"network\",\"full_text\":\"net: disconnected ⚠\",\"urgent\":true}")
-        fi
-
-        # CPU
-        cpu=$(${pkgs.procps}/bin/ps -A -o pcpu 2>/dev/null | ${pkgs.gawk}/bin/awk '{s+=$1} END {printf "%02d", s/NR*NR/100}' 2>/dev/null || echo "?")
-        # Simpler: read from /proc/stat
+        # CPU — read /proc/stat directly (no subprocesses)
         read -r _ u1 n1 s1 i1 _ < /proc/stat
-        sleep 0.05
+        sleep 0.2
         read -r _ u2 n2 s2 i2 _ < /proc/stat
         total=$(( (u2+n2+s2+i2) - (u1+n1+s1+i1) ))
         idle=$(( i2 - i1 ))
@@ -108,18 +90,31 @@
         fi
         pieces+=("{\"name\":\"cpu\",\"full_text\":\"cpu $(printf '%02d' $cpu)% 󰍛\"}")
 
-        # Memory
-        mem_used=$(${pkgs.procps}/bin/free -m 2>/dev/null | ${pkgs.gawk}/bin/awk '/^Mem:/ {printf "%.1f", $3/1024}')
-        pieces+=("{\"name\":\"memory\",\"full_text\":\"mem ''${mem_used:-?}G 󰾅\"}")
+        # Memory — read /proc/meminfo directly (no subprocesses)
+        while IFS=': ' read -r key val _; do
+          case "$key" in
+            MemTotal) mem_total=$val ;;
+            MemAvailable) mem_avail=$val ;;
+          esac
+        done < /proc/meminfo
+        if [ -n "$mem_total" ] && [ -n "$mem_avail" ]; then
+          mem_used_kb=$(( mem_total - mem_avail ))
+          mem_used_mb=$(( mem_used_kb / 1024 ))
+          mem_gb=$(( mem_used_mb / 1024 ))
+          mem_frac=$(( (mem_used_mb % 1024) * 10 / 1024 ))
+          pieces+=("{\"name\":\"memory\",\"full_text\":\"mem $mem_gb.$mem_frac G 󰾅\"}")
+        else
+          pieces+=("{\"name\":\"memory\",\"full_text\":\"mem ?G 󰾅\"}")
+        fi
 
-        # Disk
-        disk_pct=$(df -h / 2>/dev/null | ${pkgs.gawk}/bin/awk 'NR==2 {gsub(/%/,""); print $5}')
+        # Disk — one df call
+        disk_pct=$(df --output=pcent / 2>/dev/null | tail -1 | tr -dc '0-9')
         pieces+=("{\"name\":\"disk\",\"full_text\":\"disk $(printf '%02d' "''${disk_pct:-0}")% 󰋊\"}")
 
-        # Battery (only if battery exists)
+        # Battery (only if battery exists) — read /sys directly
         if [ -d /sys/class/power_supply/BAT0 ]; then
-          bat_cap=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null)
-          bat_status=$(cat /sys/class/power_supply/BAT0/status 2>/dev/null)
+          bat_cap=$(< /sys/class/power_supply/BAT0/capacity)
+          bat_status=$(< /sys/class/power_supply/BAT0/status)
           if [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ]; then
             bat_icon="󰂄"
           else
@@ -137,8 +132,8 @@
         date_str=$(date '+%m-%d')
         pieces+=("{\"name\":\"clock\",\"full_text\":\"date $date_str 󰸗\"}")
 
-        # Duodo clock
-        duod_val=$(duod 2>/dev/null | ${pkgs.choose}/bin/choose -c 0..4)
+        # Duodo clock — timeout to prevent hangs
+        duod_val=$(timeout 1 duod 2>/dev/null | ${pkgs.choose}/bin/choose -c 0..4)
         pieces+=("{\"name\":\"duod\",\"full_text\":\"duodo ''${duod_val:-?} 󱑤\"}")
 
         # Build JSON array
@@ -150,7 +145,7 @@
         line="$line]"
         echo "$line"
 
-        sleep 1
+        sleep 2
       done
     '';
 
