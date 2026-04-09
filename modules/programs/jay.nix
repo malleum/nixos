@@ -351,11 +351,11 @@
         ${mod}-shift-z = { type = "exec", exec = "poweroff" }
         ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
 
-        # ─ Screenshots ─
-        Print = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m active -z --clipboard-only" } }
-        shift-Print = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region -z --clipboard-only" } }
-        ${mod}-shift-s = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only" } }
-        ${mod}-ctrl-s = { type = "exec", exec = { shell = "wl-paste | ${pkgs.swappy}/bin/swappy -f -" } }
+        # ─ Screenshots (jay screenshot + satty) ─
+        Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.wl-clipboard}/bin/wl-copy < /tmp/jay-screenshot.png", privileged = true } }
+        shift-Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.satty}/bin/satty -f /tmp/jay-screenshot.png", privileged = true } }
+        ${mod}-shift-s = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.satty}/bin/satty -f /tmp/jay-screenshot.png", privileged = true } }
+        ${mod}-ctrl-s = { type = "exec", exec = { shell = "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.satty}/bin/satty -f -", privileged = true } }
 
         # ─ Floating / layout ─
         ${mod}-a = "focus-parent"
@@ -492,27 +492,7 @@
         action = { type = "move-to-workspace", name = "3" }
 
         [[windows]]
-        match.title-regex = ".*Steam.*"
-        match.just-mapped = true
-        action = { type = "move-to-workspace", name = "4" }
-
-        [[windows]]
-        match.title-regex = ".*Minecraft.*"
-        match.just-mapped = true
-        action = { type = "move-to-workspace", name = "4" }
-
-        [[windows]]
-        match.title-regex = ".*Prism Launcher.*"
-        match.just-mapped = true
-        action = { type = "move-to-workspace", name = "4" }
-
-        [[windows]]
-        match.title-regex = ".*Terraria.*"
-        match.just-mapped = true
-        action = { type = "move-to-workspace", name = "4" }
-
-        [[windows]]
-        match.title-regex = ".*War.*"
+        match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War).*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "4" }
 
@@ -551,20 +531,58 @@
         match.app-id = "nm-connection-editor"
         initial-tile-state = "floating"
 
+        # Float satty
+        [[windows]]
+        match.app-id = "satty"
+        initial-tile-state = "floating"
+
+        # ── Client Rules (grant privileged protocol access) ─────────
+        [[clients]]
+        match.any = [
+          { comm = "wl-copy" },
+          { comm = "wl-paste" },
+          { comm = "cliphist" },
+        ]
+        capabilities = ["data-control"]
+
+        [[clients]]
+        match.comm = "satty"
+        capabilities = ["layer-shell"]
+
+        [[clients]]
+        match.comm = "swaylock"
+        capabilities = ["session-lock", "layer-shell"]
+
+        [[clients]]
+        match.any = [
+          { comm = "swaync" },
+          { comm = "swaync-client" },
+        ]
+        capabilities = ["layer-shell"]
+
+        [[clients]]
+        match.comm = "nm-applet"
+        capabilities = ["layer-shell"]
+
+        [[clients]]
+        match.comm = "rofi"
+        capabilities = ["layer-shell"]
+
         # ── Xwayland ─────────────────────────────────────────────────
         [xwayland]
         enabled = true
       '';
   in {
-    home.packages = [jayPkg];
+    home.packages = [jayPkg pkgs.satty];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 
-    # Swappy config: save to downloads
-    xdg.configFile."swappy/config".text = ''
-      [Default]
-      save_dir=$HOME/downloads
-      save_filename_format=swappy-%Y%m%d-%H%M%S.png
+    # Satty config: save to downloads, copy to clipboard on save
+    xdg.configFile."satty/config.toml".text = ''
+      [general]
+      save-after-copy = false
+      copy-command = "wl-copy"
+      output-filename = "$HOME/downloads/satty-%Y%m%d-%H%M%S.png"
     '';
   };
 }
