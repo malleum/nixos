@@ -14,6 +14,7 @@ in {
         efi
         gui
         lap
+        vrt
         wif
         wrk
         ;
