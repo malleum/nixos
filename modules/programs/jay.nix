@@ -1,15 +1,6 @@
-{inputs, ...}: {
-  unify.modules.gui.home = {
-    config,
-    hostConfig,
-    pkgs,
-    ...
-  }: let
-    wallpaper = config.stylix.image;
-    browser = hostConfig.user.browser;
-    mod = "logo";
-
-    jayPkg = pkgs.rustPlatform.buildRustPackage {
+{inputs, ...}: let
+  makeJayPkg = pkgs:
+    pkgs.rustPlatform.buildRustPackage {
       pname = "jay";
       version = "flake-${inputs.jay.shortRev or "unknown"}";
       src = inputs.jay;
@@ -54,6 +45,23 @@
 
       meta.mainProgram = "jay";
     };
+in {
+  # Install jay.desktop to system-level wayland-sessions so ly can find it
+  unify.modules.gui.nixos = {pkgs, ...}: {
+    environment.systemPackages = [(makeJayPkg pkgs)];
+  };
+
+  unify.modules.gui.home = {
+    config,
+    hostConfig,
+    pkgs,
+    ...
+  }: let
+    wallpaper = config.stylix.image;
+    browser = hostConfig.user.browser;
+    mod = "logo";
+
+    jayPkg = makeJayPkg pkgs;
 
     # Jay status bar script using i3bar JSON protocol
     # Reads from /proc and /sys directly where possible to minimize subprocess spawning.
@@ -227,7 +235,7 @@
         ]
 
         on-graphics-initialized = [
-          { type = "exec", exec = "wl-tray-bridge" },
+          { type = "exec", exec = { prog = "wl-tray-bridge", privileged = true } },
           { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
           { type = "exec", exec = "${pkgs.pasystray}/bin/pasystray" },
           { type = "exec", exec = ["${pkgs.swaybg}/bin/swaybg", "-i", "${wallpaper}", "-m", "fill"] },
@@ -301,7 +309,7 @@
         launch-browser = { type = "exec", exec = "${browser}" }
         launch-browser2 = { type = "exec", exec = "${hostConfig.user.browser2}" }
         launch-vesktop = { type = "exec", exec = "vesktop" }
-        launch-teams = { type = "exec", exec = ["${browser}", "https://teams.microsoft.com/v2/"] }
+        launch-teams = { type = "exec", exec = ["${browser}", "--new-window", "https://teams.microsoft.com/v2/"] }
         launch-iamb = { type = "exec", exec = { shell = "$TERMINAL iamb" } }
         launch-signal = { type = "exec", exec = "signal-desktop" }
 
@@ -375,8 +383,8 @@
         ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
         # ─ Move workspace to other output ─
-        ${mod}-o = { type = "move-to-output", direction = "right" }
-        ${mod}-shift-o = { type = "move-to-output", direction = "left" }
+        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "warp-mouse-to-focus"]
+        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "warp-mouse-to-focus"]
 
         # ─ Focus movement (vim-style) ─
         ${mod}-h = "focus-left"
@@ -397,11 +405,11 @@
         ${mod}-p = { type = "show-workspace", name = "4" }
         ${mod}-y = { type = "show-workspace", name = "5" }
 
-        ${mod}-shift-apostrophe = { type = "move-to-workspace", name = "1" }
-        ${mod}-shift-comma = { type = "move-to-workspace", name = "2" }
-        ${mod}-shift-period = { type = "move-to-workspace", name = "3" }
-        ${mod}-shift-p = { type = "move-to-workspace", name = "4" }
-        ${mod}-shift-y = { type = "move-to-workspace", name = "5" }
+        ${mod}-shift-apostrophe = [{ type = "move-to-workspace", name = "1" }, { type = "show-workspace", name = "1" }]
+        ${mod}-shift-comma = [{ type = "move-to-workspace", name = "2" }, { type = "show-workspace", name = "2" }]
+        ${mod}-shift-period = [{ type = "move-to-workspace", name = "3" }, { type = "show-workspace", name = "3" }]
+        ${mod}-shift-p = [{ type = "move-to-workspace", name = "4" }, { type = "show-workspace", name = "4" }]
+        ${mod}-shift-y = [{ type = "move-to-workspace", name = "5" }, { type = "show-workspace", name = "5" }]
 
         # ─ Split direction ─
         ${mod}-minus = "split-horizontal"
@@ -453,7 +461,6 @@
         # Workspace assignments
         [[windows]]
         match.title-regex = ".*Microsoft Teams.*"
-        match.just-mapped = true
         action = { type = "move-to-workspace", name = "2" }
 
         [[windows]]
@@ -463,6 +470,7 @@
 
         [[windows]]
         match.title-regex = ".*Firefox.*"
+        match.not.title-regex = ".*Microsoft Teams.*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "1" }
 
@@ -477,8 +485,7 @@
         action = { type = "move-to-workspace", name = "1" }
 
         [[windows]]
-        match.title-regex = "^iamb.*"
-        match.just-mapped = true
+        match.title-regex = "^iamb"
         action = { type = "move-to-workspace", name = "2" }
 
         [[windows]]
