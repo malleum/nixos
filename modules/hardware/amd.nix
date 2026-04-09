@@ -4,6 +4,11 @@
     hostConfig,
     ...
   }: {
+    boot.kernelParams = [
+      "amdgpu.gpu_recovery=1" # Enable GPU reset on hang instead of freezing the whole system
+      "amdgpu.ppfeaturemask=0xfffd7fff" # Disable SDMA power gating (bit 15) to prevent sdma0 hangs
+    ];
+
     services.xserver.videoDrivers = ["amdgpu"];
 
     users.users.${hostConfig.user.username}.extraGroups = ["render"];

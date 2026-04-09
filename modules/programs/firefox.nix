@@ -88,7 +88,7 @@
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
       "media.ffmpeg.vaapi.enabled" = true; # This is the main one: enables VA-API (video decoding)
-      "media.ffvpx.enabled" = false; # Disables the built-in VP8/VP9 decoder to force VA-API
+      "media.ffvpx.enabled" = true; # Use software VP8/VP9 decoder (avoids GPU contention with games)
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
       "media.webrtc.pipewire.enabled" = true;
 
@@ -96,7 +96,7 @@
       "widget.wayland.opaque-region.enabled" = true; # Required for proper Wayland compositing
       "widget.wayland-dmabuf-vaapi.enabled" = true; # Enable DMA-BUF for VA-API on Wayland
       "gfx.x11-egl.force-enabled" = false; # Don't force X11 EGL on Wayland
-      "widget.dmabuf.force-enabled" = true; # Force DMA-BUF buffer sharing
+      "widget.dmabuf.force-enabled" = false; # Don't force DMA-BUF — can cause GPU instability under load
 
       # --- Auto-Enable Extensions & Hide Prompts ---
       "extensions.startupScanScopes" = 1; # Allow extensions from user profile
