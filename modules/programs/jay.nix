@@ -176,21 +176,21 @@
       else if hostConfig.name == "manus"
       # toml
       then ''
-        # Lenovo laptop panel
+        # LG ULTRAGEAR (left monitor, scaled for readable text)
+        [[outputs]]
+        match.connector = "DP-2"
+        name = "external"
+        x = 0
+        y = 0
+        mode = { width = 2560, height = 1440, refresh-rate = 60.0 }
+
+        # Lenovo laptop panel (right of external, or standalone)
         [[outputs]]
         match.connector = "eDP-1"
         name = "laptop"
         x = 2560
         y = 0
         mode = { width = 1920, height = 1200, refresh-rate = 60.0 }
-
-        # LG ULTRAGEAR (left monitor)
-        [[outputs]]
-        match.serial-number = "0x0004A026"
-        name = "external"
-        x = 0
-        y = 0
-        mode = { width = 2560, height = 1440, refresh-rate = 60.0 }
       ''
       # toml
       else ''
@@ -203,6 +203,7 @@
         # ── General ──────────────────────────────────────────────────
         log-level = "info"
         focus-follows-mouse = true
+        unstable-mouse-follows-focus = true
         window-management-key = "Super_L"
         auto-reload = true
         show-titles = false
@@ -210,7 +211,31 @@
 
         # ── Keyboard ─────────────────────────────────────────────────
         keymap.name = "dvorak"
+        repeat-rate = { rate = 50, delay = 225 }
 
+        # ── Idle ─────────────────────────────────────────────────────
+        idle = { minutes = 10 }
+
+        on-idle = {
+          type = "exec",
+          exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true },
+        }
+
+        # ── Startup ──────────────────────────────────────────────────
+        on-startup = [
+          { type = "set-env", env = { XDG_CURRENT_DESKTOP = "jay" } },
+        ]
+
+        on-graphics-initialized = [
+          { type = "exec", exec = "wl-tray-bridge" },
+          { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
+          { type = "exec", exec = "${pkgs.pasystray}/bin/pasystray" },
+          { type = "exec", exec = ["${pkgs.swaybg}/bin/swaybg", "-i", "${wallpaper}", "-m", "fill"] },
+          { type = "exec", exec = "signal-desktop" },
+          { type = "exec", exec = { shell = "$TERMINAL iamb" } },
+        ]
+
+        # ── Keyboard layouts ─────────────────────────────────────────
         [[keymaps]]
         name = "dvorak"
         rmlvo = { layout = "us", variants = "dvorak", options = "caps:escape,compose:ins" }
@@ -218,8 +243,6 @@
         [[keymaps]]
         name = "qwerty"
         rmlvo = { layout = "us", options = "caps:escape,compose:ins" }
-
-        repeat-rate = { rate = 50, delay = 225 }
 
         # ── Environment ──────────────────────────────────────────────
         [env]
@@ -235,8 +258,6 @@
         ${outputConfig}
 
         # ── Input ────────────────────────────────────────────────────
-        # Pointer settings (accel-profile applies to mice, touchpad settings
-        # are silently ignored on non-touchpad devices)
         [[inputs]]
         match.is-pointer = true
         accel-profile = "Flat"
@@ -273,26 +294,6 @@
         format = "i3bar"
         exec = "${jayStatusScript}"
 
-        # ── Idle ─────────────────────────────────────────────────────
-        idle = { minutes = 10 }
-
-        on-idle = {
-          type = "exec",
-          exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true },
-        }
-
-        # ── Startup ──────────────────────────────────────────────────
-        on-startup = [
-          { type = "set-env", env = { XDG_CURRENT_DESKTOP = "jay" } },
-        ]
-
-        on-graphics-initialized = [
-          { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
-          { type = "exec", exec = ["${pkgs.swaybg}/bin/swaybg", "-i", "${wallpaper}", "-m", "fill"] },
-          { type = "exec", exec = "signal-desktop" },
-          { type = "exec", exec = { shell = "$TERMINAL iamb" } },
-        ]
-
         # ── Named Actions ────────────────────────────────────────────
         [actions]
         launch-terminal = { type = "exec", exec = { shell = "$TERMINAL" } }
@@ -316,10 +317,11 @@
         ${mod}-shift-d = "$launch-teams"
         ${mod}-i = "$launch-iamb"
         ${mod}-shift-i = "$launch-signal"
+        ${mod}-ctrl-c = "open-control-center"
 
         # ─ Clipboard copypaste ─
-        ${mod}-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "https://xkcd.com/1475/"] }
-        ${mod}-shift-x = { type = "exec", exec = ["${pkgs.wl-clipboard}/bin/wl-copy", "Neida, jeg ville vinne"] }
+        ${mod}-x = { type = "exec", exec = { prog = "${pkgs.wl-clipboard}/bin/wl-copy", args = ["https://xkcd.com/1475/"], privileged = true } }
+        ${mod}-shift-x = { type = "exec", exec = { prog = "${pkgs.wl-clipboard}/bin/wl-copy", args = ["Neida, jeg ville vinne"], privileged = true } }
 
         # ─ Notifications (swaync) ─
         ${mod}-n = { type = "exec", exec = ["swaync-client", "--close-all"] }
@@ -331,7 +333,7 @@
         ${mod}-s = { type = "exec", exec = { shell = "rofi -show drun" } }
 
         # ─ Clipboard history ─
-        ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy" } }
+        ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
 
         # ─ Calculator (rofi-calc with live preview) ─
         ${mod}-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy" } }
@@ -340,8 +342,8 @@
         ${mod}-shift-e = { type = "exec", exec = ["rofi", "-modi", "emoji", "-show", "emoji"] }
 
         # ─ Keyboard layout switching ─
-        ${mod}-backslash = { type = "set-keymap", keymap.name = "qwerty" }
-        ${mod}-shift-backslash = { type = "set-keymap", keymap.name = "dvorak" }
+        ${mod}-backslash = { type = "set-keymap", keymap = { name = "qwerty" } }
+        ${mod}-shift-backslash = { type = "set-keymap", keymap = { name = "dvorak" } }
 
         # ─ Window management ─
         ${mod}-shift-q = "close"
@@ -410,6 +412,20 @@
 
         # ─ Toggle bar / titles ─
         ${mod}-ctrl-b = "toggle-bar"
+
+        # ─ VT switching (essential for recovery) ─
+        ctrl-alt-F1 = { type = "switch-to-vt", num = 1 }
+        ctrl-alt-F2 = { type = "switch-to-vt", num = 2 }
+        ctrl-alt-F3 = { type = "switch-to-vt", num = 3 }
+        ctrl-alt-F4 = { type = "switch-to-vt", num = 4 }
+        ctrl-alt-F5 = { type = "switch-to-vt", num = 5 }
+        ctrl-alt-F6 = { type = "switch-to-vt", num = 6 }
+        ctrl-alt-F7 = { type = "switch-to-vt", num = 7 }
+        ctrl-alt-F8 = { type = "switch-to-vt", num = 8 }
+        ctrl-alt-F9 = { type = "switch-to-vt", num = 9 }
+        ctrl-alt-F10 = { type = "switch-to-vt", num = 10 }
+        ctrl-alt-F11 = { type = "switch-to-vt", num = 11 }
+        ctrl-alt-F12 = { type = "switch-to-vt", num = 12 }
 
         # ── Complex Shortcuts (media keys regardless of modifiers) ──
         [complex-shortcuts.XF86AudioLowerVolume]
