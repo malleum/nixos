@@ -749,6 +749,28 @@
         "type": "github"
       }
     },
+    "jay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775675805,
+        "narHash": "sha256-6SDl2Xi8TPT/CejPsJD8/A9HEfjRP9e1heDARuLnjx0=",
+        "ref": "refs/heads/master",
+        "rev": "a07f1bcdfd0ab9fc96d6d968b3ca386a5f4ff473",
+        "revCount": 2087,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/mahkoh/jay"
+      },
+      "original": {
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/mahkoh/jay"
+      }
+    },
     "mcsr-stats": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -1017,6 +1039,7 @@
         "home-manager": "home-manager",
         "hypr": "hypr",
         "import-tree": "import-tree",
+        "jay": "jay",
         "mcsr-stats": "mcsr-stats",
         "nix-alien": "nix-alien",
         "nixpkgs": "nixpkgs_4",

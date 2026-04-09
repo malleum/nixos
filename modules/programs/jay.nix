@@ -1,4 +1,4 @@
-{
+{inputs, ...}: {
   unify.modules.gui.home = {
     config,
     hostConfig,
@@ -8,6 +8,52 @@
     wallpaper = config.stylix.image;
     browser = hostConfig.user.browser;
     mod = "logo";
+
+    jayPkg = pkgs.rustPlatform.buildRustPackage {
+      pname = "jay";
+      version = "flake-${inputs.jay.shortRev or "unknown"}";
+      src = inputs.jay;
+
+      cargoDeps = pkgs.rustPlatform.importCargoLock {
+        lockFile = "${inputs.jay}/Cargo.lock";
+      };
+
+      nativeBuildInputs = with pkgs; [
+        autoPatchelfHook
+        installShellFiles
+        pkg-config
+      ];
+
+      buildInputs = with pkgs; [
+        libGL
+        libinput
+        libgbm
+        pango
+        udev
+        shaderc
+        xkeyboard_config
+      ];
+
+      runtimeDependencies = with pkgs; [
+        libglvnd
+        vulkan-loader
+      ];
+
+      env.SHADERC_LIB_DIR = "${pkgs.lib.getLib pkgs.shaderc}/lib";
+
+      postInstall = ''
+        install -D etc/jay.portal $out/share/xdg-desktop-portal/portals/jay.portal
+        install -D etc/jay-portals.conf $out/share/xdg-desktop-portal/jay-portals.conf
+        install -D etc/jay.desktop $out/share/wayland-sessions/jay.desktop
+
+        installShellCompletion --cmd jay \
+          --bash <($out/bin/jay generate-completion bash) \
+          --zsh <($out/bin/jay generate-completion zsh) \
+          --fish <($out/bin/jay generate-completion fish)
+      '';
+
+      meta.mainProgram = "jay";
+    };
 
     # Jay status bar script using i3bar JSON protocol
     # bash
@@ -499,7 +545,7 @@
         enabled = true
       '';
   in {
-    home.packages = [pkgs.jay];
+    home.packages = [jayPkg];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 
