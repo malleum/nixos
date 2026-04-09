@@ -38,6 +38,21 @@
               source ~/documents/gh/k/abbr.fish
           end
         '';
+        functions = {
+          # Override grc's man wrapper — it has no grc config for man so it
+          # shows grc's own help. User functions take precedence over vendor
+          # conf.d regardless of load order, unlike shellInit erasing.
+          man = ''
+            set -lx LESS_TERMCAP_mb (printf '\e[1;35m')
+            set -lx LESS_TERMCAP_md (printf '\e[1;34m')
+            set -lx LESS_TERMCAP_me (printf '\e[0m')
+            set -lx LESS_TERMCAP_so (printf '\e[33m')
+            set -lx LESS_TERMCAP_se (printf '\e[0m')
+            set -lx LESS_TERMCAP_us (printf '\e[1;32m')
+            set -lx LESS_TERMCAP_ue (printf '\e[0m')
+            command man $argv
+          '';
+        };
         shellAliases = {
           la = "eza -lah";
           cat = "bat";
