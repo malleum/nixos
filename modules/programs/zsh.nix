@@ -45,8 +45,9 @@
               return 127
           }
 
-          # any-nix-shell
-          ${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin
+          # any-nix-shell (without --info-right: its precmd sets RPROMPT directly,
+          # wiping starship's right prompt; starship's $nix_shell module handles display)
+          ${pkgs.any-nix-shell}/bin/any-nix-shell zsh | source /dev/stdin
 
           # Autopair (like fish's autopair plugin)
           source ${pkgs.zsh-autopair}/share/zsh/zsh-autopair/autopair.zsh
@@ -77,7 +78,12 @@
           bindkey '^P' _fzf_process_widget
 
           # Vi cursor: block in both modes (matches fish's fish_cursor_insert block)
-          function zle-keymap-select zle-line-init {
+          # Call any previously-registered zle-line-init (e.g. starship's timing hook) first
+          function zle-line-init {
+            (( $+functions[starship_zle-line-init] )) && starship_zle-line-init
+            echo -ne '\e[2 q'
+          }
+          function zle-keymap-select {
             echo -ne '\e[2 q'
           }
           zle -N zle-keymap-select
@@ -133,7 +139,13 @@
 
           # Menu select: highlighted item is inserted on CLI as you cycle
           zstyle ':completion:*' menu select
-          zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+          # Fish-like flag descriptions: bold flag, dim separator, colored description
+          # =(#b) pattern: group 1 = --flag (bold), group 2 = ' -- ' (dim), group 3 = description (italic cyan)
+          zstyle ':completion:*' list-colors \
+            "''${(s.:.)LS_COLORS}" \
+            '=(#b)(--[^ =]*)( -- )(*)=1=2=3;36'
+          # Group headers in dim parens (e.g. "(options)" above the flags list)
+          zstyle ':completion:*:descriptions' format '%F{8}(%d)%f'
         '';
 
         shellAliases = {
