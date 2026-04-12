@@ -8,8 +8,8 @@
       extraPackages = with pkgs; [
         gtk3
         glib
-        xorg.libXrandr
-        xorg.libX11
+        libxrandr
+        libx11
       ];
     };
   };

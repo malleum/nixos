@@ -44,11 +44,14 @@
       '';
 
       meta.mainProgram = "jay";
+      passthru.providedSessions = ["jay"];
     };
 in {
   # Install jay.desktop to system-level wayland-sessions so ly can find it
   unify.modules.gui.nixos = {pkgs, ...}: {
     environment.systemPackages = [(makeJayPkg pkgs)];
+    # Register jay.desktop with the display manager (ly, gdm, etc.)
+    services.displayManager.sessionPackages = [(makeJayPkg pkgs)];
   };
 
   unify.modules.gui.home = {
@@ -63,14 +66,49 @@ in {
 
     jayPkg = makeJayPkg pkgs;
 
+    wlTrayBridge = let
+      src = pkgs.fetchFromGitHub {
+        owner = "mahkoh";
+        repo = "wl-tray-bridge";
+        rev = "04cb349720f266917b5490e4a02f08d6ddf3f233";
+        hash = "sha256-pYmFEqMMEsSTYBwxbD2l2F+lO7WuVt1FFmnkCCoaXf0=";
+      };
+    in pkgs.rustPlatform.buildRustPackage {
+      pname = "wl-tray-bridge";
+      version = "0-unstable-2025-04-01";
+      inherit src;
+      cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
+      nativeBuildInputs = with pkgs; [pkg-config];
+      buildInputs = with pkgs; [pango cairo glib];
+    };
+
     # Jay status bar script using i3bar JSON protocol
     # Reads from /proc and /sys directly where possible to minimize subprocess spawning.
+    # Audio updates instantly via pactl subscribe; everything else updates every ~2s.
     # bash
     jayStatusScript = pkgs.writeShellScript "jay-status" ''
       echo '{"version":1}'
       echo '['
       echo '[]'
+
+      # Signal file touched by background pactl subscriber on audio changes
+      audio_flag=$(mktemp)
+      ( pactl subscribe 2>/dev/null | while IFS= read -r evt; do
+          case "$evt" in *" sink "*|*" source "*) touch "$audio_flag" ;; esac
+        done ) &
+      pactl_pid=$!
+      trap "kill $pactl_pid 2>/dev/null; rm -f $audio_flag" EXIT HUP INT TERM
+
+      # Sleep up to 2s but return early on audio events
+      wait_tick() {
+        for _ in $(seq 20); do
+          sleep 0.1
+          [ -f "$audio_flag" ] && return
+        done
+      }
+
       while true; do
+        rm -f "$audio_flag"
         pieces=()
 
         # Audio (pulseaudio) — two quick pulsemixer calls with timeout
@@ -153,7 +191,7 @@ in {
         line="$line]"
         echo "$line"
 
-        sleep 2
+        wait_tick
       done
     '';
 
@@ -235,7 +273,7 @@ in {
         ]
 
         on-graphics-initialized = [
-          { type = "exec", exec = { prog = "wl-tray-bridge", privileged = true } },
+          { type = "exec", exec = { prog = "${wlTrayBridge}/bin/wl-tray-bridge", privileged = true } },
           { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
           { type = "exec", exec = "${pkgs.pasystray}/bin/pasystray" },
           { type = "exec", exec = ["${pkgs.swaybg}/bin/swaybg", "-i", "${wallpaper}", "-m", "fill"] },
@@ -270,7 +308,7 @@ in {
         match.is-pointer = true
         accel-profile = "Flat"
         accel-speed = 0.0
-        natural-scrolling = true
+        natural-scrolling = false
         tap-enabled = true
         tap-drag-enabled = true
 
@@ -292,6 +330,7 @@ in {
         border-width = 2
         title-height = 24
         bar-height = 32
+        bar-separator-width = 4
         font = "JetBrainsMono Nerd Font 10"
         title-font = "JetBrainsMono Nerd Font 10"
         bar-font = "JetBrainsMono Nerd Font 13"
@@ -383,8 +422,8 @@ in {
         ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
         # ─ Move workspace to other output ─
-        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "warp-mouse-to-focus"]
-        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "warp-mouse-to-focus"]
+        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right", "warp-mouse-to-focus"]
+        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left", "warp-mouse-to-focus"]
 
         # ─ Focus movement (vim-style) ─
         ${mod}-h = "focus-left"
@@ -420,6 +459,7 @@ in {
 
         # ─ Toggle bar / titles ─
         ${mod}-ctrl-b = "toggle-bar"
+        ${mod}-ctrl-t = "toggle-titles"
 
         # ─ VT switching (essential for recovery) ─
         ctrl-alt-F1 = { type = "switch-to-vt", num = 1 }
@@ -522,6 +562,11 @@ in {
         match.title-regex = ".*Discord.*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "5" }
+
+        [[windows]]
+        match.title-regex = ".*Element.*"
+        match.just-mapped = true
+        action = { type = "move-to-workspace", name = "2" }
 
         # Float file dialogs
         [[windows]]
