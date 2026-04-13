@@ -119,24 +119,24 @@ in {
       echo '['
       echo '[]'
 
-      # Signal file touched by background pactl subscriber on audio changes
-      audio_flag=$(mktemp)
+      # FIFO-based audio wakeup: read -t 2 blocks until pactl event or timeout
+      audio_pipe=$(mktemp -u /tmp/jay-audio-XXXXXX)
+      mkfifo "$audio_pipe"
+      exec 9<>"$audio_pipe"  # keep both ends open so writes never block
       ( pactl subscribe 2>/dev/null | while IFS= read -r evt; do
-          case "$evt" in *" sink "*|*" source "*) touch "$audio_flag" ;; esac
+          case "$evt" in *" sink "*|*" source "*) echo x >&9 ;; esac
         done ) &
       pactl_pid=$!
-      trap "kill $pactl_pid 2>/dev/null; rm -f $audio_flag" EXIT HUP INT TERM
+      trap "kill $pactl_pid 2>/dev/null; exec 9>&-; rm -f $audio_pipe" EXIT HUP INT TERM
 
-      # Sleep up to 2s but return early on audio events
+      # Block up to 2s; return instantly on audio event
       wait_tick() {
-        for _ in $(seq 20); do
-          sleep 0.1
-          [ -f "$audio_flag" ] && return
-        done
+        local _d
+        read -t 2 -r _d <&9 || true
+        while read -t 0 -r _d <&9; do :; done  # drain extras
       }
 
       while true; do
-        rm -f "$audio_flag"
         pieces=()
 
         # Audio (pulseaudio) — two quick pulsemixer calls with timeout
@@ -611,9 +611,10 @@ in {
         match.app-id = "nm-connection-editor"
         initial-tile-state = "floating"
 
-        # Float satty
+        # Float satty (app-id varies by build; title-regex catches all cases)
         [[windows]]
-        match.app-id = "satty"
+        match.title-regex = ".*[Ss]atty.*"
+        match.just-mapped = true
         initial-tile-state = "floating"
 
         # ── Client Rules (grant privileged protocol access) ─────────
