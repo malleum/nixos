@@ -322,7 +322,7 @@ in {
         focused-title-text-color = "#${config.stylix.base16Scheme.base01}"
         unfocused-title-bg-color = "#${config.stylix.base16Scheme.base02}"
         unfocused-title-text-color = "#${config.stylix.base16Scheme.base05}"
-        focused-inactive-title-bg-color = "#${config.stylix.base16Scheme.base03}"
+        focused-inactive-title-bg-color = "#${config.stylix.base16Scheme.base02}"
         focused-inactive-title-text-color = "#${config.stylix.base16Scheme.base05}"
         attention-requested-bg-color = "#${config.stylix.base16Scheme.base08}"
         separator-color = "#${config.stylix.base16Scheme.base02}"
@@ -422,8 +422,8 @@ in {
         ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
         # ─ Move workspace to other output ─
-        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right", "warp-mouse-to-focus"]
-        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left", "warp-mouse-to-focus"]
+        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right"]
+        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left"]
 
         # ─ Focus movement (vim-style) ─
         ${mod}-h = "focus-left"
@@ -539,7 +539,7 @@ in {
         action = { type = "move-to-workspace", name = "3" }
 
         [[windows]]
-        match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War).*"
+        match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident).*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "4" }
 
