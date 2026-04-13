@@ -118,6 +118,15 @@
           # Still allow . in completion context (e.g. .hidden files)
           bindkey -M isearch . self-insert
 
+          # Up-arrow in insert mode: fetch history then move cursor past last char
+          # (vi-mode positions cursor ON last char; backspace can't reach it otherwise)
+          function _viins-up-history {
+            zle up-line-or-history
+            zle end-of-line
+          }
+          zle -N _viins-up-history
+          bindkey -M viins '^[[A' _viins-up-history
+
           # Alt+F: accept next word of autosuggestion (fish-like partial accept)
           bindkey '^[f' forward-word
 

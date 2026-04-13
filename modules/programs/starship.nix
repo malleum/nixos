@@ -37,7 +37,6 @@
           "$rust"
           "$typst"
           "$zig"
-          "$line_break"
         ];
         scan_timeout = 500;
         character = {
