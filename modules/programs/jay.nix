@@ -66,6 +66,33 @@ in {
 
     jayPkg = makeJayPkg pkgs;
 
+    # config.so: extends TOML config with smart workspace behaviors
+    jayConfigSo = let
+      configSrc = ./jay-config-so;
+    in
+      pkgs.rustPlatform.buildRustPackage {
+        pname = "jay-config-so";
+        version = "0.1.0";
+        src = configSrc;
+        cargoDeps = pkgs.rustPlatform.importCargoLock {
+          lockFile = "${configSrc}/Cargo.lock";
+        };
+
+        # Patch vendored jay-toml-config to remove its config!() macro call
+        # (causes duplicate JAY_CONFIG_ENTRY_V1 symbol otherwise).
+        preBuild = ''
+          toml_lib=$(find /build/cargo-vendor-dir -path '*/jay-toml-config-*/src/lib.rs' -print -quit 2>/dev/null)
+          if [ -n "$toml_lib" ]; then
+            sed -i '/^config!(configure);$/d' "$toml_lib"
+          fi
+        '';
+
+        installPhase = ''
+          mkdir -p $out/lib
+          cp target/*/release/libjay_config_so.so $out/lib/config.so
+        '';
+      };
+
     wlTrayBridge = let
       src = pkgs.fetchFromGitHub {
         owner = "mahkoh";
@@ -73,14 +100,15 @@ in {
         rev = "04cb349720f266917b5490e4a02f08d6ddf3f233";
         hash = "sha256-pYmFEqMMEsSTYBwxbD2l2F+lO7WuVt1FFmnkCCoaXf0=";
       };
-    in pkgs.rustPlatform.buildRustPackage {
-      pname = "wl-tray-bridge";
-      version = "0-unstable-2025-04-01";
-      inherit src;
-      cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
-      nativeBuildInputs = with pkgs; [pkg-config];
-      buildInputs = with pkgs; [pango cairo glib];
-    };
+    in
+      pkgs.rustPlatform.buildRustPackage {
+        pname = "wl-tray-bridge";
+        version = "0-unstable-2025-04-01";
+        inherit src;
+        cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
+        nativeBuildInputs = with pkgs; [pkg-config];
+        buildInputs = with pkgs; [pango cairo glib];
+      };
 
     # Jay status bar script using i3bar JSON protocol
     # Reads from /proc and /sys directly where possible to minimize subprocess spawning.
@@ -628,6 +656,7 @@ in {
     home.packages = [jayPkg pkgs.satty];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
+    xdg.configFile."jay/config.so".source = "${jayConfigSo}/lib/config.so";
 
     # Satty config: save to downloads, copy to clipboard on save
     xdg.configFile."satty/config.toml".text = ''

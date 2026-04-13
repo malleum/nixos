@@ -1,0 +1,11 @@
+[package]
+name = "jay-config-so"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+jay-config = "1.10"
+jay-toml-config = "0.12"
