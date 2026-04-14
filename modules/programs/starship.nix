@@ -39,6 +39,9 @@
           "$zig"
         ];
         scan_timeout = 500;
+        nix_shell = {
+          symbol = "❄ ";
+        };
         character = {
           error_symbol = "[✗](bold red)";
         };
