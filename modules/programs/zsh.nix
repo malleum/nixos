@@ -122,6 +122,20 @@
           # Still allow . in completion context (e.g. .hidden files)
           bindkey -M isearch . self-insert
 
+          # Abbreviations: g:m/ -> github:malleum/ , g:llm/ -> github:libertyluthermoffitt/
+          function _rationalise-slash {
+            if [[ $LBUFFER = *g:m ]]; then
+              LBUFFER="${LBUFFER%g:m}github:malleum/"
+            elif [[ $LBUFFER = *g:llm ]]; then
+              LBUFFER="${LBUFFER%g:llm}github:libertyluthermoffitt/"
+            else
+              LBUFFER+=/
+            fi
+          }
+          zle -N _rationalise-slash
+          bindkey / _rationalise-slash
+          bindkey -M isearch / self-insert
+
           # Up-arrow in insert mode: fetch history then move cursor past last char
           # (vi-mode positions cursor ON last char; backspace can't reach it otherwise)
           function _viins-up-history {

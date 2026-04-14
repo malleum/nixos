@@ -34,6 +34,19 @@
           set fish_cursor_insert block
           ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
 
+          # Abbreviations: g:m/ -> github:malleum/ , g:llm/ -> github:libertyluthermoffitt/
+          function _rationalise_slash
+              set -l token (commandline -t)
+              if string match -q "*g:m" -- $token
+                  commandline -t (string replace -r "g:m\$" "github:malleum/" -- $token)
+              else if string match -q "*g:llm" -- $token
+                  commandline -t (string replace -r "g:llm\$" "github:libertyluthermoffitt/" -- $token)
+              else
+                  commandline -i /
+              end
+          end
+          bind -M insert / _rationalise_slash
+
           if test -f ~/documents/gh/k/abbr.fish
               source ~/documents/gh/k/abbr.fish
           end
