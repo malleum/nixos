@@ -616,10 +616,9 @@ in {
         match.app-id = "nm-connection-editor"
         initial-tile-state = "floating"
 
-        # Float satty (app-id varies by build; title-regex catches all cases)
+        # Float satty
         [[windows]]
-        match.title-regex = ".*[Ss]atty.*"
-        match.just-mapped = true
+        match.app-id = "com.gabm.satty"
         initial-tile-state = "floating"
 
         # ── Client Rules (grant privileged protocol access) ─────────
