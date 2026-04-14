@@ -119,21 +119,26 @@ in {
       echo '['
       echo '[]'
 
-      # FIFO-based audio wakeup: read -t 2 blocks until pactl event or timeout
+      # FIFO-based audio wakeup.
+      # O_RDWR (<>) makes reads non-blocking on Linux — use separate O_RDONLY/O_WRONLY fds.
+      # Open order: subscriber stdout->FIFO (child blocks on O_WRONLY), then parent opens
+      # O_RDONLY (they "meet", both unblock). Parent then opens sentinel O_WRONLY (fd8) so
+      # reads don't get EOF if pactl dies.
       audio_pipe=$(mktemp -u /tmp/jay-audio-XXXXXX)
       mkfifo "$audio_pipe"
-      exec 9<>"$audio_pipe"  # keep both ends open so writes never block
-      ( pactl subscribe 2>/dev/null | while IFS= read -r evt; do
-          case "$evt" in *" sink "*|*" source "*) echo x >&9 ;; esac
-        done ) &
+      ( ${pkgs.pulseaudio}/bin/pactl subscribe 2>/dev/null | while IFS= read -r evt; do
+          case "$evt" in *" sink "*|*" source "*) echo x ;; esac
+        done ) >"$audio_pipe" &
       pactl_pid=$!
-      trap "kill $pactl_pid 2>/dev/null; exec 9>&-; rm -f $audio_pipe" EXIT HUP INT TERM
+      exec 9<"$audio_pipe"   # O_RDONLY — blocks until subscriber opens write end (they meet)
+      exec 8>"$audio_pipe"   # O_WRONLY sentinel — won't block (fd9 is now open reader)
+      trap "kill $pactl_pid 2>/dev/null; wait $pactl_pid 2>/dev/null; exec 8>&-; exec 9>&-; rm -f $audio_pipe" EXIT HUP INT TERM
 
       # Block up to 2s; return instantly on audio event
       wait_tick() {
         local _d
         read -t 2 -r _d <&9 || true
-        while read -t 0 -r _d <&9; do :; done  # drain extras
+        while read -t 0.01 -r _d <&9; do :; done || true  # drain extras (read -t 0 only polls, doesn't consume)
       }
 
       while true; do
