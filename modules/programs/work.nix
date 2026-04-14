@@ -5,7 +5,7 @@
       abbr -a prod 'VS_RUN_PROD=1'
     '';
 
-    programs.zsh.initExtra = ''
+    programs.zsh.initContent = ''
       typeset -gA _zsh_abbrs
       _zsh_abbrs=(
         stag 'STAGING_BRANCH=$(git branch --show-current)'
