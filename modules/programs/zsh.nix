@@ -125,9 +125,9 @@
           # Abbreviations: g:m/ -> github:malleum/ , g:llm/ -> github:libertyluthermoffitt/
           function _rationalise-slash {
             if [[ $LBUFFER = *g:m ]]; then
-              LBUFFER="${LBUFFER%g:m}github:malleum/"
+              LBUFFER="''${LBUFFER%g:m}github:malleum/"
             elif [[ $LBUFFER = *g:llm ]]; then
-              LBUFFER="${LBUFFER%g:llm}github:libertyluthermoffitt/"
+              LBUFFER="''${LBUFFER%g:llm}github:libertyluthermoffitt/"
             else
               LBUFFER+=/
             fi
