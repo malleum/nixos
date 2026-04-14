@@ -20,7 +20,11 @@
     users.defaultUserShell = lib.mkForce pkgs.zsh;
   };
 
-  unify.home = {pkgs, config, ...}: {
+  unify.home = {
+    pkgs,
+    config,
+    ...
+  }: {
     programs = {
       zsh = {
         enable = true;
@@ -156,12 +160,6 @@
           # Group headers in dim parens (e.g. "(options)" above the flags list)
           zstyle ':completion:*:descriptions' format '%F{8}(%d)%f'
         '';
-
-        shellAliases = {
-          la = "eza -lah";
-          cat = "bat";
-          choose = "choose -x";
-        };
       };
     };
 

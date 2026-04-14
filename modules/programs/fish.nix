@@ -53,11 +53,6 @@
             command man $argv
           '';
         };
-        shellAliases = {
-          la = "eza -lah";
-          cat = "bat";
-          choose = "choose -x";
-        };
       };
     };
 
