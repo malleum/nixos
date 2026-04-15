@@ -631,6 +631,7 @@ in {
           { comm = "wl-copy" },
           { comm = "wl-paste" },
           { comm = "cliphist" },
+          { comm = "iamb" },
         ]
         capabilities = ["data-control"]
 
