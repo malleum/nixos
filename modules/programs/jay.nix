@@ -345,6 +345,10 @@ in {
         tap-enabled = true
         tap-drag-enabled = true
 
+        [[inputs]]
+        match.is-gesture = true
+        natural-scrolling = true
+
         # ── Theme ─────────────────────────────────────────────────────
         [theme]
         bg-color = "#000000"
@@ -416,10 +420,10 @@ in {
         ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
 
         # ─ Calculator (rofi-calc with live preview) ─
-        ${mod}-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy" } }
+        ${mod}-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy", privileged = true } }
 
         # ─ Emoji picker ─
-        ${mod}-shift-e = { type = "exec", exec = ["rofi", "-modi", "emoji", "-show", "emoji"] }
+        ${mod}-shift-e = { type = "exec", exec = { shell = "rofi -modi emoji -show emoji | wl-copy", privileged = true } }
 
         # ─ Keyboard layout switching ─
         ${mod}-backslash = { type = "set-keymap", keymap = { name = "qwerty" } }
