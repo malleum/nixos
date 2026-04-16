@@ -87,14 +87,14 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
-      "media.ffmpeg.vaapi.enabled" = true; # This is the main one: enables VA-API (video decoding)
+      "media.ffmpeg.vaapi.enabled" = false; # Disabled: VA-API video decode competes with GPU under gaming load and caused system crashes
       "media.ffvpx.enabled" = true; # Use software VP8/VP9 decoder (avoids GPU contention with games)
       "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
       "media.webrtc.pipewire.enabled" = true;
 
       # --- Wayland-specific fixes ---
       "widget.wayland.opaque-region.enabled" = true; # Required for proper Wayland compositing
-      "widget.wayland-dmabuf-vaapi.enabled" = true; # Enable DMA-BUF for VA-API on Wayland
+      "widget.wayland-dmabuf-vaapi.enabled" = false; # Disabled: DMA-BUF VA-API path adds GPU memory pressure during gaming
       "gfx.x11-egl.force-enabled" = false; # Don't force X11 EGL on Wayland
       "widget.dmabuf.force-enabled" = false; # Don't force DMA-BUF — can cause GPU instability under load
 

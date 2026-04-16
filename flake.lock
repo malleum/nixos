@@ -756,11 +756,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775756243,
-        "narHash": "sha256-o/rXiXV9N4kdzPVgJ9z7lO1Std69U68czgOyacMfBWM=",
+        "lastModified": 1776175929,
+        "narHash": "sha256-MlrtOISqUkqKnZet/wbnra/WQHcRD/2A2L/jXguNqls=",
         "ref": "refs/heads/master",
-        "rev": "271fa858f93bc605a0d0b38eec84b79049c544e9",
-        "revCount": 2089,
+        "rev": "44d4170af776442348ed25dc033b38d09fecafd5",
+        "revCount": 2137,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/mahkoh/jay"
