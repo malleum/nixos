@@ -1,5 +1,10 @@
 {
   unify.nixos = {
-    console.keyMap = "dvorak";
+    console.useXkbConfig = true;
+    services.xserver.xkb = {
+      layout = "us";
+      variant = "dvorak";
+      options = "caps:escape";
+    };
   };
 }
