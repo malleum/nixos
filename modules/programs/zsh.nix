@@ -128,6 +128,8 @@
               LBUFFER="''${LBUFFER%g:m}github:malleum/"
             elif [[ $LBUFFER = *g:llm ]]; then
               LBUFFER="''${LBUFFER%g:llm}github:libertyluthermoffitt/"
+            elif [[ $LBUFFER = *llm ]]; then
+              LBUFFER="''${LBUFFER%g:llm}libertyluthermoffitt/"
             else
               LBUFFER+=/
             fi
@@ -135,6 +137,22 @@
           zle -N _rationalise-slash
           bindkey / _rationalise-slash
           bindkey -M isearch / self-insert
+
+          ns() {
+            nix shell "''${@/#/nixpkgs#}"
+          }
+
+          nn() {
+            local pkg="$1"
+            shift
+            nix run "nixpkgs#$pkg" -- "$@"
+          }
+  
+          ng() {
+            local repo="$1"
+            shift
+            nix run "github:$repo" -- "$@"
+          }
 
           # Up-arrow in insert mode: fetch history then move cursor past last char
           # (vi-mode positions cursor ON last char; backspace can't reach it otherwise)
