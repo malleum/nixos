@@ -129,7 +129,7 @@
             elif [[ $LBUFFER = *g:llm ]]; then
               LBUFFER="''${LBUFFER%g:llm}github:libertyluthermoffitt/"
             elif [[ $LBUFFER = *llm ]]; then
-              LBUFFER="''${LBUFFER%g:llm}libertyluthermoffitt/"
+              LBUFFER="''${LBUFFER%llm}libertyluthermoffitt/"
             else
               LBUFFER+=/
             fi
