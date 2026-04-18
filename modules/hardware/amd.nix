@@ -6,6 +6,8 @@
   }: {
     boot.kernelParams = [
       "amdgpu.gpu_recovery=1" # Enable GPU reset on hang instead of freezing the whole system
+      "amdgpu.sg_display=0"   # Fix for scatter/gather display crashing on Cezanne APU under heavy memory load
+      "amdgpu.noretry=0"      # Help mitigate memory faults on APUs
     ];
 
     services.xserver.videoDrivers = ["amdgpu"];

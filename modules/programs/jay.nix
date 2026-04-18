@@ -632,8 +632,8 @@ in {
           { comm = "wl-paste" },
           { comm = "cliphist" },
           { comm = "iamb" },
-          { coom = "foot" },
-          { coom = "kitty" },
+          { comm = "foot" },
+          { comm = "kitty" },
         ]
         capabilities = ["data-control"]
 
