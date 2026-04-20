@@ -106,8 +106,9 @@ in {
         version = "0-unstable-2025-04-01";
         inherit src;
         cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
-        nativeBuildInputs = with pkgs; [pkg-config];
-        buildInputs = with pkgs; [pango cairo glib];
+        nativeBuildInputs = with pkgs; [pkg-config autoPatchelfHook];
+        buildInputs = with pkgs; [pango cairo glib wayland];
+        runtimeDependencies = with pkgs; [wayland];
       };
 
     # Jay status bar script using i3bar JSON protocol
