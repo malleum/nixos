@@ -635,6 +635,8 @@ in {
           { comm = "iamb" },
           { comm = "foot" },
           { comm = "kitty" },
+          { comm = "tmux" },
+          { comm = "nvim" },
         ]
         capabilities = ["data-control"]
 
