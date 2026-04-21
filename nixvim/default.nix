@@ -240,6 +240,7 @@
     diffview.enable = true;
     gitsigns.enable = true;
     harpoon.enable = true;
+    markdown-preview.enable = true;
     neogit.enable = true;
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
