@@ -6,8 +6,8 @@
 }: {
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
-    cursorcolumn = true;
-    cursorline = true;
+    #cursorcolumn = true;
+    #cursorline = true;
     expandtab = true;
     ignorecase = true;
     mouse = "";

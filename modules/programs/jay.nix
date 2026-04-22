@@ -291,7 +291,7 @@ in {
 
         # ── Keyboard ─────────────────────────────────────────────────
         keymap.name = "dvorak"
-        repeat-rate = { rate = 50, delay = 225 }
+        repeat-rate = { rate = 100, delay = 200 }
 
         # ── Idle ─────────────────────────────────────────────────────
         idle = { minutes = 10 }
