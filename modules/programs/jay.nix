@@ -630,13 +630,16 @@ in {
         [[clients]]
         match.any = [
           { comm = "wl-copy" },
+          { comm = ".wl-copy-wrappe" },
           { comm = "wl-paste" },
+          { comm = ".wl-paste-wrapp" },
           { comm = "cliphist" },
           { comm = "iamb" },
           { comm = "foot" },
           { comm = "kitty" },
           { comm = "tmux" },
           { comm = "nvim" },
+          { comm = ".nvim-wrapped" },
         ]
         capabilities = ["data-control"]
 
