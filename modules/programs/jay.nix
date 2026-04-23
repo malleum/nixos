@@ -439,7 +439,7 @@ in {
         # ─ Screenshots (jay screenshot + satty) ─
         Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.wl-clipboard}/bin/wl-copy < /tmp/jay-screenshot.png", privileged = true } }
         shift-Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.satty}/bin/satty -f /tmp/jay-screenshot.png", privileged = true } }
-        ${mod}-shift-s = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.satty}/bin/satty -f /tmp/jay-screenshot.png", privileged = true } }
+        ${mod}-shift-s = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only", privileged = true } }
         ${mod}-ctrl-s = { type = "exec", exec = { shell = "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.satty}/bin/satty -f -", privileged = true } }
 
         # ─ Floating / layout ─
