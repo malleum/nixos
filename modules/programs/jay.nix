@@ -324,6 +324,26 @@ in {
         name = "qwerty"
         rmlvo = { layout = "us", options = "caps:escape,compose:ins" }
 
+        [[keymaps]]
+        name = "lunar"
+        map = """
+          xkb_keymap {
+              xkb_keycodes { include "evdev" };
+              xkb_types    { include "complete" };
+              xkb_compat   { include "complete" };
+              xkb_symbols  {
+                  include "pc+us(dvorak)+inet(evdev)"
+                  // capslock = 0
+                  key <CAPS> { [ 0 ] };
+                  // Swap LeftShift and LeftCtrl
+                  key <LFSH> { [ Control_L ] };
+                  key <LCTL> { [ Shift_L ] };
+                  // m5 = f3 (assuming m5 is evdev 275 -> XKB 283)
+                  key <I283> { [ F3 ] };
+              };
+          };
+        """
+
         # ── Environment ──────────────────────────────────────────────
         [env]
         NIXOS_OZONE_WL = "1"
@@ -580,6 +600,12 @@ in {
         match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident).*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "4" }
+
+        # Lunar Client keybinds
+        [[windows]]
+        match.title-regex = ".*Lunar Client.*"
+        action = { type = "set-keymap", map = { name = "lunar" } }
+        latch = { type = "set-keymap", map = { name = "dvorak" } }
 
         [[windows]]
         match.title-regex = ".*OBS.*"
