@@ -15,6 +15,7 @@
         General = {
           EnableNetworkConfiguration = false;
           DisableANQP = true;
+          DisablePMKSA = true;
         };
         DriverQuirks.DefaultInterface = "*";
       };
@@ -25,5 +26,9 @@
       macAddress = "preserve";
       scanRandMacAddress = false;
     };
+
+    boot.extraModprobeConfig = ''
+      options mt7925e disable_aspm=1
+    '';
   };
 }
