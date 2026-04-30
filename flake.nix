@@ -47,11 +47,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mcsr-stats = {
-      url = "github:malleum/mcsr_stats";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     wordle-hax = {
       url = "github:malleum/wordle_hax";
       inputs.nixpkgs.follows = "nixpkgs";

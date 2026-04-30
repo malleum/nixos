@@ -12,7 +12,6 @@ in {
         efi
         matrix
         grapple
-        mcsr-stats
         wordle-bot
         ;
     };
