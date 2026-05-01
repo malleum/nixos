@@ -38,160 +38,164 @@
           path = "$HOME/.local/share/zsh/history";
         };
 
-        initContent = ''
-          # Vi mode
-          bindkey -v
-          export KEYTIMEOUT=1
+        initContent =
+          /*
+          zsh
+          */
+          ''
+            # Vi mode
+            bindkey -v
+            export KEYTIMEOUT=1
 
-          # Command not found
-          command_not_found_handler() {
-              echo "skill issue: $1"
-              return 127
-          }
+            # Command not found
+            command_not_found_handler() {
+                echo "skill issue: $1"
+                return 127
+            }
 
-          # any-nix-shell (without --info-right: its precmd sets RPROMPT directly,
-          # wiping starship's right prompt; starship's $nix_shell module handles display)
-          ${pkgs.any-nix-shell}/bin/any-nix-shell zsh | source /dev/stdin
+            # any-nix-shell (without --info-right: its precmd sets RPROMPT directly,
+            # wiping starship's right prompt; starship's $nix_shell module handles display)
+            ${pkgs.any-nix-shell}/bin/any-nix-shell zsh | source /dev/stdin
 
-          # Autopair (like fish's autopair plugin)
-          source ${pkgs.zsh-autopair}/share/zsh/zsh-autopair/autopair.zsh
+            # Autopair (like fish's autopair plugin)
+            source ${pkgs.zsh-autopair}/share/zsh/zsh-autopair/autopair.zsh
 
-          # grc colorizes command output (ping, df, etc.)
-          source ${pkgs.grc}/etc/grc.zsh
+            # grc colorizes command output (ping, df, etc.)
+            source ${pkgs.grc}/etc/grc.zsh
 
-          # Colored man pages via bat
-          # MANROFFOPT -c forces groff to use backspace formatting instead of SGR
-          # codes, so col -bx can strip them cleanly before bat highlights
-          export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-          export MANROFFOPT="-c"
+            # Colored man pages via bat
+            # MANROFFOPT -c forces groff to use backspace formatting instead of SGR
+            # codes, so col -bx can strip them cleanly before bat highlights
+            export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+            export MANROFFOPT="-c"
 
-          # fzf keybindings: Ctrl+R history, Ctrl+T file search, Alt+C cd
-          source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-          source ${pkgs.fzf}/share/fzf/completion.zsh
+            # fzf keybindings: Ctrl+R history, Ctrl+T file search, Alt+C cd
+            source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+            source ${pkgs.fzf}/share/fzf/completion.zsh
 
-          # Ctrl+P: fzf process search (Ctrl+P = prev-history in emacs mode but free in vi insert)
-          function _fzf_process_widget {
-            local pid
-            pid=$(ps aux | fzf --header-lines=1 --prompt='Process> ' --preview='echo {}' | awk '{print $2}')
-            if [[ -n $pid ]]; then
-              LBUFFER+=$pid
-            fi
-            zle reset-prompt
-          }
-          zle -N _fzf_process_widget
-          bindkey '^P' _fzf_process_widget
-
-          # Vi cursor: block in both modes (matches fish's fish_cursor_insert block)
-          # Call any previously-registered zle-line-init (e.g. starship's timing hook) first
-          function zle-line-init {
-            (( $+functions[starship_zle-line-init] )) && starship_zle-line-init
-            echo -ne '\e[2 q'
-          }
-          function zle-keymap-select {
-            echo -ne '\e[2 q'
-          }
-          zle -N zle-keymap-select
-          zle -N zle-line-init
-
-          # Notify when a command takes longer than 10s (like fish's done plugin)
-          _cmd_start=0
-          function _preexec_timer { _cmd_start=$EPOCHSECONDS }
-          function _precmd_notify {
-            if (( _cmd_start > 0 )); then
-              local elapsed=$(( EPOCHSECONDS - _cmd_start ))
-              if (( elapsed >= 10 )); then
-                notify-send "Done" "Finished in ''${elapsed}s" 2>/dev/null
+            # Ctrl+P: fzf process search (Ctrl+P = prev-history in emacs mode but free in vi insert)
+            function _fzf_process_widget {
+              local pid
+              pid=$(ps aux | fzf --header-lines=1 --prompt='Process> ' --preview='echo {}' | awk '{print $2}')
+              if [[ -n $pid ]]; then
+                LBUFFER+=$pid
               fi
-              _cmd_start=0
-            fi
-          }
-          autoload -Uz add-zsh-hook
-          add-zsh-hook preexec _preexec_timer
-          add-zsh-hook precmd _precmd_notify
+              zle reset-prompt
+            }
+            zle -N _fzf_process_widget
+            bindkey '^P' _fzf_process_widget
 
-          # Puffer: ... → ../.. , .... → ../../.. etc.
-          function _rationalise-dot {
-            if [[ $LBUFFER = *.. ]]; then
-              LBUFFER+=/..
-            else
-              LBUFFER+=.
-            fi
-          }
-          zle -N _rationalise-dot
-          bindkey . _rationalise-dot
-          # Still allow . in completion context (e.g. .hidden files)
-          bindkey -M isearch . self-insert
+            # Vi cursor: block in both modes (matches fish's fish_cursor_insert block)
+            # Call any previously-registered zle-line-init (e.g. starship's timing hook) first
+            function zle-line-init {
+              (( $+functions[starship_zle-line-init] )) && starship_zle-line-init
+              echo -ne '\e[2 q'
+            }
+            function zle-keymap-select {
+              echo -ne '\e[2 q'
+            }
+            zle -N zle-keymap-select
+            zle -N zle-line-init
 
-          # Abbreviations: g:m/ -> github:malleum/ , g:llm/ -> github:libertyluthermoffitt/
-          function _rationalise-slash {
-            if [[ $LBUFFER = *g:m ]]; then
-              LBUFFER="''${LBUFFER%g:m}github:malleum/"
-            elif [[ $LBUFFER = *g:llm ]]; then
-              LBUFFER="''${LBUFFER%g:llm}github:libertyluthermoffitt/"
-            elif [[ $LBUFFER = *llm ]]; then
-              LBUFFER="''${LBUFFER%llm}libertyluthermoffitt/"
-            else
-              LBUFFER+=/
-            fi
-          }
-          zle -N _rationalise-slash
-          bindkey / _rationalise-slash
-          bindkey -M isearch / self-insert
+            # Notify when a command takes longer than 10s (like fish's done plugin)
+            _cmd_start=0
+            function _preexec_timer { _cmd_start=$EPOCHSECONDS }
+            function _precmd_notify {
+              if (( _cmd_start > 0 )); then
+                local elapsed=$(( EPOCHSECONDS - _cmd_start ))
+                if (( elapsed >= 10 )); then
+                  notify-send "Done" "Finished in ''${elapsed}s" 2>/dev/null
+                fi
+                _cmd_start=0
+              fi
+            }
+            autoload -Uz add-zsh-hook
+            add-zsh-hook preexec _preexec_timer
+            add-zsh-hook precmd _precmd_notify
 
-          ns() {
-            nix shell "''${@/#/nixpkgs#}"
-          }
+            # Puffer: ... → ../.. , .... → ../../.. etc.
+            function _rationalise-dot {
+              if [[ $LBUFFER = *.. ]]; then
+                LBUFFER+=/..
+              else
+                LBUFFER+=.
+              fi
+            }
+            zle -N _rationalise-dot
+            bindkey . _rationalise-dot
+            # Still allow . in completion context (e.g. .hidden files)
+            bindkey -M isearch . self-insert
 
-          nn() {
-            local pkg="$1"
-            shift
-            nix run "nixpkgs#$pkg" -- "$@"
-          }
-  
-          ng() {
-            local repo="$1"
-            shift
-            nix run "github:$repo" -- "$@"
-          }
+            # Abbreviations: g:m/ -> github:malleum/ , g:llm/ -> github:libertyluthermoffitt/
+            function _rationalise-slash {
+              if [[ $LBUFFER = *g:m ]]; then
+                LBUFFER="''${LBUFFER%g:m}github:malleum/"
+              elif [[ $LBUFFER = *g:llm ]]; then
+                LBUFFER="''${LBUFFER%g:llm}github:libertyluthermoffitt/"
+              elif [[ $LBUFFER = *llm ]]; then
+                LBUFFER="''${LBUFFER%llm}libertyluthermoffitt/"
+              else
+                LBUFFER+=/
+              fi
+            }
+            zle -N _rationalise-slash
+            bindkey / _rationalise-slash
+            bindkey -M isearch / self-insert
 
-          # Up-arrow in insert mode: fetch history then move cursor past last char
-          # (vi-mode positions cursor ON last char; backspace can't reach it otherwise)
-          function _viins-up-history {
-            zle up-line-or-history
-            zle end-of-line
-          }
-          zle -N _viins-up-history
-          bindkey -M viins '^[[A' _viins-up-history
+            ns() {
+              nix shell "''${@/#/nixpkgs#}"
+            }
 
-          # Alt+F: accept next word of autosuggestion (fish-like partial accept)
-          bindkey '^[f' forward-word
+            nn() {
+              local pkg="$1"
+              shift
+              nix run "nixpkgs#$pkg" -- "$@"
+            }
 
-          # Fish-like completion:
-          # Tab 1: complete common prefix + show list
-          # Tab 2+: cycle through options, each inserted on CLI
-          # Enter: accept; Space: accept and continue typing
-          setopt AUTO_LIST        # show list on first ambiguous Tab
-          setopt AUTO_MENU        # enter menu mode on second Tab
-          unsetopt MENU_COMPLETE  # don't auto-insert first match on Tab 1
-          unsetopt LIST_AMBIGUOUS # show list even when a common prefix was inserted
-          unsetopt AUTO_REMOVE_SLASH  # don't strip trailing / from dirs on space
+            ng() {
+              local repo="$1"
+              shift
+              nix run "github:$repo" -- "$@"
+            }
 
-          # Fuzzy + substring + case-insensitive matching
-          zstyle ':completion:*' matcher-list \
-            'm:{a-zA-Z}={A-Za-z}' \
-            'r:|[._-]=* r:|=*' \
-            'l:|=* r:|=*'
+            # Up-arrow in insert mode: fetch history then move cursor past last char
+            # (vi-mode positions cursor ON last char; backspace can't reach it otherwise)
+            function _viins-up-history {
+              zle up-line-or-history
+              zle end-of-line
+            }
+            zle -N _viins-up-history
+            bindkey -M viins '^[[A' _viins-up-history
 
-          # Menu select: highlighted item is inserted on CLI as you cycle
-          zstyle ':completion:*' menu select
-          # Fish-like flag descriptions: bold flag, dim separator, colored description
-          # =(#b) pattern: group 1 = --flag (bold), group 2 = ' -- ' (dim), group 3 = description (italic cyan)
-          zstyle ':completion:*' list-colors \
-            "''${(s.:.)LS_COLORS}" \
-            '=(#b)(--[^ =]*)( -- )(*)=1=2=3;36'
-          # Group headers in dim parens (e.g. "(options)" above the flags list)
-          zstyle ':completion:*:descriptions' format '%F{8}(%d)%f'
-        '';
+            # Alt+F: accept next word of autosuggestion (fish-like partial accept)
+            bindkey '^[f' forward-word
+
+            # Fish-like completion:
+            # Tab 1: complete common prefix + show list
+            # Tab 2+: cycle through options, each inserted on CLI
+            # Enter: accept; Space: accept and continue typing
+            setopt AUTO_LIST        # show list on first ambiguous Tab
+            setopt AUTO_MENU        # enter menu mode on second Tab
+            unsetopt MENU_COMPLETE  # don't auto-insert first match on Tab 1
+            unsetopt LIST_AMBIGUOUS # show list even when a common prefix was inserted
+            unsetopt AUTO_REMOVE_SLASH  # don't strip trailing / from dirs on space
+
+            # Fuzzy + substring + case-insensitive matching
+            zstyle ':completion:*' matcher-list \
+              'm:{a-zA-Z}={A-Za-z}' \
+              'r:|[._-]=* r:|=*' \
+              'l:|=* r:|=*'
+
+            # Menu select: highlighted item is inserted on CLI as you cycle
+            zstyle ':completion:*' menu select
+            # Fish-like flag descriptions: bold flag, dim separator, colored description
+            # =(#b) pattern: group 1 = --flag (bold), group 2 = ' -- ' (dim), group 3 = description (italic cyan)
+            zstyle ':completion:*' list-colors \
+              "''${(s.:.)LS_COLORS}" \
+              '=(#b)(--[^ =]*)( -- )(*)=1=2=3;36'
+            # Group headers in dim parens (e.g. "(options)" above the flags list)
+            zstyle ':completion:*:descriptions' format '%F{8}(%d)%f'
+          '';
       };
     };
 
