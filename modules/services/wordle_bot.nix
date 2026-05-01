@@ -6,7 +6,7 @@ in {
     config,
     ...
   }: let
-    wordle-hax = inputs.wordle-hax.packages.${pkgs.system}.default;
+    termword = inputs.termword.packages.${pkgs.system}.default;
 
     wordle-bot-script =
       pkgs.writers.writePython3Bin "wordle-bot" {
@@ -17,12 +17,14 @@ in {
       */
       ''
         import asyncio
+        import datetime
         import os
+        import random
         import re
         import subprocess
         import sys
 
-        from nio import AsyncClient, MatrixRoom, RoomMessageText
+        from nio import AsyncClient, MatrixRoom, RoomMessageText, Event
 
         # Ensure logs are visible immediately
         sys.stdout.reconfigure(line_buffering=True)
@@ -31,6 +33,66 @@ in {
         HOMESERVER = "https://ws42.top"
         BOT_USER = "@awareness:ws42.top"
         NYT_BOT = "@nyt-games-bot:ws42.top"
+
+        # Valid 5-letter words to use as fillers (avoiding common answers)
+        FILLER_WORDS = [
+            "bloke",
+            "shady",
+            "jumpy",
+            "glint",
+            "froze",
+            "vivid",
+            "pouch",
+            "clerk",
+            "mount",
+            "dwarf",
+            "vocal",
+            "prism",
+            "jumbo",
+            "wreck",
+            "glade",
+            "crane",
+            "audio",
+            "raise",
+            "slant",
+            "point",
+            "trace",
+            "lions",
+            "learn",
+            "round",
+            "price",
+            "store",
+            "clear",
+            "bread",
+            "train",
+            "plate",
+            "place",
+            "stone",
+            "phone",
+            "stair",
+            "least",
+            "nails",
+            "roast",
+            "snare",
+            "steal",
+            "trail",
+            "tread",
+            "spend",
+            "cloud",
+            "guilt",
+            "piano",
+            "mouse",
+            "flute",
+            "grape",
+            "fruit",
+            "melon",
+            "lemon",
+            "beach",
+            "coast",
+            "drain",
+            "track",
+            "smart",
+        ]
 
         # Square mapping: g=green, y=yellow, w=white/gray/black
         G = "🟩"
@@ -50,124 +112,126 @@ in {
             return res
 
 
+        def parse_termword_output(output):
+            lines = [line.strip() for line in output.split("\n") if line.strip()]
+            words = []
+            for line in lines:
+                match = re.search(r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])", line)
+                if match:
+                    words.append("".join(match.groups()).lower())
+
+            n_guesses = 0
+            solved = False
+            for line in reversed(lines):
+                if "Solved in" in line:
+                    m = re.search(r"Solved in (\d+) guesses", line)
+                    if m:
+                        n_guesses = int(m.group(1))
+                        solved = True
+                        break
+                if "Failed" in line:
+                    n_guesses = 6
+                    solved = False
+                    break
+
+            answer = words[-1] if solved and words else None
+            return n_guesses, solved, answer
+
+
+        def get_target_words(termword_bin):
+            now = datetime.datetime.now()
+            # termword uses YYYY-M-D
+            date_str = f"{now.year}-{now.month}-{now.day}"
+            print(f"Checking termword for {date_str}...")
+            try:
+                output = subprocess.check_output(
+                    [termword_bin, "sintfoap", "--history", date_str],
+                    text=True,
+                    stderr=subprocess.STDOUT,
+                )
+                if "No game found" in output:
+                    print("No game found for sintfoap yet.")
+                    return None
+
+                n_guesses, solved, answer = parse_termword_output(output)
+                if n_guesses == 0:
+                    print("Could not parse guess count from output.")
+                    return None
+
+                print(f"Sintfoap: {n_guesses} guesses, Solved: {solved}, Answer: {answer}")
+
+                # Build our sequence
+                target = ["tares"]
+
+                if solved:
+                    if n_guesses == 1:
+                        return [answer]  # If he got it in 1, we just guess the answer
+
+                    # Fillers for rounds 2 to N-1
+                    num_fillers = n_guesses - 2  # 1 for tares, 1 for answer
+                    fillers_available = [
+                        w for w in FILLER_WORDS if w != answer and w != "tares"
+                    ]
+
+                    if num_fillers > 0:
+                        target += random.sample(
+                            fillers_available, min(num_fillers, len(fillers_available))
+                        )
+
+                    if answer:
+                        target.append(answer)
+                else:
+                    # He failed, so we use 6 guesses total
+                    fillers_available = [w for w in FILLER_WORDS if w != "tares"]
+                    target += random.sample(fillers_available, 5)
+
+                print(f"Our plan: {target}")
+                return target
+
+            except subprocess.CalledProcessError as e:
+                print(f"Error running termword: {e.output}")
+                return None
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+                return None
+
+
         class WordleBot:
-            def __init__(self, client, wordle_hax_bin):
+            def __init__(self, client, target_words):
                 self.client = client
-                self.wordle_hax_bin = wordle_hax_bin
-                self.process = None
+                self.target_words = target_words
                 self.target_room_id = None
                 self.game_solved = False
                 self.guessed_count = 0
-                self.last_guess = None
-
-            async def start_hax(self):
-                print(f"Starting hax process: {self.wordle_hax_bin}")
-                if self.process:
-                    self.process.terminate()
-                self.process = subprocess.Popen(
-                    [self.wordle_hax_bin, "--auto-select"],
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    bufsize=1,
-                )
-                await asyncio.sleep(1)
-
-            def get_next_guess(self, result_code=None):
-                if not self.process:
-                    print("Error: process not started")
-                    return None
-
-                if result_code:
-                    print(f"Feeding result to hax: {result_code}")
-                    self.process.stdin.write(f"{result_code}\n")
-                    self.process.stdin.flush()
-
-                print("Waiting for next guess from hax...")
-                while True:
-                    line = self.process.stdout.readline()
-                    if not line:
-                        print("Hax process closed stdout")
-                        break
-                    if "No candidates remaining" in line:
-                        print("Solver has no candidates — state is inconsistent")
-                        return None
-                    if "[AUTO-SELECTED]:" in line:
-                        match = re.search(
-                            r"\[AUTO-SELECTED\]:\s*([A-Z]+)", line
-                        )
-                        if match:
-                            guess = match.group(1).lower()
-                            print(f"Hax recommended: {guess}")
-                            return guess
-                return None
 
             async def handle_board(self, room_id, body):
-                # Extract all guesses and results from the board
-                matches = re.findall(
-                    r"([A-Z]{5})\s+([🟩🟨⬜⬛▫️▪️]{5})", body
-                )
-                if not matches:
-                    if "Wordle" in body and (
-                        "Guess the" in body or "attempts" in body
-                    ):
-                        if self.guessed_count == 0:
-                            print("Game start detected. Making first guess.")
-                            if not self.process:
-                                await self.start_hax()
-                            guess = self.get_next_guess()
-                            if guess:
-                                self.last_guess = guess
-                                self.guessed_count = 1
-                                await self.client.room_send(
-                                    room_id,
-                                    "m.room.message",
-                                    {"msgtype": "m.text", "body": guess},
-                                )
+                if self.game_solved:
                     return
 
-                print(
-                    f"Board detected. Found {len(matches)} guesses."
-                    f" We sent {self.guessed_count}."
-                )
+                # Check if it's already solved or failed
+                if "Solved" in body or "Failed" in body or "ggggg" in parse_squares(body):
+                    print("Game already finished in this room.")
+                    self.game_solved = True
+                    return
 
-                if len(matches) >= self.guessed_count:
-                    last_word, last_squares = matches[-1]
-                    result_code = parse_squares(last_squares)
+                # Extract guesses already on the board
+                matches = re.findall(r"([A-Z]{5})\s+([🟩🟨⬜⬛▫️▪️]{5})", body)
 
-                    if result_code == "ggggg":
-                        print(f"Wordle solved: {last_word}")
-                        self.game_solved = True
-                        if self.process:
-                            self.process.terminate()
-                        return
+                # Update current count
+                self.guessed_count = len(matches)
+                print(f"Current board has {self.guessed_count} guesses.")
 
-                    if len(matches) > self.guessed_count or (
-                        len(matches) == self.guessed_count
-                        and self.last_guess
-                        and self.last_guess == matches[-1][0].lower()
-                    ):
-                        if not self.process:
-                            await self.start_hax()
-                            self.get_next_guess()  # consume initial auto-select
-                            for i in range(len(matches) - 1):
-                                self.get_next_guess(
-                                    parse_squares(matches[i][1])
-                                )
-
-                        guess = self.get_next_guess(result_code)
-                        if guess:
-                            self.last_guess = guess
-                            self.guessed_count = len(matches) + 1
-                            await self.client.room_send(
-                                room_id,
-                                "m.room.message",
-                                {"msgtype": "m.text", "body": guess},
-                            )
-                        else:
-                            print("Solver failed — giving up")
-                            self.game_solved = True
+                if self.guessed_count < len(self.target_words):
+                    next_word = self.target_words[self.guessed_count]
+                    print(f"Sending guess {self.guessed_count + 1}: {next_word}")
+                    await self.client.room_send(
+                        room_id,
+                        "m.room.message",
+                        {"msgtype": "m.text", "body": next_word},
+                    )
+                else:
+                    print("Matched the target number of guesses.")
+                    self.game_solved = True
 
             async def find_or_create_room(self):
                 await self.client.sync(timeout=3000)
@@ -177,17 +241,14 @@ in {
                         return room_id
 
                 print(f"Creating new room with {NYT_BOT}...")
-                resp = await self.client.room_create(
-                    is_direct=True, invite=[NYT_BOT]
-                )
+                resp = await self.client.room_create(is_direct=True, invite=[NYT_BOT])
                 self.target_room_id = resp.room_id
                 return resp.room_id
 
-            async def message_callback(
-                self, room: MatrixRoom, event: RoomMessageText
-            ) -> None:
+            async def message_callback(self, room: MatrixRoom, event: Event) -> None:
                 if (
-                    event.sender != NYT_BOT
+                    not isinstance(event, RoomMessageText)
+                    or event.sender != NYT_BOT
                     or room.room_id != self.target_room_id
                 ):
                     return
@@ -195,6 +256,13 @@ in {
 
 
         async def main():
+            termword_bin = "${termword}/bin/termword"
+            target_words = get_target_words(termword_bin)
+
+            if not target_words:
+                print("Nothing to do (sintfoap hasn't played or error). Exiting.")
+                return
+
             # Wait for Synapse ready
             for i in range(30):
                 try:
@@ -202,8 +270,7 @@ in {
 
                     if (
                         requests.get(
-                            f"{HOMESERVER}/_matrix/client/versions",
-                            timeout=2,
+                            f"{HOMESERVER}/_matrix/client/versions", timeout=2
                         ).status_code
                         == 200
                     ):
@@ -218,23 +285,21 @@ in {
 
             client = AsyncClient(HOMESERVER, BOT_USER)
             client.access_token = token
-            bot = WordleBot(
-                client,
-                "${wordle-hax}/bin/wordle_hax",  # noqa: E501
-            )
-            client.add_event_callback(bot.message_callback, RoomMessageText)
+            bot = WordleBot(client, target_words)
+            client.add_event_callback(bot.message_callback, Event)
 
             room_id = await bot.find_or_create_room()
             sync_task = asyncio.create_task(client.sync_forever(timeout=30000))
 
-            # Initial trigger
+            # Trigger bot to show current state
             await client.room_send(
                 room_id,
                 "m.room.message",
                 {"msgtype": "m.text", "body": "wordle"},
             )
 
-            for _ in range(60):
+            # Wait for completion or timeout
+            for _ in range(120):  # Longer timeout for multiple guesses
                 if bot.game_solved:
                     break
                 await asyncio.sleep(5)
@@ -256,7 +321,7 @@ in {
 
     # --- Systemd Service ---
     systemd.services.matrix-wordle-bot = {
-      description = "Wordle Hax Matrix Bot - Daily Play";
+      description = "Wordle Follower Matrix Bot - Sintfoap Mimicry";
       after = ["network.target" "matrix-synapse.service"];
 
       serviceConfig = {
@@ -264,20 +329,19 @@ in {
         Environment = "BOT_TOKEN_FILE=${config.sops.secrets.matrix-wordle-hax-token.path}";
         ExecStart = "${wordle-bot-script}/bin/wordle-bot";
 
-        # Hardening (Standard in your config)
-        User = "matrix-synapse"; # Re-use synapse user for simplicity or create 'wordle-bot'
+        User = "matrix-synapse";
         PrivateTmp = true;
         ProtectSystem = "full";
         NoNewPrivileges = true;
       };
     };
 
-    # --- Systemd Timer: Run daily at 6:00 AM EST (11:00 UTC) ---
+    # --- Systemd Timer: Run hourly at :57 US/Eastern ---
     systemd.timers.matrix-wordle-bot = {
-      description = "Timer for Daily Wordle Hax";
+      description = "Timer for Daily Wordle Sintfoap Follower";
       wantedBy = ["timers.target"];
       timerConfig = {
-        OnCalendar = "*-*-* 06:00:00 US/Eastern";
+        OnCalendar = "*-*-* *:57:00 US/Eastern";
         Unit = "matrix-wordle-bot.service";
       };
     };

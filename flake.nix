@@ -47,8 +47,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    wordle-hax = {
-      url = "github:malleum/wordle_hax";
+    termword = {
+      url = "github:malleum/termword";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
