@@ -1008,9 +1008,9 @@
         "sops-nix": "sops-nix",
         "stable": "stable",
         "stylix": "stylix",
+        "termword": "termword",
         "unify": "unify",
-        "waywall": "waywall",
-        "wordle-hax": "wordle-hax"
+        "waywall": "waywall"
       }
     },
     "sops-nix": {
@@ -1170,6 +1170,27 @@
         "type": "github"
       }
     },
+    "termword": {
+      "inputs": {
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775834523,
+        "narHash": "sha256-Rc1WsxQkDLIRT3pGjt9U8/6yPvv0be/apY6Jo9fZObw=",
+        "owner": "malleum",
+        "repo": "termword",
+        "rev": "0ed04e2e62b8701c0592b3133ca3b475aa11e1df",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "termword",
+        "type": "github"
+      }
+    },
     "tinted-kitty": {
       "flake": false,
       "locked": {
@@ -1277,27 +1298,6 @@
       "original": {
         "owner": "malleum",
         "repo": "waywall",
-        "type": "github"
-      }
-    },
-    "wordle-hax": {
-      "inputs": {
-        "flake-utils": "flake-utils_3",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1776112271,
-        "narHash": "sha256-M4m+MX9M7CuOVDSP6xmCDUAGBHWl8jqYBRRJ93fBNcw=",
-        "owner": "malleum",
-        "repo": "wordle_hax",
-        "rev": "4a369a0f7108ef1777581ef3d27203a18ee596b2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "malleum",
-        "repo": "wordle_hax",
         "type": "github"
       }
     },

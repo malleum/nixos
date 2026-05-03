@@ -1,5 +1,5 @@
 {
-  unify.modules.lap.nixos = {
+  unify.modules.gui.nixos = {
     hardware.bluetooth.enable = true;
   };
 }

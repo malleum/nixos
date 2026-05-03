@@ -33,6 +33,10 @@
         syntaxHighlighting.enable = true;
         dotDir = "${config.xdg.configHome}/zsh";
 
+        shellAliases = {
+          rm_wt_icon = "rm -f \"/home/joshammer/.local/share/Steam/steamapps/common/War Thunder/icon.ico\" \"/home/joshammer/.local/share/Steam/steamapps/common/War Thunder/launcher.ico\"";
+        };
+
         history = {
           size = 10000;
           path = "$HOME/.local/share/zsh/history";

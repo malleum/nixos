@@ -10,7 +10,7 @@ in {
       inherit
         (modules)
         amd
-        bio
+        efi
         doc
         gam
         gui
