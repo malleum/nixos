@@ -1,51 +1,11 @@
 {inputs, ...}: let
   makeJayPkg = pkgs:
-    pkgs.rustPlatform.buildRustPackage {
-      pname = "jay";
-      version = "flake-${inputs.jay.shortRev or "unknown"}";
-      src = inputs.jay;
-
-      cargoDeps = pkgs.rustPlatform.importCargoLock {
-        lockFile = "${inputs.jay}/Cargo.lock";
-      };
-
-      nativeBuildInputs = with pkgs; [
-        autoPatchelfHook
-        installShellFiles
-        pkg-config
-      ];
-
-      buildInputs = with pkgs; [
-        libGL
-        libinput
-        libgbm
-        pango
-        udev
-        shaderc
-        xkeyboard_config
-      ];
-
-      runtimeDependencies = with pkgs; [
-        libglvnd
-        vulkan-loader
-      ];
-
-      env.SHADERC_LIB_DIR = "${pkgs.lib.getLib pkgs.shaderc}/lib";
-
-      postInstall = ''
-        install -D etc/jay.portal $out/share/xdg-desktop-portal/portals/jay.portal
-        install -D etc/jay-portals.conf $out/share/xdg-desktop-portal/jay-portals.conf
-        install -D etc/jay.desktop $out/share/wayland-sessions/jay.desktop
-
-        installShellCompletion --cmd jay \
-          --bash <($out/bin/jay generate-completion bash) \
-          --zsh <($out/bin/jay generate-completion zsh) \
-          --fish <($out/bin/jay generate-completion fish)
+    inputs.jay.packages.${pkgs.system}.jay.overrideAttrs (old: {
+      RUSTC_BOOTSTRAP = "1";
+      postPatch = (old.postPatch or "") + ''
+        sed -i '1i #![feature(cfg_select)]' src/main.rs
       '';
-
-      meta.mainProgram = "jay";
-      passthru.providedSessions = ["jay"];
-    };
+    });
 in {
   # Install jay.desktop to system-level wayland-sessions so ly can find it
   unify.modules.gui.nixos = {pkgs, ...}: {
