@@ -6,14 +6,19 @@
       src = pkgs.fetchFromGitHub {
         owner = "malleum";
         repo = "iamb";
-        rev = "117a15bf5d031f399298d0ba8047f11ccdeb3997";
-        hash = "sha256-GgabVCwsFZucZ4xVlP4IXpaDyGigZX39w5T7/Ny3T9g=";
+        rev = "054bc9d50e7af523d11dac00e867cecb7ec33efc";
+        hash = "sha256-dlM/qyWROQZqhE5CoY+ylMrumD+kEYx9zh1b/cnCWj8=";
       };
       cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
-      postPatch =
-        (oldAttrs.postPatch or "")
+      preBuild =
+        (oldAttrs.preBuild or "")
         + ''
-          sed -i '1i #![recursion_limit = "256"]' src/main.rs
+          echo "patching matrix-sdk recursion_limit"
+          for f in $(find "$NIX_BUILD_TOP" -path '*/matrix-sdk*/src/lib.rs' 2>/dev/null); do
+            echo "  -> $f"
+            chmod u+w "$f"
+            sed -i '1i #![recursion_limit = "512"]' "$f"
+          done
         '';
     });
   in {
