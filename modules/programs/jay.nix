@@ -278,7 +278,19 @@ in {
         # ── Keyboard layouts ─────────────────────────────────────────
         [[keymaps]]
         name = "dvorak"
-        rmlvo = { layout = "us", variants = "dvorak", options = "caps:escape,compose:ins" }
+        map = """
+          xkb_keymap {
+              xkb_keycodes { include "evdev" };
+              xkb_types    { include "complete" };
+              xkb_compat   { include "complete" };
+              xkb_symbols  {
+                  include "pc+us(dvorak)+inet(evdev)"
+                  key <CAPS> { [ Escape ] };
+                  key <INS>  { [ Multi_key ] };
+                  key <COMP> { [ Multi_key ] };
+              };
+          };
+        """
 
         [[keymaps]]
         name = "qwerty"
