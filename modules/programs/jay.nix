@@ -1,6 +1,6 @@
 {inputs, ...}: let
   makeJayPkg = pkgs:
-    inputs.jay.packages.${pkgs.system}.jay.overrideAttrs (old: {
+    inputs.jay.packages.${pkgs.stdenv.hostPlatform.system}.jay.overrideAttrs (old: {
       RUSTC_BOOTSTRAP = "1";
       postPatch = (old.postPatch or "") + ''
         sed -i '1i #![feature(cfg_select)]' src/main.rs

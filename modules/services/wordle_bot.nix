@@ -6,7 +6,7 @@ in {
     config,
     ...
   }: let
-    termword = inputs.termword.packages.${pkgs.system}.default;
+    termword = inputs.termword.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     wordle-bot-script =
       pkgs.writers.writePython3Bin "wordle-bot" {

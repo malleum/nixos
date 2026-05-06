@@ -6,8 +6,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "malleum";
         repo = "iamb";
-        rev = "054bc9d50e7af523d11dac00e867cecb7ec33efc";
-        hash = "sha256-dlM/qyWROQZqhE5CoY+ylMrumD+kEYx9zh1b/cnCWj8=";
+        rev = "08e18a2138ae936dd9ef3585885bfe9e207ff39c";
+        hash = "sha256-H16lOyKloG1R6SbLkb/B/vht4wrbClc5BGy6IWscgnU=";
       };
       cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
       preBuild =
