@@ -9,7 +9,7 @@
       networkmanagerapplet
 
       hunspellDicts.en-us
-      libreoffice
+      stable.libreoffice
       hunspell
       pandoc
       gimp

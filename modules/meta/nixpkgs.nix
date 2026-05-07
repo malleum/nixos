@@ -12,6 +12,13 @@
         };
       })
 
+      # Skip flaky openldap test017-syncreplication-refresh (breaks bottles build)
+      (final: prev: {
+        openldap = prev.openldap.overrideAttrs (old: {
+          doCheck = false;
+        });
+      })
+
       # Pin livekit to 1.9.12 — 1.10.0 causes immediate SIGNAL_SOURCE_CLOSE
       # on all clients; revert once upstream fixes the regression.
       (final: prev: {
