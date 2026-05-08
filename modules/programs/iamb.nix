@@ -1,28 +1,14 @@
-{
+{inputs, ...}: {
   unify.modules.gui.home = {pkgs, ...}: let
-    jiamb = pkgs.iamb.overrideAttrs (oldAttrs: rec {
-      pname = "iamb";
-      version = "0.0.11";
-      src = pkgs.fetchFromGitHub {
-        owner = "malleum";
-        repo = "iamb";
-        rev = "9725810364e579f2ef02b8f5d92d805d3e7cc6f1";
-        hash = "sha256-+6kzzSew9oaBAzq09H/qQSmAQ36XhoMDD4MNtxfqZnc=";
-      };
-      cargoDeps = pkgs.rustPlatform.importCargoLock {lockFile = "${src}/Cargo.lock";};
-      preBuild =
-        (oldAttrs.preBuild or "")
-        + ''
-          echo "patching matrix-sdk recursion_limit"
-          for f in $(find "$NIX_BUILD_TOP" -path '*/matrix-sdk*/src/lib.rs' 2>/dev/null); do
-            echo "  -> $f"
-            chmod u+w "$f"
-            sed -i '1i #![recursion_limit = "512"]' "$f"
-          done
-        '';
-    });
+    jiamb = inputs.iamb.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     home = {
+      sessionVariables = {
+        IAMB_DICT_EN_AFF = "${pkgs.hunspellDicts.en_US}/share/hunspell/en_US.aff";
+        IAMB_DICT_EN_DIC = "${pkgs.hunspellDicts.en_US}/share/hunspell/en_US.dic";
+        IAMB_DICT_NB_AFF = "${pkgs.hunspellDicts.nb_NO}/share/hunspell/nb_NO.aff";
+        IAMB_DICT_NB_DIC = "${pkgs.hunspellDicts.nb_NO}/share/hunspell/nb_NO.dic";
+      };
       packages = with pkgs; [
         jiamb
         (element-desktop.override {
