@@ -6,7 +6,6 @@
       "adbuser"
       # "vboxusers"
     ];
-    programs.adb.enable = true;
   };
 
   unify.modules.vrt.home = {pkgs, ...}: {
