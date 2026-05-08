@@ -2,9 +2,11 @@
   makeJayPkg = pkgs:
     inputs.jay.packages.${pkgs.stdenv.hostPlatform.system}.jay.overrideAttrs (old: {
       RUSTC_BOOTSTRAP = "1";
-      postPatch = (old.postPatch or "") + ''
-        sed -i '1i #![feature(cfg_select)]' src/main.rs
-      '';
+      postPatch =
+        (old.postPatch or "")
+        + ''
+          sed -i '1i #![feature(cfg_select)]' src/main.rs
+        '';
     });
 in {
   # Install jay.desktop to system-level wayland-sessions so ly can find it
