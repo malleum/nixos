@@ -15,6 +15,7 @@ in {
         gam
         gui
         lap
+        vrt
         wrk
         ;
     };
