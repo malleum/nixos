@@ -115,8 +115,9 @@ in {
         def parse_termword_output(output):
             lines = [line.strip() for line in output.split("\n") if line.strip()]
             words = []
+            pattern = r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])"
             for line in lines:
-                match = re.search(r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])", line)
+                match = re.search(pattern, line)
                 if match:
                     words.append("".join(match.groups()).lower())
 
@@ -158,7 +159,10 @@ in {
                     print("Could not parse guess count from output.")
                     return None
 
-                print(f"Sintfoap: {n_guesses} guesses, Solved: {solved}, Answer: {answer}")
+                print(
+                    f"Sintfoap: {n_guesses} guesses, "
+                    f"Solved: {solved}, Answer: {answer}"
+                )
 
                 # Build our sequence
                 target = ["tares"]
@@ -209,7 +213,8 @@ in {
                     return
 
                 # Check if it's already solved or failed
-                if "Solved" in body or "Failed" in body or "ggggg" in parse_squares(body):
+                squares = parse_squares(body)
+                if "Solved" in body or "Failed" in body or "ggggg" in squares:
                     print("Game already finished in this room.")
                     self.game_solved = True
                     return
@@ -256,7 +261,10 @@ in {
 
 
         async def main():
-            termword_bin = "${termword}/bin/termword"
+            termword_bin = (
+                "${termword}"
+                "/bin/termword"
+            )
             target_words = get_target_words(termword_bin)
 
             if not target_words:
