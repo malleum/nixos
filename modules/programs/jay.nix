@@ -203,7 +203,7 @@ in {
         [[outputs]]
         match.serial-number = "0000000000001"
         name = "main"
-        x = 1920
+        x = 3840
         y = 0
         mode = { width = 1920, height = 1080, refresh-rate = 180.0 }
 
@@ -211,7 +211,7 @@ in {
         [[outputs]]
         match.serial-number = "3CQ1261KNM"
         name = "secondary"
-        x = 0
+        x = 1920
         y = 0
         mode = { width = 1920, height = 1080, refresh-rate = 60.0 }
       ''
@@ -254,14 +254,6 @@ in {
         # ── Keyboard ─────────────────────────────────────────────────
         keymap.name = "dvorak"
         repeat-rate = { rate = 100, delay = 200 }
-
-        # ── Idle ─────────────────────────────────────────────────────
-        idle = { minutes = 10 }
-
-        on-idle = {
-          type = "exec",
-          exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true },
-        }
 
         # ── Startup ──────────────────────────────────────────────────
         on-startup = [
@@ -421,8 +413,8 @@ in {
         ${mod}-shift-e = { type = "exec", exec = { shell = "rofi -modi emoji -show emoji | wl-copy", privileged = true } }
 
         # ─ Keyboard layout switching ─
-        ${mod}-backslash = { type = "set-keymap", keymap = { name = "qwerty" } }
-        ${mod}-shift-backslash = { type = "set-keymap", keymap = { name = "dvorak" } }
+        ${mod}-backslash = { type = "set-keymap", map = { name = "qwerty" } }
+        ${mod}-shift-backslash = { type = "set-keymap", map = { name = "dvorak" } }
 
         # ─ Window management ─
         ${mod}-shift-q = "close"

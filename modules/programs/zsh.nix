@@ -107,7 +107,7 @@
             function _precmd_notify {
               if (( _cmd_start > 0 )); then
                 local elapsed=$(( EPOCHSECONDS - _cmd_start ))
-                if (( elapsed >= 10 )); then
+                if (( elapsed >= 10 )) && (( $+commands[notify-send] )); then
                   notify-send "Done" "Finished in ''${elapsed}s" 2>/dev/null
                 fi
                 _cmd_start=0

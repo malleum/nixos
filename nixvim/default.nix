@@ -6,8 +6,8 @@
 }: {
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
-    #cursorcolumn = true;
-    #cursorline = true;
+    cursorcolumn = true;
+    cursorline = true;
     expandtab = true;
     ignorecase = true;
     mouse = "";
@@ -28,8 +28,6 @@
     winborder = "rounded";
     wrap = false;
   };
-
-  package = pkgs.neovim-unwrapped;
 
   viAlias = true;
   luaLoader.enable = true;
@@ -80,7 +78,6 @@
 
         "<Esc>" = "<cmd>nohlsearch<CR><Esc>";
         "J" = ''<cmd>lua vim.cmd("normal! mz" .. vim.v.count1 .. "J`z")<cr>'';
-        "s" = "<cmd>lua require('flash').jump()<cr>";
 
         "<C-j>" = "<cmd>cn<cr>";
         "<C-k>" = "<cmd>cp<cr>";
@@ -205,7 +202,7 @@
           preset = "default";
           "<C-p>" = ["select_prev" "show"];
           "<C-n>" = ["select_next" "show"];
-          "<CR>" = ["accept" "fallback"];
+          "<CR>" = ["select_and_accept" "fallback"];
           "<C-b>" = ["scroll_documentation_up" "fallback"];
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
@@ -251,58 +248,8 @@
     typst-preview.enable = true;
     web-devicons.enable = true;
 
-    smear-cursor = {
-      enable = true;
-      settings = {
-        # FAST framerate for smoother energy effects
-        time_interval = 7;
-
-        # --- Color: Vibrant Green Energy ---
-        cursor_color = "#c0ff00"; # Neon Lime/Electric Green
-
-        # --- Dynamics: Railgun Vibes (Fast, tight, focused) ---
-        stiffness = 0.85; # Near instantaneous head movement
-        trailing_stiffness = 0.6; # Tail follows tightly (fire hazard was 0.2)
-        damping = 0.75; # Controlled stop (fire hazard was 0.6)
-        anticipation = 0.5; # Slight "pre-charge/recoil" effect before snapping
-
-        # --- Appearance (Hacks from fire hazard for readability) ---
-        never_draw_over_target = true; # See text under cursor
-        hide_target_hack = true; # Actually hide the physical cursor
-        legacy_computing_symbols_support = true; # Recommended if font supports for better blend
-
-        # --- Particles: Linear Energy Tracers ---
-        particles_enabled = true;
-        particles_per_second = 400; # High density beam
-        particle_spread = 0.05; # EXTREMELY tight focus (fire hazard was 1)
-        particles_per_length = 40; # Line density
-
-        # Particles follow the cursor speed for a true tracer path
-        particle_velocity_from_cursor = 0.9;
-        particle_max_lifetime = 500; # Lingers briefly
-
-        # Floating energy field effects
-        particle_gravity = 0; # No smoke/fire gravity (fire hazard was -50)
-        particle_damping = 0.2; # How slow they slow down
-        min_distance_emit_particles = 0.5; # Emit on almost all moves
-      };
-    };
-
-    flash = {
-      enable = true;
-      settings = {
-        label.rainbow.enabled = true;
-        modes = {
-          search.enabled = false;
-          char.enabled = false;
-        };
-      };
-    };
-
     treesitter = lib.mkIf plena {
       enable = true;
-      # package = pkgs.stable.vimPlugins.nvim-treesitter.withAllGrammars;
-      # nixGrammars = false;
       settings.highlight.enable = true;
     };
 
@@ -319,8 +266,6 @@
           python = ["isort" "ruff_format"];
           rust = ["rustfmt"];
           typst = ["typstyle"];
-          elixir = ["mix"];
-          elm = ["elm_format"];
         };
       };
     };
