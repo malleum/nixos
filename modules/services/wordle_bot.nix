@@ -281,7 +281,7 @@ in {
             await asyncio.sleep(3)
 
             # Send guesses sequentially; NYT bot sends multiple messages per guess
-            # so reactive board parsing causes duplicate sends — use fixed delays instead
+            # reactive board parsing causes duplicate sends; fixed delays works
             for i, word in enumerate(target_words):
                 if bot.game_solved:
                     break
