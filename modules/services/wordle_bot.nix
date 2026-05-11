@@ -116,26 +116,25 @@ in {
             lines = [line.strip() for line in output.split("\n") if line.strip()]
             words = []
             pattern = r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])"
+            n_guesses = 0
+            solved = False
+            answer = None
             for line in lines:
                 match = re.search(pattern, line)
                 if match:
                     words.append("".join(match.groups()).lower())
-
-            n_guesses = 0
-            solved = False
-            for line in reversed(lines):
                 if "Solved in" in line:
                     m = re.search(r"Solved in (\d+) guesses", line)
                     if m:
                         n_guesses = int(m.group(1))
                         solved = True
-                        break
+                        answer = words[-1] if words else None
+                    break
                 if "Failed" in line:
                     n_guesses = 6
                     solved = False
                     break
 
-            answer = words[-1] if solved and words else None
             return n_guesses, solved, answer
 
 
@@ -205,7 +204,7 @@ in {
                 self.client = client
                 self.target_words = target_words
                 self.target_room_id = None
-                self.game_solved = False
+                self.game_finished = False
 
             async def find_or_create_room(self):
                 await self.client.sync(timeout=3000)
@@ -228,12 +227,28 @@ in {
                     return
                 body = event.body
                 squares = parse_squares(body)
-                if "Solved" in body or "Failed" in body or "ggggg" in squares:
+                if (
+                    "Game over" in body
+                    or "Solved" in body
+                    or "ggggg" in squares
+                ):
                     print("Game finished.")
-                    self.game_solved = True
+                    self.game_finished = True
 
 
         async def main():
+            state_dir = os.environ.get("STATE_DIRECTORY", "/tmp")
+            last_played_file = os.path.join(state_dir, "last_played")
+            now = datetime.datetime.now()
+            today = f"{now.year}-{now.month}-{now.day}"
+            try:
+                with open(last_played_file) as f:
+                    if f.read().strip() == today:
+                        print(f"Already played {today}. Exiting.")
+                        return
+            except FileNotFoundError:
+                pass
+
             termword_bin = (
                 "${termword}"
                 "/bin/termword"
@@ -283,7 +298,7 @@ in {
             # Send guesses sequentially; NYT bot sends multiple messages per guess
             # reactive board parsing causes duplicate sends; fixed delays works
             for i, word in enumerate(target_words):
-                if bot.game_solved:
+                if bot.game_finished:
                     break
                 print(f"Sending guess {i + 1}: {word}")
                 await client.room_send(
@@ -295,6 +310,9 @@ in {
 
             sync_task.cancel()
             await client.close()
+
+            with open(last_played_file, "w") as f:
+                f.write(today)
 
 
         if __name__ == "__main__":
@@ -319,6 +337,7 @@ in {
         ExecStart = "${wordle-bot-script}/bin/wordle-bot";
 
         User = "matrix-synapse";
+        StateDirectory = "matrix-wordle-bot";
         PrivateTmp = true;
         ProtectSystem = "full";
         NoNewPrivileges = true;
