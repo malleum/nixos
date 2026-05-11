@@ -206,37 +206,6 @@ in {
                 self.target_words = target_words
                 self.target_room_id = None
                 self.game_solved = False
-                self.guessed_count = 0
-
-            async def handle_board(self, room_id, body):
-                if self.game_solved:
-                    return
-
-                # Check if it's already solved or failed
-                squares = parse_squares(body)
-                if "Solved" in body or "Failed" in body or "ggggg" in squares:
-                    print("Game already finished in this room.")
-                    self.game_solved = True
-                    return
-
-                # Extract guesses already on the board
-                matches = re.findall(r"([A-Z]{5})\s+([🟩🟨⬜⬛▫️▪️]{5})", body)
-
-                # Update current count
-                self.guessed_count = len(matches)
-                print(f"Current board has {self.guessed_count} guesses.")
-
-                if self.guessed_count < len(self.target_words):
-                    next_word = self.target_words[self.guessed_count]
-                    print(f"Sending guess {self.guessed_count + 1}: {next_word}")
-                    await self.client.room_send(
-                        room_id,
-                        "m.room.message",
-                        {"msgtype": "m.text", "body": next_word},
-                    )
-                else:
-                    print("Matched the target number of guesses.")
-                    self.game_solved = True
 
             async def find_or_create_room(self):
                 await self.client.sync(timeout=3000)
@@ -257,7 +226,11 @@ in {
                     or room.room_id != self.target_room_id
                 ):
                     return
-                await self.handle_board(room.room_id, event.body)
+                body = event.body
+                squares = parse_squares(body)
+                if "Solved" in body or "Failed" in body or "ggggg" in squares:
+                    print("Game finished.")
+                    self.game_solved = True
 
 
         async def main():
@@ -299,17 +272,25 @@ in {
             room_id = await bot.find_or_create_room()
             sync_task = asyncio.create_task(client.sync_forever(timeout=30000))
 
-            # Trigger bot to show current state
+            # Check current game state before guessing
             await client.room_send(
                 room_id,
                 "m.room.message",
                 {"msgtype": "m.text", "body": "wordle"},
             )
+            await asyncio.sleep(3)
 
-            # Wait for completion or timeout
-            for _ in range(120):  # Longer timeout for multiple guesses
+            # Send guesses sequentially; NYT bot sends multiple messages per guess
+            # so reactive board parsing causes duplicate sends — use fixed delays instead
+            for i, word in enumerate(target_words):
                 if bot.game_solved:
                     break
+                print(f"Sending guess {i + 1}: {word}")
+                await client.room_send(
+                    room_id,
+                    "m.room.message",
+                    {"msgtype": "m.text", "body": word},
+                )
                 await asyncio.sleep(5)
 
             sync_task.cancel()
