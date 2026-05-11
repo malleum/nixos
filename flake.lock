@@ -439,11 +439,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778009629,
-        "narHash": "sha256-nUoQtf4Zq7DRYJrfv904hjrxjAlWVP6a1pNNFKx3FCg=",
+        "lastModified": 1778503501,
+        "narHash": "sha256-08L/X4/do7nET4rzidJ76eV/1r+mB7DchVpdPypsghc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "00ed86e58bb6979a7921859fd1615d19382eac5c",
+        "rev": "85ba629c79449badf4338117c27f0ee92b4b9f1a",
         "type": "github"
       },
       "original": {
@@ -469,11 +469,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1778100383,
-        "narHash": "sha256-nU6bXG8s2wYJ0FI7WAG5YNNRrFJ8QEAwzFVCr89kyj8=",
+        "lastModified": 1778504983,
+        "narHash": "sha256-F70mt2snAYPobaMEEGRJmCqOmqU/zDM31HldpMUIWi0=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "e9659382e9dbd4b21527b7838baa9139fa17e984",
+        "rev": "5e441cae538c9396f2ee30338419bec12969608c",
         "type": "github"
       },
       "original": {
@@ -704,11 +704,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777492286,
-        "narHash": "sha256-PwuoEJQcjSKJNP5T55qhfDwIP0tw5zxEhfu8GDfKfeg=",
+        "lastModified": 1778234770,
+        "narHash": "sha256-jAcsogZwWMfXT9MfXxZzkwliAqIuZUV0p71h6Ba9ReE=",
         "owner": "hyprwm",
         "repo": "hyprutils",
-        "rev": "ec5c0c709706bad5b82f667fd8758eae442577ce",
+        "rev": "a2dbd8a4cc51f7cbe4224732668392bb1aa79df2",
         "type": "github"
       },
       "original": {
@@ -816,11 +816,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778008137,
-        "narHash": "sha256-bz01cCbZu8W9y0goyzYW5eeLOKxrC1ccxKwznnoCe9E=",
+        "lastModified": 1778503762,
+        "narHash": "sha256-mEfBxYPFgTAz1AcIA1afoNPw9RkhxXDKh0KhOjU6zLc=",
         "ref": "refs/heads/master",
-        "rev": "9fa2a4f33a6c93594c4f54395e4812ced54c0790",
-        "revCount": 2244,
+        "rev": "11eeee63bb2e313c81fded419393e3451db91258",
+        "revCount": 2299,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/mahkoh/jay"
@@ -1009,11 +1009,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778106509,
-        "narHash": "sha256-x92w5b1UxeMP9ELiCAyebXyVYctHop5qEEhkrN1MY8Y=",
+        "lastModified": 1778506944,
+        "narHash": "sha256-lU0Bleh0reE+WU7j8Uiqsu6ekPav50L8sXsgOvEQS+0=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "7115812f4588200c6be430f085e3b037939da957",
+        "rev": "0166493cfe4e0e9927435c1cfbf5505cfb0d10d1",
         "type": "github"
       },
       "original": {
