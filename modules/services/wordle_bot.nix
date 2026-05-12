@@ -24,7 +24,13 @@ in {
         import subprocess
         import sys
 
-        from nio import AsyncClient, MatrixRoom, RoomMessageText, Event
+        from nio import (
+            AsyncClient,
+            MatrixRoom,
+            RoomMessageText,
+            Event,
+            RoomMessagesResponse,
+        )
 
         # Ensure logs are visible immediately
         sys.stdout.reconfigure(line_buffering=True)
@@ -112,7 +118,11 @@ in {
             return res
 
 
+        ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
         def parse_termword_output(output):
+            output = ANSI_RE.sub("", output)
             lines = [line.strip() for line in output.split("\n") if line.strip()]
             words = []
             pattern = r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])"
@@ -236,19 +246,47 @@ in {
                     self.game_finished = True
 
 
-        async def main():
-            state_dir = os.environ.get("STATE_DIRECTORY", "/tmp")
-            last_played_file = os.path.join(state_dir, "last_played")
-            now = datetime.datetime.now()
-            today = f"{now.year}-{now.month}-{now.day}"
-            try:
-                with open(last_played_file) as f:
-                    if f.read().strip() == today:
-                        print(f"Already played {today}. Exiting.")
-                        return
-            except FileNotFoundError:
-                pass
+        async def get_today_state(client, room_id):
+            """Walk room history backward; collect own guesses + game-over from today."""
+            today_start = datetime.datetime.now().replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+            today_start_ms = int(today_start.timestamp() * 1000)
 
+            my_guesses = []
+            game_over = False
+            start = client.next_batch
+            for _ in range(5):
+                resp = await client.room_messages(
+                    room_id, start=start, direction="b", limit=50
+                )
+                if not isinstance(resp, RoomMessagesResponse) or not resp.chunk:
+                    break
+                stop = False
+                for ev in resp.chunk:
+                    if ev.server_timestamp < today_start_ms:
+                        stop = True
+                        break
+                    if not isinstance(ev, RoomMessageText):
+                        continue
+                    if ev.sender == BOT_USER:
+                        body = ev.body.strip().lower()
+                        if len(body) == 5 and body.isalpha():
+                            my_guesses.append(body)
+                    elif ev.sender == NYT_BOT:
+                        if "Game over" in ev.body or "Solved" in ev.body:
+                            game_over = True
+                        if "ggggg" in parse_squares(ev.body):
+                            game_over = True
+                if stop:
+                    break
+                start = resp.end
+
+            my_guesses.reverse()
+            return my_guesses, game_over
+
+
+        async def main():
             termword_bin = (
                 "${termword}"
                 "/bin/termword"
@@ -285,19 +323,57 @@ in {
             client.add_event_callback(bot.message_callback, Event)
 
             room_id = await bot.find_or_create_room()
+
+            my_guesses, game_over = await get_today_state(client, room_id)
+            print(f"Already sent today: {my_guesses} (game_over={game_over})")
+
+            if game_over:
+                print("Today's game already finished. Exiting.")
+                await client.close()
+                return
+
+            answer = target_words[-1]
+            n_target = len(target_words)
+            already = len(my_guesses)
+
+            if already == 0:
+                start_game = True
+                to_send = list(target_words)
+            elif answer in my_guesses:
+                print("Answer already sent. Exiting.")
+                await client.close()
+                return
+            elif already >= n_target:
+                # Plan exhausted but answer never sent (e.g. old buggy run). Send answer.
+                start_game = False
+                to_send = [answer]
+            else:
+                # Mid-game: top up fillers (avoiding repeats) then send answer.
+                start_game = False
+                needed_fillers = n_target - already - 1
+                sent_set = set(my_guesses) | {answer}
+                pool = [w for w in FILLER_WORDS if w not in sent_set]
+                new_fillers = (
+                    random.sample(pool, min(needed_fillers, len(pool)))
+                    if needed_fillers > 0
+                    else []
+                )
+                to_send = new_fillers + [answer]
+
+            print(f"Plan to send this run: {to_send}")
             sync_task = asyncio.create_task(client.sync_forever(timeout=30000))
 
-            # Check current game state before guessing
-            await client.room_send(
-                room_id,
-                "m.room.message",
-                {"msgtype": "m.text", "body": "wordle"},
-            )
-            await asyncio.sleep(3)
+            if start_game:
+                await client.room_send(
+                    room_id,
+                    "m.room.message",
+                    {"msgtype": "m.text", "body": "wordle"},
+                )
+                await asyncio.sleep(3)
 
             # Send guesses sequentially; NYT bot sends multiple messages per guess
             # reactive board parsing causes duplicate sends; fixed delays works
-            for i, word in enumerate(target_words):
+            for i, word in enumerate(to_send):
                 if bot.game_finished:
                     break
                 print(f"Sending guess {i + 1}: {word}")
@@ -310,9 +386,6 @@ in {
 
             sync_task.cancel()
             await client.close()
-
-            with open(last_played_file, "w") as f:
-                f.write(today)
 
 
         if __name__ == "__main__":
