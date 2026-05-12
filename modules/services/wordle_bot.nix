@@ -247,7 +247,7 @@ in {
 
 
         async def get_today_state(client, room_id):
-            """Walk room history backward; collect own guesses + game-over from today."""
+            """Walk room history backward; collect own guesses+game-over from today."""
             today_start = datetime.datetime.now().replace(
                 hour=0, minute=0, second=0, microsecond=0
             )
@@ -344,7 +344,7 @@ in {
                 await client.close()
                 return
             elif already >= n_target:
-                # Plan exhausted but answer never sent (e.g. old buggy run). Send answer.
+                # Plan exhausted but answer never sent (eg old buggy run. Send answer
                 start_game = False
                 to_send = [answer]
             else:
