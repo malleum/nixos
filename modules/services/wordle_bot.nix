@@ -6,11 +6,15 @@ in {
     config,
     ...
   }: let
-    termword = inputs.termword.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    termword =
+      inputs.termword.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     wordle-bot-script =
       pkgs.writers.writePython3Bin "wordle-bot" {
-        libraries = [pkgs.python3Packages.matrix-nio pkgs.python3Packages.requests];
+        libraries = [
+          pkgs.python3Packages.matrix-nio
+          pkgs.python3Packages.requests
+        ];
       }
       /*
       python
@@ -123,7 +127,9 @@ in {
 
         def parse_termword_output(output):
             output = ANSI_RE.sub("", output)
-            lines = [line.strip() for line in output.split("\n") if line.strip()]
+            lines = [
+                line.strip() for line in output.split("\n") if line.strip()
+            ]
             words = []
             pattern = r"([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])\s+([A-Z])"
             n_guesses = 0
@@ -178,7 +184,8 @@ in {
 
                 if solved:
                     if n_guesses == 1:
-                        return [answer]  # If he got it in 1, we just guess the answer
+                        # If he got it in 1, just guess the answer
+                        return [answer]
 
                     # Fillers for rounds 2 to N-1
                     num_fillers = n_guesses - 2  # 1 for tares, 1 for answer
@@ -188,14 +195,17 @@ in {
 
                     if num_fillers > 0:
                         target += random.sample(
-                            fillers_available, min(num_fillers, len(fillers_available))
+                            fillers_available,
+                            min(num_fillers, len(fillers_available)),
                         )
 
                     if answer:
                         target.append(answer)
                 else:
                     # He failed, so we use 6 guesses total
-                    fillers_available = [w for w in FILLER_WORDS if w != "tares"]
+                    fillers_available = [
+                        w for w in FILLER_WORDS if w != "tares"
+                    ]
                     target += random.sample(fillers_available, 5)
 
                 print(f"Our plan: {target}")
@@ -224,30 +234,29 @@ in {
                         return room_id
 
                 print(f"Creating new room with {NYT_BOT}...")
-                resp = await self.client.room_create(is_direct=True, invite=[NYT_BOT])
+                resp = await self.client.room_create(
+                    is_direct=True, invite=[NYT_BOT]
+                )
                 self.target_room_id = resp.room_id
                 return resp.room_id
 
-            async def message_callback(self, room: MatrixRoom, event: Event) -> None:
+            async def message_callback(
+                self, room: MatrixRoom, event: Event
+            ) -> None:
                 if (
                     not isinstance(event, RoomMessageText)
                     or event.sender != NYT_BOT
                     or room.room_id != self.target_room_id
                 ):
                     return
-                body = event.body
-                squares = parse_squares(body)
-                if (
-                    "Game over" in body
-                    or "Solved" in body
-                    or "ggggg" in squares
-                ):
-                    print("Game finished.")
+                squares = parse_squares(event.body)
+                if "ggggg" in squares:
+                    print("Game solved.")
                     self.game_finished = True
 
 
         async def get_today_state(client, room_id):
-            """Walk room history backward; collect own guesses+game-over from today."""
+            """Walk room history backward; collect today's guesses+state."""
             today_start = datetime.datetime.now().replace(
                 hour=0, minute=0, second=0, microsecond=0
             )
@@ -260,7 +269,8 @@ in {
                 resp = await client.room_messages(
                     room_id, start=start, direction="b", limit=50
                 )
-                if not isinstance(resp, RoomMessagesResponse) or not resp.chunk:
+                ok = isinstance(resp, RoomMessagesResponse) and resp.chunk
+                if not ok:
                     break
                 stop = False
                 for ev in resp.chunk:
@@ -274,8 +284,6 @@ in {
                         if len(body) == 5 and body.isalpha():
                             my_guesses.append(body)
                     elif ev.sender == NYT_BOT:
-                        if "Game over" in ev.body or "Solved" in ev.body:
-                            game_over = True
                         if "ggggg" in parse_squares(ev.body):
                             game_over = True
                 if stop:
@@ -283,6 +291,9 @@ in {
                 start = resp.end
 
             my_guesses.reverse()
+            # Fail-state: 6 own guesses without solve = game over
+            if len(my_guesses) >= 6:
+                game_over = True
             return my_guesses, game_over
 
 
@@ -294,7 +305,7 @@ in {
             target_words = get_target_words(termword_bin)
 
             if not target_words:
-                print("Nothing to do (sintfoap hasn't played or error). Exiting.")
+                print("Nothing to do (sintfoap not played or error). Exiting.")
                 return
 
             # Wait for Synapse ready
@@ -344,7 +355,7 @@ in {
                 await client.close()
                 return
             elif already >= n_target:
-                # Plan exhausted but answer never sent (eg old buggy run. Send answer
+                # Plan exhausted, answer never sent. Send answer.
                 start_game = False
                 to_send = [answer]
             else:
@@ -360,6 +371,14 @@ in {
                 )
                 to_send = new_fillers + [answer]
 
+            # Hard cap: never exceed 6 total guesses
+            remaining_slots = max(0, 6 - already)
+            to_send = to_send[:remaining_slots]
+            if not to_send:
+                print("No guess slots remaining. Exiting.")
+                await client.close()
+                return
+
             print(f"Plan to send this run: {to_send}")
             sync_task = asyncio.create_task(client.sync_forever(timeout=30000))
 
@@ -371,7 +390,7 @@ in {
                 )
                 await asyncio.sleep(3)
 
-            # Send guesses sequentially; NYT bot sends multiple messages per guess
+            # Send guesses sequentially; NYT bot sends multiple msgs per guess
             # reactive board parsing causes duplicate sends; fixed delays works
             for i, word in enumerate(to_send):
                 if bot.game_finished:
@@ -406,7 +425,8 @@ in {
 
       serviceConfig = {
         Type = "oneshot";
-        Environment = "BOT_TOKEN_FILE=${config.sops.secrets.matrix-wordle-hax-token.path}";
+        Environment =
+          "BOT_TOKEN_FILE=${config.sops.secrets.matrix-wordle-hax-token.path}";
         ExecStart = "${wordle-bot-script}/bin/wordle-bot";
 
         User = "matrix-synapse";
