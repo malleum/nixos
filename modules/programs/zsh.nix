@@ -192,6 +192,10 @@
 
             # Menu select: highlighted item is inserted on CLI as you cycle
             zstyle ':completion:*' menu select
+            # Shift-Tab reverses menu cycle (load complist first so menuselect keymap exists)
+            zmodload zsh/complist
+            bindkey '^[[Z' reverse-menu-complete
+            bindkey -M menuselect '^[[Z' reverse-menu-complete
             # Fish-like flag descriptions: bold flag, dim separator, colored description
             # =(#b) pattern: group 1 = --flag (bold), group 2 = ' -- ' (dim), group 3 = description (italic cyan)
             zstyle ':completion:*' list-colors \
