@@ -15,20 +15,22 @@
     users.users.${hostConfig.user.username}.extraGroups = ["render"];
 
     # Re-enable for discrete AMD GPU (ROCm compute):
-    # systemd.tmpfiles.rules = [
-    #   "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
-    # ];
+    systemd.tmpfiles.rules = [
+      "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+    ];
 
     hardware = {
       enableRedistributableFirmware = true;
       graphics = {
         enable = true;
+        enable32Bit = true;
         extraPackages = with pkgs; [
-          # rocmPackages.clr.icd # Re-enable for discrete AMD GPU (ROCm compute)
-          mesa # Mesa drivers including radv (open-source Vulkan)
+          rocmPackages.clr.icd
+          mesa # radeonsi GL + radv Vulkan + VA-API driver
+          libva-utils # vainfo for verifying VA-API
         ];
         extraPackages32 = with pkgs; [
-          driversi686Linux.mesa # 32-bit support for Steam games
+          driversi686Linux.mesa
           pkgsi686Linux.libva
         ];
       };

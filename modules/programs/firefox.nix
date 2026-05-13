@@ -15,6 +15,7 @@
       ublock-origin # Content blocker (ads, etc.)
       unpaywall # Finds free versions of academic papers
       tridactyl # Vim-like keybindings for Firefox
+      youtube-shorts-block # Hide/normalize YouTube Shorts
     ];
 
     # Combined and cleaned-up settings
@@ -87,20 +88,36 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
-      "media.ffmpeg.vaapi.enabled" = false; # Disabled: VA-API video decode competes with GPU under gaming load and caused system crashes
-      "media.ffvpx.enabled" = true; # Use software VP8/VP9 decoder (avoids GPU contention with games)
-      "media.rdd-process.enabled" = true; # Helps with sandboxing for video decoding
+      "media.ffmpeg.vaapi.enabled" = true; # VA-API hardware video decode
+      "media.ffvpx.enabled" = true; # Software VP8/VP9 fallback when VA-API can't handle codec
+      "media.rdd-process.enabled" = true; # Sandbox video decode in RDD process
+      "media.rdd-ffmpeg.enabled" = true; # Route ffmpeg/VA-API through RDD sandbox
+      "media.av1.enabled" = true; # AV1 decode (HW on new GPUs)
       "media.webrtc.pipewire.enabled" = true;
 
-      # --- Wayland-specific fixes ---
-      "widget.wayland.opaque-region.enabled" = true; # Required for proper Wayland compositing
-      "widget.wayland-dmabuf-vaapi.enabled" = false; # Disabled: DMA-BUF VA-API path adds GPU memory pressure during gaming
-      "gfx.x11-egl.force-enabled" = false; # Don't force X11 EGL on Wayland
-      "widget.dmabuf.force-enabled" = false; # Don't force DMA-BUF — can cause GPU instability under load
+      # --- Wayland-specific ---
+      "widget.wayland.opaque-region.enabled" = true; # Proper Wayland compositing
+      "widget.wayland-dmabuf-vaapi.enabled" = true; # Zero-copy VA-API → compositor via DMA-BUF
+      "widget.dmabuf-webgl.enabled" = true; # DMA-BUF for WebGL on Wayland
+      "gfx.x11-egl.force-enabled" = false; # Stay on Wayland EGL path
 
       # --- Auto-Enable Extensions & Hide Prompts ---
       "extensions.startupScanScopes" = 1; # Allow extensions from user profile
+      "extensions.autoDisableScopes" = 0; # Don't auto-disable any extension scope on install
       "extensions.showDomainRestrictions" = false; # Hide extension domain restriction prompts
+
+      # --- DRM (Widevine) auto-accept ---
+      "media.eme.enabled" = true; # Master EME (DRM) switch — pre-accept
+      "media.gmp-widevinecdm.enabled" = true; # Enable Widevine CDM
+      "media.gmp-widevinecdm.visible" = true; # Show Widevine in plugins list
+      "media.gmp-widevinecdm.autoupdate" = true; # Keep Widevine current
+      "media.gmp-manager.updateEnabled" = true; # Allow GMP (Widevine etc.) downloads
+
+      # --- Suppress mailto / protocol-handler registration popups ---
+      "network.protocol-handler.external.mailto" = false; # Don't hand mailto to external app
+      "network.protocol-handler.expose.mailto" = false; # Hide mailto handler entirely
+      "gecko.handlerService.allowRegisterFromDifferentHost" = false; # Block cross-host handler registration
+
 
       # --- Hide Bookmarks Bar ---
       "browser.toolbars.bookmarks.visibility" = "never"; # Always hide bookmarks toolbar
@@ -132,7 +149,10 @@
         id = 0;
         isDefault = true;
 
-        extensions.packages = myExtensions;
+        extensions = {
+          packages = myExtensions;
+          force = true; # Overwrite extensions.json so Nix-managed addons enable on first run
+        };
 
         search = {
           default = "Brave Search";
