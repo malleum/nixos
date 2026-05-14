@@ -8,7 +8,6 @@
         waywall
 
         prismlauncher
-        lunar-client
         wl-crosshair
 
         haguichi

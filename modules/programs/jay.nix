@@ -77,7 +77,10 @@ in {
     # Reads from /proc and /sys directly where possible to minimize subprocess spawning.
     # Audio updates instantly via pactl subscribe; everything else updates every ~2s.
     # bash
-    jayStatusScript = pkgs.writeShellScript "jay-status" ''
+    jayStatusScript = pkgs.writeShellScriptBin "jay-status" ''
+      # Kill older instances (--older-than skips self, age <1s)
+      ${pkgs.psmisc}/bin/killall -q -9 --older-than 1s jay-status 2>/dev/null || true
+
       echo '{"version":1}'
       echo '['
       echo '[]'
@@ -275,8 +278,8 @@ in {
         map = """
           xkb_keymap {
               xkb_keycodes { include "evdev" };
-              xkb_types    { include "complete" };
-              xkb_compat   { include "complete" };
+              xkb_types    { include "basic" };
+              xkb_compat   { include "basic" };
               xkb_symbols  {
                   include "pc+us(dvorak)+inet(evdev)"
                   key <CAPS> { [ Escape ] };
@@ -289,26 +292,6 @@ in {
         [[keymaps]]
         name = "qwerty"
         rmlvo = { layout = "us", options = "caps:escape,compose:ins" }
-
-        [[keymaps]]
-        name = "lunar"
-        map = """
-          xkb_keymap {
-              xkb_keycodes { include "evdev" };
-              xkb_types    { include "complete" };
-              xkb_compat   { include "complete" };
-              xkb_symbols  {
-                  include "pc+us(dvorak)+inet(evdev)"
-                  // capslock = 0
-                  key <CAPS> { [ 0 ] };
-                  // Swap LeftShift and LeftCtrl
-                  key <LFSH> { [ Control_L ] };
-                  key <LCTL> { [ Shift_L ] };
-                  // m5 = f3 (assuming m5 is evdev 275 -> XKB 283)
-                  key <I283> { [ F3 ] };
-              };
-          };
-        """
 
         # ── Environment ──────────────────────────────────────────────
         [env]
@@ -363,7 +346,7 @@ in {
         # ── Status Bar ───────────────────────────────────────────────
         [status]
         format = "i3bar"
-        exec = "${jayStatusScript}"
+        exec = "${jayStatusScript}/bin/jay-status"
 
         # ── Named Actions ────────────────────────────────────────────
         [actions]
@@ -566,12 +549,6 @@ in {
         match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident).*"
         match.just-mapped = true
         action = { type = "move-to-workspace", name = "4" }
-
-        # Lunar Client keybinds
-        [[windows]]
-        match.title-regex = ".*Lunar Client.*"
-        action = { type = "set-keymap", map = { name = "lunar" } }
-        latch = { type = "set-keymap", map = { name = "dvorak" } }
 
         [[windows]]
         match.title-regex = ".*OBS.*"
