@@ -259,6 +259,7 @@
       settings = {
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
+          clojure = ["cljfmt"];
           go = ["goimports" "gofmt"];
           javascript = ["prettierd"];
           lua = ["stylua"];
@@ -273,7 +274,9 @@
     lint = lib.mkIf plena {
       enable = true;
       linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
+      linters.clj-kondo.cmd = "${pkgs.clj-kondo}/bin/clj-kondo";
       lintersByFt.python = ["ruff"];
+      lintersByFt.clojure = ["clj-kondo"];
     };
     lualine = {
       enable = true;
