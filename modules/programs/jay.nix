@@ -194,6 +194,34 @@ in {
       done
     '';
 
+    # Audio output switcher: pick sink via rofi, set default, move all streams
+    # bash
+    audioSwitchScript = pkgs.writeShellScriptBin "jay-audio-switch" ''
+      set -eu
+      pactl=${pkgs.pulseaudio}/bin/pactl
+
+      # Build "name<TAB>description" list
+      list=$(
+        $pactl list short sinks | ${pkgs.gawk}/bin/awk '{print $2}' | while read -r n; do
+          desc=$($pactl list sinks | ${pkgs.gawk}/bin/awk -v s="$n" '
+            $1=="Name:" && $2==s {f=1; next}
+            f && /Description:/ {sub(/^[[:space:]]*Description:[[:space:]]*/,""); print; exit}
+          ')
+          printf '%s\t%s\n' "$n" "$desc"
+        done
+      )
+
+      choice=$(printf '%s\n' "$list" | ${pkgs.coreutils}/bin/cut -f2 | rofi -dmenu -p audio)
+      [ -z "$choice" ] && exit 0
+      sink=$(printf '%s\n' "$list" | ${pkgs.gnugrep}/bin/grep -F -m1 "	$choice" | ${pkgs.coreutils}/bin/cut -f1)
+      [ -z "$sink" ] && exit 0
+
+      $pactl set-default-sink "$sink"
+      $pactl list short sink-inputs | ${pkgs.gawk}/bin/awk '{print $1}' | \
+        ${pkgs.findutils}/bin/xargs -r -I{} $pactl move-sink-input {} "$sink"
+      ${pkgs.libnotify}/bin/notify-send -t 1500 "Audio output" "$choice"
+    '';
+
     # Monitor config per host
     # NOTE: Run `jay randr` to discover serial numbers and connector names,
     # then replace the match fields below with your actual serial numbers
@@ -253,6 +281,7 @@ in {
         auto-reload = true
         show-titles = false
         workspace-display-order = "sorted"
+        idle.minutes = 0
 
         # ── Keyboard ─────────────────────────────────────────────────
         keymap.name = "dvorak"
@@ -385,6 +414,9 @@ in {
 
         # ─ App launcher (rofi) ─
         ${mod}-s = { type = "exec", exec = { shell = "rofi -show drun" } }
+
+        # ─ Audio output switch (default + move all streams) ─
+        ${mod}-ctrl-a = { type = "exec", exec = "${audioSwitchScript}/bin/jay-audio-switch" }
 
         # ─ Clipboard history ─
         ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
@@ -640,7 +672,7 @@ in {
         enabled = true
       '';
   in {
-    home.packages = [jayPkg pkgs.satty];
+    home.packages = [jayPkg pkgs.satty audioSwitchScript];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
     xdg.configFile."jay/config.so".source = "${jayConfigSo}/lib/config.so";
