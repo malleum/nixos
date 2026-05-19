@@ -5,9 +5,13 @@ use jay_config::{
         mods::{LOGO, SHIFT},
         syms::*,
     },
-    video::Connector,
+    video::{on_connector_connected, on_connector_disconnected, Connector},
     Direction, Workspace,
 };
+
+/// Connectors that should auto-disable when their monitor powers off
+/// (e.g. a TV that drops DRM connection when turned off).
+const AUTO_TOGGLE_CONNECTORS: &[&str] = &["DP-2"];
 
 /// Check if a workspace has any windows (is occupied).
 fn workspace_has_windows(ws: Workspace) -> bool {
@@ -83,6 +87,17 @@ fn configure() {
     seat.bind(LOGO | SYM_o, || smart_move_to_output(Direction::Right));
     seat.bind(LOGO | SHIFT | SYM_o, || {
         smart_move_to_output(Direction::Left)
+    });
+
+    on_connector_connected(|c| {
+        if AUTO_TOGGLE_CONNECTORS.contains(&c.name().as_str()) {
+            c.set_enabled(true);
+        }
+    });
+    on_connector_disconnected(|c| {
+        if AUTO_TOGGLE_CONNECTORS.contains(&c.name().as_str()) {
+            c.set_enabled(false);
+        }
     });
 }
 
