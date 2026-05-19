@@ -173,7 +173,23 @@
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
-  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
+  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object parinfer-rust];
+
+  extraConfigLuaPre = ''
+    -- Conjure: don't steal K (keep LSP hover); use <localleader>ek instead.
+    vim.g["conjure#mapping#doc_word"] = false
+    vim.g["conjure#filetype#scheme"] = false
+    vim.g["conjure#filetype#fennel"] = false
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "clojure", "clojurescript", "edn" },
+      callback = function(ev)
+        vim.keymap.set("n", "<leader>ek",
+          "<cmd>ConjureDocWord<cr>",
+          { buffer = ev.buf, desc = "Conjure: doc for word under cursor" })
+      end,
+    })
+  '';
 
   plugins = {
     lspconfig.enable = plena;
@@ -233,6 +249,7 @@
       };
     };
 
+    conjure.enable = true;
     csvview.enable = true;
     diffview.enable = true;
     gitsigns.enable = true;
