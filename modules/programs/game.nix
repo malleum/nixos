@@ -1,6 +1,7 @@
 {
   unify.modules.gam.nixos = {pkgs, ...}: {
     services.flatpak.enable = true;
+    environment.systemPackages = [ pkgs.gamescope ];
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;
