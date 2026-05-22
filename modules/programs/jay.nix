@@ -254,15 +254,24 @@ in {
         match.connector = "DP-2"
         name = "external"
         x = 0
+        y = 1120
+        mode = { width = 2560, height = 1440, refresh-rate = 60.0 }
+         
+        # LG ULTRAGEAR (right monitor, scaled for readable text)
+        [[outputs]]
+        match.connector = "HDMI-A-1"
+        name = "external"
+        x = 4480
         y = 0
         mode = { width = 2560, height = 1440, refresh-rate = 60.0 }
+        transform = "rotate-270"
 
         # Lenovo laptop panel (right of external, or standalone)
         [[outputs]]
         match.connector = "eDP-1"
         name = "laptop"
         x = 2560
-        y = 0
+        y = 1360
         mode = { width = 1920, height = 1200, refresh-rate = 60.0 }
       ''
       # toml
