@@ -68,7 +68,18 @@
       themes;
   };
 
-  unify.modules.gui.home = {lib, ...}: {
+  unify.modules.gui.home = {
+    lib,
+    pkgs,
+    ...
+  }: {
+    # Unify GTK app icons (pavucontrol, nm-connection-editor, file dialogs)
+    # with the tray. Papirus-Dark is a complete set with light-on-dark panel
+    # icons. Stylix already sets gtk.theme/enable; it does not set iconTheme.
+    gtk.iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
     stylix.targets = {
       fish.enable = false;
       hyprpaper.enable = lib.mkForce false;
