@@ -3,7 +3,7 @@
     # virtualisation.virtualbox.host = {enable = true;};
 
     users.users.${hostConfig.user.username}.extraGroups = [
-      "adbuser"
+      "adbusers"
       # "vboxusers"
     ];
   };
@@ -19,6 +19,7 @@
       nixos-shell
       quickemu
       qemu
+      adb-sync
     ];
   };
 }
