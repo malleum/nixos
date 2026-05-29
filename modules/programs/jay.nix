@@ -11,7 +11,11 @@
 in {
   # Install jay.desktop to system-level wayland-sessions so ly can find it
   unify.modules.gui.nixos = {pkgs, ...}: {
-    environment.systemPackages = [(makeJayPkg pkgs)];
+    # papirus-icon-theme lands in /run/current-system/sw/share/icons (on
+    # XDG_DATA_DIRS) so wl-tray-bridge can resolve the *plain* named tray icons
+    # nm-applet (network-wireless-*) and pasystray (audio-volume-*) request.
+    # (Adwaita only ships -symbolic variants, which pasystray doesn't ask for.)
+    environment.systemPackages = [(makeJayPkg pkgs) pkgs.papirus-icon-theme];
     # Register jay.desktop with the display manager (ly, gdm, etc.)
     services.displayManager.sessionPackages = [(makeJayPkg pkgs)];
   };
@@ -100,29 +104,61 @@ in {
       exec 8>"$audio_pipe"   # O_WRONLY sentinel — won't block (fd9 is now open reader)
       trap "kill $pactl_pid 2>/dev/null; wait $pactl_pid 2>/dev/null; exec 8>&-; exec 9>&-; rm -f $audio_pipe" EXIT HUP INT TERM
 
-      # Block up to 2s; return instantly on audio event
+      pactl=${pkgs.pulseaudio}/bin/pactl
+
+      # Per-widget accent colors (base16 theme). Only the icon is colored;
+      # values stay in the default bar-status-text-color for readability.
+      c_audio="#${config.stylix.base16Scheme.base0C}"
+      c_cpu="#${config.stylix.base16Scheme.base0D}"
+      c_mem="#${config.stylix.base16Scheme.base0E}"
+      c_disk="#${config.stylix.base16Scheme.base09}"
+      c_bat="#${config.stylix.base16Scheme.base0B}"
+      c_bat_low="#${config.stylix.base16Scheme.base08}"
+      c_date="#${config.stylix.base16Scheme.base0A}"
+      c_duod="#${config.stylix.base16Scheme.base0F}"
+      c_dim="#${config.stylix.base16Scheme.base03}"
+      c_bg="#${config.stylix.base16Scheme.base01}"   # bar bg, for invisible spacer
+
+      # emit NAME, glyph in accent color via pango, then value in default color
+      piece() { printf '{"name":"%s","markup":"pango","full_text":"<span foreground='"'"'%s'"'"'>%s</span> %s"}' "$1" "$2" "$3" "$4"; }
+
+      # Block up to 2s. Return 0 if woken by an audio event, 1 on timeout.
       wait_tick() {
         local _d
-        read -t 2 -r _d <&9 || true
-        while read -t 0.01 -r _d <&9; do :; done || true  # drain extras (read -t 0 only polls, doesn't consume)
+        if read -t 2 -r _d <&9; then
+          while read -t 0.01 -r _d <&9; do :; done  # drain burst (read -t 0 only polls, doesn't consume)
+          return 0
+        fi
+        return 1
       }
 
-      while true; do
-        pieces=()
-
-        # Audio (pulseaudio) — two quick pulsemixer calls with timeout
-        vol=$(timeout 1 ${pkgs.pulsemixer}/bin/pulsemixer --get-volume 2>/dev/null | ${pkgs.gawk}/bin/awk '{print $1}')
-        mute=$(timeout 1 ${pkgs.pulsemixer}/bin/pulsemixer --get-mute 2>/dev/null)
-        if [ "$mute" = "1" ]; then
-          pieces+=("{\"name\":\"pulseaudio\",\"full_text\":\"audio: muted 󰝟\"}")
-        else
-          icon=""
-          [ "''${vol:-0}" -gt 50 ] 2>/dev/null && icon=""
-          [ "''${vol:-0}" -gt 75 ] 2>/dev/null && icon=""
-          pieces+=("{\"name\":\"pulseaudio\",\"full_text\":\"audio ''${vol:-?}% $icon\"}")
+      # Audio block — pactl (C, ~10ms) not pulsemixer (Python, ~150ms).
+      # Re-rendered on every audio event so volume updates feel instant.
+      audio_piece=""
+      build_audio() {
+        local mute vol icon
+        mute=$($pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null)
+        if [ "$mute" = "Mute: yes" ]; then
+          audio_piece=$(piece pulseaudio "$c_dim" "󰝟" "muted")
+          return
         fi
+        vol=$($pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null \
+          | ${pkgs.gawk}/bin/awk '{for(i=1;i<=NF;i++) if($i ~ /%$/){gsub(/%/,"",$i); print $i; exit}}')
+        icon="󰕿"
+        [ "''${vol:-0}" -gt 33 ] 2>/dev/null && icon="󰖀"
+        [ "''${vol:-0}" -gt 66 ] 2>/dev/null && icon="󰕾"
+        audio_piece=$(piece pulseaudio "$c_audio" "$icon" "''${vol:-?}%")
+      }
+
+      # Everything else — rebuilt only on the 2s tick, never on audio events,
+      # so the slow bits (sleep 0.2, df, duod) don't gate audio latency.
+      slow_pieces=()
+      build_slow() {
+        slow_pieces=()
+        local key val
 
         # CPU — read /proc/stat directly (no subprocesses)
+        local u1 n1 s1 i1 u2 n2 s2 i2 total idle cpu
         read -r _ u1 n1 s1 i1 _ < /proc/stat
         sleep 0.2
         read -r _ u2 n2 s2 i2 _ < /proc/stat
@@ -133,9 +169,10 @@ in {
         else
           cpu=0
         fi
-        pieces+=("{\"name\":\"cpu\",\"full_text\":\"cpu $(printf '%02d' $cpu)% 󰍛\"}")
+        slow_pieces+=("$(piece cpu "$c_cpu" "󰍛" "$(printf '%02d' $cpu)%")")
 
         # Memory — read /proc/meminfo directly (no subprocesses)
+        local mem_total mem_avail mem_used_kb mem_used_mb mem_gb mem_frac
         while IFS=': ' read -r key val _; do
           case "$key" in
             MemTotal) mem_total=$val ;;
@@ -147,50 +184,58 @@ in {
           mem_used_mb=$(( mem_used_kb / 1024 ))
           mem_gb=$(( mem_used_mb / 1024 ))
           mem_frac=$(( (mem_used_mb % 1024) * 10 / 1024 ))
-          pieces+=("{\"name\":\"memory\",\"full_text\":\"mem $mem_gb.$mem_frac G 󰾅\"}")
+          slow_pieces+=("$(piece memory "$c_mem" "󰾅" "$mem_gb.''${mem_frac}G")")
         else
-          pieces+=("{\"name\":\"memory\",\"full_text\":\"mem ?G 󰾅\"}")
+          slow_pieces+=("$(piece memory "$c_mem" "󰾅" "?G")")
         fi
 
         # Disk — one df call
+        local disk_pct
         disk_pct=$(df --output=pcent / 2>/dev/null | tail -1 | tr -dc '0-9')
-        pieces+=("{\"name\":\"disk\",\"full_text\":\"disk $(printf '%02d' "''${disk_pct:-0}")% 󰋊\"}")
+        slow_pieces+=("$(piece disk "$c_disk" "󰋊" "$(printf '%02d' "''${disk_pct:-0}")%")")
 
         # Battery (only if battery exists) — read /sys directly
         if [ -d /sys/class/power_supply/BAT0 ]; then
+          local bat_cap bat_status bat_icon bat_col
           bat_cap=$(< /sys/class/power_supply/BAT0/capacity)
           bat_status=$(< /sys/class/power_supply/BAT0/status)
+          bat_col=$c_bat
           if [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ]; then
             bat_icon="󰂄"
           else
             bat_icon="󰁹"
+            [ "''${bat_cap:-100}" -le 15 ] && bat_col=$c_bat_low
           fi
-          bat_json="{\"name\":\"battery\",\"full_text\":\"bat ''${bat_cap:-?}% $bat_icon\""
-          if [ "''${bat_cap:-100}" -le 10 ] && [ "$bat_status" = "Discharging" ]; then
-            bat_json="$bat_json,\"urgent\":true"
-          fi
-          bat_json="$bat_json}"
-          pieces+=("$bat_json")
+          slow_pieces+=("$(piece battery "$bat_col" "$bat_icon" "''${bat_cap:-?}%")")
         fi
 
         # Date
+        local date_str
         date_str=$(date '+%m-%d')
-        pieces+=("{\"name\":\"clock\",\"full_text\":\"date $date_str 󰸗\"}")
+        slow_pieces+=("$(piece clock "$c_date" "󰸗" "$date_str")")
 
-        # Duodo clock — timeout to prevent hangs
+        # Duodo clock — timeout to prevent hangs.
+        # Trailing blocks (colored = bar bg, so invisible) are the gap before the
+        # tray: jay sizes the status by ink-rect, which drops trailing spaces but
+        # not glyph ink, so bg-colored blocks reserve width without showing.
+        local duod_val
         duod_val=$(timeout 1 duod 2>/dev/null | ${pkgs.choose}/bin/choose -c 0..4)
-        pieces+=("{\"name\":\"duod\",\"full_text\":\"duodo ''${duod_val:-?} 󱑤\"}")
+        slow_pieces+=("$(piece duod "$c_duod" "󰔛" "''${duod_val:-?} <span foreground='$c_bg'>█</span>")")
+      }
 
-        # Build JSON array
-        line=",["
-        for i in "''${!pieces[@]}"; do
-          [ "$i" -gt 0 ] && line="$line,"
-          line="$line''${pieces[$i]}"
+      print_line() {
+        local line=",[$audio_piece" p
+        for p in "''${slow_pieces[@]}"; do
+          line="$line,$p"
         done
-        line="$line]"
-        echo "$line"
+        echo "$line]"
+      }
 
-        wait_tick
+      build_slow
+      while true; do
+        build_audio
+        print_line
+        wait_tick || build_slow   # audio event: re-render audio only; timeout: refresh the rest
       done
     '';
 
@@ -363,8 +408,10 @@ in {
         bar-bg-color = "#${config.stylix.base16Scheme.base01}"
         bar-status-text-color = "#${config.stylix.base16Scheme.base05}"
         border-color = "#${config.stylix.base16Scheme.base03}"
+        # Workspace tabs (titles are hidden, so these only style the bar tabs):
+        # active = accent pill w/ dark text; others = subtle pill w/ readable text.
         focused-title-bg-color = "#${config.stylix.base16Scheme.base0D}"
-        focused-title-text-color = "#${config.stylix.base16Scheme.base01}"
+        focused-title-text-color = "#${config.stylix.base16Scheme.base00}"
         unfocused-title-bg-color = "#${config.stylix.base16Scheme.base02}"
         unfocused-title-text-color = "#${config.stylix.base16Scheme.base05}"
         focused-inactive-title-bg-color = "#${config.stylix.base16Scheme.base02}"
@@ -384,6 +431,7 @@ in {
         # ── Status Bar ───────────────────────────────────────────────
         [status]
         format = "i3bar"
+        i3bar-separator = '  <span foreground="#${config.stylix.base16Scheme.base04}" size="x-large">·</span>  '
         exec = "${jayStatusScript}/bin/jay-status"
 
         # ── Named Actions ────────────────────────────────────────────
@@ -394,6 +442,7 @@ in {
         launch-browser2 = { type = "exec", exec = "${hostConfig.user.browser2}" }
         launch-vesktop = { type = "exec", exec = "vesktop" }
         launch-teams = { type = "exec", exec = ["${browser}", "--new-window", "https://teams.microsoft.com/v2/"] }
+        launch-calendar = { type = "exec", exec = ["${browser}", "--new-window", "https://calendar.google.com/calendar/r"] }
         launch-iamb = { type = "exec", exec = { shell = "$TERMINAL iamb" } }
         launch-signal = { type = "exec", exec = "signal-desktop" }
 
@@ -410,6 +459,7 @@ in {
         ${mod}-i = "$launch-iamb"
         ${mod}-shift-i = "$launch-signal"
         ${mod}-ctrl-c = "open-control-center"
+        ${mod}-shift-c = "$launch-calendar"
 
         # ─ Clipboard copypaste ─
         ${mod}-x = { type = "exec", exec = { prog = "${pkgs.wl-clipboard}/bin/wl-copy", args = ["https://xkcd.com/1475/"], privileged = true } }
@@ -685,6 +735,17 @@ in {
 
     xdg.configFile."jay/config.toml".text = jayConfig;
     xdg.configFile."jay/config.so".source = "${jayConfigSo}/lib/config.so";
+
+    # wl-tray-bridge: use a real icon theme (Hicolor lacks named tray icons,
+    # which is why nm-applet/pasystray showed the fallback "OBJ" placeholder).
+    # `color` recolors symbolic SVGs to match the bar foreground.
+    xdg.configFile."wl-tray-bridge/config.toml".text = ''
+      scale = 1.0
+      theme = "Papirus-Dark"
+
+      [icon]
+      color = "#${config.stylix.base16Scheme.base05}ff"
+    '';
 
     # Satty config: save to downloads, copy to clipboard on save
     xdg.configFile."satty/config.toml".text = ''
