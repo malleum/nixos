@@ -478,10 +478,10 @@ in {
         ${mod}-ctrl-a = { type = "exec", exec = "${audioSwitchScript}/bin/jay-audio-switch" }
 
         # ─ Clipboard history ─
-        ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
+        ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
 
         # ─ Calculator (rofi-calc with live preview) ─
-        ${mod}-c = { type = "exec", exec = { shell = "rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy", privileged = true } }
+        ${mod}-c = { type = "exec", exec = { shell = "rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy", privileged = true } }
 
         # ─ Emoji picker ─
         ${mod}-shift-e = { type = "exec", exec = { shell = "rofi -modi emoji -show emoji | wl-copy", privileged = true } }

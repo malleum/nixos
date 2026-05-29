@@ -271,9 +271,9 @@
             (mkBind "SUPER + backslash" ''hl.dsp.exec_cmd("hyprctl switchxkblayout all next")'')
 
             (mkBind "SUPER + s" ''hl.dsp.exec_cmd("rofi -show drun")'')
-            (mkBind "SUPER + c" ''hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy")'')
+            (mkBind "SUPER + c" ''hl.dsp.exec_cmd("rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy")'')
             (mkBind "SUPER + SHIFT + e" ''hl.dsp.exec_cmd("rofi -modi emoji -show emoji")'')
-            (mkBind "SUPER + v" ''hl.dsp.exec_cmd("${pkgs.cliphist}/bin/cliphist list | rofi -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy")'')
+            (mkBind "SUPER + v" ''hl.dsp.exec_cmd("${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy")'')
             (mkBind "SUPER + CONTROL + SHIFT + s" ''hl.dsp.exec_cmd("themeswitcher")'')
 
             (mkBind "SUPER + SHIFT + q" ''hl.dsp.window.close()'')

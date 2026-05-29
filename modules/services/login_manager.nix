@@ -5,7 +5,7 @@
     ...
   }: let
     sessions = "${config.services.displayManager.sessionData.desktops}/share";
-    tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+    tuigreet = "${pkgs.tuigreet}/bin/tuigreet";
   in {
     # A plain login-shell entry so "shell" is selectable alongside jay/hyprland.
     environment.etc."greetd/sessions/shell.desktop".text = ''

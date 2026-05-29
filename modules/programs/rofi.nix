@@ -34,13 +34,12 @@
         "window" = {
           location = mkLiteral "center";
           anchor = mkLiteral "center";
-          width = mkLiteral "50%";
-          height = mkLiteral "50%";
+          width = mkLiteral "40%";
           padding = mkLiteral "24px";
           border = mkLiteral "2px";
           border-radius = mkLiteral "16px";
-          border-color = mkLiteral "#${config.stylix.base16Scheme.base09}";
-          background-color = mkLiteral "#${config.stylix.base16Scheme.base00}CC";
+          border-color = mkLiteral "#${config.stylix.base16Scheme.base0D}";
+          background-color = mkLiteral "#${config.stylix.base16Scheme.base00}E6";
         };
         "mainbox" = {
           orientation = mkLiteral "vertical";
@@ -53,7 +52,7 @@
           spacing = mkLiteral "12px";
           padding = mkLiteral "12px";
           border-radius = mkLiteral "12px";
-          background-color = mkLiteral "#${config.stylix.base16Scheme.base01}66"; # More visible background
+          background-color = mkLiteral "#${config.stylix.base16Scheme.base01}80"; # More visible background
         };
         "listview" = {
           # --- KEY CHANGE: From grid to list ---
@@ -86,17 +85,17 @@
           text-color = mkLiteral "inherit";
         };
         "element selected" = {
-          background-color = mkLiteral "#${config.stylix.base16Scheme.base09}4D";
-          text-color = mkLiteral "#${config.stylix.base16Scheme.base0C}";
+          background-color = mkLiteral "#${config.stylix.base16Scheme.base0D}";
+          text-color = mkLiteral "#${config.stylix.base16Scheme.base00}";
         };
         "entry" = {
           placeholder = "";
           placeholder-color = mkLiteral "#${config.stylix.base16Scheme.base03}";
-          text-color = mkLiteral "#${config.stylix.base16Scheme.base0C}";
+          text-color = mkLiteral "#${config.stylix.base16Scheme.base05}";
           vertical-align = mkLiteral "0.5";
         };
         "prompt" = {
-          text-color = mkLiteral "#${config.stylix.base16Scheme.base09}";
+          text-color = mkLiteral "#${config.stylix.base16Scheme.base0D}";
           vertical-align = mkLiteral "0.5";
         };
         "message" = {
@@ -106,7 +105,7 @@
         };
         "textbox" = {
           background-color = mkLiteral "inherit";
-          text-color = mkLiteral "#${config.stylix.base16Scheme.base0B}";
+          text-color = mkLiteral "#${config.stylix.base16Scheme.base0D}";
           horizontal-align = mkLiteral "0.5";
         };
       };
