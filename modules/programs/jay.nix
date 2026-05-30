@@ -267,6 +267,23 @@ in {
       ${pkgs.libnotify}/bin/notify-send -t 1500 "Audio output" "$choice"
     '';
 
+    # Toggle the "DP-2" output on/off. State tracked in XDG_RUNTIME_DIR
+    # so it resets cleanly on logout.
+    # bash
+    leftMonitorToggleScript = pkgs.writeShellScriptBin "jay-toggle-left-monitor" ''
+      set -eu
+      state_file="''${XDG_RUNTIME_DIR:-/tmp}/jay-left-monitor-disabled"
+      if [ -f "$state_file" ]; then
+        jay randr output DP-2 enable
+        rm -f "$state_file"
+        ${pkgs.libnotify}/bin/notify-send -t 1500 "DP-2 monitor" "enabled"
+      else
+        jay randr output DP-2 disable
+        : > "$state_file"
+        ${pkgs.libnotify}/bin/notify-send -t 1500 "DP-2 monitor" "disabled"
+      fi
+    '';
+
     # Monitor config per host
     # NOTE: Run `jay randr` to discover serial numbers and connector names,
     # then replace the match fields below with your actual serial numbers
@@ -275,21 +292,30 @@ in {
       if hostConfig.name == "magnus"
       # toml
       then ''
-        # HKC 25E3A (main, 180Hz) — update match.serial-number via `jay randr`
+        # VIZ VFD40M-0809 (left) — serial "0" is non-unique, pair with manufacturer
         [[outputs]]
-        match.serial-number = "0000000000001"
-        name = "main"
-        x = 3840
+        match.serial-number = "0"
+        match.manufacturer = "VIZ"
+        name = "left"
+        x = 0
         y = 0
-        mode = { width = 1920, height = 1080, refresh-rate = 180.0 }
+        mode = { width = 1920, height = 1080, refresh-rate = 60.0 }
 
-        # HP V222vb (secondary)
+        # HP V222vb (middle)
         [[outputs]]
         match.serial-number = "3CQ1261KNM"
-        name = "secondary"
+        name = "middle"
         x = 1920
         y = 0
         mode = { width = 1920, height = 1080, refresh-rate = 60.0 }
+
+        # HKC 25E3A (right, 180Hz)
+        [[outputs]]
+        match.serial-number = "0000000000001"
+        name = "right"
+        x = 3840
+        y = 0
+        mode = { width = 1920, height = 1080, refresh-rate = 180.0 }
       ''
       else if hostConfig.name == "manus"
       # toml
@@ -476,6 +502,9 @@ in {
 
         # ─ Audio output switch (default + move all streams) ─
         ${mod}-ctrl-a = { type = "exec", exec = "${audioSwitchScript}/bin/jay-audio-switch" }
+
+        # ─ Toggle left monitor on/off ─
+        ${mod}-shift-m = { type = "exec", exec = "${leftMonitorToggleScript}/bin/jay-toggle-left-monitor" }
 
         # ─ Clipboard history ─
         ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
@@ -731,7 +760,7 @@ in {
         enabled = true
       '';
   in {
-    home.packages = [jayPkg pkgs.satty audioSwitchScript];
+    home.packages = [jayPkg pkgs.satty audioSwitchScript leftMonitorToggleScript];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
     xdg.configFile."jay/config.so".source = "${jayConfigSo}/lib/config.so";
