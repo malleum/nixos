@@ -1,23 +1,9 @@
-{inputs, ...}: let
-  makeJayPkg = pkgs:
-    inputs.jay.packages.${pkgs.stdenv.hostPlatform.system}.jay.overrideAttrs (old: {
-      RUSTC_BOOTSTRAP = "1";
-      postPatch =
-        (old.postPatch or "")
-        + ''
-          sed -i '1i #![feature(cfg_select)]' src/main.rs
-        '';
-    });
-in {
-  # Install jay.desktop to system-level wayland-sessions so ly can find it
-  unify.modules.gui.nixos = {pkgs, ...}: {
-    # papirus-icon-theme lands in /run/current-system/sw/share/icons (on
-    # XDG_DATA_DIRS) so wl-tray-bridge can resolve the *plain* named tray icons
-    # nm-applet (network-wireless-*) and pasystray (audio-volume-*) request.
-    # (Adwaita only ships -symbolic variants, which pasystray doesn't ask for.)
-    environment.systemPackages = [(makeJayPkg pkgs) pkgs.papirus-icon-theme];
-    # Register jay.desktop with the display manager (ly, gdm, etc.)
-    services.displayManager.sessionPackages = [(makeJayPkg pkgs)];
+{inputs, ...}: {
+  unify.modules.gui.nixos = {pkgs, ...}: let
+    jayPkg = inputs.jay.packages.${pkgs.stdenv.hostPlatform.system}.jay;
+  in {
+    environment.systemPackages = [jayPkg pkgs.papirus-icon-theme];
+    services.displayManager.sessionPackages = [jayPkg];
   };
 
   unify.modules.gui.home = {
@@ -30,34 +16,7 @@ in {
     browser = hostConfig.user.browser;
     mod = "logo";
 
-    jayPkg = makeJayPkg pkgs;
-
-    # config.so: extends TOML config with smart workspace behaviors
-    jayConfigSo = let
-      configSrc = ./jay-config-so;
-    in
-      pkgs.rustPlatform.buildRustPackage {
-        pname = "jay-config-so";
-        version = "0.1.0";
-        src = configSrc;
-        cargoDeps = pkgs.rustPlatform.importCargoLock {
-          lockFile = "${configSrc}/Cargo.lock";
-        };
-
-        # Patch vendored jay-toml-config to remove its config!() macro call
-        # (causes duplicate JAY_CONFIG_ENTRY_V1 symbol otherwise).
-        preBuild = ''
-          toml_lib=$(find /build/cargo-vendor-dir -path '*/jay-toml-config-*/src/lib.rs' -print -quit 2>/dev/null)
-          if [ -n "$toml_lib" ]; then
-            sed -i '/^config!(configure);$/d' "$toml_lib"
-          fi
-        '';
-
-        installPhase = ''
-          mkdir -p $out/lib
-          cp target/*/release/libjay_config_so.so $out/lib/config.so
-        '';
-      };
+    jayPkg = inputs.jay.packages.${pkgs.stdenv.hostPlatform.system}.jay;
 
     wlTrayBridge = let
       src = pkgs.fetchFromGitHub {
@@ -356,7 +315,6 @@ in {
         # ── General ──────────────────────────────────────────────────
         log-level = "info"
         focus-follows-mouse = true
-        unstable-mouse-follows-focus = true
         window-management-key = "Super_L"
         auto-reload = true
         show-titles = false
@@ -532,7 +490,7 @@ in {
         ${mod}-ctrl-s = { type = "exec", exec = { shell = "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.satty}/bin/satty -f -", privileged = true } }
 
         # ─ Floating / layout ─
-        ${mod}-a = "focus-parent"
+        ${mod}-a = ["focus-parent", "warp-mouse-to-focus"]
         ${mod}-space = "toggle-floating"
         ${mod}-t = "toggle-split"
         ${mod}-f = "toggle-mono"
@@ -549,14 +507,14 @@ in {
         ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
         # ─ Move workspace to other output ─
-        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right"]
-        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left"]
+        ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right", "warp-mouse-to-focus"]
+        ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left", "warp-mouse-to-focus"]
 
         # ─ Focus movement (vim-style) ─
-        ${mod}-h = "focus-left"
-        ${mod}-j = "focus-down"
-        ${mod}-k = "focus-up"
-        ${mod}-l = "focus-right"
+        ${mod}-h = ["focus-left", "warp-mouse-to-focus"]
+        ${mod}-j = ["focus-down", "warp-mouse-to-focus"]
+        ${mod}-k = ["focus-up", "warp-mouse-to-focus"]
+        ${mod}-l = ["focus-right", "warp-mouse-to-focus"]
 
         # ─ Move windows (vim-style) ─
         ${mod}-shift-h = "move-left"
@@ -565,17 +523,17 @@ in {
         ${mod}-shift-l = "move-right"
 
         # ─ Workspaces (dvorak home row: ' , . p y) ─
-        ${mod}-apostrophe = { type = "show-workspace", name = "1" }
-        ${mod}-comma = { type = "show-workspace", name = "2" }
-        ${mod}-period = { type = "show-workspace", name = "3" }
-        ${mod}-p = { type = "show-workspace", name = "4" }
-        ${mod}-y = { type = "show-workspace", name = "5" }
+        ${mod}-apostrophe = [{ type = "show-workspace", name = "1" }, "warp-mouse-to-focus"]
+        ${mod}-comma = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus"]
+        ${mod}-period = [{ type = "show-workspace", name = "3" }, "warp-mouse-to-focus"]
+        ${mod}-p = [{ type = "show-workspace", name = "4" }, "warp-mouse-to-focus"]
+        ${mod}-y = [{ type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
 
-        ${mod}-shift-apostrophe = [{ type = "move-to-workspace", name = "1" }, { type = "show-workspace", name = "1" }]
-        ${mod}-shift-comma = [{ type = "move-to-workspace", name = "2" }, { type = "show-workspace", name = "2" }]
-        ${mod}-shift-period = [{ type = "move-to-workspace", name = "3" }, { type = "show-workspace", name = "3" }]
-        ${mod}-shift-p = [{ type = "move-to-workspace", name = "4" }, { type = "show-workspace", name = "4" }]
-        ${mod}-shift-y = [{ type = "move-to-workspace", name = "5" }, { type = "show-workspace", name = "5" }]
+        ${mod}-shift-apostrophe = [{ type = "move-to-workspace", name = "1" }, { type = "show-workspace", name = "1" }, "warp-mouse-to-focus"]
+        ${mod}-shift-comma = [{ type = "move-to-workspace", name = "2" }, { type = "show-workspace", name = "2" }, "warp-mouse-to-focus"]
+        ${mod}-shift-period = [{ type = "move-to-workspace", name = "3" }, { type = "show-workspace", name = "3" }, "warp-mouse-to-focus"]
+        ${mod}-shift-p = [{ type = "move-to-workspace", name = "4" }, { type = "show-workspace", name = "4" }, "warp-mouse-to-focus"]
+        ${mod}-shift-y = [{ type = "move-to-workspace", name = "5" }, { type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
 
         # ─ Split direction ─
         ${mod}-minus = "split-horizontal"
@@ -763,7 +721,6 @@ in {
     home.packages = [jayPkg pkgs.satty audioSwitchScript leftMonitorToggleScript];
 
     xdg.configFile."jay/config.toml".text = jayConfig;
-    xdg.configFile."jay/config.so".source = "${jayConfigSo}/lib/config.so";
 
     # wl-tray-bridge: use a real icon theme (Hicolor lacks named tray icons,
     # which is why nm-applet/pasystray showed the fallback "OBJ" placeholder).

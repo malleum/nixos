@@ -21,6 +21,7 @@
 
     stylix = {
       enable = true;
+      enableReleaseChecks = false;
       image = themes.${theme}.image;
       base16Scheme = themes.${theme}.base16Scheme;
 
@@ -80,6 +81,7 @@
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
     };
+    stylix.enableReleaseChecks = false;
     stylix.targets = {
       fish.enable = false;
       hyprpaper.enable = lib.mkForce false;

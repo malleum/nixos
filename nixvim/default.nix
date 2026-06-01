@@ -114,10 +114,7 @@
   lsp = {
     inlayHints.enable = true;
     servers = lib.mkIf plena {
-      elmls.enable = true;
-      elixir.enable = true;
       clangd.enable = true;
-      clojure_lsp.enable = true;
       gopls.enable = true;
       jdtls.enable = true;
       jsonls.enable = true;
@@ -174,22 +171,6 @@
   };
 
   extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object parinfer-rust];
-
-  extraConfigLuaPre = ''
-    -- Conjure: don't steal K (keep LSP hover); use <localleader>ek instead.
-    vim.g["conjure#mapping#doc_word"] = false
-    vim.g["conjure#filetype#scheme"] = false
-    vim.g["conjure#filetype#fennel"] = false
-
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "clojure", "clojurescript", "edn" },
-      callback = function(ev)
-        vim.keymap.set("n", "<leader>ek",
-          "<cmd>ConjureDocWord<cr>",
-          { buffer = ev.buf, desc = "Conjure: doc for word under cursor" })
-      end,
-    })
-  '';
 
   plugins = {
     lspconfig.enable = plena;
@@ -249,7 +230,6 @@
       };
     };
 
-    conjure.enable = true;
     csvview.enable = true;
     diffview.enable = true;
     gitsigns.enable = true;
@@ -276,7 +256,6 @@
       settings = {
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
-          clojure = ["cljfmt"];
           go = ["goimports" "gofmt"];
           javascript = ["prettierd"];
           lua = ["stylua"];
@@ -291,9 +270,7 @@
     lint = lib.mkIf plena {
       enable = true;
       linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
-      linters.clj-kondo.cmd = "${pkgs.clj-kondo}/bin/clj-kondo";
       lintersByFt.python = ["ruff"];
-      lintersByFt.clojure = ["clj-kondo"];
     };
     lualine = {
       enable = true;

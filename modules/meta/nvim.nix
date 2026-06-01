@@ -6,7 +6,10 @@
   }: let
     nixvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
-      module = import ../../nixvim;
+      module = {
+        imports = [(import ../../nixvim)];
+        nixpkgs.source = inputs.nixpkgs;
+      };
       extraSpecialArgs = {
         inherit pkgs inputs;
         plena = true;
@@ -15,7 +18,10 @@
 
     mvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
-      module = import ../../nixvim;
+      module = {
+        imports = [(import ../../nixvim)];
+        nixpkgs.source = inputs.nixpkgs;
+      };
       extraSpecialArgs = {
         inherit pkgs inputs;
         plena = false;

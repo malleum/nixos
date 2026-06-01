@@ -36,7 +36,10 @@
     nixvim.url = "github:nix-community/nixvim";
 
     hypr.url = "github:hyprwm/Hyprland";
-    stylix.url = "github:danth/stylix";
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     waywall = {
       url = "github:malleum/waywall";
       inputs.nixpkgs.follows = "nixpkgs";
