@@ -88,6 +88,7 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
+      "gfx.webrender.compositor" = false; # Disable Wayland native-compositor passthrough — works around jay protocol errors (WP:E WP:CA…) on monitor/window changes that crash Firefox
       "media.ffmpeg.vaapi.enabled" = true; # VA-API hardware video decode
       "media.ffvpx.enabled" = true; # Software VP8/VP9 fallback when VA-API can't handle codec
       "media.rdd-process.enabled" = true; # Sandbox video decode in RDD process
