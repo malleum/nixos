@@ -33,7 +33,10 @@
 
     fix-python.url = "github:GuillaumeDesforges/fix-python";
     nix-alien.url = "github:thiagokokada/nix-alien";
-    nixvim.url = "github:nix-community/nixvim";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     hypr.url = "github:hyprwm/Hyprland";
     stylix = {

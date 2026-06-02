@@ -9,6 +9,7 @@
       module = {
         imports = [(import ../../nixvim)];
         nixpkgs.source = inputs.nixpkgs;
+        version.enableNixpkgsReleaseCheck = false;
       };
       extraSpecialArgs = {
         inherit pkgs inputs;
@@ -21,6 +22,7 @@
       module = {
         imports = [(import ../../nixvim)];
         nixpkgs.source = inputs.nixpkgs;
+        version.enableNixpkgsReleaseCheck = false;
       };
       extraSpecialArgs = {
         inherit pkgs inputs;

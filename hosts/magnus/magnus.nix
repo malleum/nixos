@@ -10,6 +10,7 @@ in {
       inherit
         (modules)
         amd
+        dbt
         efi
         doc
         gam
