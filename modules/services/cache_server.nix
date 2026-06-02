@@ -40,12 +40,11 @@
       "d /var/lib/laptop-cache 0755 nix-uploader nix-uploader -"
     ];
 
-    sops.secrets.cch-signing-key = {
-      key = "cch_signing_key";
-      owner = "harmonia";
-      group = "harmonia";
-      mode = "0440";
-    };
+    # harmonia runs with DynamicUser=true, so there is no static `harmonia`
+    # user for sops to chown to. The signing key is fed to the unit via
+    # LoadCredential, which the service manager reads as root — so leaving
+    # the secret root-owned (sops default) is fine.
+    sops.secrets.cch-signing-key.key = "cch_signing_key";
 
     services.harmonia.cache = {
       enable = true;
