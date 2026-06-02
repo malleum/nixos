@@ -20,7 +20,6 @@
   unify.modules.cch.nixos = {
     pkgs,
     lib,
-    config,
     ...
   }: let
     cacheUrl = "https://malleum.us/";
@@ -68,11 +67,13 @@
         # shellcheck disable=SC2086
         echo "$paths" | xargs nix copy --to "ssh-ng://malleum.us"
 
-        # Register one gcroot per target name. Replacing the symlink drops
-        # the prior path's only root → next nix-collect-garbage deletes it.
+        # Register one gcroot per target name. /var/lib/laptop-cache is
+        # symlinked under /nix/var/nix/gcroots on the server, so each symlink
+        # here is a real GC root. Overwriting a symlink de-roots the prior
+        # path; the server's weekly nh-clean then purges it. (GC itself needs
+        # root, which nix-uploader is not — so we don't run it here.)
         {
           echo 'set -eu'
-          echo 'mkdir -p /var/lib/laptop-cache'
           for p in $paths; do
             base=$(basename "$p")
             # strip leading "<hash>-"
@@ -81,8 +82,6 @@
             name=$(echo "$name" | sed -E 's/-[0-9].*$//')
             printf 'ln -sfn %q /var/lib/laptop-cache/%s\n' "$p" "$name"
           done
-          # Sweep unrooted paths now that symlinks point at the new versions.
-          echo 'nix-collect-garbage >/dev/null 2>&1 || true'
         } | ssh malleum.us bash
       '';
     };
