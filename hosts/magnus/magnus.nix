@@ -10,9 +10,10 @@ in {
       inherit
         (modules)
         amd
+        cch
         dbt
-        efi
         doc
+        efi
         gam
         gui
         vrt

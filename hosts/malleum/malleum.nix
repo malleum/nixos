@@ -10,6 +10,7 @@ in {
       inherit
         (modules)
         amd
+        cch
         doc
         efi
         gam

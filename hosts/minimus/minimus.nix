@@ -9,9 +9,10 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
+        cache-server
         efi
-        matrix
         grapple
+        matrix
         wordle-bot
         ;
     };

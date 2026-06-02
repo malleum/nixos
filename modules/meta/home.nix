@@ -3,7 +3,6 @@
     home = {
       hostConfig,
       lib,
-      pkgs,
       ...
     }: let
       inherit

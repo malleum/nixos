@@ -27,7 +27,7 @@
       gnumake
       go
       iogii
-      jdk21
+      jdk
       lua
       nodejs
       python3

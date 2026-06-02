@@ -11,23 +11,13 @@
           config.allowUnfree = true;
         };
       })
-
-      # Skip flaky openldap test017-syncreplication-refresh (breaks bottles build)
-      (final: prev: {
-        openldap = prev.openldap.overrideAttrs (old: {
-          doCheck = false;
-        });
-      })
     ];
   };
 in {
   imports = [inputs.flake-parts.flakeModules.easyOverlay];
 
   perSystem = {system, ...}: {
-    imports = [
-      "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
-      {inherit nixpkgs;}
-    ];
+    imports = ["${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix" {inherit nixpkgs;}];
 
     nixpkgs.hostPlatform = {inherit system;};
   };
