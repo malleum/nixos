@@ -24,6 +24,7 @@
       "general.useragent.locale" = "en-US"; # Set language to US English
       "browser.shell.checkDefaultBrowser" = false; # Disable default browser check
       "browser.download.useDownloadDir" = true; # Save files to Downloads folder
+      "browser.download.always_ask_before_handling_new_types" = true; # Never auto-open downloads (csv etc.) — always ask/save, no LibreOffice autolaunch
       "browser.tabs.loadInBackground" = true; # Open new tabs in background
       "browser.ctrlTab.recentlyUsedOrder" = false; # Cycle tabs in visual order, not LRU
       "browser.ssb.enabled" = false; # Disable "Site Specific Browser" (PWA-like) feature
@@ -133,6 +134,10 @@
       removeFirefoxSearchFiles = lib.hm.dag.entryBefore ["writeBoundary"] ''
         run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4
         run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/search.json.mozlz4.bak
+      '';
+      # Wipe per-type download actions (csv→LibreOffice etc.); always_ask pref then takes over
+      removeFirefoxHandlers = lib.hm.dag.entryBefore ["writeBoundary"] ''
+        run rm -f ${hostConfig.user.homeDirectory}/.mozilla/firefox/default/handlers.json
       '';
     };
 
