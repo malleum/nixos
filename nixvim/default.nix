@@ -170,7 +170,7 @@
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
-  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object parinfer-rust];
+  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
 
   plugins = {
     lspconfig.enable = plena;

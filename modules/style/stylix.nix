@@ -57,6 +57,7 @@
 
       targets = {
         fish.enable = false;
+        kmscon.enable = false;
         nixvim.enable = false;
       };
     };

@@ -29,15 +29,25 @@
     };
     users.groups.nix-uploader = {};
 
-    # Required: trusted-users can `nix copy --to ssh-ng://...` without
-    # signed paths; harmonia signs at serve time, not at receive time.
+    # nix-uploader must be trusted to push unsigned paths over ssh-ng.
     nix.settings.trusted-users = ["nix-uploader"];
 
-    # GC root directory. One symlink per pushed pkg-name; replacing the
-    # symlink drops the prior path's only root, so nix-collect-garbage
-    # purges old versions automatically.
+    # Accept unsigned paths on ingest. The ssh-ng `nix-daemon --stdio` path
+    # doesn't reliably propagate the trusted-user flag to addToStore, so the
+    # daemon otherwise rejects pushes with "lacks a signature by a trusted
+    # key" even though the connection is trusted. Access is gated by the
+    # nix-uploader SSH key, and harmonia re-signs everything at serve time
+    # with the malleum.us-1 key, so clients still verify against that.
+    nix.settings.require-sigs = false;
+
+    # GC root directory. One symlink per pushed pkg-name, written by the
+    # nix-uploader over SSH. Symlinking it under /nix/var/nix/gcroots makes
+    # every symlink inside a real GC root (Nix follows symlinked gcroot
+    # dirs), so pushed paths survive GC. Overwriting a symlink with a new
+    # version de-roots the old path → weekly nh-clean purges it.
     systemd.tmpfiles.rules = [
       "d /var/lib/laptop-cache 0755 nix-uploader nix-uploader -"
+      "L+ /nix/var/nix/gcroots/laptop-cache - - - - /var/lib/laptop-cache"
     ];
 
     # harmonia runs with DynamicUser=true, so there is no static `harmonia`
