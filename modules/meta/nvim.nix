@@ -4,6 +4,8 @@
     system,
     ...
   }: let
+    cls = inputs.cls.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
     nixvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
       inherit system;
       module = {
@@ -47,5 +49,11 @@
       program = "${mvim}/bin/nvim";
     };
     packages.mvim = mvim;
+
+    apps.cls = {
+      type = "app";
+      program = "${cls}/bin/cls";
+    };
+    packages.cls = cls;
   };
 }

@@ -63,6 +63,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    cls = {
+      url = "github:malleum/cls";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jay = {
       url = "git+https://github.com/mahkoh/jay?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
