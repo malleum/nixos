@@ -17,7 +17,7 @@
         enableNixpkgsReleaseCheck = false;
       };
 
-      gtk.gtk4.theme = null;
+      gtk.gtk4.theme = lib.mkForce null;
       xdg.userDirs.setSessionVariables = false;
       programs.git.signing.format = null;
 
