@@ -21,7 +21,7 @@
       settings.default_session = {
         # --remember: last username, --remember-session: last picked session
         # (jay/hyprland/shell). tuigreet pre-selects it as the default.
-        command = "${tuigreet} --time --asterisks --remember --remember-session --sessions ${sessions}/wayland-sessions:${sessions}/xsessions:/etc/greetd/sessions";
+        command = "${tuigreet} --time --asterisks --cmd 'jay run' --remember --remember-session --sessions ${sessions}/wayland-sessions:${sessions}/xsessions:/etc/greetd/sessions";
         user = "greeter";
       };
     };

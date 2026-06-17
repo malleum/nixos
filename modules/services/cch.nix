@@ -63,9 +63,26 @@
         count=$(echo "$paths" | wc -l)
         echo "cch-push: pushing $count paths to ${cacheUrl}"
 
+        # Activation restarts NetworkManager, and network-online.target is
+        # already reached from boot so systemd ordering does not actually gate
+        # us — we can fire while DNS is briefly down. Retry to ride out that
+        # window. Push is best-effort: never fail (would mark the whole switch
+        # failed, exit 4).
         # nix-uploader is in trusted-users on minimus, so unsigned upload OK.
-        # shellcheck disable=SC2086
-        echo "$paths" | xargs nix copy --to "ssh-ng://malleum.us"
+        ok=0
+        for attempt in $(seq 1 30); do
+          # shellcheck disable=SC2086
+          if echo "$paths" | xargs nix copy --to "ssh-ng://malleum.us"; then
+            ok=1
+            break
+          fi
+          echo "cch-push: attempt $attempt failed (network?), retrying in 2s..."
+          sleep 2
+        done
+        if [ "$ok" -ne 1 ]; then
+          echo "cch-push: giving up after retries, skipping this run"
+          exit 0
+        fi
 
         # Register one gcroot per target name. /var/lib/laptop-cache is
         # symlinked under /nix/var/nix/gcroots on the server, so each symlink
@@ -82,7 +99,7 @@
             name=$(echo "$name" | sed -E 's/-[0-9].*$//')
             printf 'ln -sfn %q /var/lib/laptop-cache/%s\n' "$p" "$name"
           done
-        } | ssh malleum.us bash
+        } | ssh malleum.us bash || echo "cch-push: gcroot registration failed (non-fatal)"
       '';
     };
   in {
