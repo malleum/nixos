@@ -205,6 +205,10 @@
         };
         sources.default = ["lsp" "path" "snippets" "buffer"];
         completion = {
+          list.selection = {
+            preselect = true;
+            auto_insert = false;
+          };
           menu = {
             border = "rounded";
             draw = {
