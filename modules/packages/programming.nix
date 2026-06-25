@@ -1,10 +1,10 @@
-{
+{inputs, ...}: {
   unify.modules.gui.home = {pkgs, ...}: let
     iogii = pkgs.stdenv.mkDerivation {
       name = "iogii";
       src = builtins.fetchurl {
-        url = "https://golfscript.com/iogii/iogii-1.1";
-        sha256 = "sha256:0fv7myy1mcn9s5r46lbffqwhkkfb9p7582agbgp5c8zh3kdcmy5v";
+        url = "https://golfscript.com/iogii/iogii-1.2";
+        sha256 = "sha256:1kgvr7jzayrcdm1wqk3pzl8lyjp317rk7vndwws3dl2x6ikbc2xn";
       };
       buildInputs = [pkgs.ruby];
       unpackPhase = ":";
@@ -19,8 +19,10 @@
         chmod +x $bin
       '';
     };
+    ago = inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     home.packages = with pkgs; [
+      ago
       alejandra
       clang-tools
       gcc

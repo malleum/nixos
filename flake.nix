@@ -68,6 +68,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ago = {
+      url = "github:libertyluthermoffitt/ago/nunc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jay = {
       url = "git+https://github.com/mahkoh/jay?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
