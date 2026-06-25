@@ -72,7 +72,8 @@
     };
 
     ago = {
-      url = "github:libertyluthermoffitt/ago/nunc";
+      # url = "github:libertyluthermoffitt/ago/nunc";
+      url = "path:/home/joshammer/documents/gh/ago";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

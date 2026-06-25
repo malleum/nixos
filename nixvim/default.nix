@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
   plena ? true,
@@ -55,7 +56,7 @@
         "-" = "<cmd>Oil<cr>";
         "<leader>g" = "<cmd>Neogit<cr>";
         "<leader>q" = "<cmd>lua require('quicker').toggle()<cr>";
-        "<leader>f" = "<cmd>lua require('conform').format({ async = true, lsp_fallback = true })<cr>";
+        "<leader>f" = "<cmd>lua require('conform').format({ async = true, lsp_format = 'last' })<cr>";
 
         "<leader>a" = "<cmd>lua require('harpoon'):list():add()<cr>";
         "<leader>o" = "<cmd>lua require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())<cr>";
@@ -170,7 +171,11 @@
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
-  extraPlugins = with pkgs.vimPlugins; [vim-visual-multi vim-indent-object];
+  extraPlugins = with pkgs.vimPlugins; [
+    vim-visual-multi
+    vim-indent-object
+    inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
+  ];
 
   plugins = {
     lspconfig.enable = plena;
