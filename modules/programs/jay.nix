@@ -4,6 +4,17 @@
   in {
     environment.systemPackages = [jayPkg pkgs.papirus-icon-theme];
     services.displayManager.sessionPackages = [jayPkg];
+
+    # jay has no session manager, so graphical-session.target (which refuses
+    # manual start) never activates and graphical-session user services like
+    # cliphist never run. This target is started from jay's on-graphics-initialized
+    # and pulls graphical-session.target in via BindsTo (dependency activation
+    # bypasses RefuseManualStart).
+    systemd.user.targets.jay-session = {
+      description = "jay compositor session";
+      bindsTo = ["graphical-session.target"];
+      before = ["graphical-session.target"];
+    };
   };
 
   unify.modules.gui.home = {
@@ -331,6 +342,7 @@
         ]
 
         on-graphics-initialized = [
+          { type = "exec", exec = { shell = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
           { type = "exec", exec = { prog = "${wlTrayBridge}/bin/wl-tray-bridge", privileged = true } },
           { type = "exec", exec = "${pkgs.networkmanagerapplet}/bin/nm-applet" },
           { type = "exec", exec = "${pkgs.pasystray}/bin/pasystray" },
