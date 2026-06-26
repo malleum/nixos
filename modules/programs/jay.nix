@@ -297,7 +297,7 @@
         x = 0
         y = 1120
         mode = { width = 2560, height = 1440, refresh-rate = 60.0 }
-         
+
         # LG ULTRAGEAR (right monitor, scaled for readable text)
         [[outputs]]
         match.connector = "HDMI-A-1"

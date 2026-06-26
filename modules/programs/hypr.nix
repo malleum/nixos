@@ -189,48 +189,154 @@
         };
 
         curve = [
-          {_args = ["myBezier" {type = "bezier"; points = [[0.05 0.9] [0.1 1.05]];}];}
+          {
+            _args = [
+              "myBezier"
+              {
+                type = "bezier";
+                points = [[0.05 0.9] [0.1 1.05]];
+              }
+            ];
+          }
         ];
 
         animation = [
-          {leaf = "windows"; enabled = true; speed = 7; bezier = "myBezier"; style = slide;}
-          {leaf = "windowsOut"; enabled = true; speed = 7; bezier = "default"; style = "popin 80%";}
-          {leaf = "border"; enabled = true; speed = 10; bezier = "default";}
-          {leaf = "borderangle"; enabled = true; speed = 8; bezier = "default";}
-          {leaf = "fade"; enabled = true; speed = 7; bezier = "default";}
-          {leaf = "workspaces"; enabled = true; speed = 6; bezier = "default"; style = slide;}
+          {
+            leaf = "windows";
+            enabled = true;
+            speed = 7;
+            bezier = "myBezier";
+            style = slide;
+          }
+          {
+            leaf = "windowsOut";
+            enabled = true;
+            speed = 7;
+            bezier = "default";
+            style = "popin 80%";
+          }
+          {
+            leaf = "border";
+            enabled = true;
+            speed = 10;
+            bezier = "default";
+          }
+          {
+            leaf = "borderangle";
+            enabled = true;
+            speed = 8;
+            bezier = "default";
+          }
+          {
+            leaf = "fade";
+            enabled = true;
+            speed = 7;
+            bezier = "default";
+          }
+          {
+            leaf = "workspaces";
+            enabled = true;
+            speed = 6;
+            bezier = "default";
+            style = slide;
+          }
         ];
 
         gesture = [
-          {fingers = 3; direction = "horizontal"; action = "workspace";}
-          {fingers = 3; direction = "vertical"; action = "move";}
+          {
+            fingers = 3;
+            direction = "horizontal";
+            action = "workspace";
+          }
+          {
+            fingers = 3;
+            direction = "vertical";
+            action = "move";
+          }
         ];
 
         layer_rule = [
-          {match = {namespace = "rofi";}; blur = true;}
+          {
+            match = {namespace = "rofi";};
+            blur = true;
+          }
         ];
 
         window_rule = [
-          {match.title = "^(.*Microsoft Teams.*)$"; workspace = "2";}
+          {
+            match.title = "^(.*Microsoft Teams.*)$";
+            workspace = "2";
+          }
 
-          {match.title = "^(.*Brave.*)$"; workspace = "1";}
-          {match.title = "^(.*Firefox.*)$"; workspace = "1";}
-          {match.title = "^(.*Ninjabrain Bot.*)$"; workspace = "1";}
-          {match.title = "^(.*e4mc.*)$"; workspace = "1";}
-          {match.title = "^(iamb.*)$"; workspace = "2";}
-          {match.title = "^(kitty)$"; workspace = "3";}
-          {match.title = "^(foot)$"; workspace = "3";}
-          {match.title = "^(.*Steam.*)$"; workspace = "4";}
-          {match.title = "^(.*Minecraft.*)$"; workspace = "4";}
-          {match.title = "^(.*Prism Launcher.*)$"; workspace = "4";}
-          {match.title = "^(.*Terraria.*)$"; workspace = "4";}
-          {match.title = "^(.*War.*)$"; workspace = "4";}
-          {match.title = "^(.*OBS.*)$"; workspace = "5";}
-          {match.title = "^(.*MainPicker.*)$"; workspace = "5";}
-          {match.title = "^(Signal)$"; workspace = "5";}
-          {match.title = "^(.*Discord.*)$"; workspace = "5";}
+          {
+            match.title = "^(.*Brave.*)$";
+            workspace = "1";
+          }
+          {
+            match.title = "^(.*Firefox.*)$";
+            workspace = "1";
+          }
+          {
+            match.title = "^(.*Ninjabrain Bot.*)$";
+            workspace = "1";
+          }
+          {
+            match.title = "^(.*e4mc.*)$";
+            workspace = "1";
+          }
+          {
+            match.title = "^(iamb.*)$";
+            workspace = "2";
+          }
+          {
+            match.title = "^(kitty)$";
+            workspace = "3";
+          }
+          {
+            match.title = "^(foot)$";
+            workspace = "3";
+          }
+          {
+            match.title = "^(.*Steam.*)$";
+            workspace = "4";
+          }
+          {
+            match.title = "^(.*Minecraft.*)$";
+            workspace = "4";
+          }
+          {
+            match.title = "^(.*Prism Launcher.*)$";
+            workspace = "4";
+          }
+          {
+            match.title = "^(.*Terraria.*)$";
+            workspace = "4";
+          }
+          {
+            match.title = "^(.*War.*)$";
+            workspace = "4";
+          }
+          {
+            match.title = "^(.*OBS.*)$";
+            workspace = "5";
+          }
+          {
+            match.title = "^(.*MainPicker.*)$";
+            workspace = "5";
+          }
+          {
+            match.title = "^(Signal)$";
+            workspace = "5";
+          }
+          {
+            match.title = "^(.*Discord.*)$";
+            workspace = "5";
+          }
 
-          {match.title = "^(.*(All|Save) Files?.*)$"; float = true;}
+          {
+            match.title = "^(.*(All|Save) Files?.*)$";
+            float = true;
+          }
         ];
 
         on = {

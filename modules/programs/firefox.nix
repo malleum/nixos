@@ -89,7 +89,7 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
-      "gfx.webrender.compositor" = false; # Disable Wayland native-compositor passthrough — works around jay protocol errors (WP:E WP:CA…) on monitor/window changes that crash Firefox
+      "gfx.webrender.compositor" = true; # Enable Wayland native-compositor passthrough for better performance (may cause jay protocol errors on monitor disconnects)
       "media.ffmpeg.vaapi.enabled" = true; # VA-API hardware video decode
       "media.ffvpx.enabled" = true; # Software VP8/VP9 fallback when VA-API can't handle codec
       "media.rdd-process.enabled" = true; # Sandbox video decode in RDD process
@@ -119,7 +119,6 @@
       "network.protocol-handler.external.mailto" = false; # Don't hand mailto to external app
       "network.protocol-handler.expose.mailto" = false; # Hide mailto handler entirely
       "gecko.handlerService.allowRegisterFromDifferentHost" = false; # Block cross-host handler registration
-
 
       # --- Hide Bookmarks Bar ---
       "browser.toolbars.bookmarks.visibility" = "never"; # Always hide bookmarks toolbar

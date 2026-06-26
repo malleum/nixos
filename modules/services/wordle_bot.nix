@@ -425,8 +425,7 @@ in {
 
       serviceConfig = {
         Type = "oneshot";
-        Environment =
-          "BOT_TOKEN_FILE=${config.sops.secrets.matrix-wordle-hax-token.path}";
+        Environment = "BOT_TOKEN_FILE=${config.sops.secrets.matrix-wordle-hax-token.path}";
         ExecStart = "${wordle-bot-script}/bin/wordle-bot";
 
         User = "matrix-synapse";
