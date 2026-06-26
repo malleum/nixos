@@ -8,14 +8,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1782405109,
-        "narHash": "sha256-XMTbc5fBoklTfOeA8BKNW49/hQY5+WHrVBjY9xjwxGU=",
-        "path": "/home/joshammer/documents/gh/ago",
-        "type": "path"
+        "lastModified": 1782440651,
+        "narHash": "sha256-cM5Yq/aJgFzznETXe1KVHR66DQazl6KHF3JjuW+uWNQ=",
+        "owner": "libertyluthermoffitt",
+        "repo": "ago",
+        "rev": "68268f35e4dfa4e8aa3f6b58f65fac8c16b21d01",
+        "type": "github"
       },
       "original": {
-        "path": "/home/joshammer/documents/gh/ago",
-        "type": "path"
+        "owner": "libertyluthermoffitt",
+        "ref": "nunc",
+        "repo": "ago",
+        "type": "github"
       }
     },
     "aquamarine": {
