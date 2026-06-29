@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782440651,
-        "narHash": "sha256-cM5Yq/aJgFzznETXe1KVHR66DQazl6KHF3JjuW+uWNQ=",
+        "lastModified": 1782741340,
+        "narHash": "sha256-bEtVNi0sO74U+/35rXTBPpxNE3wTGAUI5ODSbCY2t9k=",
         "owner": "libertyluthermoffitt",
         "repo": "ago",
-        "rev": "68268f35e4dfa4e8aa3f6b58f65fac8c16b21d01",
+        "rev": "cd7fa54047f4886979a22ec9f4c63281879d146f",
         "type": "github"
       },
       "original": {
