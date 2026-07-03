@@ -13,6 +13,7 @@ in {
         efi
         grapple
         matrix
+        mc
         wordle-bot
         ;
     };
