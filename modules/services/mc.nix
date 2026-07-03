@@ -166,13 +166,13 @@
         loaders='loaders=["paper","purpur","bukkit","spigot"]'
         fetch_plugin() { # $1=jar-name $2=modrinth-slug
           [ -e "plugins/$1.jar" ] && return 0
-          api="https://api.modrinth.com/v2/project/$2/version"
-          url=$(curl -fsSL -A "$ua" --get --data-urlencode "$loaders" \
-            --data-urlencode 'game_versions=["${mcVersion}"]' "$api" \
-            | jq -er 'first(.[] | select(.version_type=="release")).files[0].url') \
-            || url=$(curl -fsSL -A "$ua" --get --data-urlencode "$loaders" "$api" \
-              | jq -er '.[0].files[0].url') \
+          api="https://api.modrinth.com/v2/project/$2/version?loaders=%5B%22paper%22%2C%22purpur%22%2C%22bukkit%22%5D"
+          # Try version-matched first, fall back to latest
+          url=$(curl -fsSL -A "$ua" "$api&game_versions=%5B%22${mcVersion}%22%5D" \
+            | jq -er 'first(.[] | select(.version_type=="release")).files[0].url // .[0].files[0].url // empty') \
+            || url=$(curl -fsSL -A "$ua" "$api" | jq -er '.[0].files[0].url') \
             || { echo "WARNING: could not resolve $1 ($2)"; return 0; }
+          [ -z "$url" ] && { echo "WARNING: empty url for $1"; return 0; }
           curl -fsSL -A "$ua" -o "plugins/$1.jar.part" "$url" \
             && mv "plugins/$1.jar.part" "plugins/$1.jar" \
             || { echo "WARNING: download failed for $1"; rm -f "plugins/$1.jar.part"; }
