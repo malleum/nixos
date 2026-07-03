@@ -185,8 +185,8 @@
         fetch_plugin Chunky              chunky            # chunk pregeneration
         fetch_plugin DynamicLights       dynamiclight      # held-torch glow (packet-only)
         fetch_plugin WorldGuard          worldguard        # anti-grief rules
-        fetch_plugin EssentialsX         essentialsx       # /home /spawn /tpa
-        fetch_plugin LuckPerms           luckperms         # permissions
+        # EssentialsX intentionally omitted — adds /enderchest, /home, /tpa etc.
+        # which change vanilla feel. Use RCON + op for admin commands instead.
         fetch_plugin BlueMap             bluemap           # live 3D web map
         fetch_plugin Multiverse-Core     multiverse-core   # extra worlds
         fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
