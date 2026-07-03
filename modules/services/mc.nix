@@ -191,6 +191,7 @@
         fetch_plugin Multiverse-Core     multiverse-core   # extra worlds
         fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
         fetch_plugin FastAsyncWorldEdit  fastasyncworldedit # schematic copy/paste (ships)
+        fetch_plugin DistantHorizonsSupport distant-horizons-support # server-side LOD data for DH clients
 
         # RCON password (generated once, never in nix store)
         if [ ! -e rcon.secret ]; then
