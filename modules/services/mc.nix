@@ -190,7 +190,6 @@
         fetch_plugin BlueMap             bluemap           # live 3D web map
         fetch_plugin Multiverse-Core     multiverse-core   # extra worlds
         fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
-        fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
         fetch_plugin FastAsyncWorldEdit  fastasyncworldedit # schematic copy/paste (ships)
         # DistantHorizonsSupport intentionally omitted — server plugin lags behind
         # client releases and shows "outdated" warning. DH works client-only fine.
