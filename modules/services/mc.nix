@@ -67,8 +67,19 @@
 
     # Whitelisted players and operators (level 4). Add names here, rebuild.
     # UUIDs are resolved from the Mojang API and cached in .uuid-cache/.
-    whitelistNames = ["malleum"];
+    whitelistNames = ["malleum" "opcornpay" "jaderabbit__"];
     adminNames = ["malleum"];
+
+    # Global spawn hub. Everyone first-spawns AND respawns at this exact block in
+    # felucia_v1 (see the Multiverse spawn-pin in preStart). x,y,z,yaw,pitch.
+    spawnWorld = "felucia_v1";
+    spawnX = "728.5";
+    spawnY = "-52.0";
+    spawnZ = "-260.5";
+    spawnYaw = "176.96";
+    spawnPitch = "0.0";
+    # Multiverse "exact destination" form used for first-spawn-location: yaw:pitch.
+    firstSpawnDest = "e:${spawnWorld}:${spawnX},${spawnY},${spawnZ}:${spawnYaw}:${spawnPitch}";
 
     # Regenerated every start; rcon.password appended at runtime.
     serverProperties = {
@@ -265,6 +276,37 @@
         if [ -f plugins/MythicMobs/config/config-spawning.yml ]; then
           sed -i -E 's/^([[:space:]]*Generator:[[:space:]]*).*/\1CLUSTER/' \
             plugins/MythicMobs/config/config-spawning.yml
+        fi
+
+        # Global spawn hub — pin it declaratively. Multiverse stores spawn/respawn
+        # in runtime YAML (config.yml + worlds.yml) that is otherwise managed
+        # in-game, so re-assert the hub every boot: it survives an in-game change,
+        # a Multiverse rewrite-on-shutdown, or a state-dir wipe + re-import.
+        #   - first-spawn-location: where brand-new players land (exact coords).
+        #   - enforce-respawn-at-world-spawn: send respawns to the world spawn.
+        #   - every world's respawn-world -> felucia_v1: death anywhere returns to
+        #     the hub. Beds still override (vanilla), by design.
+        #   - felucia_v1's spawn-location = the exact hub block.
+        # Multiverse loads these on boot (main thread), so this is reliable where
+        # RCON `mvsetspawn`/`mv modify` are not (they throw "Cannot perform command
+        # async" over RCON). yq edits leaf values in place to preserve structure.
+        yq=${pkgs.yq-go}/bin/yq
+        if [ -f plugins/Multiverse-Core/config.yml ]; then
+          "$yq" -i '
+            .spawn.first-spawn-override = true |
+            .spawn.enforce-respawn-at-world-spawn = true |
+            .spawn.first-spawn-location = "${firstSpawnDest}"
+          ' plugins/Multiverse-Core/config.yml
+        fi
+        if [ -f plugins/Multiverse-Core/worlds.yml ]; then
+          "$yq" -i '
+            (.[].respawn-world) = "${spawnWorld}" |
+            .["minecraft:${spawnWorld}"].spawn-location.x = ${spawnX} |
+            .["minecraft:${spawnWorld}"].spawn-location.y = ${spawnY} |
+            .["minecraft:${spawnWorld}"].spawn-location.z = ${spawnZ} |
+            .["minecraft:${spawnWorld}"].spawn-location.yaw = ${spawnYaw} |
+            .["minecraft:${spawnWorld}"].spawn-location.pitch = ${spawnPitch}
+          ' plugins/Multiverse-Core/worlds.yml
         fi
 
       '';
