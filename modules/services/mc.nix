@@ -94,6 +94,12 @@
     # size mismatch. Extends all three vanilla dimensions to height 2032.
     heightDatapack = ./2032-world-height.zip;
 
+    # MythicMobs per-world themed spawn config (bundled, copied in on every start).
+    # mobs-*.yml define vanilla-behaviour mobs; randomspawns-*.yml REPLACE natural
+    # spawns per world so density tracks the vanilla cycle. Tune Chance in-game.
+    mythicMobsFile = ./mc-mythicmobs/mobs-starwars.yml;
+    mythicSpawnsFile = ./mc-mythicmobs/randomspawns-starwars.yml;
+
     # Aikar's flags — https://mcflags.emc.gs
     javaFlags = builtins.concatStringsSep " " [
       "-Xms${heap}" "-Xmx${heap}"
@@ -185,6 +191,7 @@
         fetch_plugin Multiverse-Core     multiverse-core   # extra worlds
         fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
         fetch_plugin FastAsyncWorldEdit  fastasyncworldedit # schematic copy/paste (ships)
+        fetch_plugin MythicMobs          mythicmobs        # per-world themed mob spawns
         # DistantHorizonsSupport 0.13.1 targets DH client 3.0.0-3.0.3 — clients
         # MUST run DH 3.0.x (not 3.1.x) or they get an "outdated" warning and
         # fall back to client-only LOD. Serves server-generated LODs to clients.
@@ -241,6 +248,13 @@
           printf 'mobs:\n  block-creeper-block-damage: true\n  block-enderman-block-damage: true\n' \
             > plugins/WorldGuard/config.yml
         fi
+
+        # MythicMobs themed spawns: declarative, refreshed every start.
+        # Folders are created here (plugin reads them on load); other MythicMobs
+        # example files are left untouched.
+        mkdir -p plugins/MythicMobs/mobs plugins/MythicMobs/randomspawns
+        cp -f ${mythicMobsFile} plugins/MythicMobs/mobs/starwars.yml
+        cp -f ${mythicSpawnsFile} plugins/MythicMobs/randomspawns/starwars.yml
 
       '';
 
