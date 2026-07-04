@@ -1,60 +1,50 @@
 # Minecraft server (Paper) with Origins-Reborn and a Star Wars world collection.
 # Players connect to malleum.us:25565 (raw TCP; nginx and the binary cache on
-# 80/443 are unaffected). BlueMap is served at map.malleum.us.
+# 80/443 are unaffected).
 #
 # --- Origins ---
 # Origins-Reborn is a pure server-side reimplementation of the Origins mod for
 # PaperMC — players join with a stock vanilla client and pick their origin via
-# a custom GUI. ViaVersion/ViaBackwards let clients on any nearby version join.
+# a custom GUI. Origins-Fantasy and Origins-Magic add balanced extra origins.
+# ViaVersion/ViaBackwards let clients on any nearby version join.
 #
-# --- Star Wars worlds ---
-# The planet/ship maps live in /var/lib/minecraft/<name>/ (one folder per world).
-# rsync them from your machine first:
-#   rsync -a ./endor/        root@malleum.us:/var/lib/minecraft/endor/
-#   rsync -a ./felucia_v1/   root@malleum.us:/var/lib/minecraft/felucia_v1/
-#   rsync -a ./geonosis_battle/ root@malleum.us:/var/lib/minecraft/geonosis_battle/
-#   rsync -a ./isd_v1/       root@malleum.us:/var/lib/minecraft/isd_v1/
-#   rsync -a ./phoenix_fleet/ root@malleum.us:/var/lib/minecraft/phoenix_fleet/
-#   rsync -a ./scarif_v1/    root@malleum.us:/var/lib/minecraft/scarif_v1/
-#   rsync -a ./venator_v4/   root@malleum.us:/var/lib/minecraft/venator_v4/
-#   chown -R minecraft:minecraft /var/lib/minecraft/*/
-# Then import via RCON (one-time; Multiverse remembers across restarts):
-#   RCON="mcrcon -H 127.0.0.1 -P 25575 -p $(sudo cat /var/lib/minecraft/rcon.secret)"
-#   for w in endor felucia_v1 geonosis_battle isd_v1 phoenix_fleet scarif_v1 venator_v4; do
-#     $RCON "mv import $w normal"
+# --- Star Wars worlds + portals ---
+# Seven worlds: overworld/nether/end (vanilla names world/world_nether/
+# world_the_end) plus endor, felucia_v1, geonosis_battle, scarif_v1 (Multiverse).
+# Capital ships (Venator, ISD) and the rebel fleet are pasted into world_the_end.
+# Multiverse-Portals link the planets in a chain; nether-portal-style frames
+# with air interiors trigger on walk-through. Players first-spawn in felucia_v1.
+#
+# These are RUNTIME STATE (not regenerated): world folders AND the plugin
+# configs that describe them. When deploying to minimus, rsync BOTH:
+#   for w in world world_nether world_the_end endor felucia_v1 \
+#            geonosis_battle scarif_v1; do
+#     rsync -a "./$w/" root@malleum.us:/var/lib/minecraft/$w/
 #   done
+#   rsync -a ./plugins/Multiverse-Core/    root@malleum.us:/var/lib/minecraft/plugins/Multiverse-Core/
+#   rsync -a ./plugins/Multiverse-Portals/ root@malleum.us:/var/lib/minecraft/plugins/Multiverse-Portals/
+#   rsync -a ./plugins/WorldGuard/         root@malleum.us:/var/lib/minecraft/plugins/WorldGuard/
+#   ssh root@malleum.us 'chown -R minecraft:minecraft /var/lib/minecraft'
+# Worlds are already registered in Multiverse-Core/worlds.yml, so no re-import
+# is needed after rsync — they load on boot.
 #
-# --- Height extension (ISD map) ---
-# The ISD map was built using a 2032-block height extender datapack. The datapack
-# (2032-world-height.zip, bundled in this repo) is written to world/datapacks/
-# on every start so the extended dimension type is registered globally before
-# Paper loads any worlds. Confirmed working on 1.21.10.
+# --- Height extension ---
+# The custom maps and the End capital ships were built with a 2032-block height
+# extender datapack (2032-world-height.zip, bundled in this repo), written to
+# world/datapacks/ on every start so the extended dimension type is registered
+# globally before Paper loads any world. This is the only "increase build
+# height" mechanism — a datapack, no plugin. Confirmed on 1.21.10.
 #
-# --- End battle scene (ISD vs Venator) ---
-# Tested locally: Venator schematic is 1176W×328H×643L blocks.
-# After a player with op connects, run these once (copy/paste into their chat):
-#   ## Teleport to the End, paste Venator at centre facing south (+Z)
-#   /mv tp world_the_end
-#   /tp 0 100 -700
-#   //schem load venator_v4
-#   //paste -a                           # paste, skip air
-#   /tp 0 100 700
-#   //schem load venator_v4
-#   //rotate 180
-#   //paste -a                           # Venator facing north — mirrored battle
-#   ## For the ISD: travel to isd_v1 world, select the whole ship with //wand,
-#   ## //copy, return to world_the_end, position, //paste.
-#
-# --- Declarative vs first-run state ---
+# --- Declarative vs runtime state ---
 # Rewritten every start (edit mc.nix, not in-place):
-#   server.properties, whitelist.json, ops.json
-# Written once on first run (edit in-place afterwards):
-#   rcon.secret, plugins/WorldGuard/config.yml, plugins/BlueMap/core.conf
+#   server.properties, whitelist.json, ops.json, world/datapacks/2032-world-height.zip
+# Written once on first run / managed in-game (rsync from local, edit in-place):
+#   rcon.secret, world folders, plugins/*/ configs (Multiverse, WorldGuard, ...)
 #
 # --- Before first deploy ---
 # 1. Open 25565/tcp in the Oracle VCN Security List.
 # 2. Starting the service accepts the Minecraft EULA (https://aka.ms/MinecraftEULA).
-# 3. Add a DNS A record for map.malleum.us pointing at this host.
+# 3. rsync worlds + plugin configs from the local test server (see above).
 #
 # Admin console:
 #   mcrcon -H 127.0.0.1 -P 25575 -p "$(sudo cat /var/lib/minecraft/rcon.secret)" "<cmd>"
@@ -84,10 +74,12 @@
     serverProperties = {
       motd = "Origins SMP - pick your origin!";
       difficulty = "easy";
-      view-distance = "32";
+      view-distance = "16";
       simulation-distance = "10";
       white-list = "true";
       enforce-whitelist = "true";
+      # Real Mojang auth: with the whitelist, only listed real accounts join.
+      online-mode = "true";
       spawn-protection = "0";
       enable-rcon = "true";
       "rcon.port" = toString rconPort;
@@ -179,6 +171,8 @@
         }
 
         fetch_plugin Origins-Reborn      origins-reborn    # server-side Origins
+        fetch_plugin Origins-Fantasy     origins-fantasy   # +10 balanced fantasy origins
+        fetch_plugin Origins-Magic       origins-magic     # +8 balanced magic origins
         fetch_plugin ViaVersion          viaversion        # newer clients can join
         fetch_plugin ViaBackwards        viabackwards      # older clients can join
         fetch_plugin CoreProtect         coreprotect       # block logging + rollback
@@ -187,12 +181,14 @@
         fetch_plugin WorldGuard          worldguard        # anti-grief rules
         # EssentialsX intentionally omitted — adds /enderchest, /home, /tpa etc.
         # which change vanilla feel. Use RCON + op for admin commands instead.
-        fetch_plugin BlueMap             bluemap           # live 3D web map
+        # BlueMap intentionally omitted — heavy initial render; not wanted.
         fetch_plugin Multiverse-Core     multiverse-core   # extra worlds
         fetch_plugin Multiverse-Portals  multiverse-portals # portal blocks between worlds
         fetch_plugin FastAsyncWorldEdit  fastasyncworldedit # schematic copy/paste (ships)
-        # DistantHorizonsSupport intentionally omitted — server plugin lags behind
-        # client releases and shows "outdated" warning. DH works client-only fine.
+        # DistantHorizonsSupport 0.13.1 targets DH client 3.0.0-3.0.3 — clients
+        # MUST run DH 3.0.x (not 3.1.x) or they get an "outdated" warning and
+        # fall back to client-only LOD. Serves server-generated LODs to clients.
+        fetch_plugin DistantHorizonsSupport distant-horizons-support
 
         # RCON password (generated once, never in nix store)
         if [ ! -e rcon.secret ]; then
@@ -246,11 +242,6 @@
             > plugins/WorldGuard/config.yml
         fi
 
-        # BlueMap: pre-accept Mojang asset download (renders vanilla textures)
-        if [ ! -e plugins/BlueMap/core.conf ]; then
-          mkdir -p plugins/BlueMap
-          echo "accept-download: true" > plugins/BlueMap/core.conf
-        fi
       '';
 
       serviceConfig = {
@@ -269,17 +260,7 @@
       };
     };
 
-    # BlueMap web server (port 8100) stays firewalled; expose only via nginx
-    services.nginx.virtualHosts."map.malleum.us" = {
-      forceSSL = true;
-      enableACME = true;
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8100";
-        proxyWebsockets = true;
-      };
-    };
-
-    # Game port only; RCON (25575) and BlueMap (8100) are loopback-only.
+    # Game port only; RCON (25575) is loopback-only.
     networking.firewall.allowedTCPPorts = [port];
   };
 }
