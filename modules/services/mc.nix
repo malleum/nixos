@@ -284,6 +284,11 @@
         # a Multiverse rewrite-on-shutdown, or a state-dir wipe + re-import.
         #   - first-spawn-location: where brand-new players land (exact coords).
         #   - enforce-respawn-at-world-spawn: send respawns to the world spawn.
+        #   - event-priority.player-respawn = highest: MV registers its respawn
+        #     handler at LOW by default, so Origins-Reborn (and other plugins) run
+        #     later and override the redirect back to the overworld spawn — players
+        #     die and respawn in the overworld despite respawn-world. HIGHEST makes
+        #     MV authoritative. Read at plugin enable, so it needs a restart.
         #   - every world's respawn-world -> felucia_v1: death anywhere returns to
         #     the hub. Beds still override (vanilla), by design.
         #   - felucia_v1's spawn-location = the exact hub block.
@@ -295,7 +300,8 @@
           "$yq" -i '
             .spawn.first-spawn-override = true |
             .spawn.enforce-respawn-at-world-spawn = true |
-            .spawn.first-spawn-location = "${firstSpawnDest}"
+            .spawn.first-spawn-location = "${firstSpawnDest}" |
+            .event-priority.player-respawn = "highest"
           ' plugins/Multiverse-Core/config.yml
         fi
         if [ -f plugins/Multiverse-Core/worlds.yml ]; then
