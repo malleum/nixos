@@ -315,6 +315,16 @@
           ' plugins/Multiverse-Core/worlds.yml
         fi
 
+        # Origins-Reborn teleports players to the OVERWORLD world spawn the moment
+        # they pick an origin (origin-selection.auto-spawn-teleport), which overrode
+        # the Multiverse first-spawn and dumped brand-new players in the overworld
+        # right after the origin GUI. Disable it so new players stay at the Felucia
+        # first-spawn after choosing. Respawn-on-death is handled separately by MV.
+        if [ -f plugins/Origins-Reborn/config.yml ]; then
+          "$yq" -i '.origin-selection.auto-spawn-teleport = false' \
+            plugins/Origins-Reborn/config.yml
+        fi
+
       '';
 
       serviceConfig = {
