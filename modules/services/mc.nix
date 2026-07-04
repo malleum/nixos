@@ -256,6 +256,17 @@
         cp -f ${mythicMobsFile} plugins/MythicMobs/mobs/starwars.yml
         cp -f ${mythicSpawnsFile} plugins/MythicMobs/randomspawns/starwars.yml
 
+        # Enable the ADD-method spawn generator. MythicMobs defaults Generator to
+        # NONE, which disables proactive random spawns; the themed Action: ADD
+        # spawns need a generator (CLUSTER = spawn points around players). Without
+        # this the custom maps stay empty, since they have almost no natural
+        # vanilla spawns for the old REPLACE method to hook. MM merges the rest of
+        # its defaults into this file on first run; we only pin Generator.
+        if [ -f plugins/MythicMobs/config/config-spawning.yml ]; then
+          sed -i -E 's/^([[:space:]]*Generator:[[:space:]]*).*/\1CLUSTER/' \
+            plugins/MythicMobs/config/config-spawning.yml
+        fi
+
       '';
 
       serviceConfig = {

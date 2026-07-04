@@ -1,34 +1,38 @@
-# Per-world themed spawns. Action REPLACE swaps a natural spawn for the themed
-# mob, so overall density tracks the vanilla spawn cycle (not overwhelming).
-# HOSTILE entries replace natural hostile spawns; PASSIVE entries (Reason PASSIVE)
-# replace natural animal spawns. Tune Chance in-game if a world feels too
-# busy/empty. End is intentionally left vanilla (endermen/shulkers).
+# Per-world themed spawns. Action ADD + config-spawning Generator: CLUSTER makes
+# MythicMobs proactively find spawn points around players and spawn the themed
+# mob there. This is required because the custom Star Wars maps produce almost
+# no natural vanilla spawns (lit builds, few spawnable blocks), so the old
+# Action: REPLACE approach (hooks a vanilla spawn and swaps it) left worlds empty.
+#
+# Density is throttled by Cooldown (seconds between spawns at a given point) plus
+# the server mob cap. Bump Cooldown / drop Chance if a world feels too busy.
+# End is intentionally left vanilla (endermen/shulkers).
 
 # ===================== GEONOSIS — execution arena, droid army =====================
-geo_pillager:   {Type: sw_pillager,   Worlds: geonosis_battle, Action: REPLACE, Priority: 1, Chance: 0.45}
-geo_vindicator: {Type: sw_vindicator, Worlds: geonosis_battle, Action: REPLACE, Priority: 1, Chance: 0.30}
-geo_husk:       {Type: sw_husk,       Worlds: geonosis_battle, Action: REPLACE, Priority: 1, Chance: 0.20}
-geo_ravager:    {Type: sw_ravager,    Worlds: geonosis_battle, Action: REPLACE, Priority: 2, Chance: 0.05}
+geo_pillager:   {Type: sw_pillager,   Worlds: geonosis_battle, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.45, Cooldown: 30}
+geo_vindicator: {Type: sw_vindicator, Worlds: geonosis_battle, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.30, Cooldown: 35}
+geo_husk:       {Type: sw_husk,       Worlds: geonosis_battle, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.20, Cooldown: 40}
+geo_ravager:    {Type: sw_ravager,    Worlds: geonosis_battle, Action: ADD, Reason: NATURAL, Priority: 2, Chance: 0.05, Cooldown: 90}
 # sparse desert food
-geo_rabbit:     {Type: sw_rabbit,     Worlds: geonosis_battle, Action: REPLACE, Priority: 1, Chance: 0.60}
+geo_rabbit:     {Type: sw_rabbit,     Worlds: geonosis_battle, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.40, Cooldown: 50}
 
 # ===================== FELUCIA — fungal jungle =====================
-fel_slime:      {Type: sw_slime,      Worlds: felucia_v1, Action: REPLACE, Priority: 1, Chance: 0.50}
-fel_witch:      {Type: sw_witch,      Worlds: felucia_v1, Action: REPLACE, Priority: 1, Chance: 0.25}
-fel_cavespider: {Type: sw_cavespider, Worlds: felucia_v1, Action: REPLACE, Priority: 1, Chance: 0.25}
-fel_chicken:    {Type: sw_chicken,    Worlds: felucia_v1, Action: REPLACE, Priority: 1, Chance: 0.50}
-fel_cow:        {Type: sw_cow,        Worlds: felucia_v1, Action: REPLACE, Priority: 1, Chance: 0.50}
+fel_slime:      {Type: sw_slime,      Worlds: felucia_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.45, Cooldown: 30}
+fel_witch:      {Type: sw_witch,      Worlds: felucia_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.25, Cooldown: 45}
+fel_cavespider: {Type: sw_cavespider, Worlds: felucia_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.25, Cooldown: 40}
+fel_chicken:    {Type: sw_chicken,    Worlds: felucia_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.40, Cooldown: 45}
+fel_cow:        {Type: sw_cow,        Worlds: felucia_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.40, Cooldown: 45}
 
 # ===================== ENDOR — forest moon (richest wildlife) =====================
-end_pillager:   {Type: sw_pillager,  Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.60}
-end_cow:        {Type: sw_cow,        Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.30}
-end_sheep:      {Type: sw_sheep,      Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.25}
-end_chicken:    {Type: sw_chicken,    Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.20}
-end_wolf:       {Type: sw_wolf,       Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.15}
-end_fox:        {Type: sw_fox,        Worlds: endor, Action: REPLACE, Priority: 1, Chance: 0.10}
+end_pillager:   {Type: sw_pillager,  Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.45, Cooldown: 35}
+end_cow:        {Type: sw_cow,        Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.45, Cooldown: 40}
+end_sheep:      {Type: sw_sheep,      Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.40, Cooldown: 40}
+end_chicken:    {Type: sw_chicken,    Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.35, Cooldown: 45}
+end_wolf:       {Type: sw_wolf,       Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.20, Cooldown: 60}
+end_fox:        {Type: sw_fox,        Worlds: endor, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.15, Cooldown: 60}
 
 # ===================== SCARIF — tropical beach, Imperial garrison =====================
-sca_drowned:    {Type: sw_drowned,   Worlds: scarif_v1, Action: REPLACE, Priority: 1, Chance: 0.60}
-sca_guardian:   {Type: sw_guardian,  Worlds: scarif_v1, Action: REPLACE, Priority: 1, Chance: 0.20}
-sca_turtle:     {Type: sw_turtle,    Worlds: scarif_v1, Action: REPLACE, Priority: 1, Chance: 0.40}
-sca_chicken:    {Type: sw_chicken,   Worlds: scarif_v1, Action: REPLACE, Priority: 1, Chance: 0.40}
+sca_drowned:    {Type: sw_drowned,   Worlds: scarif_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.50, Cooldown: 35}
+sca_guardian:   {Type: sw_guardian,  Worlds: scarif_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.20, Cooldown: 60}
+sca_turtle:     {Type: sw_turtle,    Worlds: scarif_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.35, Cooldown: 50}
+sca_chicken:    {Type: sw_chicken,   Worlds: scarif_v1, Action: ADD, Reason: NATURAL, Priority: 1, Chance: 0.35, Cooldown: 45}
