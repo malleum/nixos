@@ -13,7 +13,7 @@ on water and lava but fears the hard earth and the deep places.
 
 | Power | Key | Effect |
 |---|---|---|
-| Surface Tension | `waverider:fluid_walker` | Water and lava are solid ground to you. While striding the surface you have **Speed III** (sprinting ≈ 9 blocks/s — faster than a boat's ~8), and lava underfoot cannot burn you. **Sneak** to slip beneath and swim. Landing from a fall onto a fluid is landing on *stone* — dive (hold sneak) or clutch, or eat the (doubled) fall damage. |
+| Surface Tension | `waverider:fluid_walker` | Water and lava are solid ground to you. While striding the surface you have **Speed III** (sprinting ≈ 9 blocks/s — faster than a boat's ~8), and lava underfoot cannot burn you. **Sneak** to slip beneath and swim — but only from a standstill or a harmless hop (≤ 3 blocks of fall). Landing from a real fall onto a fluid is landing on *stone*: the **only** save is a Wavecatch. A catch over open water drops you through the wave onto the surface, where you stay standing unless you keep holding sneak. |
 | Wavecatch | `waverider:water_clutch` | While falling, tap **sneak** within 10 blocks of a surface: a momentary wave (a real, non-flowing water block, 1 s lifetime) appears on it and breaks your fall. Every attempt — hit or miss — starts a **1 s cooldown**, so pressing too early means going splat. A catch from beyond safe-fall height grants **Speed I + Regeneration I + Night Vision for 60 s**. |
 | Hard Landing | `waverider:hard_landing` | Double damage from falling and from flying into blocks. |
 | Shallow Lungs | `waverider:shallow_lungs` | Your breath runs out twice as fast underwater. |

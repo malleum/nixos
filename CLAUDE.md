@@ -233,6 +233,13 @@ and copied to `plugins/` by mc.nix preStart on every start.
   sneak while falling within 10 blocks of a surface → real water block for 1s
   breaks the fall (1s cooldown on every attempt, even misses); catches from
   >3 blocks grant Speed/Regen/Night Vision 60s.
+- v1.2.0: sneak-diving out of a fall is limited to vanilla safe-fall height
+  (fallDistance ≤ 3) — past that the floor stays solid even while sneaking and
+  only a Wavecatch saves you. Clutch over open water: player falls through the
+  clutch block onto the (still solid) body surface and stays standing unless
+  still holding shift (fall reset re-arms sneak-to-sink). FluidWalker treats
+  clutch water as fall-through in all three checks (feet bail, downward scan,
+  3x3 surface test).
 - v1.1.0 fixes after first play-test: (1) fall damage onto fluids now applies —
   requires `allow-flight=true` in server.properties (set by mc.nix); the old
   per-player setAllowFlight suppressed ALL fall damage (vanilla skips fall

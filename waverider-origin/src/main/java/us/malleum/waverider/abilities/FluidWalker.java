@@ -54,6 +54,12 @@ public class FluidWalker implements VisibleAbility, Listener {
     private static final int SCAN_DEPTH = 5;
     /** Grace period for cancelling lava/fire damage after the last lava-walk tick. */
     private static final long LAVA_GRACE_MILLIS = 600;
+    /**
+     * Sneaking can only withdraw the floor while the accumulated fall is within
+     * vanilla safe-fall height (no damage anyway). Past this, only a Wavecatch
+     * breaks the fall - holding shift is no longer a free dive.
+     */
+    private static final float SNEAK_DIVE_MAX_FALL = 3.0f;
 
     /** Plain barrier for lava (nothing in vanilla is lava-loggable). */
     private static final BlockData BARRIER = Material.BARRIER.createBlockData();
@@ -79,7 +85,7 @@ public class FluidWalker implements VisibleAbility, Listener {
 
     @Override
     public String description() {
-        return "You tread water and lava as if it were stone, striding the surface with great haste. Sneak to slip beneath. Lava cannot burn you while you stand atop it.";
+        return "You tread water and lava as if it were stone, striding the surface with great haste. Sneak to slip beneath - though not out of a real fall: catch it, or crater. Lava cannot burn you while you stand atop it.";
     }
 
     @EventHandler
@@ -146,7 +152,12 @@ public class FluidWalker implements VisibleAbility, Listener {
     }
 
     private void update(Player player, Location to, boolean sneaking) {
-        if (sneaking || player.getVehicle() != null || player.isGliding()
+        // Sneaking withdraws the floor only from a standstill or a harmless hop:
+        // beyond vanilla safe-fall height the surface stays solid even while
+        // sneaking, so a real fall can only be saved by a Wavecatch (whose water
+        // resets the fall, re-arming sneak-to-sink the moment it catches).
+        boolean canSneakThrough = player.getFallDistance() <= SNEAK_DIVE_MAX_FALL;
+        if ((sneaking && canSneakThrough) || player.getVehicle() != null || player.isGliding()
                 || player.getGameMode() == GameMode.SPECTATOR
                 || to == null || to.getWorld() == null) {
             clear(player);
@@ -158,18 +169,23 @@ public class FluidWalker implements VisibleAbility, Listener {
         int y = to.getBlockY();
         int z = to.getBlockZ();
 
-        if (world.getBlockAt(x, y, z).isLiquid()) {
+        Block feet = world.getBlockAt(x, y, z);
+        if (feet.isLiquid() && !WaterClutch.isClutchWater(feet)) {
             // Already inside the fluid (dove in, or got here before the floor did):
-            // no floor until they climb back out or bob above the surface.
+            // no floor until they climb back out or bob above the surface. Passing
+            // through a clutch wave doesn't count - the floor below must hold so a
+            // catch over open water ends standing on the surface.
             clear(player);
             return;
         }
 
         // Walk down from the feet looking for the top block of a fluid column.
-        // Anything solid first means ordinary ground - no floor.
+        // Anything solid first means ordinary ground - no floor. A clutch wave is
+        // fall-through, so look past it to the real surface underneath.
         Integer surfaceY = null;
         for (int d = 1; d <= SCAN_DEPTH; d++) {
             Block block = world.getBlockAt(x, y - d, z);
+            if (WaterClutch.isClutchWater(block)) continue;
             if (block.isLiquid()) {
                 surfaceY = y - d;
                 break;
@@ -188,8 +204,9 @@ public class FluidWalker implements VisibleAbility, Listener {
             for (int dz = -1; dz <= 1; dz++) {
                 Block block = world.getBlockAt(x + dx, surfaceY, z + dz);
                 if (!block.isLiquid()) continue;
-                if (block.getRelative(BlockFace.UP).isLiquid()) continue; // not the surface
                 if (WaterClutch.isClutchWater(block)) continue;           // never solidify a clutch wave
+                Block above = block.getRelative(BlockFace.UP);
+                if (above.isLiquid() && !WaterClutch.isClutchWater(above)) continue; // not the surface
                 if (block.getType() == Material.LAVA) lava = true;
                 wanted.add(block.getLocation());
             }
