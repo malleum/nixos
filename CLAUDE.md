@@ -218,6 +218,32 @@ reachability also needs a **25565/tcp ingress rule in the Oracle VCN Security
 List** (same place as the 80/443 rules for the website). If the server is
 unreachable externally but bound locally, this is why.
 
+## Waverider custom origin (waverider-origin/)
+
+Custom Origins-Reborn addon origin, added 2026-07-05 on branch
+`claude/waverider-origin-plugin-n9ylrc`. Java/Gradle project at
+`waverider-origin/` (self-contained; user wants it in its own repo
+eventually). Built jar is COMMITTED at `modules/services/Waverider-Origin.jar`
+and copied to `plugins/` by mc.nix preStart on every start.
+
+- Mechanics: walk/run on water+lava (client-side barrier packets + Speed II,
+  no burn), sneak to sink; fluids are SOLID when landing from falls (splat)
+  unless sneaking/diving; 2x fall + fly-into-wall damage; 2x breath drain;
+  leather armor only (elytra allowed); vegetarian (built-in power). Wavecatch:
+  sneak while falling within 10 blocks of a surface → real water block for 1s
+  breaks the fall (1s cooldown on every attempt, even misses); catches from
+  >3 blocks grant Speed/Regen/Night Vision 60s.
+- Ability keys: waverider:{fluid_walker,water_clutch,hard_landing,
+  shallow_lungs,leather_only}. Config lands in Origins-Reborn's
+  ability-config.yml under `waverider:`; text in translations.yml.
+- Rebuild: `cd waverider-origin && gradle build && cp
+  build/libs/Waverider-Origin-*.jar ../modules/services/Waverider-Origin.jar`.
+  Deps: paper-api 1.21.10 (papermc repo) + maven.modrinth:origins-reborn
+  (compileOnly). Verified: compiles, loads on Paper 1.21.10 alongside
+  Origins-Reborn 2.10.9, origin JSON parses, abilities register.
+- NOT yet play-tested in game (needs a real client to walk on water, test
+  clutch timing, fly-kick suppression, and lava-walk feel).
+
 ## Persistent memory
 
 There's operational memory at

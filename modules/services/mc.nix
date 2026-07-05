@@ -6,6 +6,7 @@
 # Origins-Reborn is a pure server-side reimplementation of the Origins mod for
 # PaperMC — players join with a stock vanilla client and pick their origin via
 # a custom GUI. Origins-Fantasy and Origins-Magic add balanced extra origins.
+# Waverider is our own addon origin, built from waverider-origin/ in this repo.
 # ViaVersion/ViaBackwards let clients on any nearby version join.
 #
 # --- Star Wars worlds + portals ---
@@ -111,6 +112,13 @@
     mythicMobsFile = ./mc-mythicmobs/mobs-starwars.yml;
     mythicSpawnsFile = ./mc-mythicmobs/randomspawns-starwars.yml;
 
+    # Waverider custom origin (Origins-Reborn addon) — source lives in
+    # waverider-origin/ at the repo root; this committed jar is its build
+    # output (rebuild: gradle build, then copy over this file — see the
+    # project README). Fetch-by-release replaces this once the plugin moves
+    # to its own repository.
+    waveriderJar = ./Waverider-Origin.jar;
+
     # Aikar's flags — https://mcflags.emc.gs
     javaFlags = builtins.concatStringsSep " " [
       "-Xms${heap}" "-Xmx${heap}"
@@ -207,6 +215,10 @@
         # MUST run DH 3.0.x (not 3.1.x) or they get an "outdated" warning and
         # fall back to client-only LOD. Serves server-generated LODs to clients.
         fetch_plugin DistantHorizonsSupport distant-horizons-support
+
+        # Waverider origin addon — built in this repo (waverider-origin/),
+        # refreshed every start so a rebuilt committed jar deploys on switch.
+        cp -f ${waveriderJar} plugins/Waverider-Origin.jar
 
         # RCON password (generated once, never in nix store)
         if [ ! -e rcon.secret ]; then

@@ -1,0 +1,9 @@
+name: Waverider-Origin
+version: '${version}'
+main: us.malleum.waverider.WaveriderOrigin
+api-version: '1.21'
+author: malleum
+description: Origins-Reborn addon adding the Waverider origin - run on water and lava, clutch your falls, fear the hard earth.
+
+depend:
+  - Origins-Reborn
