@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "us.malleum"
-version = "1.0.0"
+version = "1.1.0"
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -23,6 +23,9 @@ dependencies {
 }
 
 tasks.processResources {
+    // expand() values aren't task inputs by default; without this a version
+    // bump leaves a stale version inside plugin.yml on incremental builds.
+    inputs.property("version", version)
     filesMatching("plugin.yml") {
         expand("version" to version)
     }

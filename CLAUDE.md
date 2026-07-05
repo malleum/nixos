@@ -226,13 +226,21 @@ Custom Origins-Reborn addon origin, added 2026-07-05 on branch
 eventually). Built jar is COMMITTED at `modules/services/Waverider-Origin.jar`
 and copied to `plugins/` by mc.nix preStart on every start.
 
-- Mechanics: walk/run on water+lava (client-side barrier packets + Speed II,
+- Mechanics: walk/run on water+lava (client-side barrier packets + Speed III,
   no burn), sneak to sink; fluids are SOLID when landing from falls (splat)
   unless sneaking/diving; 2x fall + fly-into-wall damage; 2x breath drain;
   leather armor only (elytra allowed); vegetarian (built-in power). Wavecatch:
   sneak while falling within 10 blocks of a surface → real water block for 1s
   breaks the fall (1s cooldown on every attempt, even misses); catches from
   >3 blocks grant Speed/Regen/Night Vision 60s.
+- v1.1.0 fixes after first play-test: (1) fall damage onto fluids now applies —
+  requires `allow-flight=true` in server.properties (set by mc.nix); the old
+  per-player setAllowFlight suppressed ALL fall damage (vanilla skips fall
+  damage for mayfly players). Do NOT reintroduce setAllowFlight. (2) Speed III
+  (amplifier 2, `fluid_walker.speed-amplifier`) so sprinting (~9 b/s) beats
+  boats (~8 b/s); user asked for at least Speed 3. (3) water floor uses
+  WATERLOGGED barriers so the water still renders under your feet (no dry
+  patch); lava can't be fluid-logged so lava keeps plain barriers.
 - Ability keys: waverider:{fluid_walker,water_clutch,hard_landing,
   shallow_lungs,leather_only}. Config lands in Origins-Reborn's
   ability-config.yml under `waverider:`; text in translations.yml.

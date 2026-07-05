@@ -2,6 +2,7 @@ package us.malleum.waverider.abilities;
 
 import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -10,7 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,12 +21,13 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,13 +38,16 @@ import java.util.UUID;
  * Water and lava behave like solid ground: the top fluid block under the player
  * is replaced client-side with an invisible barrier, so ordinary client physics
  * make it walkable/runnable/jumpable. Sneaking withdraws the floor and lets the
- * player sink in and swim. While striding the surface the player gets Speed II,
- * and lava underfoot cannot burn them.
+ * player sink in and swim. While striding the surface the player gets Speed
+ * (level configurable, default III - faster than a boat's ~8 blocks/s), and
+ * lava underfoot cannot burn them.
  *
- * The floor is purely packet-level; the real world is never modified. Because
- * the server believes the player is hovering over fluid, flight is temporarily
- * allowed to dodge the vanilla "flying is not enabled" kick (actual flight
- * toggling is cancelled).
+ * The floor is purely packet-level; the real world is never modified. The
+ * server sees the player standing on air above fluid, so the server MUST run
+ * with allow-flight=true in server.properties or the vanilla anti-fly check
+ * kicks them after a few seconds of hovering. Deliberately NOT worked around
+ * with Player#setAllowFlight: vanilla skips ALL fall damage for mayfly
+ * players, which would break Hard Landing and the falls-onto-fluid splat.
  */
 public class FluidWalker implements VisibleAbility, Listener {
     /** How far below the feet to look for a fluid surface. Covers near-terminal fall speed (~4 blocks/tick). */
@@ -50,11 +55,17 @@ public class FluidWalker implements VisibleAbility, Listener {
     /** Grace period for cancelling lava/fire damage after the last lava-walk tick. */
     private static final long LAVA_GRACE_MILLIS = 600;
 
+    /** Plain barrier for lava (nothing in vanilla is lava-loggable). */
     private static final BlockData BARRIER = Material.BARRIER.createBlockData();
+    /** Waterlogged barrier for water: solid to the client but still renders the water, so no dry patch underfoot. */
+    private static final BlockData WATER_BARRIER = Material.BARRIER.createBlockData(data -> {
+        if (data instanceof Waterlogged waterlogged) waterlogged.setWaterlogged(true);
+    });
 
     private final Map<UUID, Set<Location>> fakeFloors = new HashMap<>();
-    private final Set<UUID> flightGranted = new HashSet<>();
     private final Map<UUID, Long> lastLavaWalk = new HashMap<>();
+    /** Potion amplifier while striding the surface (2 = Speed III). */
+    private int speedAmplifier;
 
     @Override
     public @NotNull Key getKey() {
@@ -79,22 +90,18 @@ public class FluidWalker implements VisibleAbility, Listener {
                 (Runnable) () -> clear(event.getPlayer()));
     }
 
+    @Override
+    public void initialize(JavaPlugin plugin) {
+        speedAmplifier = this.registerConfigOption(plugin, "speed-amplifier",
+                Collections.singletonList("Speed potion amplifier while striding fluid (2 = Speed III, just faster than a boat)"),
+                ConfigManager.SettingType.INTEGER, 2);
+    }
+
     @EventHandler
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         // Sneaking withdraws the floor immediately so the player drops in and swims.
         this.runForAbility(event.getPlayer(),
                 player -> update(player, player.getLocation(), event.isSneaking()));
-    }
-
-    @EventHandler
-    public void onToggleFlight(PlayerToggleFlightEvent event) {
-        // Flight is only allowed to suppress the vanilla fly-kick; never let it engage.
-        Player player = event.getPlayer();
-        if (flightGranted.contains(player.getUniqueId())
-                && player.getGameMode() != GameMode.CREATIVE
-                && player.getGameMode() != GameMode.SPECTATOR) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler
@@ -200,21 +207,17 @@ public class FluidWalker implements VisibleAbility, Listener {
         }
         for (Location loc : wanted) {
             if (!current.contains(loc)) {
-                player.sendBlockChange(loc, BARRIER);
+                player.sendBlockChange(loc,
+                        loc.getBlock().getType() == Material.WATER ? WATER_BARRIER : BARRIER);
             }
         }
         fakeFloors.put(player.getUniqueId(), wanted);
 
-        if (!player.getAllowFlight()) {
-            player.setAllowFlight(true);
-            flightGranted.add(player.getUniqueId());
-        }
-
-        // Speed II only while actually striding the surface, not while airborne above it.
+        // Speed only while actually striding the surface, not while airborne above it.
         if (y == surfaceY + 1) {
             PotionEffect speed = player.getPotionEffect(PotionEffectType.SPEED);
-            if (speed == null || speed.getAmplifier() < 1 || speed.getDuration() < 30) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1, true, false, true));
+            if (speed == null || speed.getAmplifier() < speedAmplifier || speed.getDuration() < 30) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedAmplifier, true, false, true));
             }
             if (lava) {
                 lastLavaWalk.put(player.getUniqueId(), System.currentTimeMillis());
@@ -231,18 +234,11 @@ public class FluidWalker implements VisibleAbility, Listener {
                 player.sendBlockChange(loc, loc.getBlock().getBlockData());
             }
         }
-        if (flightGranted.remove(player.getUniqueId())
-                && player.getGameMode() != GameMode.CREATIVE
-                && player.getGameMode() != GameMode.SPECTATOR) {
-            player.setFlying(false);
-            player.setAllowFlight(false);
-        }
     }
 
     /** Drop tracking without sending packets (client state already reset). */
     private void forget(Player player) {
         fakeFloors.remove(player.getUniqueId());
-        flightGranted.remove(player.getUniqueId());
         lastLavaWalk.remove(player.getUniqueId());
     }
 }

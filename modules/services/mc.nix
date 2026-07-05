@@ -93,6 +93,11 @@
       # Real Mojang auth: with the whitelist, only listed real accounts join.
       online-mode = "true";
       spawn-protection = "0";
+      # Required by the Waverider origin: its fluid-walking floor is client-side
+      # only, so the server sees the player hovering and the vanilla anti-fly
+      # check would kick them. This only disables that kick — nobody gains
+      # actual flight. Hack-client fly risk is acceptable on a whitelist.
+      allow-flight = "true";
       enable-rcon = "true";
       "rcon.port" = toString rconPort;
     };
