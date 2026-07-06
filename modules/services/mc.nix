@@ -68,7 +68,7 @@
 
     # Whitelisted players and operators (level 4). Add names here, rebuild.
     # UUIDs are resolved from the Mojang API and cached in .uuid-cache/.
-    whitelistNames = ["malleum" "opcornpay" "jaderabbit__"];
+    whitelistNames = ["malleum" "opcornpay" "jaderabbit__" "sintfoap" "marvin1984"];
     adminNames = ["malleum"];
 
     # Global spawn hub. Everyone first-spawns AND respawns at this exact block in
