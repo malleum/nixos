@@ -30,6 +30,8 @@
     wrap = false;
   };
 
+  filetype.extension.rask = "ruby";
+
   viAlias = true;
   luaLoader.enable = true;
   performance.combinePlugins = {
@@ -53,6 +55,7 @@
   keymaps = let
     maps = {
       "n" = {
+        "K" = "<Nop>";
         "-" = "<cmd>Oil<cr>";
         "<leader>g" = "<cmd>Neogit<cr>";
         "<leader>q" = "<cmd>lua require('quicker').toggle()<cr>";
