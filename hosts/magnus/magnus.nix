@@ -10,6 +10,7 @@ in {
       inherit
         (modules)
         amd
+        bt-audio
         cch
         dbt
         doc
