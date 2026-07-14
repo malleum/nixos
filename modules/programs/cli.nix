@@ -5,7 +5,7 @@
       cat = "bat";
       choose = "choose -x";
       claude = "claude --dangerously-skip-permissions";
-      agent = "cursor-agent";
+      ca = "cursor-agent";
     };
   in {
     programs = {
