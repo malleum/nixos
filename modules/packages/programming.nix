@@ -20,11 +20,14 @@
       '';
     };
     ago = inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    domain = inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    rask = inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     home.packages = with pkgs; [
       ago
       alejandra
       clang-tools
+      domain
       gcc
       gnumake
       go
@@ -33,6 +36,7 @@
       lua
       nodejs
       python3
+      rask
       typst
     ];
   };

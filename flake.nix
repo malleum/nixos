@@ -76,6 +76,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    domain = {
+      url = "github:rfuller25/domainlang";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rask = {
+      url = "github:malleum/rask";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jay = {
       url = "git+https://github.com/mahkoh/jay?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";

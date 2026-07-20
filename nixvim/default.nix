@@ -119,6 +119,14 @@
     inlayHints.enable = true;
     servers = lib.mkIf plena {
       clangd.enable = true;
+      domain = {
+        enable = true;
+        config = {
+          cmd = ["${inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain}/bin/domain" "lsp"];
+          filetypes = ["domain"];
+          root_markers = [".git"];
+        };
+      };
       gopls.enable = true;
       jdtls.enable = true;
       jsonls.enable = true;
@@ -178,6 +186,7 @@
     vim-visual-multi
     vim-indent-object
     inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
+    inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
   ];
 
   plugins = {
