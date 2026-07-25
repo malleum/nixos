@@ -13,8 +13,7 @@
         haguichi
         lumafly
 
-        bottles
-        lutris
+        stable.bottles
         protonup-ng
         wine
         winetricks
