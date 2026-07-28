@@ -931,6 +931,26 @@
         "url": "https://github.com/mahkoh/jay"
       }
     },
+    "mc": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785262625,
+        "narHash": "sha256-wjVSu7mj6A2flwiMrN/RM8abqHVQO/sRHc0oObL1K0I=",
+        "owner": "malleum",
+        "repo": "mc",
+        "rev": "16a9d95fc47314738e769497b575f507a049e894",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "mc",
+        "type": "github"
+      }
+    },
     "nix-alien": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -1188,6 +1208,7 @@
         "iamb": "iamb",
         "import-tree": "import-tree",
         "jay": "jay",
+        "mc": "mc",
         "nix-alien": "nix-alien",
         "nixpkgs": "nixpkgs_4",
         "nixvim": "nixvim",
