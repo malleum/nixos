@@ -1162,11 +1162,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784780603,
-        "narHash": "sha256-e/l38v1n8YSugJB80yPomj5QY36SdV+i32RE5RLVIE4=",
+        "lastModified": 1785097558,
+        "narHash": "sha256-sMNFYWv6GNJnlBdeaoprRXS5yf49/G9S42iXGJwSVQE=",
         "owner": "malleum",
         "repo": "rask",
-        "rev": "dc1574056f53002db059ef640a9c9e5b146f6db7",
+        "rev": "3bd284e14a606f91f5172e1bc87c8f74e5c74840",
         "type": "github"
       },
       "original": {
