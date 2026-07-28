@@ -15,7 +15,6 @@
       home = {
         inherit username homeDirectory;
         enableNixpkgsReleaseCheck = false;
-        pointerCursor.enable = true;
       };
 
       gtk.gtk4.theme = lib.mkForce null;

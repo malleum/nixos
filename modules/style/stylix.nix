@@ -75,6 +75,12 @@
     pkgs,
     ...
   }: {
+    # Cursor theme. Only meaningful with a display, and its name/package come
+    # from stylix.cursor above — so this belongs to the gui module, not the
+    # global home config: headless hosts get no stylix, and enabling it there
+    # leaves home.pointerCursor.name undefined and fails to evaluate.
+    home.pointerCursor.enable = true;
+
     # Unify GTK app icons (pavucontrol, nm-connection-editor, file dialogs)
     # with the tray. Papirus-Dark is a complete set with light-on-dark panel
     # icons. Stylix already sets gtk.theme/enable; it does not set iconTheme.
