@@ -33,6 +33,8 @@
         copycat
         yank
         open
+        tmux-thumbs
+        jump
       ];
       # Use an indented string (two single-quotes) to allow for Nix's ${...} interpolation
       extraConfig = ''
@@ -41,6 +43,11 @@
 
         bind -T copy-mode-vi v send -X begin-selection
         bind -T copy-mode-vi y send -X copy-selection-and-cancel
+
+        # Mouse-drag select shouldn't kick out of copy-mode (that snaps scroll
+        # back to bottom). Stay in copy-mode after copying.
+        bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-no-clear "wl-copy"
+        bind -T copy-mode MouseDragEnd1Pane send -X copy-pipe-no-clear "wl-copy"
 
         bind v split-window -h -c '#{pane_current_path}'
         bind s split-window -v -c '#{pane_current_path}'
@@ -59,6 +66,10 @@
         set -g @yank_selection_mouse 'clipboard'
         set -g @yank_action 'copy-pipe'
         set -g @open-S 'https://www.google.com/search?q='
+        set -g @thumbs-key C-o
+        set -g @thumbs-command 'echo -n {} | wl-copy'
+        set -g @thumbs-position 'left'
+        set -g @jump-key j
 
         # --- SIMPLIFIED THEME ---
         set -g mode-style "fg=${accent},bg=${pane_border}"
