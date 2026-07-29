@@ -1,23 +1,9 @@
 {
-  unify.nixos = {
-    pkgs,
-    hostConfig,
-    lib,
-    ...
-  }: {
+  unify.nixos = {pkgs, ...}: {
     programs.zsh.enable = true;
-    environment = {
-      shells = [pkgs.zsh];
-      variables = {
-        EDITOR = "nvim";
-        VISUAL = "nvim";
-        TERMINAL = "foot";
-        BROWSER = hostConfig.user.browser;
-        BROWSER2 = hostConfig.user.browser2;
-      };
-    };
+    environment.shells = [pkgs.zsh];
 
-    users.defaultUserShell = lib.mkForce pkgs.zsh;
+    users.defaultUserShell = pkgs.zsh;
   };
 
   unify.home = {

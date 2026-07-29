@@ -9,12 +9,10 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
-        cache-server
         efi
         grapple
         matrix
         mc
-        wordle-bot
         ;
     };
 

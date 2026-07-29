@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  unify.modules.med.nixos = {pkgs, ...}: {
     programs = {
       obs-studio = {
         enable = true;

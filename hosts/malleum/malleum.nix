@@ -9,13 +9,20 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
+        ai
         amd
-        cch
+        cht
+        dev
         doc
         efi
         gam
         gui
+        hyp
         lap
+        med
+        off
+        prn
+        src
         vrt
         wrk
         ;

@@ -1,19 +1,12 @@
 {inputs, ...}: {
   unify.modules.gui.nixos = {
     pkgs,
-    lib,
     hostConfig,
     ...
   }: let
     themes = import ./_themes.nix {
       inherit pkgs;
       name = hostConfig.name;
-    };
-    mkStylixTheme = theme: {
-      stylix = {
-        image = lib.mkForce themes.${theme}.image;
-        base16Scheme = lib.mkForce themes.${theme}.base16Scheme;
-      };
     };
     theme = "cybertruck";
   in {
@@ -56,18 +49,10 @@
       };
 
       targets = {
-        fish.enable = false;
         kmscon.enable = false;
         nixvim.enable = false;
       };
     };
-    specialisation =
-      builtins.mapAttrs (name: _: {
-        configuration = {
-          imports = [(mkStylixTheme name)];
-        };
-      })
-      themes;
   };
 
   unify.modules.gui.home = {
@@ -89,8 +74,8 @@
       package = pkgs.papirus-icon-theme;
     };
     stylix.enableReleaseChecks = false;
+
     stylix.targets = {
-      fish.enable = false;
       hyprpaper.enable = lib.mkForce false;
       nixvim.enable = false;
       rofi.enable = false;

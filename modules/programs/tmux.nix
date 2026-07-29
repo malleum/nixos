@@ -24,17 +24,15 @@
       clock24 = true;
       keyMode = "vi";
       baseIndex = 1;
+      # Plugins that read an @-option at load time are deliberately NOT here --
+      # see the bottom of extraConfig. home-manager emits this list as run-shell
+      # lines *before* extraConfig, so anything configured by a `set -g @...`
+      # would read the default instead of your value.
       plugins = with pkgs.tmuxPlugins; [
         sensible
         tilish
-        tmux-fzf
-        resurrect
-        continuum
-        copycat
         yank
         open
-        tmux-thumbs
-        jump
       ];
       # Use an indented string (two single-quotes) to allow for Nix's ${...} interpolation
       extraConfig = ''
@@ -58,18 +56,9 @@
         set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'  # underscore colours - needs tmux-3.0
 
         # Plugin configurations
-        set -g @resurrect-capture-pane-contents 'on'
-        set -g @resurrect-strategy-vim 'session'
-        set -g @resurrect-strategy-nvim 'session'
-        set -g @continuum-save-interval '5'
-        set -g @continuum-restore 'on'
         set -g @yank_selection_mouse 'clipboard'
         set -g @yank_action 'copy-pipe'
         set -g @open-S 'https://www.google.com/search?q='
-        set -g @thumbs-key C-o
-        set -g @thumbs-command 'echo -n {} | wl-copy'
-        set -g @thumbs-position 'left'
-        set -g @jump-key j
 
         # --- SIMPLIFIED THEME ---
         set -g mode-style "fg=${accent},bg=${pane_border}"
@@ -101,6 +90,43 @@
         # Prefix highlight uses a secondary, non-clashing accent color
         set -g @prefix_highlight_output_prefix "#[fg=${highlight}]#[bg=${bg}]#[fg=${highlight_fg}]#[bg=${highlight}]"
         set -g @prefix_highlight_output_suffix ""
+
+        # ── Session persistence (must stay last) ─────────────────────
+        #
+        # continuum has no timer of its own: at load it appends
+        # "#{continuum_status}" to whatever status-right currently holds, and
+        # relies on tmux re-evaluating status-right every status-interval to
+        # fire the save. Load order is therefore everything.
+        #
+        # home-manager emits programs.tmux.plugins as run-shell lines *above*
+        # extraConfig, so with continuum listed there it read the default
+        # status-right, appended its hook, and then the theme block above
+        # overwrote status-right and threw the hook away. Autosave silently
+        # never ran again -- the newest save on disk was three months stale
+        # while @continuum-save-last-timestamp only ever showed server start
+        # time. The @continuum-* options had the same problem: set after the
+        # plugin had already read them.
+        #
+        # So: options first, then the theme's status-right, then resurrect,
+        # then continuum dead last. Upstream says the same ("tmux-continuum
+        # should be the last plugin in the list").
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @resurrect-strategy-vim 'session'
+        set -g @resurrect-strategy-nvim 'session'
+        set -g @continuum-save-interval '5'
+        set -g @continuum-restore 'on'
+
+        # Same trap: tmux-thumbs binds get_tmux_option "@thumbs-key" at load,
+        # so listed above it bound its default (prefix Space) and ignored C-o.
+        # prefix C-o then fell through to tmux's builtin rotate-window, which on
+        # a single-pane window looks exactly like "the pane just refreshed".
+        set -g @thumbs-key C-o
+        set -g @thumbs-command 'echo -n {} | wl-copy'
+        set -g @thumbs-position 'left'
+
+        run-shell ${pkgs.tmuxPlugins.tmux-thumbs}/share/tmux-plugins/tmux-thumbs/tmux-thumbs.tmux
+        run-shell ${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/resurrect.tmux
+        run-shell ${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/continuum.tmux
       '';
     };
   };

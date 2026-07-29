@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  unify.modules.hyp.nixos = {pkgs, ...}: {
     programs.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -7,7 +7,7 @@
     };
   };
 
-  unify.modules.gui.home = {
+  unify.modules.hyp.home = {
     config,
     hostConfig,
     lib,
@@ -41,12 +41,15 @@
       then "slidevert"
       else "slide";
   in {
+    # Only the GTK portal is session-agnostic. The Hyprland portal is picked up
+    # from programs.hyprland.portalPackage on the NixOS side and selected by
+    # hyprland-portals.conf when XDG_CURRENT_DESKTOP=Hyprland; under jay,
+    # jay-portals.conf routes ScreenCast/RemoteDesktop to jay's own portal and
+    # FileChooser to gtk4. Listing the Hyprland portal here too just installed
+    # a second implementation into the jay session for nothing.
     xdg.portal = {
       enable = true;
-      extraPortals = [
-        inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland
-        pkgs.xdg-desktop-portal-gtk
-      ];
+      extraPortals = [pkgs.xdg-desktop-portal-gtk];
     };
     wayland.windowManager.hyprland = {
       enable = true;
@@ -67,35 +70,58 @@
           {_args = ["MOZ_ACCELERATED" "1"];}
         ];
 
+        # Kept in step with the [[outputs]] blocks in jay.nix — jay is the
+        # daily driver, hyprland is the fallback session, and a fallback with
+        # the wrong layout is worse than useless. `desc:` substring-matches
+        # "make model serial", so model/serial fragments are enough and are
+        # stabler than connectors (manus' left LG floats DP-1 <-> DP-2).
         monitor =
           if hostConfig.name == "magnus"
           then [
             {
-              output = "desc:HKC OVERSEAS LIMITED 25E3A 0000000000001";
-              mode = "1920x1080@180.00";
+              # left
+              output = "desc:VFD40M-0809";
+              mode = "1920x1080@60.00";
               position = "0x0";
               scale = 1;
             }
             {
-              output = "desc:HP Inc. HP V222vb 3CQ1261KNM";
-              mode = "1920x1080";
-              position = "-1920x0";
+              # middle
+              output = "desc:HP V222vb 3CQ1261KNM";
+              mode = "1920x1080@60.00";
+              position = "1920x0";
+              scale = 1;
+            }
+            {
+              # right, 180Hz
+              output = "desc:25E3A 0000000000001";
+              mode = "1920x1080@180.00";
+              position = "3840x0";
               scale = 1;
             }
           ]
           else if hostConfig.name == "manus"
           then [
             {
-              output = "desc:Lenovo Group Limited 0x4146";
-              mode = "1920x1200@60.00";
-              position = "0x0";
+              # left external
+              output = "desc:LG ULTRAGEAR 0x0004A026";
+              mode = "2560x1440@60.00";
+              position = "0x1120";
               scale = 1;
             }
             {
-              # left monitor
-              output = "desc:LG Electronics LG ULTRAGEAR 0x0004A026";
-              mode = "2560x1440@60.00Hz";
-              position = "-2560x-240";
+              # right external, rotated
+              output = "desc:LG ULTRAGEAR 406NTXR8X146";
+              mode = "2560x1440@60.00";
+              position = "4480x0";
+              transform = 3; # rotate-270
+              scale = 1;
+            }
+            {
+              # laptop panel
+              output = "desc:Lenovo Group Limited 0x4146";
+              mode = "1920x1200@60.00";
+              position = "2560x1360";
               scale = 1;
             }
             {
@@ -380,7 +406,6 @@
             (mkBind "SUPER + c" ''hl.dsp.exec_cmd("rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy")'')
             (mkBind "SUPER + SHIFT + e" ''hl.dsp.exec_cmd("rofi -modi emoji -show emoji")'')
             (mkBind "SUPER + v" ''hl.dsp.exec_cmd("${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy")'')
-            (mkBind "SUPER + CONTROL + SHIFT + s" ''hl.dsp.exec_cmd("themeswitcher")'')
 
             (mkBind "SUPER + SHIFT + q" ''hl.dsp.window.close()'')
             (mkBind "SUPER + CONTROL + SHIFT + semicolon" ''hl.dsp.exit()'')

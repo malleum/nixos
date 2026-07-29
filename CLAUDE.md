@@ -35,12 +35,16 @@ nix flake update mc && git commit -am 'flake: bump mc' && git push
 ssh minimus 'cd ~/.config/nixos && git pull && nh os switch -j 1 --cores 1'
 ```
 
-## Known unrelated breakage
+## Formatting and hooks
 
-`nixosConfigurations.minimus` currently fails to evaluate on
-`home-manager.users.joshammer.home.pointerCursor.name` ("was accessed but has no
-value defined"). This predates the Minecraft split — it reproduces on commits
-from before it — and blocks a full `nh os switch` on minimus until fixed.
+`nix fmt` runs alejandra over the tree. prek (a Rust pre-commit) runs the same
+formatter on commit plus a `readme-tree` hook that regenerates the README
+layout section from `git ls-files`. Install once with `nix run .#install-hooks`,
+or just enter `nix develop`. If a commit is refused with "files were modified by
+this hook", restage and commit again.
+
+New files must be `git add`ed before they are visible to the flake at all —
+untracked files do not exist as far as `git+file://` is concerned.
 
 ## Persistent memory
 

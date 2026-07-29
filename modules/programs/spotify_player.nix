@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {config, ...}: {
+  unify.modules.med.home = {config, ...}: {
     programs.spotify-player = {
       enable = true;
       settings = {

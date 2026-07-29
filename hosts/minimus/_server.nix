@@ -3,6 +3,9 @@ let
 in {
   systemd.services.nix-daemon.serviceConfig.LimitNOFILE = 65536;
 
-  users.users.root.openssh.authorizedKeys.keys = [sshPubKey];
+  # No root key: sshd refuses root logins (PermitRootLogin = "no" in
+  # modules/services/ssh.nix), so the entry would be dead config. Admin access
+  # is joshammer + passwordless wheel sudo; Oracle's serial console is the
+  # out-of-band fallback.
   users.users.joshammer.openssh.authorizedKeys.keys = [sshPubKey];
 }

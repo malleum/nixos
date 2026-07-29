@@ -1,139 +1,178 @@
-# TODO
-- [x] Dendritic with unify
-- [ ] secrets
-    - [x] age personal key
-    - [x] oracle key
-    - [x] github token
-    - [x] vs key
-    - [ ] gpg keys
-    - [ ] gitlab key
-- [x] outputs
-    - [x] nixvim
-    - [x] scripts
-- [x] config for oracle
-- [x] firefox
-- [x] new nixvim
-- [ ] switch wallpaper
-- [ ] debug spotify_player
+# nixos
 
-```nix
-``.
-├── flake.lock
-├── flake.nix
-├── hosts
-│   ├── magnus
-│   │   ├── _hardware-configuration.nix
-│   │   └── magnus.nix
-│   ├── malleum
-│   │   ├── _hardware-configuration.nix
-│   │   └── malleum.nix
-│   ├── manus
-│   │   ├── _hardware-configuration.nix
-│   │   └── manus.nix
-│   └── minimus
-│       ├── _hardware-configuration.nix
-│       ├── _network.nix
-│       ├── _server.nix
-│       └── minimus.nix
-├── modules
-│   ├── hardware
-│   │   ├── amd.nix
-│   │   ├── battery.nix
-│   │   ├── bluetooth.nix
-│   │   ├── keyboard.nix
-│   │   ├── mcsr_keyboard.nix
-│   │   ├── printer.nix
-│   │   ├── screen_light.nix
-│   │   └── wifi_mediatek.nix
-│   ├── meta
-│   │   ├── documentation.nix
-│   │   ├── flake.nix
-│   │   ├── flakepath.nix
-│   │   ├── home.nix
-│   │   ├── hostname.nix
-│   │   ├── minimus-system.nix
-│   │   ├── nix.nix
-│   │   ├── nixpkgs.nix
-│   │   ├── nvim.nix
-│   │   ├── stateversion.nix
-│   │   ├── user.nix
-│   │   └── userConfig.nix
-│   ├── packages
-│   │   ├── ai.nix
-│   │   ├── cli.nix
-│   │   ├── coreutils.nix
-│   │   ├── fonts.nix
-│   │   ├── game.nix
-│   │   ├── gui.nix
-│   │   ├── iogii.nix
-│   │   ├── programming.nix
-│   │   ├── scripts.nix
-│   │   └── wayland.nix
-│   ├── programs
-│   │   ├── brave.nix
-│   │   ├── cli.nix
-│   │   ├── firefox.nix
-│   │   ├── fish.nix
-│   │   ├── game.nix
-│   │   ├── git.nix
-│   │   ├── hypr.nix
-│   │   ├── iamb.nix
-│   │   ├── nh.nix
-│   │   ├── nixhelpers.nix
-│   │   ├── obs.nix
-│   │   ├── rofi.nix
-│   │   ├── spotify_player.nix
-│   │   ├── starship.nix
-│   │   ├── term.nix
-│   │   ├── tmux.nix
-│   │   ├── vesktop.nix
-│   │   ├── virt.nix
-│   │   ├── waybar.nix
-│   │   ├── work.nix
-│   │   └── zellij.nix
-│   ├── scripts
-│   │   ├── _chron.nix
-│   │   ├── _cin.nix
-│   │   ├── _disfiles.nix
-│   │   ├── _duod.nix
-│   │   ├── _ktv.nix
-│   │   ├── _pyenv.nix
-│   │   └── _themeswitcher.nix
-│   ├── secrets
-│   │   ├── default.yaml
-│   │   ├── gpg.nix
-│   │   ├── matrix.yaml
-│   │   ├── oracle-ssh.yaml
-│   │   └── sops.nix
-│   ├── services
-│   │   ├── clipboard.nix
-│   │   ├── dunst.nix
-│   │   ├── login_manager.nix
-│   │   ├── matrix.nix
-│   │   ├── ssd.nix
-│   │   └── ssh.nix
-│   ├── style
-│   │   ├── _themes.nix
-│   │   ├── stylix.nix
-│   │   └── wallpapers
-│   │       ├── grid.jpeg
-│   │       ├── legotesla.png
-│   │       ├── legotrain.png
-│   │       ├── skyline.png
-│   │       ├── space.png
-│   │       ├── tall_dark_sky_su57.jpg
-│   │       └── ws42.png
-│   └── system
-│       ├── audio.nix
-│       ├── bios.nix
-│       ├── docker.nix
-│       ├── efi.nix
-│       ├── locale.nix
-│       ├── network.nix
-│       ├── security.nix
-│       ├── virtualization.nix
-│       └── xdg.nix
-├── nixvim
-│   └── default.nix
-└── README.md
-`
+NixOS flake for `malleum`, `magnus`, `manus` (desktops/laptops, jay + hyprland)
+and `minimus` (aarch64 Oracle Cloud server). Built on the
+[unify](https://codeberg.org/quasigod/unify) module system over flake-parts +
+import-tree, so every file under `hosts/` and `modules/` is picked up
+automatically.
+
+## Usage
+
+```sh
+nh os switch                 # rebuild this host
+nix fmt                      # format every .nix file (alejandra)
+nix run .#install-hooks      # install the prek commit hooks
+nix flake check              # eval all hosts + run the hooks
+```
+
+Deploy to the server without building on it:
+
+```sh
+nh os switch . -H minimus --target-host minimus
+```
+
+That builds locally (x86 hosts have aarch64 binfmt registered) and copies the
+closure over SSH. Drop `--target-host` and add `--build-host minimus` instead if
+you would rather have the Ampere box do the compiling natively.
+
+## Layout
+
+<!-- BEGIN TREE -->
+```
+ .
+├──  CLAUDE.md
+├──  flake.lock
+├──  flake.nix
+├──  hosts
+│   ├──  magnus
+│   │   ├──  _hardware-configuration.nix
+│   │   └──  magnus.nix
+│   ├──  malleum
+│   │   ├──  _hardware-configuration.nix
+│   │   └──  malleum.nix
+│   ├──  manus
+│   │   ├──  _hardware-configuration.nix
+│   │   └──  manus.nix
+│   └──  minimus
+│       ├──  _hardware-configuration.nix
+│       ├──  _network.nix
+│       ├──  _server.nix
+│       └──  minimus.nix
+├──  modules
+│   ├──  hardware
+│   │   ├──  amd.nix
+│   │   ├──  battery.nix
+│   │   ├──  bluetooth.nix
+│   │   ├──  keyboard.nix
+│   │   ├──  mcsr_keyboard.nix
+│   │   ├──  printer.nix
+│   │   ├──  screen_light.nix
+│   │   └──  wifi_mt7925.nix
+│   ├──  meta
+│   │   ├──  bootstrap.nix
+│   │   ├──  documentation.nix
+│   │   ├──  env.nix
+│   │   ├──  flake.nix
+│   │   ├──  flakepath.nix
+│   │   ├──  fmt.nix
+│   │   ├──  home.nix
+│   │   ├──  hostname.nix
+│   │   ├──  nix.nix
+│   │   ├──  nixpkgs.nix
+│   │   ├──  nvim.nix
+│   │   ├──  source-builds.nix
+│   │   ├──  stateversion.nix
+│   │   ├──  user.nix
+│   │   └──  userConfig.nix
+│   ├──  packages
+│   │   ├──  ai.nix
+│   │   ├──  cli.nix
+│   │   ├──  cls.nix
+│   │   ├──  coreutils.nix
+│   │   ├──  fonts.nix
+│   │   ├──  game.nix
+│   │   ├──  gui.nix
+│   │   ├──  iogii.nix
+│   │   ├──  media.nix
+│   │   ├──  more_cli.nix
+│   │   ├──  office.nix
+│   │   ├──  programming.nix
+│   │   ├──  scripts.nix
+│   │   └──  wayland.nix
+│   ├──  programs
+│   │   ├──  brave.nix
+│   │   ├──  cli.nix
+│   │   ├──  firefox.nix
+│   │   ├──  game.nix
+│   │   ├──  git.nix
+│   │   ├──  hypr.nix
+│   │   ├──  iamb.nix
+│   │   ├──  jay
+│   │   │   ├──  _config.nix
+│   │   │   ├──  _session-unit.nix
+│   │   │   ├──  _status.nix
+│   │   │   ├──  _tray-bridge.nix
+│   │   │   └──  default.nix
+│   │   ├──  nh.nix
+│   │   ├──  nixhelpers.nix
+│   │   ├──  obs.nix
+│   │   ├──  rofi.nix
+│   │   ├──  spotify_player.nix
+│   │   ├──  ssh.nix
+│   │   ├──  starship.nix
+│   │   ├──  term.nix
+│   │   ├──  tmux.nix
+│   │   ├──  vesktop.nix
+│   │   ├──  virt.nix
+│   │   ├──  waybar.nix
+│   │   ├──  work.nix
+│   │   └──  zsh.nix
+│   ├──  scripts
+│   │   ├──  _chron.nix
+│   │   ├──  _duod.nix
+│   │   ├──  _jay-audio-switch.nix
+│   │   ├──  _jay-osd.nix
+│   │   ├──  _jay-power-menu.nix
+│   │   ├──  _jay-toggle-monitor.nix
+│   │   ├──  _jay-window-switch.nix
+│   │   ├──  _ktv.nix
+│   │   ├──  _matrix-backup.nix
+│   │   └──  _pyenv.nix
+│   ├──  secrets
+│   │   ├──  default.yaml
+│   │   ├──  gpg.nix
+│   │   ├──  matrix.yaml
+│   │   ├──  oracle-ssh.yaml
+│   │   ├──  sops.nix
+│   │   └──  vs-gitlab.yaml
+│   ├──  services
+│   │   ├──  bt-audio.nix
+│   │   ├──  clipboard.nix
+│   │   ├──  grapple.nix
+│   │   ├──  login_manager.nix
+│   │   ├──  matrix.nix
+│   │   ├──  mc.nix
+│   │   ├──  notif.nix
+│   │   ├──  ssd.nix
+│   │   └──  ssh.nix
+│   ├──  style
+│   │   ├──  _themes.nix
+│   │   ├──  stylix.nix
+│   │   └──  wallpapers
+│   │       ├──  legotesla.png
+│   │       ├──  legotrain.png
+│   │       └──  ws42.png
+│   └──  system
+│       ├──  audio.nix
+│       ├──  dbt.nix
+│       ├──  docker.nix
+│       ├──  efi.nix
+│       ├──  locale.nix
+│       ├──  network.nix
+│       ├──  oom.nix
+│       ├──  security.nix
+│       ├──  tts.nix
+│       ├──  virtualization.nix
+│       └──  xdg.nix
+├──  nixvim
+│   └──  default.nix
+└── 󰂺 README.md
+```
+<!-- END TREE -->
+
+The tree above is regenerated by the `readme-tree` commit hook — do not edit it
+by hand.
+
+## TODO
+
+- [ ] secrets: gpg keys, gitlab key

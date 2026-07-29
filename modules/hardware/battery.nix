@@ -1,12 +1,15 @@
-{
+{inputs, ...}: {
   unify.modules.lap.nixos = {
+    # common-pc-laptop turns TLP on by default (gated on
+    # power-profiles-daemon being off, which it is below).
+    imports = [inputs.nixos-hardware.nixosModules.common-pc-laptop];
+
     services = {
       # Better scheduling for CPU cycles - thanks System76
       system76-scheduler.settings.cfsProfiles.enable = true;
 
-      # Enable TLP (better than gnomes internal power manager)
+      # Tuning only; the enable comes from common-pc-laptop.
       tlp = {
-        enable = true;
         settings = {
           CPU_BOOST_ON_AC = 0;
           CPU_BOOST_ON_BAT = 0;

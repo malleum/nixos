@@ -1,13 +1,14 @@
 {self, ...}: {
   unify.home = {
     pkgs,
-    hostConfig,
+    nixosConfig,
     ...
   }: let
+    # mvim unless the host takes `dev`; see modules/meta/nvim.nix.
     variant =
-      if hostConfig.name == "minimus"
-      then "mvim"
-      else "nvim";
+      if nixosConfig.local.fullNvim
+      then "nvim"
+      else "mvim";
     nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.${variant};
     cls = self.packages.${pkgs.stdenv.hostPlatform.system}.cls;
   in {

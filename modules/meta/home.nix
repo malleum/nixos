@@ -33,7 +33,10 @@
     };
 
     nixos.home-manager = {
-      backupFileExtension = "bak";
+      # Overwrite colliding files rather than leaving .bak clutter behind.
+      # backupCommand runs on each pre-existing file instead of aborting
+      # activation; backupFileExtension would move it aside forever.
+      backupCommand = "rm -f";
       useGlobalPkgs = true;
       useUserPackages = true;
     };

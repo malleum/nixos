@@ -38,12 +38,5 @@
         };
       };
     };
-
-    programs.ssh = {
-      extraConfig = ''
-        Host oracle minimus
-          IdentityFile ${hostConfig.user.homeDirectory}/.ssh/oracle
-      '';
-    };
   };
 }

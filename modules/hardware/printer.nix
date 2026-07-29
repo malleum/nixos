@@ -1,5 +1,5 @@
 {
-  unify.modules.lap.nixos = {pkgs, ...}: {
+  unify.modules.prn.nixos = {pkgs, ...}: {
     # Enable CUPS to print documents.
     services.printing.enable = true;
 

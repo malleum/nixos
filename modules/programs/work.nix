@@ -1,10 +1,5 @@
 {inputs, ...}: {
   unify.modules.wrk.home = {pkgs, ...}: {
-    programs.fish.shellInit = ''
-      abbr -a stag "STAGING_BRANCH=(git branch --show-current)"
-      abbr -a prod 'VS_RUN_PROD=1'
-    '';
-
     programs.zsh.initContent = ''
       typeset -gA _zsh_abbrs
       _zsh_abbrs=(
@@ -26,6 +21,7 @@
     home.packages = with pkgs; [
       awscli2
       glab
+      gpclient # GlobalProtect VPN
       inputs.fix-python.packages.${pkgs.stdenv.hostPlatform.system}.default
       openvpn
       uv

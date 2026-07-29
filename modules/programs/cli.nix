@@ -20,7 +20,6 @@
         nix-direnv.enable = true;
       };
       zsh.shellAliases = shellAliases;
-      fish.shellAliases = shellAliases;
     };
 
     home = {

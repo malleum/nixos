@@ -50,7 +50,7 @@
     };
   };
 
-  unify.modules.gui.home = {pkgs, ...}: let
+  unify.modules.med.home = {pkgs, ...}: let
     system = pkgs.stdenv.hostPlatform.system;
     sayCmd = self.packages.${system}.say;
     voiceDir = self.packages.${system}.piper-voice-no-talesyntese;

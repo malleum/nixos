@@ -19,22 +19,30 @@
         !include ${config.sops.templates.nix-access-tokens.path}
       '';
 
+      # Hardlink duplicate store paths weekly instead of hashing every path
+      # inline during every build (what auto-optimise-store did).
+      optimise = {
+        automatic = true;
+        dates = ["weekly"];
+      };
+
       settings = {
         inherit allowed-users;
         trusted-users = allowed-users;
 
-        auto-optimise-store = true;
+        # Deliberately NOT auto-optimise-store: that hashes every path inline
+        # on every build. nix.optimise below does the same dedupe on a timer.
 
         experimental-features = [
           "flakes"
           "nix-command"
         ];
+        # cache.nixos.org and its key are already NixOS defaults; listing them
+        # again just produced a duplicate entry in nix.conf's substituters.
         substituters = [
-          "https://cache.nixos.org/"
           "https://hyprland.cachix.org"
         ];
         trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         ];
       };

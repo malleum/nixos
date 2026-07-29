@@ -1,4 +1,10 @@
 {
+  # Despite the name, programs.chromium is NixOS' Chromium-*family* policy
+  # module: it writes /etc/brave/policies/managed/extra.json as well as the
+  # chromium one, and Brave reads both. So this is not chromium doing Brave's
+  # job -- it is the correct place for these, and hand-rolling an
+  # environment.etc entry instead would also drop stylix, which injects
+  # BrowserThemeColor through extraOpts.
   unify.modules.gui.nixos = {
     programs.chromium = {
       enable = true;

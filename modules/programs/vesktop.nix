@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {
+  unify.modules.med.home = {
     programs.vesktop = {
       enable = true;
       settings = {
@@ -10,7 +10,6 @@
         hardwareAcceleration = true;
         autoStartMinimized = true;
         spellCheckLanguages = ["en-US"];
-        splashBackground = "../style/wallpapers/gojo.mp4";
         splashTheming = true;
       };
       vencord.settings = {

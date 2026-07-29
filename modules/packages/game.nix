@@ -13,7 +13,7 @@
         haguichi
         lumafly
 
-        stable.bottles
+        bottles
         protonup-ng
         wine
         winetricks

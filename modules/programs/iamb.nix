@@ -1,7 +1,29 @@
-{inputs, ...}: {
-  unify.modules.gui.home = {pkgs, ...}: let
-    jiamb = inputs.iamb.packages.${pkgs.stdenv.hostPlatform.system}.default;
+{
+  unify.modules.cht.home = {
+    lib,
+    pkgs,
+    ...
+  }: let
+    jiamb = pkgs.iamb;
+
+    # Launched at login, not supervised -- see the helper for why these are
+    # Restart=no with X-SwitchMethod=keep-old.
+    mkSessionUnit = import ./jay/_session-unit.nix {inherit lib;};
   in {
+    systemd.user.services = {
+      signal = mkSessionUnit {
+        description = "Signal";
+        exec = "${pkgs.signal-desktop}/bin/signal-desktop";
+        restart = false;
+      };
+
+      iamb = mkSessionUnit {
+        description = "iamb matrix client";
+        exec = "${pkgs.foot}/bin/foot --app-id=iamb --title=iamb ${jiamb}/bin/iamb";
+        restart = false;
+      };
+    };
+
     home = {
       sessionVariables = {
         IAMB_DICT_EN_AFF = "${pkgs.hunspellDicts.en_US}/share/hunspell/en_US.aff";
@@ -87,10 +109,11 @@
             "gu" = ":unreact<Enter>";
             "gx" = ":open<Enter>";
             "gX" = ":download<Enter>";
-            "gy" = "\"+y";
-            "gp" = "\"+p";
-            "gP" = "\"+P";
             "<C-C>" = ":cancel!<Enter>";
+
+            # Clipboard paste, matching the nvim leader maps.
+            "<Space>p" = "\"+p";
+            "<Space>P" = "\"+P";
 
             "=1" = ":react 100<Enter>";
             "=a" = ":react saluting_face<Enter>";
@@ -115,6 +138,20 @@
             "=u" = ":react thumbsup<Enter>";
             "=w" = ":react watermelon<Enter>";
             "=y" = ":react tada<Enter>";
+          };
+
+          # Same leader maps as nvim: yank to the system clipboard, delete into
+          # the black hole.
+          "normal|visual" = {
+            "<Space>y" = "\"+y";
+            "<Space>Y" = "\"+y$";
+            "<Space>d" = "\"_d";
+            "<Space>D" = "\"_D";
+          };
+
+          # Paste over a selection without losing what's in the register.
+          visual = {
+            "<Space>p" = "\"_dP";
           };
         };
       };

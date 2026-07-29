@@ -34,13 +34,34 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    fix-python.url = "github:GuillaumeDesforges/fix-python";
-    nix-alien.url = "github:thiagokokada/nix-alien";
+    # Both default to their own pinned nixpkgs — fix-python's is from 2023-04
+    # and would be evaluated and fetched in full alongside ours.
+    fix-python = {
+      url = "github:GuillaumeDesforges/fix-python";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-alien = {
+      url = "github:thiagokokada/nix-alien";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Deliberately NOT following nixpkgs: Hyprland's cachix only has binaries
+    # built against its own pin, and overriding it forces a local build.
     hypr.url = "github:hyprwm/Hyprland";
     stylix = {
       url = "github:danth/stylix";
@@ -53,11 +74,6 @@
 
     grapple = {
       url = "github:malleum/malleusite";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    termword = {
-      url = "github:malleum/termword";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
