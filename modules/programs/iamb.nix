@@ -19,7 +19,13 @@
 
       iamb = mkSessionUnit {
         description = "iamb matrix client";
-        exec = "${pkgs.foot}/bin/foot --app-id=iamb --title=iamb ${jiamb}/bin/iamb";
+        # iamb panics (rust exit 101) if the initial sync has no network,
+        # and jay-session.target starts well before NetworkManager has
+        # actually got a connection up -- so wait for it first. nm-online
+        # returns immediately once connected; -t caps the wait so a
+        # genuinely offline boot still opens iamb (to its own error) rather
+        # than hanging the session forever.
+        exec = "${pkgs.bash}/bin/bash -c '${pkgs.networkmanager}/bin/nm-online -q -t 30; exec ${pkgs.foot}/bin/foot --app-id=iamb --title=iamb ${jiamb}/bin/iamb'";
         restart = false;
       };
     };
