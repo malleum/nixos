@@ -42,9 +42,15 @@
     # from-source flake input over it for hosts that want the tip.
     jayPkg = pkgs.jay;
 
-    # EDID serial of the manus left external monitor (LG ULTRAGEAR on DP-x).
-    # Shared by the output config and the toggle keybinding.
-    leftMonitorSerial = "303142";
+    # EDID serial of each host's "left" monitor -- the one super-shift-m
+    # toggles. Shared by the output config and the toggle keybinding.
+    # manus: LG ULTRAGEAR (connector floats DP-1/DP-2, hence match-by-serial).
+    # magnus: the TV (serial "1" is non-unique, paired with manufacturer "BBY"
+    # in _config.nix's output match -- see the comment there).
+    leftMonitorSerial =
+      if hostConfig.name == "magnus"
+      then "1"
+      else "303142";
 
     wlTrayBridge = import ./_tray-bridge.nix {inherit pkgs;};
     jayStatus = import ./_status.nix {

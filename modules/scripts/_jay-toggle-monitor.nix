@@ -1,6 +1,12 @@
 # Toggle a monitor on/off by EDID serial number.
 #
-#   jay-toggle-monitor <serial>
+#   jay-toggle-monitor <serial> [on|off]
+#
+# With no second arg, flips whatever the current state is (the keybinding
+# use). With `on`/`off`, forces that state and is a silent no-op if the
+# monitor is already there -- for driving from on-graphics-initialized at
+# startup, where a toggle would race the actual state and a notify-send
+# would be noise.
 #
 # `jay randr output` takes a connector, and connectors move between reboots
 # (manus' left LG floats DP-1 <-> DP-2), so the connector is resolved from the
@@ -21,10 +27,11 @@ pkgs.writeShellApplication {
   runtimeInputs = with pkgs; [jq libnotify];
   text = ''
     if [ $# -lt 1 ]; then
-      echo "usage: jay-toggle-monitor <edid-serial>" >&2
+      echo "usage: jay-toggle-monitor <edid-serial> [on|off]" >&2
       exit 2
     fi
     serial="$1"
+    force="''${2:-}"
 
     # `|| true` guards the whole pipeline: pipefail would otherwise abort here
     # on no-match, before the empty check below can report it nicely.
@@ -46,12 +53,26 @@ pkgs.writeShellApplication {
     conn="''${info%% *}"
     enabled="''${info##* }"
 
-    if [ "$enabled" = "true" ]; then
-      jay randr output "$conn" disable
-      notify-send -t 1500 "Monitor ($conn)" "disabled"
-    else
-      jay randr output "$conn" enable
-      notify-send -t 1500 "Monitor ($conn)" "enabled"
-    fi
+    case "$force" in
+      off)
+        [ "$enabled" = "true" ] && jay randr output "$conn" disable
+        ;;
+      on)
+        [ "$enabled" = "false" ] && jay randr output "$conn" enable
+        ;;
+      "")
+        if [ "$enabled" = "true" ]; then
+          jay randr output "$conn" disable
+          notify-send -t 1500 "Monitor ($conn)" "disabled"
+        else
+          jay randr output "$conn" enable
+          notify-send -t 1500 "Monitor ($conn)" "enabled"
+        fi
+        ;;
+      *)
+        echo "usage: jay-toggle-monitor <edid-serial> [on|off]" >&2
+        exit 2
+        ;;
+    esac
   '';
 }

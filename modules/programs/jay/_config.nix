@@ -29,10 +29,10 @@
     if hostName == "magnus"
     # toml
     then ''
-      # VIZ VFD40M-0809 (left) — serial "0" is non-unique, pair with manufacturer
+      # Large TV (left) — serial "1" is non-unique, pair with manufacturer
       [[outputs]]
-      match.serial-number = "0"
-      match.manufacturer = "VIZ"
+      match.serial-number = "1"
+      match.manufacturer = "BBY"
       name = "left"
       x = 0
       y = 0
@@ -113,9 +113,17 @@
 
       # Everything the session needs is a systemd user unit wanted by
       # jay-session.target (see systemd.user.services below), so starting the
-      # target is the only thing that happens here.
+      # target is the only thing that happens here. On magnus, the TV also
+      # gets forced off here -- it's kept off most of the time, so it should
+      # start off rather than in whatever state it was left in, with
+      # super-shift-m toggling from there.
       on-graphics-initialized = [
         { type = "exec", exec = { shell = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
+        ${
+          if hostName == "magnus"
+          then ''{ type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}", "off"] },''
+          else ""
+        }
       ]
 
       # ── Keyboard layouts ─────────────────────────────────────────
@@ -206,10 +214,6 @@
       launch-vesktop = { type = "exec", exec = "vesktop" }
       launch-teams = { type = "exec", exec = ["${browser}", "--new-window", "https://teams.microsoft.com/v2/"] }
       launch-calendar = { type = "exec", exec = ["${browser}", "--new-window", "https://calendar.google.com/calendar/r"] }
-      # app-id/title set here too, so super-i lands on workspace 2 at map time
-      # exactly like the session unit does.
-      launch-iamb = { type = "exec", exec = ["${pkgs.foot}/bin/foot", "--app-id=iamb", "--title=iamb", "iamb"] }
-      launch-signal = { type = "exec", exec = "signal-desktop" }
 
       # ── Shortcuts ────────────────────────────────────────────────
       [shortcuts]
@@ -221,8 +225,11 @@
       ${mod}-shift-b = "$launch-browser2"
       ${mod}-d = "$launch-vesktop"
       ${mod}-shift-d = "$launch-teams"
-      ${mod}-i = "$launch-iamb"
-      ${mod}-shift-i = "$launch-signal"
+      # iamb and signal are already running as jay-session login units
+      # (see iamb.nix), so these just focus their workspace instead of
+      # relaunching -- a plain $launch action spawned a duplicate process.
+      ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus"]
+      ${mod}-shift-i = [{ type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
       ${mod}-ctrl-c = "open-control-center"
       ${mod}-shift-c = "$launch-calendar"
 
@@ -266,7 +273,7 @@
       ${mod}-g = { type = "exec", exec = { prog = "${pkgs.wl-kbptr}/bin/wl-kbptr", privileged = true } }
 
       # ─ Toggle left monitor on/off ─
-      ${mod}-shift-m = { type = "exec", exec = "${monitorToggle}/bin/jay-toggle-monitor ${leftMonitorSerial}" }
+      ${mod}-shift-m = { type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}"] }
 
       # ─ Clipboard history ─
       ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
@@ -375,7 +382,7 @@
 
       [complex-shortcuts.XF86AudioRaiseVolume]
       mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--output-volume", "raise", "--max-volume", "100"] }
+      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--output-volume", "raise", "--max-volume", "150"] }
 
       [complex-shortcuts.XF86AudioMute]
       mod-mask = ""
