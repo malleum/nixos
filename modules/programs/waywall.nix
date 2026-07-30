@@ -1,11 +1,11 @@
 # waywall + Ninjabrain-Bot, configured declaratively from the waywall flake's
 # home-manager modules.
 #
-# The waywall repo (github:malleum/waywall, checked out at ~/.config/waywall)
-# owns the Lua engine, the overlay PNG generator and the MCSR JDK; this file is
-# only the wiring: it feeds the stylix palette in and sets the geometry and
-# keybinds. ~/.config/waywall/init.lua is generated -- it is gitignored in that
-# repo, so the checkout and the generated file coexist in the same directory.
+# The waywall repo (github:malleum/waywall, checked out at
+# ~/documents/gh/waywall-nix) owns the Lua engine, the overlay PNG generator and
+# the MCSR JDK; this file is only the wiring: it feeds the stylix palette in and
+# sets the geometry and keybinds. ~/.config/waywall then holds nothing but the
+# generated init.lua and waywall's own layout_state.lua.
 {inputs, ...}: {
   unify.modules.gam.home = {
     config,
@@ -30,7 +30,8 @@
 
     home.packages = [waywallPkgs.cps-wl];
 
-    # The JDK to point Prism's instances at. Deliberately *not* in
+    # The JDK to point Prism's instances at: Oracle GraalVM 21, which needs
+    # allowUnfree (set in modules/meta/nixpkgs.nix). Deliberately *not* in
     # home.packages: it is a full JDK, so it collides with the openjdk another
     # package already puts in the profile (both ship lib/src.zip). A symlink
     # gives Prism a stable path to autodetect and keeps the store path GC-rooted
