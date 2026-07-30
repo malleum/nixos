@@ -30,6 +30,26 @@
 
     home.packages = [waywallPkgs.cps-wl];
 
+    # The CPS counter runs against jay, not inside waywall. waywall replaces its
+    # own WAYLAND_DISPLAY with its nested socket, and implements no
+    # wlr-layer-shell, so a layer-shell client launched by waywall.exec finds no
+    # protocol to bind and never appears. As a user unit it inherits the session's
+    # host display instead -- and as a host client it draws above the waywall
+    # window rather than being composited inside it.
+    #
+    # No wantedBy: it is started on demand by the waywall keybind.
+    systemd.user.services.cps-overlay = {
+      Unit = {
+        Description = "Clicks-per-second overlay";
+        PartOf = ["graphical-session.target"];
+        After = ["graphical-session.target"];
+      };
+      Service = {
+        ExecStart = "${waywallPkgs.cps-wl}/bin/cps-overlay";
+        Restart = "no";
+      };
+    };
+
     # The JDK to point Prism's instances at: Oracle GraalVM 21, which needs
     # allowUnfree (set in modules/meta/nixpkgs.nix). Deliberately *not* in
     # home.packages: it is a full JDK, so it collides with the openjdk another
@@ -85,6 +105,12 @@
         tall = {
           w = 384;
           h = 16384;
+        };
+        # 864 of a 1080 canvas is 80% screen height. Pie chart and percentage
+        # source rects are derived from this, so they follow the height.
+        lowest = {
+          w = 384;
+          h = 864;
         };
       };
 
@@ -169,10 +195,7 @@
         process = "ninjabrain-bot";
       };
 
-      cps = {
-        command = "${waywallPkgs.cps-wl}/bin/cps-overlay";
-        process = "cps-overlay";
-      };
+      # Default toggleCommand drives the systemd user unit defined below.
 
       resizeAnimation = {
         # Feeds ~/.waywall_state, which resize_animation_waywall.py reads inside
