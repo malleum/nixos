@@ -15,6 +15,7 @@
   mod,
   leftMonitorSerial,
   jayStatus,
+  jayLock,
   audioSwitch,
   monitorToggle,
   powerMenu,
@@ -120,10 +121,10 @@
       on-graphics-initialized = [
         { type = "exec", exec = { shell = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
         ${
-          if hostName == "magnus"
-          then ''{ type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}", "off"] },''
-          else ""
-        }
+        if hostName == "magnus"
+        then ''{ type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}", "off"] },''
+        else ""
+      }
       ]
 
       # ── Keyboard layouts ─────────────────────────────────────────
@@ -175,10 +176,21 @@
 
       # ── Theme ─────────────────────────────────────────────────────
       [theme]
-      bg-color = "#000000"
-      bar-bg-color = "#${colors.base01}"
+      # Only ever seen for the instant before swaybg comes up; matching base00
+      # keeps that flash from being a black frame.
+      bg-color = "#${colors.base00}"
+      # Colors take #rrggbbaa. The bar is translucent to sit with the 0.85
+      # terminals and 0.9 popups stylix sets, instead of reading heavier than
+      # everything else on screen.
+      bar-bg-color = "#${colors.base01}D9"
       bar-status-text-color = "#${colors.base05}"
-      border-color = "#${colors.base03}"
+      # Titles are hidden, so the border is the *only* focus indicator:
+      # dim base02 between unfocused windows, accent ring on the focused one.
+      # focused-border-color requires the `full` container border style --
+      # with the default `separators` there is no border to recolor.
+      border-color = "#${colors.base02}"
+      focused-border-color = "#${colors.base0D}"
+      container-borders = "full"
       # Workspace tabs (titles are hidden, so these only style the bar tabs):
       # active = accent pill w/ dark text; others = subtle pill w/ readable text.
       focused-title-bg-color = "#${colors.base0D}"
@@ -202,7 +214,9 @@
       # ── Status Bar ───────────────────────────────────────────────
       [status]
       format = "i3bar"
-      i3bar-separator = '  <span foreground="#${colors.base04}" size="x-large">·</span>  '
+      # Each block draws its own rounded pill (see _status.nix), so the
+      # separator is plain space -- a middot between pills reads as clutter.
+      i3bar-separator = "  "
       exec = "${jayStatus}/bin/jay-status"
 
       # ── Named Actions ────────────────────────────────────────────
@@ -308,18 +322,37 @@
       ${mod}-shift-f = "toggle-fullscreen"
 
       # ─ Screen lock ─
-      ${mod}-BackSpace = { type = "exec", exec = { prog = "${pkgs.swaylock}/bin/swaylock", args = ["-c", "000000"], privileged = true } }
+      # jay-lock is swaylock-effects with the theme's colors (see _lock.nix).
+      # The binary it execs is still called swaylock, so the [[clients]] rule
+      # granting session-lock below still matches it.
+      ${mod}-BackSpace = { type = "exec", exec = { prog = "${jayLock}/bin/jay-lock", privileged = true } }
 
       # ─ Wallpaper restart ─
       ${mod}-bracketleft = { type = "exec", exec = { shell = "pkill swaybg; ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill &" } }
+
+      # ─ Bar refresh ─
+      # There is no "restart the status" action: jay respawns the status command
+      # when it re-reads the config, so reloading is the way to refresh the bar.
+      # Nothing was bound to bracketright before, which is why super-] just
+      # typed a ] into the focused window. Note these are *keysyms* on the
+      # active (dvorak) keymap, so bracketleft/bracketright sit on the physical
+      # keys qwerty calls - and =.
+      ${mod}-bracketright = "reload-config-toml"
 
       # ─ Kill electron ─
       ${mod}-ctrl-d = { type = "exec", exec = { shell = "killall electron" } }
       ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
       # ─ Move workspace to other output ─
-      ${mod}-o = [{ type = "move-to-output", direction = "right" }, "focus-right", "warp-mouse-to-focus"]
-      ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "focus-left", "warp-mouse-to-focus"]
+      # No focus action here on purpose. move_ws_to_output (src/state.rs) does
+      # not touch the keyboard focus, so after the move the focus is already on
+      # this workspace on its new output. The `focus-right` that used to follow
+      # was what broke it: focus-right resolves the workspace's output, which
+      # by then *is* the target output, and steps one further -- on a 3-monitor
+      # host, moving left->middle landed the focus on the right monitor.
+      # Only the pointer needs to catch up.
+      ${mod}-o = [{ type = "move-to-output", direction = "right" }, "warp-mouse-to-focus"]
+      ${mod}-shift-o = [{ type = "move-to-output", direction = "left" }, "warp-mouse-to-focus"]
 
       # ─ Focus movement (vim-style) ─
       ${mod}-h = ["focus-left", "warp-mouse-to-focus"]
@@ -328,10 +361,15 @@
       ${mod}-l = ["focus-right", "warp-mouse-to-focus"]
 
       # ─ Move windows (vim-style) ─
-      ${mod}-shift-h = "move-left"
-      ${mod}-shift-j = "move-down"
-      ${mod}-shift-k = "move-up"
-      ${mod}-shift-l = "move-right"
+      # move-left/right cross to the neighboring output when the window is at
+      # the edge of the tree, and jay keeps the keyboard focus on the moved
+      # window. But focus-follows-mouse is on and the pointer stays behind on
+      # the old output, so the next pointer event handed focus back to whatever
+      # was under it -- hence the warp, same as the focus bindings above.
+      ${mod}-shift-h = ["move-left", "warp-mouse-to-focus"]
+      ${mod}-shift-j = ["move-down", "warp-mouse-to-focus"]
+      ${mod}-shift-k = ["move-up", "warp-mouse-to-focus"]
+      ${mod}-shift-l = ["move-right", "warp-mouse-to-focus"]
 
       # ─ Workspaces (dvorak home row: ' , . p y) ─
       ${mod}-apostrophe = [{ type = "show-workspace", name = "1" }, "warp-mouse-to-focus"]

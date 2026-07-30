@@ -4,6 +4,7 @@
 # of what used to live here now sits alongside it or in modules/scripts:
 #   _config.nix      -- the ~570-line TOML document
 #   _status.nix      -- the i3bar status feed (needs theme colours)
+#   _lock.nix        -- the swaylock-effects lock screen (theme colours + wallpaper)
 #   _tray-bridge.nix -- the wl-tray-bridge derivation
 # and jay-audio-switch / jay-toggle-monitor / jay-power-menu /
 # jay-window-switch are plain scripts in modules/scripts, auto-collected into
@@ -57,6 +58,10 @@
       inherit pkgs;
       colors = base16Scheme;
     };
+    jayLock = import ./_lock.nix {
+      inherit pkgs wallpaper;
+      colors = base16Scheme;
+    };
 
     # The config-independent scripts, taken from the flake's own packages so
     # there is exactly one definition of each.
@@ -70,7 +75,7 @@
       ;
 
     jayConfig = import ./_config.nix {
-      inherit pkgs leftMonitorSerial wallpaper jayStatus;
+      inherit pkgs leftMonitorSerial wallpaper jayStatus jayLock;
       hostName = hostConfig.name;
       colors = base16Scheme;
       browser = hostConfig.user.browser;
@@ -90,6 +95,10 @@
   in {
     home.packages = [
       jayPkg
+      # On PATH so jay-power-menu can lock with the themed screen. That script
+      # lives in modules/scripts and is built by `pkgs.callPackage path {}`,
+      # so it cannot be handed a theme-dependent derivation as an argument.
+      jayLock
       pkgs.satty
       pkgs.playerctl
       pkgs.swayosd

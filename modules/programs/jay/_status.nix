@@ -49,9 +49,33 @@ pkgs.writeShellScriptBin "jay-status" ''
   c_duod="#${colors.base0F}"
   c_dim="#${colors.base03}"
   c_bg="#${colors.base01}"   # bar bg, for invisible spacer
+  c_pill="#${colors.base02}" # pill fill, one shade above the bar
 
-  # emit NAME, glyph in accent color via pango, then value in default color
-  piece() { printf '{"name":"%s","markup":"pango","full_text":"<span foreground='"'"'%s'"'"'>%s</span> %s"}' "$1" "$2" "$3" "$4"; }
+  # Emit NAME as a rounded pill: accent glyph + value on a base02 fill.
+  #
+  # jay's i3bar reader (jay-config/src/status.rs) turns a block's `color` /
+  # `background` into a pango span around the *whole* block -- and a pango
+  # bgcolor is a hard rectangle, which looks like a spreadsheet cell. So the
+  # fill is done in markup instead, capped by the Nerd Font powerline
+  # half-circles U+E0B6 / U+E0B4 drawn in the fill color: cap, filled body,
+  # cap. That is what makes the pill round. Needs JetBrainsMono Nerd Font
+  # (theme.bar-font in _config.nix) -- a plain font renders tofu here.
+  #
+  # Two details about the spacing, both load-bearing:
+  #
+  #   * The space after the icon sits INSIDE the icon's own span. Nerd Font
+  #     glyphs draw wider than their advance width, and pango paints each run's
+  #     background rect immediately before that run's glyphs -- so with the
+  #     space in the value's run, the value run's rect painted over the icon's
+  #     overhang and sheared the right edge off every icon.
+  #   * There are *two* spaces after the icon and one before the closing cap.
+  #     The icon's overhang visually swallows the first of them, so a single
+  #     space left the glyph butted against the value. The widths were tuned by
+  #     rendering this markup with pango-view at bar-font size, not guessed.
+  piece() {
+    printf '{"name":"%s","markup":"pango","full_text":"<span foreground='"'"'%s'"'"'></span><span bgcolor='"'"'%s'"'"'><span foreground='"'"'%s'"'"'>%s  </span>%s </span><span foreground='"'"'%s'"'"'></span>"}' \
+      "$1" "$c_pill" "$c_pill" "$2" "$3" "$4" "$c_pill"
+  }
 
   # Block up to 2s. Return 0 if woken by an audio event, 1 on timeout.
   wait_tick() {
@@ -159,16 +183,25 @@ pkgs.writeShellScriptBin "jay-status" ''
     slow_pieces+=("$(piece clock "$c_date" "󰸗" "$date_str")")
 
     # Duodo clock — timeout to prevent hangs.
-    # Trailing blocks (colored = bar bg, so invisible) are the gap before the
-    # tray: jay sizes the status by ink-rect, which drops trailing spaces but
-    # not glyph ink, so bg-colored blocks reserve width without showing.
     # duod prints 5 base-12 digits; the last one changes ~7x/second, so it is
     # dropped. Was `| choose -c 0..4` -- a whole subprocess per tick to do what
     # a substring does.
     local duod_val
     duod_val=$(timeout 1 duod 2>/dev/null)
     duod_val="''${duod_val:0:4}"
-    slow_pieces+=("$(piece duod "$c_duod" "󰔛" "''${duod_val:-?} <span foreground='$c_bg'>█</span>")")
+    slow_pieces+=("$(piece duod "$c_duod" "󰔛" "''${duod_val:-?}")")
+
+    # Gap before the tray: jay sizes the status by ink-rect, which drops
+    # trailing spaces but not glyph ink, so a block of invisible glyph ink
+    # reserves width without showing.
+    #
+    # Two changes from the old bar-bg-colored version: it is its own block
+    # rather than part of the duod pill (inside the pill a base01 glyph shows
+    # against the base02 fill), and it hides via pango `alpha` instead of
+    # painting itself the bar color -- the bar is translucent now, so an
+    # opaque base01 block would no longer match it. jay feeds the markup to
+    # pango_layout_set_markup, so the alpha attribute is honored.
+    slow_pieces+=("{\"name\":\"spacer\",\"markup\":\"pango\",\"full_text\":\"<span foreground='$c_bg' alpha='1%'>█</span>\"}")
   }
 
   print_line() {

@@ -117,14 +117,25 @@
         set -g @continuum-restore 'on'
 
         # Same trap: tmux-thumbs binds get_tmux_option "@thumbs-key" at load,
-        # so listed above it bound its default (prefix Space) and ignored C-o.
-        # prefix C-o then fell through to tmux's builtin rotate-window, which on
-        # a single-pane window looks exactly like "the pane just refreshed".
-        set -g @thumbs-key C-o
+        # so listed above it bound its default (prefix Space) and ignored this.
+        # Plain `o`, not C-o: C-o is Claude Code's own key inside the pane.
+        # It replaces tmux's builtin `select-pane -t :.+`, which super-h/j/k/l
+        # already covers at the window-manager level.
+        set -g @thumbs-key o
         set -g @thumbs-command 'echo -n {} | wl-copy'
         set -g @thumbs-position 'left'
 
         run-shell ${pkgs.tmuxPlugins.tmux-thumbs}/share/tmux-plugins/tmux-thumbs/tmux-thumbs.tmux
+
+        # tmux-thumbs.tmux binds the key as `run-shell -b`, and on tmux 3.7b the
+        # backgrounded form is a silent no-op: the wrapper never starts, so
+        # prefix C-o did nothing at all. Verified by hand -- `run-shell -b
+        # tmux-thumbs.sh` produced no window and no error (the wrapper ends in
+        # `|| true`, so failures are swallowed), while the same script without
+        # -b brought up the hint overlay and copied the pick. So rebind on top
+        # of the plugin's own binding, foreground.
+        bind-key -T prefix o run-shell ${pkgs.tmuxPlugins.tmux-thumbs}/share/tmux-plugins/tmux-thumbs/tmux-thumbs.sh
+
         run-shell ${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/resurrect.tmux
         run-shell ${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/continuum.tmux
       '';

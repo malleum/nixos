@@ -13,8 +13,19 @@ pkgs.writeShellApplication {
       " shutdown" \
       | rofi -dmenu -i -p power -theme-str 'window {width: 20%;}') || true
 
+    # jay-lock is the themed lock screen, built in modules/programs/jay/_lock.nix
+    # because it needs the stylix colours and wallpaper -- things this script,
+    # built with a bare `callPackage path {}`, has no access to. It is on the
+    # session PATH via home.packages; plain swaylock is the fallback so
+    # `nix run .#jay-power-menu` still works standalone.
     case "''${choice# *}" in
-      lock)     swaylock -c 000000 ;;
+      lock)
+        if command -v jay-lock >/dev/null; then
+          jay-lock
+        else
+          swaylock -c 000000
+        fi
+        ;;
       suspend)  systemctl suspend ;;
       logout)   jay quit ;;
       reboot)   systemctl reboot ;;

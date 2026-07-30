@@ -30,6 +30,10 @@
         "*" = {
           background-color = mkLiteral "#00000000";
           text-color = mkLiteral "#${config.stylix.base16Scheme.base05}";
+          # stylix's rofi target is off (see modules/style/stylix.nix), so
+          # nothing else sets this and rofi fell back to the default sans while
+          # the bar and window titles were JetBrainsMono.
+          font = mkLiteral "\"JetBrainsMono Nerd Font 12\"";
         };
         "window" = {
           location = mkLiteral "center";
@@ -37,8 +41,12 @@
           width = mkLiteral "40%";
           padding = mkLiteral "24px";
           border = mkLiteral "2px";
+          # 16px on containers, 12px on rows -- the same scale swaync uses.
           border-radius = mkLiteral "16px";
-          border-color = mkLiteral "#${config.stylix.base16Scheme.base0D}";
+          # base02, matching the swaync cards and the jay window borders. The
+          # accent is spent on the selected row instead; a full-saturation
+          # border *and* an accent row read as two competing highlights.
+          border-color = mkLiteral "#${config.stylix.base16Scheme.base02}";
           background-color = mkLiteral "#${config.stylix.base16Scheme.base00}E6";
         };
         "mainbox" = {

@@ -53,7 +53,7 @@
            .notification-background behind it). */
         .notification {
           padding: 0;
-          border-radius: 14px;
+          border-radius: 16px;
           border: 2px solid @base02;
           background: @base00;
         }
@@ -76,7 +76,7 @@
           background: transparent;
           border: none;
           padding: 8px;
-          border-radius: 14px;
+          border-radius: 16px;
         }
 
         .notification .summary,
@@ -90,7 +90,7 @@
         }
 
         .control-center {
-          border-radius: 14px;
+          border-radius: 16px;
           border: 2px solid @base02;
         }
 
