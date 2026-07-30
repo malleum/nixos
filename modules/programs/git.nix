@@ -9,6 +9,7 @@
       settings = {
         user = {inherit (hostConfig.user) email name;};
         push.autoSetupRemote = true;
+        pull.rebase = true;
       };
       includes = [
         {

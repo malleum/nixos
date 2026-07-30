@@ -15,6 +15,7 @@
         description = "Signal";
         exec = "${pkgs.signal-desktop}/bin/signal-desktop";
         restart = false;
+        guard = "${pkgs.bash}/bin/bash -c '! ${pkgs.procps}/bin/pgrep -x -u \"$USER\" signal-desktop >/dev/null'";
       };
 
       iamb = mkSessionUnit {
@@ -27,6 +28,9 @@
         # than hanging the session forever.
         exec = "${pkgs.bash}/bin/bash -c '${pkgs.networkmanager}/bin/nm-online -q -t 30; exec ${pkgs.foot}/bin/foot --app-id=iamb --title=iamb ${jiamb}/bin/iamb'";
         restart = false;
+        # Skip the start if an iamb is already up -- systemd-launched or
+        # spawned by hand from a terminal. See _session-unit.nix.
+        guard = "${pkgs.bash}/bin/bash -c '! ${pkgs.procps}/bin/pgrep -x -u \"$USER\" iamb >/dev/null'";
       };
     };
 

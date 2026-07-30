@@ -55,6 +55,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  bluetooth.nix
 │   │   ├──  keyboard.nix
 │   │   ├──  mcsr_keyboard.nix
+│   │   ├──  mouse.nix
 │   │   ├──  printer.nix
 │   │   ├──  screen_light.nix
 │   │   └──  wifi_mt7925.nix
@@ -99,6 +100,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  iamb.nix
 │   │   ├──  jay
 │   │   │   ├──  _config.nix
+│   │   │   ├──  _lock.nix
 │   │   │   ├──  _session-unit.nix
 │   │   │   ├──  _status.nix
 │   │   │   ├──  _tray-bridge.nix
@@ -115,6 +117,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  vesktop.nix
 │   │   ├──  virt.nix
 │   │   ├──  waybar.nix
+│   │   ├──  waywall.nix
 │   │   ├──  work.nix
 │   │   └──  zsh.nix
 │   ├──  scripts

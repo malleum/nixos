@@ -10,7 +10,18 @@
   # login) do neither: respawning something you deliberately quit is a bug, and
   # X-SwitchMethod=keep-old stops home-manager's sd-switch tearing the window
   # down and reopening it on every `nh os switch`.
+  #
+  # keep-old only covers a unit that is *active* at switch time. sd-switch also
+  # starts anything WantedBy an active target that is currently inactive, so a
+  # copy spawned outside systemd (or one whose unit died while the window
+  # lived) got a second window on every switch. `guard` is an ExecCondition:
+  # nonzero exit makes systemd skip the start cleanly, without marking the unit
+  # failed. RefuseManualStart is NOT the answer here -- sd-switch stops the old
+  # unit and is then refused the start, leaving the app dead.
   restart ? true,
+  # Shell test run before ExecStart; false (nonzero) means "already running,
+  # do nothing".
+  guard ? null,
 }: {
   Unit =
     {
@@ -25,6 +36,7 @@
 
   Service =
     {ExecStart = exec;}
+    // (lib.optionalAttrs (guard != null) {ExecCondition = guard;})
     // (
       if restart
       then {

@@ -30,6 +30,7 @@
       nmap
       nvim
       ouch
+      prek
       rip2
       ripgrep
       sd

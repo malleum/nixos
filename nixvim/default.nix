@@ -30,8 +30,6 @@
     wrap = false;
   };
 
-  filetype.extension.rask = "ruby";
-
   viAlias = true;
   luaLoader.enable = true;
   performance.combinePlugins = {
@@ -187,6 +185,7 @@
     vim-indent-object
     inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
     inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
+    inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
   ];
 
   plugins = {
@@ -220,7 +219,11 @@
           "<C-b>" = ["scroll_documentation_up" "fallback"];
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
-        sources.default = ["lsp" "path" "snippets" "buffer"];
+        sources.default = ["rask" "lsp" "path" "snippets" "buffer"];
+        providers.rask = {
+          name = "rask";
+          module = "rask.blink";
+        };
         completion = {
           list.selection = {
             preselect = true;

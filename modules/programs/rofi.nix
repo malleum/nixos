@@ -8,7 +8,10 @@
       inherit (config.lib.formats.rasi) mkLiteral;
     in {
       enable = true;
-      terminal = "$TERMINAL";
+      # Not "$TERMINAL": rofi does no env expansion in rasi strings, so it
+      # execs a binary literally named $TERMINAL and every Terminal=true
+      # .desktop entry (iamb, etc.) fails with ENOENT.
+      terminal = "${pkgs.foot}/bin/foot";
       location = "center";
       plugins = with pkgs; [
         rofi-emoji
