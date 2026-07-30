@@ -1,12 +1,10 @@
-{inputs, ...}: {
-  unify.modules.gam.home = {pkgs, ...}: let
-    ninjabrainbot = inputs.waywall.packages.${pkgs.stdenv.hostPlatform.system}.ninjabrainbot;
-  in {
+# Games and game runtimes. waywall, Ninjabrain-Bot, the CPS overlay and the
+# MCSR JDK are not here -- they come with their configuration from
+# modules/programs/waywall.nix.
+{...}: {
+  unify.modules.gam.home = {pkgs, ...}: {
     home = {
       packages = with pkgs; [
-        ninjabrainbot
-        waywall
-
         prismlauncher
         wl-crosshair
 
