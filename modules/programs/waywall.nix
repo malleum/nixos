@@ -153,7 +153,11 @@
         y = 333;
         width = 736;
         height = 414;
-        srcWidth = 60;
+        # resources/overlay.png marks 18 cells (9 each side of centre) spanning
+        # 1152 of its 1920 px, i.e. 64 canvas px per cell. One cell has to be
+        # one render pixel for the ruler to mean anything, so the slice is
+        # 1920 / 64 = 30 render pixels wide.
+        srcWidth = 30;
         srcHeight = 580;
         overlay = "${inputs.waywall}/resources/overlay.png";
       };
