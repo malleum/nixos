@@ -219,10 +219,12 @@
           "<C-b>" = ["scroll_documentation_up" "fallback"];
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
-        sources.default = ["rask" "lsp" "path" "snippets" "buffer"];
-        providers.rask = {
-          name = "rask";
-          module = "rask.blink";
+        sources = {
+          default = ["rask" "lsp" "path" "snippets" "buffer"];
+          providers.rask = {
+            name = "rask";
+            module = "rask.blink";
+          };
         };
         completion = {
           list.selection = {

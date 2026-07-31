@@ -106,12 +106,21 @@
           w = 384;
           h = 16384;
         };
-        # 864 of a 1080 canvas is 80% screen height. Pie chart and percentage
-        # source rects are derived from this, so they follow the height.
-        lowest = {
+      };
+
+      # `lowest`: render tall (same as `tall`, for eye-throw precision), mirror
+      # only the centre 864px of it -- 80% of the 1080 canvas -- onto screen.
+      # Pie chart and percentage source rects are derived from `render`, so they
+      # follow whatever precision is set there.
+      lowest = {
+        render = {
           w = 384;
-          h = 864;
+          h = 16384;
         };
+        srcWidth = 384;
+        srcHeight = 864;
+        width = 384;
+        height = 864;
       };
 
       # Measured in-game values; the tall figure is not derivable from the
