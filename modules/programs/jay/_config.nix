@@ -242,7 +242,7 @@
       # iamb and signal are already running as jay-session login units
       # (see iamb.nix), so these just focus their workspace instead of
       # relaunching -- a plain $launch action spawned a duplicate process.
-      ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus"]
+      ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus", { type = "exec", exec = { shell = "systemctl --user restart iamb.service" } } ]
       ${mod}-shift-i = [{ type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
       ${mod}-ctrl-c = "open-control-center"
       ${mod}-shift-c = "$launch-calendar"
