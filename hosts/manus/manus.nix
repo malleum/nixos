@@ -24,7 +24,7 @@ in {
         lap
         med
         off
-        prn
+        prt
         src
         vrt
         wif
