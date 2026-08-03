@@ -159,8 +159,8 @@
     };
     keymaps = let
       default = {
-        "[d" = "<cmd>lua vim.diagnostic.jump(1)<cr>";
-        "]d" = "<cmd>lua vim.diagnostic.jump(-1)<cr>";
+        "[d" = "<cmd>lua vim.diagnostic.jump({count=-1})<cr>";
+        "]d" = "<cmd>lua vim.diagnostic.jump({count=1})<cr>";
         "gl" = "<cmd>lua vim.diagnostic.open_float()<cr>";
 
         "gd" = "<cmd>lua require('telescope.builtin').lsp_definitions()<cr>";
