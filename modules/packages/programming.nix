@@ -7,6 +7,7 @@
     domain = inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.default;
     iogii = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.iogii;
     rask = inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    weave = inputs.weave.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     home.packages = with pkgs; [
       ago
@@ -23,6 +24,7 @@
       python3
       rask
       typst
+      weave
     ];
   };
 }

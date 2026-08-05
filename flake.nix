@@ -102,6 +102,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    weave = {
+      url = "github:malleum/weave";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mc = {
       url = "github:malleum/mc";
       inputs.nixpkgs.follows = "nixpkgs";

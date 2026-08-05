@@ -1233,7 +1233,8 @@
         "stable": "stable",
         "stylix": "stylix",
         "unify": "unify",
-        "waywall": "waywall"
+        "waywall": "waywall",
+        "weave": "weave"
       }
     },
     "rust-analyzer-src": {
@@ -1556,6 +1557,26 @@
       "original": {
         "owner": "malleum",
         "repo": "waywall",
+        "type": "github"
+      }
+    },
+    "weave": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785899002,
+        "narHash": "sha256-2++uvs+yLYX9BXN539dUkILaS1QRgajCJEZKTLafLSQ=",
+        "owner": "malleum",
+        "repo": "weave",
+        "rev": "61d80168829eaea229f189290dcefee7de7c958a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "weave",
         "type": "github"
       }
     },
