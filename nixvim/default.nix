@@ -4,7 +4,9 @@
   lib,
   plena ? true,
   ...
-}: {
+}: let
+  weave = inputs.weave.packages.${pkgs.stdenv.hostPlatform.system};
+in {
   opts = {
     completeopt = ["menuone" "noselect" "noinsert"];
     cursorcolumn = true;
@@ -125,6 +127,14 @@
           root_markers = [".git"];
         };
       };
+      weave = {
+        enable = true;
+        config = {
+          cmd = ["${weave.weave}/bin/weave" "lsp"];
+          filetypes = ["weave"];
+          root_markers = [".git"];
+        };
+      };
       gopls.enable = true;
       jdtls.enable = true;
       jsonls.enable = true;
@@ -180,13 +190,27 @@
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
+  extraPackages = [weave.weave];
+
   extraPlugins = with pkgs.vimPlugins; [
     vim-visual-multi
     vim-indent-object
+    weave.weave-nvim
     inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
     inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
     inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
   ];
+  extraConfigLua = ''
+    require("weave").setup({
+      auto = true,
+      on_save = true,
+      input_patterns = { "*.txt", "*.in", "*.input", "input*", "in*" },
+      timeout_ms = 5000,
+      prefix = "  = ",
+      highlight = "WeaveTrace",
+      max_width = 120,
+    })
+  '';
 
   plugins = {
     lspconfig.enable = plena;
@@ -273,6 +297,10 @@
 
     treesitter = lib.mkIf plena {
       enable = true;
+      grammarPackages =
+        pkgs.vimPlugins.nvim-treesitter.passthru.allGrammars
+        ++ [weave.tree-sitter-weave];
+
       settings.highlight.enable = true;
     };
 
