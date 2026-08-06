@@ -52,6 +52,18 @@ in {
     loaded_netrwPlugin = 1;
   };
 
+  autoCmd = [
+    {
+      event = ["BufRead" "BufNewFile"];
+      pattern = ["*.weave"];
+      callback.__raw = ''
+        function(args)
+          vim.keymap.set('n', '<leader>F', '<cmd>%!weave fmt -terse -<cr>')
+        end
+      '';
+    }
+  ];
+
   keymaps = let
     maps = {
       "n" = {
