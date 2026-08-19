@@ -384,10 +384,6 @@
       ${mod}-shift-p = [{ type = "move-to-workspace", name = "4" }, { type = "show-workspace", name = "4" }, "warp-mouse-to-focus"]
       ${mod}-shift-y = [{ type = "move-to-workspace", name = "5" }, { type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
 
-      # ─ Split direction ─
-      ${mod}-minus = "split-horizontal"
-      ${mod}-shift-minus = "split-vertical"
-
       # ─ Reload config ─
       ${mod}-shift-r = "reload-config-toml"
 

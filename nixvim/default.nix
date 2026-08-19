@@ -147,6 +147,7 @@ in {
           root_markers = [".git"];
         };
       };
+      elixirls.enable = true;
       gopls.enable = true;
       jdtls.enable = true;
       jsonls.enable = true;
@@ -322,6 +323,7 @@ in {
       settings = {
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
+          elixir = ["mix"];
           go = ["goimports" "gofmt"];
           javascript = ["prettierd"];
           lua = ["stylua"];

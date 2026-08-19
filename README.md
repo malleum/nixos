@@ -43,11 +43,14 @@ you would rather have the Ampere box do the compiling natively.
 │   ├──  manus
 │   │   ├──  _hardware-configuration.nix
 │   │   └──  manus.nix
-│   └──  minimus
+│   ├──  minimus
+│   │   ├──  _hardware-configuration.nix
+│   │   ├──  _network.nix
+│   │   ├──  _server.nix
+│   │   └──  minimus.nix
+│   └──  minoris
 │       ├──  _hardware-configuration.nix
-│       ├──  _network.nix
-│       ├──  _server.nix
-│       └──  minimus.nix
+│       └──  minoris.nix
 ├──  modules
 │   ├──  hardware
 │   │   ├──  amd.nix

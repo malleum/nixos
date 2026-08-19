@@ -12,6 +12,7 @@
     home.packages = with pkgs; [
       ago
       alejandra
+      beamPackages.elixir
       clang-tools
       domain
       gcc
