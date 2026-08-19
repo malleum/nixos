@@ -9,6 +9,7 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
+        balefire
         efi
         grapple
         matrix

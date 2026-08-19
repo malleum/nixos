@@ -142,6 +142,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  sops.nix
 │   │   └──  vs-gitlab.yaml
 │   ├──  services
+│   │   ├──  balefire.nix
 │   │   ├──  bt-audio.nix
 │   │   ├──  clipboard.nix
 │   │   ├──  grapple.nix
