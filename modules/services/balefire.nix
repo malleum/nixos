@@ -12,7 +12,7 @@
 # matrix module, exactly as grapple's vhost relies on them.
 {
   unify.modules.balefire.nixos = {...}: let
-    domain = "balefire.joshammer.top";
+    domain = "balefire.joshammer.com";
     upstream = "http://127.0.0.1:8090";
   in {
     services.nginx.virtualHosts.${domain} = {
