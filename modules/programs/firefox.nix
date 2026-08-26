@@ -127,6 +127,9 @@
       "browser.startup.homepage_override.mstone" = "ignore"; # Ignore "milestone" (update) welcome page
       "browser.tabs.firefox-view" = false; # Disable the "Firefox View" button
       "browser.tabs.firefox-view-newIcon" = false; # Disable the "Firefox View" icon
+
+      # --- Disable Quick Find (Links Only) ---
+      "accessibility.typeaheadfind.manual" = false; # Disable ' and / typeahead find shortcuts
     };
   in {
     home.activation = {
