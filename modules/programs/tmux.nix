@@ -140,5 +140,20 @@
         run-shell ${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/continuum.tmux
       '';
     };
+
+    systemd.user.services.tmux = {
+      Unit = {
+        Description = "tmux daemon";
+        Documentation = "man:tmux(1)";
+      };
+      Service = {
+        Type = "forking";
+        ExecStart = "${pkgs.tmux}/bin/tmux start-server";
+        ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
+      };
+      Install = {
+        WantedBy = ["default.target"];
+      };
+    };
   };
 }
