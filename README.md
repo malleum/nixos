@@ -42,6 +42,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   └──  malleum.nix
 │   ├──  manus
 │   │   ├──  _hardware-configuration.nix
+│   │   ├──  _keyboard-quirk.nix
 │   │   └──  manus.nix
 │   ├──  minimus
 │   │   ├──  _hardware-configuration.nix
