@@ -14,5 +14,7 @@
       sops
       speedtest-cli
     ];
+
+    xdg.dataFile."qalculate/definitions/units.xml".text = import ../../lib/qalculate_units.nix;
   };
 }

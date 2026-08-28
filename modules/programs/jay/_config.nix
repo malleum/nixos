@@ -140,13 +140,14 @@
                 key <CAPS> { [ Escape ] };
                 key <INS>  { [ Multi_key ] };
                 key <COMP> { [ Multi_key ] };
+                key <RALT> { [ Multi_key ] };
             };
         };
       """
 
       [[keymaps]]
       name = "qwerty"
-      rmlvo = { layout = "us", options = "caps:escape,compose:ins" }
+      rmlvo = { layout = "us", options = "caps:escape,compose:ins,compose:ralt,esperanto:dvorak" }
 
       # ── Environment ──────────────────────────────────────────────
       [env]

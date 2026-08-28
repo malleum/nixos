@@ -52,6 +52,8 @@ you would rather have the Ampere box do the compiling natively.
 │   └──  minoris
 │       ├──  _hardware-configuration.nix
 │       └──  minoris.nix
+├──  lib
+│   └──  qalculate_units.nix
 ├──  modules
 │   ├──  hardware
 │   │   ├──  amd.nix
@@ -92,6 +94,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  more_cli.nix
 │   │   ├──  office.nix
 │   │   ├──  programming.nix
+│   │   ├──  qalculate_units.md
 │   │   ├──  scripts.nix
 │   │   └──  wayland.nix
 │   ├──  programs

@@ -142,6 +142,15 @@
               nix run "nixpkgs#$pkg" -- "$@"
             }
 
+            # tmux auto-attach wrapper: when run without arguments, attach to or create a session named after the current directory
+            tmux() {
+              if [ "$#" -eq 0 ]; then
+                command tmux new-session -A -s "$(basename "$PWD" | tr . -)"
+              else
+                command tmux "$@"
+              fi
+            }
+
             ng() {
               local repo="$1"
               shift
