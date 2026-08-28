@@ -199,7 +199,7 @@
       };
 
       ninb = {
-        anchor = "topright";
+        anchor = "topleft";
         command = "ninjabrain-bot";
         process = "ninjabrain-bot";
       };
