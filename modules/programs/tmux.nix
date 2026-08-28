@@ -113,6 +113,7 @@
         set -g @resurrect-capture-pane-contents 'on'
         set -g @resurrect-strategy-vim 'session'
         set -g @resurrect-strategy-nvim 'session'
+        set -g @resurrect-processes 'claude cursor-agent ca agy'
         set -g @continuum-save-interval '5'
         set -g @continuum-restore 'on'
 

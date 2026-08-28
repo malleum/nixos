@@ -36,6 +36,7 @@ in {
     # trackpoint support + the amd cpu/gpu and pc-laptop/ssd baselines.
     nixos.imports = [
       ./_hardware-configuration.nix
+      ./_keyboard-quirk.nix
       inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p16s-amd-gen4
     ];
     users.${username} = {inherit (config) modules;};
