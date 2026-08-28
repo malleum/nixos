@@ -116,6 +116,16 @@
       url = "git+https://github.com/mahkoh/jay?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    lerni = {
+      url = "github:malleum/laering_norsk/esperanto-tool";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    termword = {
+      url = "github:malleum/termword";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (
