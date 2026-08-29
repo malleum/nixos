@@ -310,8 +310,8 @@ in ''
         <title>Chron</title>
         <names>ar:ch,chron,p:chrons</names>
         <base>
-          <unit>d</unit>
-          <relation>0.01</relation>
+          <unit>s</unit>
+          <relation>864</relation>
           <exponent>1</exponent>
         </base>
         <use_with_prefixes>true</use_with_prefixes>
@@ -320,8 +320,8 @@ in ''
         <title>Duod</title>
         <names>ar:duod,duod,p:duods</names>
         <base>
-          <unit>d</unit>
-          <relation>1</relation>
+          <unit>s</unit>
+          <relation>86400</relation>
           <exponent>1</exponent>
         </base>
       </unit>
