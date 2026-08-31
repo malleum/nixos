@@ -22,8 +22,8 @@ in {
       wantedBy = ["multi-user.target"];
 
       serviceConfig = {
-        ExecStart = "${grapplePkg}/bin/grapple-game";
-        WorkingDirectory = "${grapplePkg}/share";
+        ExecStart = "${grapplePkg}/bin/malleusite";
+        WorkingDirectory = "/var/lib/grapple";
         Restart = "always";
         User = "grapple";
         Group = "grapple";

@@ -1014,17 +1014,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1785262625,
-        "narHash": "sha256-wjVSu7mj6A2flwiMrN/RM8abqHVQO/sRHc0oObL1K0I=",
-        "owner": "malleum",
-        "repo": "mc",
-        "rev": "16a9d95fc47314738e769497b575f507a049e894",
-        "type": "github"
+        "lastModified": 1788136852,
+        "narHash": "sha256-b4MmB3LBqgb4S/4mD2VL1+9tAOZHy5hXiu6rbgv/zaY=",
+        "ref": "refs/heads/main",
+        "rev": "d6cf5112a2f0d6158062f96f6b2b7446b806dddb",
+        "revCount": 2,
+        "type": "git",
+        "url": "file:///home/joshammer/documents/gh/mc"
       },
       "original": {
-        "owner": "malleum",
-        "repo": "mc",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/joshammer/documents/gh/mc"
       }
     },
     "nix-alien": {
