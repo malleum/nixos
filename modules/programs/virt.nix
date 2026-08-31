@@ -3,7 +3,6 @@
     # virtualisation.virtualbox.host = {enable = true;};
 
     users.users.${hostConfig.user.username}.extraGroups = [
-      "adbusers"
       # "vboxusers"
     ];
   };
@@ -20,6 +19,7 @@
       quickemu
       qemu
       adb-sync
+      android-tools
     ];
   };
 }

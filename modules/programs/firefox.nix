@@ -8,7 +8,6 @@
     myExtensions = with pkgs.nur.repos.rycee.firefox-addons; [
       bitwarden # Password manager
       darkreader # Dark mode for all websites
-      # auto-accepts cookies, use only with privacy-badger & ublock-origin
       istilldontcareaboutcookies # Auto-removes cookie banners
       link-cleaner # Removes tracking parameters from URLs
       privacy-badger # Blocks trackers

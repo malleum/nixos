@@ -30,7 +30,6 @@ you would rather have the Ampere box do the compiling natively.
 <!-- BEGIN TREE -->
 ```
  .
-├──  CLAUDE.md
 ├──  flake.lock
 ├──  flake.nix
 ├──  hosts
