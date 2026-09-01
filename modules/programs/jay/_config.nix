@@ -579,6 +579,7 @@
         { comm = "tmux" },
         { comm = "nvim" },
         { comm = ".nvim-wrapped" },
+        { comm = ".vorto-wrapped" },
       ]
       capabilities = ["data-control"]
 

@@ -29,7 +29,7 @@
         paths = [pkgs.brave];
         buildInputs = [pkgs.makeWrapper];
         postBuild = ''
-          wrapProgram $out/bin/brave --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland --password-store=basic"
+          wrapProgram $out/bin/brave --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland --password-store=gnome-libsecret"
         '';
       };
       commandLineArgs = [];

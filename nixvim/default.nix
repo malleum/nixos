@@ -301,7 +301,12 @@ in {
     neogit.enable = true;
     nvim-autopairs.enable = true;
     nvim-surround.enable = true;
-    auto-session.enable = true;
+    auto-session = {
+      enable = true;
+      settings = {
+        auto_restore_enabled = false;
+      };
+    };
     oil.enable = true;
     quicker.enable = true;
     quickmath.enable = true;

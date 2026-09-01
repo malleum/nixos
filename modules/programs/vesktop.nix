@@ -1,7 +1,24 @@
 {
-  unify.modules.med.home = {
+  unify.modules.med.home = {pkgs, ...}: let
+    # home-manager does `cfg.package.override { withSystemVencord = ... }`,
+    # so the wrap has to survive `.override` (symlinkJoin would drop it).
+    wrapVesktop = vesktop:
+      vesktop.overrideAttrs (old: {
+        postFixup =
+          (old.postFixup or "")
+          + ''
+            wrapProgram $out/bin/vesktop --add-flags "--password-store=gnome-libsecret"
+          '';
+      });
+  in {
     programs.vesktop = {
       enable = true;
+      # Jay is not GNOME; Electron will not auto-pick libsecret.
+      package =
+        (wrapVesktop pkgs.vesktop)
+        // {
+          override = args: wrapVesktop (pkgs.vesktop.override args);
+        };
       settings = {
         discordBranch = "stable";
         transparencyOption = "blur";

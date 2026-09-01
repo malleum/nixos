@@ -149,6 +149,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  bt-audio.nix
 │   │   ├──  clipboard.nix
 │   │   ├──  grapple.nix
+│   │   ├──  keyring.nix
 │   │   ├──  login_manager.nix
 │   │   ├──  matrix.nix
 │   │   ├──  mc.nix

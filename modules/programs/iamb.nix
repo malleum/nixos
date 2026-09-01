@@ -9,11 +9,43 @@
     # Launched at login, not supervised -- see the helper for why these are
     # Restart=no with X-SwitchMethod=keep-old.
     mkSessionUnit = import ./jay/_session-unit.nix {inherit lib;};
+
+    # Jay is not GNOME; Electron will not auto-pick libsecret.
+    withGnomeLibsecret = pkg: bin:
+      pkgs.symlinkJoin {
+        name = "${pkg.pname or bin}-libsecret";
+        paths = [pkg];
+        nativeBuildInputs = [pkgs.makeWrapper];
+        postBuild = ''
+          wrapProgram $out/bin/${bin} --add-flags "--password-store=gnome-libsecret"
+        '';
+      };
+
+    signal = withGnomeLibsecret pkgs.signal-desktop "signal-desktop";
+    element = withGnomeLibsecret (pkgs.element-desktop.override {
+      element-web = pkgs.element-web.override {
+        conf = {
+          default_server_config."m.homeserver" = {
+            base_url = "https://ws42.top";
+            server_name = "ws42.top";
+          };
+          element_call = {
+            url = "https://call.element.io";
+            use_exclusively = true;
+          };
+          features = {
+            feature_group_calls = true;
+            feature_video_rooms = true;
+            feature_element_call_video_rooms = true;
+          };
+        };
+      };
+    }) "element-desktop";
   in {
     systemd.user.services = {
       signal = mkSessionUnit {
         description = "Signal";
-        exec = "${pkgs.signal-desktop}/bin/signal-desktop";
+        exec = "${signal}/bin/signal-desktop";
         restart = false;
         guard = "${pkgs.bash}/bin/bash -c '! ${pkgs.procps}/bin/pgrep -x -u \"$USER\" signal-desktop >/dev/null'";
       };
@@ -41,28 +73,10 @@
         IAMB_DICT_NB_AFF = "${pkgs.hunspellDicts.nb_NO}/share/hunspell/nb_NO.aff";
         IAMB_DICT_NB_DIC = "${pkgs.hunspellDicts.nb_NO}/share/hunspell/nb_NO.dic";
       };
-      packages = with pkgs; [
+      packages = [
         jiamb
-        (element-desktop.override {
-          element-web = element-web.override {
-            conf = {
-              default_server_config."m.homeserver" = {
-                base_url = "https://ws42.top";
-                server_name = "ws42.top";
-              };
-              element_call = {
-                url = "https://call.element.io";
-                use_exclusively = true;
-              };
-              features = {
-                feature_group_calls = true;
-                feature_video_rooms = true;
-                feature_element_call_video_rooms = true;
-              };
-            };
-          };
-        })
-        signal-desktop
+        element
+        signal
       ];
       file.".config/iamb/config.toml".source = (pkgs.formats.toml {}).generate "iamb-config" {
         profiles.user.user_id = "@malleum:ws42.top";
