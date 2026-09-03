@@ -145,6 +145,8 @@
       Unit = {
         Description = "tmux daemon";
         Documentation = "man:tmux(1)";
+        PartOf = ["jay-session.target"];
+        After = ["jay-session.target"];
       };
       Service = {
         Type = "forking";
@@ -152,7 +154,7 @@
         ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
       };
       Install = {
-        WantedBy = ["default.target"];
+        WantedBy = ["jay-session.target"];
       };
     };
   };
