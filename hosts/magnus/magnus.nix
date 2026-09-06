@@ -11,6 +11,7 @@ in {
         (modules)
         ai
         amd
+        ath
         bt-audio
         cht
         dbt
