@@ -63,6 +63,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  mouse.nix
 │   │   ├──  printer.nix
 │   │   ├──  screen_light.nix
+│   │   ├──  wifi_ath12k.nix
 │   │   └──  wifi_mt7925.nix
 │   ├──  meta
 │   │   ├──  bootstrap.nix

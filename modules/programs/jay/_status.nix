@@ -40,6 +40,7 @@ pkgs.writeShellScriptBin "jay-status" ''
   # Per-widget accent colors (base16 theme). Only the icon is colored;
   # values stay in the default bar-status-text-color for readability.
   c_audio="#${colors.base0C}"
+  c_bt="#${colors.base0B}"
   c_cpu="#${colors.base0D}"
   c_mem="#${colors.base0E}"
   c_disk="#${colors.base09}"
@@ -85,6 +86,19 @@ pkgs.writeShellScriptBin "jay-status" ''
       return 0
     fi
     return 1
+  }
+
+  # Output-device block — is the default sink the Bluetooth headset or not?
+  # Rides the same pactl-event wakeup as the volume block, so it flips the
+  # moment the sink changes; no polling, no manual `pactl info` check.
+  bt_piece=""
+  build_bt() {
+    local sink
+    sink=$($pactl get-default-sink 2>/dev/null)
+    case "$sink" in
+      bluez_output.*) bt_piece=$(piece btaudio "$c_bt" "󰋋" "bt") ;;
+      *)              bt_piece=$(piece btaudio "$c_dim" "󰓃" "spk") ;;
+    esac
   }
 
   # Audio block — pactl (C, ~10ms) not pulsemixer (Python, ~150ms).
@@ -205,7 +219,7 @@ pkgs.writeShellScriptBin "jay-status" ''
   }
 
   print_line() {
-    local line=",[$audio_piece" p
+    local line=",[$bt_piece,$audio_piece" p
     for p in "''${slow_pieces[@]}"; do
       line="$line,$p"
     done
@@ -214,6 +228,7 @@ pkgs.writeShellScriptBin "jay-status" ''
 
   build_slow
   while true; do
+    build_bt
     build_audio
     print_line
     wait_tick || build_slow   # audio event: re-render audio only; timeout: refresh the rest
