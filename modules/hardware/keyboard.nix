@@ -1,20 +1,19 @@
-# Console and X/Wayland keymap. Scoped to `gui`: minimus has no keyboard, and
-# this was giving it a dvorak console and an services.xserver.xkb block.
 {
-  unify.modules.gui.nixos = {
+  unify.modules.gui.nixos = {pkgs, ...}: {
     console.useXkbConfig = true;
     services.xserver.xkb = {
       layout = "us";
       variant = "dvorak";
       options = "caps:escape";
     };
+
+    environment.variables.XLOCALEDIR = "${pkgs.libx11}/share/X11/locale";
   };
 
   unify.modules.gui.home = {
     home.file.".XCompose".text = ''
       include "%L"
 
-      # Esperanto quick compose sequences
       <Multi_key> <c> : "ĉ"
       <Multi_key> <C> : "Ĉ"
       <Multi_key> <g> : "ĝ"
@@ -27,6 +26,15 @@
       <Multi_key> <S> : "Ŝ"
       <Multi_key> <u> : "ŭ"
       <Multi_key> <U> : "Ŭ"
+
+      <Multi_key> <o> <slash> : "ø"
+      <Multi_key> <slash> <o> : "ø"
+      <Multi_key> <O> <slash> : "Ø"
+      <Multi_key> <slash> <O> : "Ø"
+      <Multi_key> <a> <e> : "æ"
+      <Multi_key> <A> <E> : "Æ"
+      <Multi_key> <a> <a> : "å"
+      <Multi_key> <A> <A> : "Å"
     '';
   };
 }

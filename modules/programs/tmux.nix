@@ -148,9 +148,22 @@
         PartOf = ["jay-session.target"];
         After = ["jay-session.target"];
       };
+      # Type=forking deadlocked here. `tmux start-server` blocks until the
+      # server has finished sourcing the config, and continuum's entrypoint
+      # ends in `continuum_restore.sh &` -- backgrounded, but it inherits the
+      # `run-shell` stdout pipe, and foreground run-shell reads to EOF. So the
+      # config load waits on the whole session restore (7 panes plus every
+      # @resurrect-processes entry), the client never returns, and systemd hit
+      # DefaultTimeoutStartSec=90s and SIGTERM'd the cgroup -- killing the
+      # server it had just restored. Every `nh os switch` paid that flat 90s,
+      # left the unit failed, and so sd-switch retried it on the next switch.
+      #
+      # -D runs the server in the foreground, so Type=exec marks the unit
+      # active at exec and the restore finishes on its own time. -D also turns
+      # exit-empty off, which is what a daemon unit wants anyway.
       Service = {
-        Type = "forking";
-        ExecStart = "${pkgs.tmux}/bin/tmux start-server";
+        Type = "exec";
+        ExecStart = "${pkgs.tmux}/bin/tmux -D start-server";
         ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
       };
       Install = {

@@ -9,6 +9,7 @@ in {
     modules = builtins.attrValues {
       inherit
         (modules)
+        ai
         amd
         cht
         dev
