@@ -162,6 +162,38 @@
     # would otherwise have pulled it in.
     hardware.graphics.enable = true;
 
+    # The `lap` TLP profile is tuned for a laptop in a bag. minoris is a wall
+    # panel on mains power whose entire job is compositing a canvas, so the AC
+    # side of that profile is undone here. The battery side is left exactly as
+    # it was: unplugged, it should still behave like a laptop.
+    #
+    # The governor is the line that matters. `powersave` means "the normal
+    # dynamic governor" under intel_pstate and amd_pstate in *active* mode --
+    # but under acpi-cpufreq, which is what an AMD chip without CPPC gets, it
+    # pins the core to its lowest frequency and leaves it there. This host is
+    # AMD and does not carry the `amd` module, so it never gets the
+    # amd_pstate=active kernel parameter. schedutil is right for every driver
+    # that has it; where it is missing (pstate in active mode) TLP warns and
+    # leaves the existing governor, which is already correct there. `ondemand`
+    # is the fallback on a kernel without schedutil.
+    #
+    # CPU_MAX_PERF/ENERGY_PERF_POLICY only do anything under a pstate driver,
+    # so on an older AMD part they are a no-op rather than the fix -- set
+    # correctly for the case where they do apply.
+    #
+    # Check what this box actually has:
+    #   cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+    #   cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
+    #
+    # mkForce because modules/hardware/battery.nix sets these for every `lap`
+    # host; this module is imported by minoris alone, so nothing else moves.
+    services.tlp.settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = lib.mkForce "schedutil";
+      CPU_ENERGY_PERF_POLICY_ON_AC = lib.mkForce "balance_performance";
+      CPU_BOOST_ON_AC = lib.mkForce 1;
+      CPU_MAX_PERF_ON_AC = lib.mkForce 100;
+    };
+
     environment.systemPackages = [kiosk pkgs.cage pkgs.chromium];
 
     # initial_session logs straight into the panel at boot. default_session is
