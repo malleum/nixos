@@ -77,6 +77,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hjem = {
+      url = "github:malleum/hjem";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     iamb = {
       url = "github:malleum/iamb";
       inputs.nixpkgs.follows = "nixpkgs";
