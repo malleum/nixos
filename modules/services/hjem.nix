@@ -10,6 +10,7 @@
 # which is why the greetd autologin below cannot surprise another machine.
 {inputs, ...}: {
   unify.modules.hjem.nixos = {
+    config,
     pkgs,
     lib,
     hostConfig,
@@ -20,23 +21,20 @@
     port = 8080;
     url = "http://127.0.0.1:${toString port}";
 
-    # Where a *private* Google iCal address goes. It is a bearer credential --
-    # anyone holding the URL can read the calendar -- so it lives in the
-    # service's state directory rather than in the world-readable Nix store.
-    # Drop the URL in, `systemctl restart hjem`, done. No rebuild, no secret in
-    # git. (sops-nix would also work; it is not worth a key rotation for one
-    # URL on one host.)
+    # Extra .ics feeds, merged with whatever Google returns. Empty by default;
+    # the calendar proper comes from the API, so this is for the occasional
+    # shared feed someone sends you. Lives in the state directory so adding one
+    # is an edit and a restart rather than a rebuild.
     calendarFile = "/var/lib/hjem/calendars";
 
     calendarTemplate = pkgs.writeText "hjem-calendars" ''
-      # One .ics URL per line. Lines starting with # are ignored.
+      # Extra .ics feeds, one URL per line. Lines starting with # are ignored.
+      # These are merged with the Google calendar; duplicates collapse.
       #
-      # These replace services.hjem.calendars entirely once there is one here,
-      # so the public URL below stops being fetched the moment you add the
-      # private one.
-      #
-      # Google Calendar -> Settings -> Settings for my calendars -> <calendar>
-      # -> Integrate calendar -> "Secret address in iCal format".
+      # A *private* Google iCal address is a bearer credential -- anyone
+      # holding the URL can read the calendar -- so if you put one here, note
+      # that this file is only as private as its 0640 hjem:hjem permissions.
+      # The OAuth path (modules/secrets/hjem.yaml) is the better answer.
       #
       # Then: sudo systemctl restart hjem
     '';
@@ -111,6 +109,19 @@
   in {
     imports = [inputs.hjem.nixosModules.hjem];
 
+    # The Google refresh token. Minted once with `hjem-google-auth`, kept in
+    # modules/secrets/hjem.yaml, and handed to the service as a file it reads
+    # at run time -- it never reaches the Nix store. Until it is filled in, the
+    # placeholder does not parse as credentials and the panel simply reports
+    # having no calendar.
+    sops.secrets.hjem_google = {
+      sopsFile = ../secrets/hjem.yaml;
+      key = "google_credentials";
+      owner = "hjem";
+      group = "hjem";
+      mode = "0400";
+    };
+
     services.hjem = {
       enable = true;
       inherit port;
@@ -124,11 +135,14 @@
 
       calendarEmail = "malleustempus@gmail.com";
       inherit calendarFile;
-      # Works only if the calendar is public; the file above is the real answer.
-      calendars = [
-        "https://calendar.google.com/calendar/ical/malleustempus%40gmail.com/public/basic.ics"
-      ];
 
+      # Calendar *and* tasks from one credential. The calendar stays private --
+      # no shareable .ics URL exists for it -- and recurrence is expanded by the
+      # API rather than by our own RRULE code. The tasks card is Google Tasks,
+      # which is where Keep's reminders live; consumer Keep itself has no API.
+      googleCredentialsFile = config.sops.secrets.hjem_google.path;
+
+      language = "eo";
       clock = "duod";
       fx = "full";
 

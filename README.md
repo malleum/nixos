@@ -141,6 +141,7 @@ you would rather have the Ampere box do the compiling natively.
 │   ├──  secrets
 │   │   ├──  default.yaml
 │   │   ├──  gpg.nix
+│   │   ├──  hjem.yaml
 │   │   ├──  matrix.yaml
 │   │   ├──  oracle-ssh.yaml
 │   │   ├──  sops.nix

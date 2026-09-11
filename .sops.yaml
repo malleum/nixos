@@ -1,10 +1,32 @@
+# Recipients for everything under modules/secrets/.
+#
+# The first list is the master age key (the one at
+# ~/.config/sops/age/keys.txt, which every host's sops.age.keyFile points at).
+# The rest are the four hosts' SSH host keys converted with `ssh-to-age`, so
+# sops.age.sshKeyPaths works too and a host can decrypt on its own. Add a new
+# host by running
+#
+#   ssh-keyscan -t ed25519 <host> | ssh-to-age
+#
+# and pasting the result below, then `sops updatekeys modules/secrets/*.yaml`.
+# minoris is deliberately absent: it decrypts with the master key.
+keys:
+  - &master age1tgengcm9ph3zc96f5gpkkad6at6zru5tkclh3dy953yw0fdl950smww7ha
+  # ssh-ed25519 ...Up+LK root@malleum
+  - &malleum age12x8uzt794as8c43satwwr59lt6hsvfcewmdhn5z56lvhekl2ysvq9zkjzt
+  # ssh-ed25519 ...XfBcy root@manus
+  - &manus age1jke3nkx0369pga59rgrwealzgxvgvutqg74sr8tx6g67gstsr5qs9psjk6
+  # ssh-ed25519 ...AAXi/ root@magnus
+  - &magnus age1v6s4ts746wyxtsw8fu02penyafd52kvl8pnfgr9ls8rnz0u6dqwqfc8rmg
+  # ssh-ed25519 ...R9U2i root@minimus
+  - &minimus age173whgk75u6yg22yxpqqpxyxedwhns5vyfxj237zf6ljdrvntt4kqeqjp5r
+
 creation_rules:
   - path_regex: modules/secrets/.*\.yaml$
-  - key_groups:
+    key_groups:
       - age:
-          - "age1tgengcm9ph3zc96f5gpkkad6at6zru5tkclh3dy953yw0fdl950smww7ha"
-      - ssh:
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/mm/sBk/Rgd3mnxxfrNQl88tfLX9NzQlqJZiXUp+LK root@malleum"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINAAPjcsuackKrwN4fa/xFlpU7xEhV8MHEpI3k1XfBcy root@manus"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9xoe74pMWH327f6wlYradsL9dd3Ed7YfApoxLAAXi/ root@magnus"
-          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6Z2xMaLOJDTmpCqAcX27wnJx0fSIBN9UB25RWR9U2i root@minimus"
+          - *master
+          - *malleum
+          - *manus
+          - *magnus
+          - *minimus
