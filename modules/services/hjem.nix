@@ -1,16 +1,17 @@
 # hjem (github:malleum/hjem) -- the wall panel. A duodecimal ring clock, the
-# weather, and the next thing on the calendar, drawn on an old 12" Dell that
-# does nothing else.
+# weather, and a verse of the day in Esperanto that translates itself one
+# phrase per dwell through the afternoon, on an old 12" Dell that does nothing
+# else.
 #
 # The app's own flake carries the server and its NixOS module; this file is the
-# part that only minoris needs: which calendar, where the weather is, and the
-# kiosk session that puts a browser full-screen on the panel at boot.
+# part that only minoris needs: where the weather is, the power profile for a
+# machine that is not a laptop any more, and the kiosk session that puts a
+# browser full-screen on the panel at boot.
 #
 # Nothing here is enabled by a host unless it lists `hjem` in its module set,
 # which is why the greetd autologin below cannot surprise another machine.
 {inputs, ...}: {
   unify.modules.hjem.nixos = {
-    config,
     pkgs,
     lib,
     hostConfig,
@@ -109,18 +110,22 @@
   in {
     imports = [inputs.hjem.nixosModules.hjem];
 
-    # The Google refresh token. Minted once with `hjem-google-auth`, kept in
-    # modules/secrets/hjem.yaml, and handed to the service as a file it reads
-    # at run time -- it never reaches the Nix store. Until it is filled in, the
-    # placeholder does not parse as credentials and the panel simply reports
-    # having no calendar.
-    sops.secrets.hjem_google = {
-      sopsFile = ../secrets/hjem.yaml;
-      key = "google_credentials";
-      owner = "hjem";
-      group = "hjem";
-      mode = "0400";
-    };
+    # Calendar and tasks are OFF for now -- no Google keys to mint, nothing to
+    # log in to. Everything they need is still here and still built; turning
+    # them back on is this block plus the three options below it:
+    #
+    #   sops.secrets.hjem_google = {
+    #     sopsFile = ../secrets/hjem.yaml;
+    #     key = "google_credentials";
+    #     owner = "hjem";
+    #     group = "hjem";
+    #     mode = "0400";
+    #   };
+    #
+    # modules/secrets/hjem.yaml is already in the repo with a placeholder; run
+    # `nix run github:malleum/hjem#google-auth` and `sops` it in. With no
+    # calendar configured the panel simply drops the agenda card, so nothing
+    # sits there reporting its own absence.
 
     services.hjem = {
       enable = true;
@@ -133,14 +138,14 @@
       windUnit = "mph";
       precipitationUnit = "inch";
 
-      calendarEmail = "malleustempus@gmail.com";
-      inherit calendarFile;
-
+      # calendarEmail = "malleustempus@gmail.com";
+      # inherit calendarFile;
+      #
       # Calendar *and* tasks from one credential. The calendar stays private --
       # no shareable .ics URL exists for it -- and recurrence is expanded by the
       # API rather than by our own RRULE code. The tasks card is Google Tasks,
       # which is where Keep's reminders live; consumer Keep itself has no API.
-      googleCredentialsFile = config.sops.secrets.hjem_google.path;
+      # googleCredentialsFile = config.sops.secrets.hjem_google.path;
 
       language = "eo";
       clock = "duod";
@@ -154,6 +159,8 @@
 
     systemd.tmpfiles.rules = [
       "d /var/lib/hjem 0750 hjem hjem -"
+      # Seeded even while the calendar is off, so the file is there to edit the
+      # day it goes back on.
       "C ${calendarFile} 0640 hjem hjem - ${calendarTemplate}"
     ];
 
