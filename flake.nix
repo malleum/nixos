@@ -108,7 +108,7 @@
     };
 
     mc = {
-      url = "git+file:///home/joshammer/documents/gh/mc";
+      url = "github:malleum/mc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -10,7 +10,7 @@
     imports = [inputs.mc.nixosModules.minecraft];
 
     services.malleum-minecraft = {
-      enable = true;
+      enable = false;
 
       # Whitelisted players and operators (level 4). Add names here, rebuild.
       whitelist = ["malleum" "opcornpay" "jaderabbit__" "sintfoap" "marvin1984"];

@@ -52,7 +52,7 @@ in {
     loaded_netrwPlugin = 1;
   };
 
-  autoCmd = [
+  autoCmd = lib.optionals plena [
     {
       event = ["BufRead" "BufNewFile"];
       pattern = ["*.weave"];
@@ -203,17 +203,20 @@ in {
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
-  extraPackages = [weave.weave];
+  extraPackages = lib.optionals plena [weave.weave];
 
-  extraPlugins = with pkgs.vimPlugins; [
-    vim-visual-multi
-    vim-indent-object
-    weave.weave-nvim
-    inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
-    inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
-    inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
-  ];
-  extraConfigLua = ''
+  extraPlugins = with pkgs.vimPlugins;
+    [
+      vim-visual-multi
+      vim-indent-object
+    ]
+    ++ lib.optionals plena [
+      weave.weave-nvim
+      inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
+      inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
+      inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
+    ];
+  extraConfigLua = lib.mkIf plena ''
     require("weave").setup({
       auto = true,
       on_save = true,
@@ -257,10 +260,12 @@ in {
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
         sources = {
-          default = ["rask" "lsp" "path" "snippets" "buffer"];
-          providers.rask = {
-            name = "rask";
-            module = "rask.blink";
+          default = (lib.optionals plena ["rask"]) ++ ["lsp" "path" "snippets" "buffer"];
+          providers = lib.mkIf plena {
+            rask = {
+              name = "rask";
+              module = "rask.blink";
+            };
           };
         };
         completion = {
