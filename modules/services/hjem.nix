@@ -174,6 +174,37 @@
       # which is where Keep's reminders live; consumer Keep itself has no API.
       # googleCredentialsFile = config.sops.secrets.hjem_google.path;
 
+      # The countdown inside the ring, in the clock's own units. The panel
+      # shows the soonest of these and moves on to the next as each passes, so
+      # this is a chain rather than a list: Taiwan, then Christmas, then
+      # Easter, and from there Christmas and Easter alternate on their own for
+      # as long as the panel is on the wall.
+      #
+      # Taiwan is a dated one-off and drops out once it is behind us. The other
+      # two recur -- `easter` is computed each year rather than written down,
+      # which is the only reason server/events.py contains a computus.
+      #
+      # Add `until = "2026-11-…";` to the Taiwan entry and the panel will count
+      # the trip down to its end once it has started, instead of moving
+      # straight on to Christmas on the morning of the 1st.
+      events = [
+        {
+          name = "Taiwan";
+          nameEo = "Tajvano";
+          on = "2026-10-31";
+        }
+        {
+          name = "Christmas";
+          nameEo = "Kristnasko";
+          on = "12-25";
+        }
+        {
+          name = "Easter";
+          nameEo = "Pasko";
+          on = "easter";
+        }
+      ];
+
       language = "eo";
       clock = "duod";
       fx = "full";
