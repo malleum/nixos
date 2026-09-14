@@ -1,7 +1,10 @@
 # hjem (github:malleum/hjem) -- the wall panel. A duodecimal ring clock, the
-# weather, and a verse of the day in Esperanto that translates itself one
-# phrase per dwell through the afternoon, on an old 12" Dell that does nothing
-# else.
+# weather, a verse of the day in Esperanto that translates itself one phrase
+# per dwell through the afternoon, an Esperanto root a day with the words the
+# corpus builds out of it, and a background that answers the sky: the real
+# stars and planets over Easley when it is clear, and an aurora when NOAA says
+# the oval has come far enough south to be worth walking outside for. All on an
+# old 12" Dell that does nothing else.
 #
 # The app's own flake carries the server and its NixOS module; this file is the
 # part that only minoris needs: where the weather is, the power profile for a
@@ -40,26 +43,44 @@
       # Then: sudo systemctl restart hjem
     '';
 
+    # Presence detection: the panel brings its backlight up when the webcam
+    # sees movement in the room at night. Off, because it turns on a camera.
+    #
+    # Turning it on means two edits: this, and `presence = true` below.
+    # The flag is what makes the camera usable at all -- getUserMedia would
+    # otherwise raise a permission prompt that nobody is standing there to
+    # answer, and a kiosk has no chrome to answer it with. It grants camera
+    # access to whatever the browser loads, which here is one page on
+    # 127.0.0.1 and nothing else, for the life of the session.
+    #
+    # What the page does with it is in hjem's web/js/presence.js: a 48x36 grey
+    # frame, subtracted from the previous one, discarded. No image is stored or
+    # sent anywhere; the only thing that leaves the browser is an empty POST.
+    presence = false;
+
+    presenceFlags = lib.optional presence "--use-fake-ui-for-media-stream";
+
     # Chromium rather than Firefox: this page leans on canvas, and chromium's
     # is faster on the integrated graphics in a machine of this vintage.
     # --kiosk hides everything; the rest suppress the first-run, crash-restore
     # and translate furniture that would otherwise sit over the clock forever.
-    browserFlags = lib.concatStringsSep " " [
-      "--kiosk"
-      "--ozone-platform=wayland"
-      "--enable-features=UseOzonePlatform"
-      "--noerrdialogs"
-      "--no-first-run"
-      "--no-default-browser-check"
-      "--disable-infobars"
-      "--disable-session-crashed-bubble"
-      "--disable-features=Translate,TranslateUI,InfiniteSessionRestore"
-      "--hide-scrollbars"
-      "--overscroll-history-navigation=0"
-      "--autoplay-policy=no-user-gesture-required"
-      "--password-store=basic"
-      "--check-for-update-interval=31536000"
-    ];
+    browserFlags = lib.concatStringsSep " " (presenceFlags
+      ++ [
+        "--kiosk"
+        "--ozone-platform=wayland"
+        "--enable-features=UseOzonePlatform"
+        "--noerrdialogs"
+        "--no-first-run"
+        "--no-default-browser-check"
+        "--disable-infobars"
+        "--disable-session-crashed-bubble"
+        "--disable-features=Translate,TranslateUI,InfiniteSessionRestore"
+        "--hide-scrollbars"
+        "--overscroll-history-navigation=0"
+        "--autoplay-policy=no-user-gesture-required"
+        "--password-store=basic"
+        "--check-for-update-interval=31536000"
+      ]);
 
     kiosk = pkgs.writeShellApplication {
       name = "hjem-kiosk";
@@ -131,7 +152,13 @@
       enable = true;
       inherit port;
 
-      place = "Albany";
+      # Explicit coordinates rather than `place = "Easley"`: there are Easleys
+      # in Alabama, Missouri and Iowa, and more to the point the sky scene
+      # draws the actual sky from these numbers, so the panel should not have
+      # to reach the geocoder before it knows where it is standing.
+      latitude = "34.82984";
+      longitude = "-82.60152";
+      place = "Easley";
 
       # Celsius for temperature, imperial for everything else.
       temperatureUnit = "celsius";
@@ -155,6 +182,14 @@
       # service's `video` group write access to the backlight.
       backlight = "auto";
       nightBrightness = 0.18;
+
+      # The other half of the presence switch at the top of this file; both
+      # have to be on for it to do anything. When it is on, the backlight comes
+      # up to presenceBrightness while someone is standing in front of the
+      # panel at night, and drops back after presenceGrace seconds of an empty
+      # room. The palette stays in its night amber either way -- the point is
+      # to be readable in a dark room, not to light the room.
+      inherit presence;
     };
 
     systemd.tmpfiles.rules = [
