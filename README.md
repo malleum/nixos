@@ -129,6 +129,7 @@ you would rather have the Ampere box do the compiling natively.
 │   │   └──  zsh.nix
 │   ├──  scripts
 │   │   ├──  _chron.nix
+│   │   ├──  _devinit.nix
 │   │   ├──  _duod.nix
 │   │   ├──  _jay-audio-switch.nix
 │   │   ├──  _jay-osd.nix
@@ -176,6 +177,42 @@ you would rather have the Ampere box do the compiling natively.
 │       ├──  tts.nix
 │       ├──  virtualization.nix
 │       └──  xdg.nix
+├──  mvim
+│   ├──  init.lua
+│   ├──  lsp
+│   │   ├──  bashls.lua
+│   │   ├──  clangd.lua
+│   │   ├──  cssls.lua
+│   │   ├──  elixirls.lua
+│   │   ├──  gopls.lua
+│   │   ├──  html.lua
+│   │   ├──  jdtls.lua
+│   │   ├──  jsonls.lua
+│   │   ├──  ltex_plus.lua
+│   │   ├──  lua_ls.lua
+│   │   ├──  marksman.lua
+│   │   ├──  nixd.lua
+│   │   ├──  rust_analyzer.lua
+│   │   ├──  sqls.lua
+│   │   ├──  taplo.lua
+│   │   ├──  tinymist.lua
+│   │   ├──  ts_ls.lua
+│   │   ├──  ty.lua
+│   │   ├──  yamlls.lua
+│   │   └──  zls.lua
+│   └──  lua
+│       └──  mvim
+│           ├──  autopairs.lua
+│           ├──  format.lua
+│           ├──  gitsigns.lua
+│           ├──  indent.lua
+│           ├──  keymaps.lua
+│           ├──  lsp.lua
+│           ├──  picker.lua
+│           ├──  session.lua
+│           ├──  surround.lua
+│           ├──  todo.lua
+│           └──  treesitter.lua
 ├──  nixvim
 │   └──  default.nix
 └── 󰂺 README.md

@@ -2,8 +2,8 @@
 Formatting and git hooks.
 
 `nix fmt` formats every .nix file with alejandra. The same formatter runs as a
-prek hook on commit, alongside a hook that regenerates the README file tree so
-it cannot drift from the repo again.
+prek hook on commit, along with stylua for the Lua in mvim/ and a hook that
+regenerates the README file tree so it cannot drift from the repo again.
 
 prek is a Rust reimplementation of pre-commit that reads the same config; it is
 what git-hooks.nix defaults to now.
@@ -72,6 +72,8 @@ or by running `nix run .#install-hooks`.
 
       hooks = {
         alejandra.enable = true;
+        # Lua (mvim/), styled by .stylua.toml at the repo root.
+        stylua.enable = true;
 
         readme-tree = {
           enable = true;
@@ -97,7 +99,15 @@ or by running `nix run .#install-hooks`.
 
     devShells.default = pkgs.mkShell {
       shellHook = config.pre-commit.installationScript;
-      packages = [pkgs.alejandra pkgs.prek];
+      # Editor tooling for the repo's two languages: nix (modules, hosts) and
+      # lua (mvim). Loaded by direnv via .envrc.
+      packages = with pkgs; [
+        alejandra
+        lua-language-server
+        nixd
+        prek
+        stylua
+      ];
     };
   };
 }
