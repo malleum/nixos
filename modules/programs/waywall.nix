@@ -150,6 +150,14 @@
             "D" = "Backspace";
             "Grave" = "Tab";
             "Tab" = "Dot";
+
+            # Rule A.10.1: one physical key per game input. Every key that is
+            # a remap target above gets parked on an unbound key so the
+            # original no longer doubles up.
+            "F3" = "F24";
+            "0" = "F23";
+            "Backspace" = "F22";
+            "Dot" = "F21";
           };
         };
 

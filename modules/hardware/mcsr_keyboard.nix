@@ -16,6 +16,7 @@
         apostrophe = "quotedbl"; # ' -> "
         aring = "Aring";
         oslash = "Oslash";
+        VoidSymbol = "VoidSymbol";
       };
     in
       if specialCases ? ${str}
@@ -83,6 +84,14 @@
       "x" = "b";
 
       "lalt" = "aring";
+
+      # "us" still types u/i/h/l/n at their qwerty spots; blank those so each
+      # letter comes from exactly one key (MCSR rule A.10.1).
+      "g" = "VoidSymbol"; # u
+      "c" = "VoidSymbol"; # i
+      "d" = "VoidSymbol"; # h
+      "n" = "VoidSymbol"; # l
+      "b" = "VoidSymbol"; # n
     };
     keyboard = lib.strings.concatLines [
       header
