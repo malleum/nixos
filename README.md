@@ -205,11 +205,13 @@ you would rather have the Ampere box do the compiling natively.
 │           ├──  autopairs.lua
 │           ├──  dirbuf.lua
 │           ├──  format.lua
+│           ├──  git.lua
 │           ├──  gitsigns.lua
 │           ├──  indent.lua
 │           ├──  keymaps.lua
 │           ├──  lsp.lua
 │           ├──  lsp_keys.lua
+│           ├──  multicursor.lua
 │           ├──  picker.lua
 │           ├──  session.lua
 │           ├──  surround.lua

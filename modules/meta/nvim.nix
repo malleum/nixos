@@ -130,9 +130,9 @@
   in {
     apps.default = {
       type = "app";
-      program = "${nixvim}/bin/nvim";
+      program = "${mvim}/bin/nvim";
     };
-    packages.default = nixvim;
+    packages.default = mvim;
 
     apps.nvim = {
       type = "app";

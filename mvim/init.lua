@@ -13,12 +13,16 @@
 --
 --   Removed along with their plugins
 --     -           oil                  -> - (read-only directory buffers, lua/mvim/dirbuf.lua)
---     <leader>g   neogit               -> gone
+--     <leader>g   neogit               -> <leader>g (status page, lua/mvim/git.lua)
+--     gitsigns hunk reset / blame      -> :GitResetHunk, :GitBlame (also x on the status page)
 --     <leader>q   quicker              -> :copen / :cclose
 --     <leader>a, <leader>o, <C-A-h/t/n/s>  harpoon -> gone (file marks: mA, 'A)
 --     <C-j>/<C-k> luasnip jumps (insert) -> gone (LSP snippets use <Tab>/<S-Tab>)
 --     <C-b>/<C-f> blink doc scroll     -> gone
 --     <CR>        blink accept         -> <CR> accepts the selected completion
+--
+--   Multiple cursors (hand-written, vim-visual-multi keys; lua/mvim/multicursor.lua)
+--     <C-n>, visual <C-n>, <C-Down>/<C-Up>; then n N q Q ] [ <Esc>
 --
 --   Surround (hand-written, nvim-surround style)
 --     ys{motion}{char}, yss{char}, ds{char}, cs{old}{new}, visual S{char}
@@ -72,6 +76,8 @@ require("mvim.lsp_keys")
 require("mvim.treesitter")
 require("mvim.picker").setup()
 require("mvim.dirbuf").setup()
+require("mvim.multicursor").setup()
+require("mvim.git").setup()
 require("mvim.surround").setup()
 require("mvim.indent").setup()
 require("mvim.autopairs").setup()

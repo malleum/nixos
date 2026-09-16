@@ -1,6 +1,7 @@
--- Sign-column diff against the git index, like gitsigns without the hunk
--- actions. The index copy is fetched on read/write/focus; edits are diffed
--- in memory.
+-- Sign-column diff against the git index, like gitsigns. The index copy is
+-- fetched on read/write/focus; edits are diffed in memory.
+--   :GitResetHunk  put the unstaged hunk under the cursor back to its staged
+--                  (index) version, in the buffer: :w keeps it, u undoes it
 local M = {}
 
 local ns = vim.api.nvim_create_namespace("mvim_gitsigns")
@@ -77,7 +78,41 @@ local function debounced_render(buf)
   timer:start(100, 0, vim.schedule_wrap(function() render(buf) end))
 end
 
+function M.reset_hunk()
+  local buf = vim.api.nvim_get_current_buf()
+  if not base[buf] then
+    vim.notify("Not a tracked file", vim.log.levels.WARN)
+    return
+  end
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+  local hunks = vim.text.diff(base[buf], table.concat(lines, "\n") .. "\n", { result_type = "indices" })
+  local lnum = vim.fn.line(".")
+  local base_lines = vim.split(base[buf], "\n", { plain = true })
+  for _, h in ipairs(hunks) do
+    local start_a, count_a, start_b, count_b = unpack(h)
+    -- A pure deletion has no lines in the buffer; its sign sits on start_b.
+    local first = count_b == 0 and math.max(start_b, 1) or start_b
+    local last = count_b == 0 and first or start_b + count_b - 1
+    if lnum >= first and lnum <= last then
+      local original = count_a > 0 and vim.list_slice(base_lines, start_a, start_a + count_a - 1) or {}
+      if count_b == 0 then
+        vim.api.nvim_buf_set_lines(buf, start_b, start_b, true, original)
+      else
+        vim.api.nvim_buf_set_lines(buf, start_b - 1, start_b - 1 + count_b, true, original)
+      end
+      render(buf)
+      return
+    end
+  end
+  vim.notify("No unstaged change under the cursor", vim.log.levels.INFO)
+end
+
 function M.setup()
+  vim.api.nvim_create_user_command(
+    "GitResetHunk",
+    M.reset_hunk,
+    { desc = "Discard the unstaged hunk under the cursor" }
+  )
   local group = vim.api.nvim_create_augroup("mvim_gitsigns", {})
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "FocusGained" }, {
     group = group,

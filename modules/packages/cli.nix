@@ -1,19 +1,6 @@
 {self, ...}: {
-  unify.home = {
-    pkgs,
-    nixosConfig,
-    ...
-  }: let
-    # mvim unless the host takes `dev`; see modules/meta/nvim.nix.
-    variant =
-      if nixosConfig.local.fullNvim
-      then "nvim"
-      else "mvim";
-    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.${variant};
-    # The plugin-free build is always reachable as `mvim`, whichever one `nvim` is.
-    mvim = pkgs.writeShellScriptBin "mvim" ''
-      exec ${self.packages.${pkgs.stdenv.hostPlatform.system}.mvim}/bin/nvim "$@"
-    '';
+  unify.home = {pkgs, ...}: let
+    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.mvim;
     cls = self.packages.${pkgs.stdenv.hostPlatform.system}.cls;
   in {
     home.packages = with pkgs; [
@@ -29,7 +16,6 @@
       jq
       killall
       ltrace
-      mvim
       nitch
       nmap
       nvim
