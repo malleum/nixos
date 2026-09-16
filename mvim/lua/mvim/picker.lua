@@ -19,7 +19,10 @@ local function fzf(source, args, cwd, on_select)
   })
 
   local out = vim.fn.tempname()
-  local cmd = ("%s | fzf --layout=reverse %s > %s"):format(source, args, vim.fn.shellescape(out))
+  -- <C-d>/<C-u> scroll the preview by half a page, as in a buffer. They
+  -- replace fzf's delete-char and clear-query; <C-w> still deletes a word.
+  local keys = "--bind ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up"
+  local cmd = ("%s | fzf --layout=reverse %s %s > %s"):format(source, keys, args, vim.fn.shellescape(out))
   vim.fn.jobstart(cmd, {
     term = true,
     cwd = cwd,
@@ -120,9 +123,11 @@ function M.setup()
   map("n", "<leader>pW", function() M.grep(vim.fn.expand("<cWORD>")) end)
   map("n", "<leader>pS", function() M.grep(vim.fn.input({ prompt = " > " })) end)
   map("n", "<leader>pt", function() M.grep(require("mvim.todo").rg_pattern(), true) end)
+  -- Search for the selected text (its first line; grep matches line by line).
   map("x", "<leader>h", function()
+    local text = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = vim.fn.mode() })[1]
     vim.cmd("normal! \27")
-    M.grep(vim.fn.getreg('"'))
+    M.grep(text)
   end)
 end
 

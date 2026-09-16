@@ -104,7 +104,14 @@ in {
 
       "x" = {
         "<leader>p" = "\"_dP";
-        "<leader>h" = "lua require('telescope.builtin').grep_string({ search = vim.fn.getreg('\"') })";
+        # Search the repo for the selected text (its first line), literally.
+        "<leader>h".__raw = ''
+          function()
+            local text = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = vim.fn.mode() })[1]
+            vim.cmd("normal! \27")
+            require("telescope.builtin").grep_string({ search = text })
+          end
+        '';
       };
 
       "c" = {"W" = "w";};
