@@ -112,7 +112,11 @@
         # should be the last plugin in the list").
         set -g @resurrect-capture-pane-contents 'on'
         set -g @resurrect-strategy-vim 'session'
-        set -g @resurrect-processes 'claude cursor-agent ca agy "~nvim->nvim -c AutoSession\ restore"'
+        # One pattern per nvim build, and they must not overlap: resurrect
+        # runs every matching restore command, and both builds' command lines
+        # contain "nvim". nixvim's carries its vim-pack-dir, mvim's its
+        # init.lua. Both answer to `:AutoSession restore`.
+        set -g @resurrect-processes 'claude cursor-agent ca agy "~vim-pack-dir->nvim -c AutoSession\ restore" "~mvim/init.lua->mvim -c AutoSession\ restore"'
         set -g @continuum-save-interval '5'
         set -g @continuum-restore 'on'
 

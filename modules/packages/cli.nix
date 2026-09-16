@@ -10,6 +10,10 @@
       then "nvim"
       else "mvim";
     nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.${variant};
+    # The plugin-free build is always reachable as `mvim`, whichever one `nvim` is.
+    mvim = pkgs.writeShellScriptBin "mvim" ''
+      exec ${self.packages.${pkgs.stdenv.hostPlatform.system}.mvim}/bin/nvim "$@"
+    '';
     cls = self.packages.${pkgs.stdenv.hostPlatform.system}.cls;
   in {
     home.packages = with pkgs; [
@@ -26,6 +30,7 @@
       jq
       killall
       ltrace
+      mvim
       nitch
       nmap
       nvim

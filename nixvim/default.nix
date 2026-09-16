@@ -2,7 +2,6 @@
   inputs,
   pkgs,
   lib,
-  plena ? true,
   ...
 }: let
   weave = inputs.weave.packages.${pkgs.stdenv.hostPlatform.system};
@@ -52,7 +51,7 @@ in {
     loaded_netrwPlugin = 1;
   };
 
-  autoCmd = lib.optionals plena [
+  autoCmd = [
     {
       event = ["BufRead" "BufNewFile"];
       pattern = ["*.weave"];
@@ -129,7 +128,7 @@ in {
 
   lsp = {
     inlayHints.enable = true;
-    servers = lib.mkIf plena {
+    servers = {
       clangd.enable = true;
       domain = {
         enable = true;
@@ -165,7 +164,10 @@ in {
         enable = true;
         config.offset_encoding = "utf-8";
       };
-      ty.enable = true;
+      ty = {
+        enable = true;
+        config.settings.ty.inlayHints.callArgumentNames = false;
+      };
       rust_analyzer.enable = true;
       sqls.enable = true;
       tinymist = {
@@ -203,20 +205,17 @@ in {
       ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
-  extraPackages = lib.optionals plena [weave.weave];
+  extraPackages = [weave.weave];
 
-  extraPlugins = with pkgs.vimPlugins;
-    [
-      vim-visual-multi
-      vim-indent-object
-    ]
-    ++ lib.optionals plena [
-      weave.weave-nvim
-      inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
-      inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
-      inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
-    ];
-  extraConfigLua = lib.mkIf plena ''
+  extraPlugins = with pkgs.vimPlugins; [
+    vim-visual-multi
+    vim-indent-object
+    weave.weave-nvim
+    inputs.ago.packages.${pkgs.stdenv.hostPlatform.system}.vim-ago
+    inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
+    inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
+  ];
+  extraConfigLua = ''
     require("weave").setup({
       auto = true,
       on_save = true,
@@ -229,9 +228,9 @@ in {
   '';
 
   plugins = {
-    lspconfig.enable = plena;
+    lspconfig.enable = true;
 
-    luasnip = lib.mkIf plena {
+    luasnip = {
       enable = true;
       settings = {
         enable_autosnippets = true;
@@ -250,7 +249,7 @@ in {
     blink-cmp = {
       enable = true;
       settings = {
-        snippets = lib.mkIf plena {preset = "luasnip";};
+        snippets.preset = "luasnip";
         keymap = {
           preset = "default";
           "<C-p>" = ["select_prev" "show"];
@@ -260,8 +259,8 @@ in {
           "<C-f>" = ["scroll_documentation_down" "fallback"];
         };
         sources = {
-          default = (lib.optionals plena ["rask"]) ++ ["lsp" "path" "snippets" "buffer"];
-          providers = lib.mkIf plena {
+          default = ["rask" "lsp" "path" "snippets" "buffer"];
+          providers = {
             rask = {
               name = "rask";
               module = "rask.blink";
@@ -319,7 +318,7 @@ in {
     typst-preview.enable = true;
     web-devicons.enable = true;
 
-    treesitter = lib.mkIf plena {
+    treesitter = {
       enable = true;
       grammarPackages =
         pkgs.vimPlugins.nvim-treesitter.passthru.allGrammars
@@ -328,9 +327,9 @@ in {
       settings.highlight.enable = true;
     };
 
-    conform-nvim = lib.mkIf plena {
+    conform-nvim = {
       enable = true;
-      autoInstall.enable = plena;
+      autoInstall.enable = true;
       settings = {
         formatters_by_ft = {
           "*" = ["trim_whitespace"];
@@ -346,7 +345,7 @@ in {
       };
     };
 
-    lint = lib.mkIf plena {
+    lint = {
       enable = true;
       linters.ruff.cmd = "${pkgs.ruff}/bin/ruff";
       lintersByFt.python = ["ruff"];
