@@ -17,7 +17,6 @@
     cls = self.packages.${pkgs.stdenv.hostPlatform.system}.cls;
   in {
     home.packages = with pkgs; [
-      bat
       bc
       btop
       choose

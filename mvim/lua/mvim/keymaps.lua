@@ -1,9 +1,6 @@
 -- Editing maps carried over from the nixvim config. Plugin-backed maps live
 -- in their own modules.
 local maps = {
-  n = {
-    ["K"] = "<Nop>",
-  },
   nv = {
     ["<leader>d"] = '"_d',
     ["<leader>D"] = '"_D',

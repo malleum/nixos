@@ -1,22 +1,8 @@
 -- mvim: plugin-free neovim config, packaged by modules/meta/nvim.nix.
 --
--- Keymaps that changed from the nixvim config (old -> new). Anything not
--- listed kept its old key.
---
---   LSP (now neovim 0.12 defaults)
---     <leader>rn  rename               -> grn
---     <leader>ra  code action          -> gra
---     gD          definition           -> <C-]>   (tagfunc is LSP-backed)
---     gd          telescope defs       -> <C-]>   (gd is vim's local-declaration again)
---     go          type definition      -> grt
---     gR / gr     references           -> grr     (fills the quickfix list)
---     <leader>pr  telescope references -> grr
---     gl          diagnostic float     -> <C-w>d
---     [d / ]d     diagnostic jumps     -> [d / ]d (now built in)
---     K           hover                -> K       (mapped on LspAttach; K is <Nop> elsewhere)
---     (none)      implementation       -> gri
---     (none)      document symbols     -> gO
---     (none)      signature help       -> <C-s>   (insert mode)
+-- Keymaps that differ from the nixvim config (old -> new). Anything not
+-- listed kept its old key. LSP keys are neovim's defaults in both builds, plus
+-- grc for callers; see lua/mvim/lsp_keys.lua.
 --
 --   Pickers (fzf in a float instead of telescope)
 --     <leader>h, <leader>t, <leader>pg, <leader>ps, <leader>pw, <leader>pW,
@@ -26,7 +12,7 @@
 --     <leader>ph  help tags            -> :help <Tab>
 --
 --   Removed along with their plugins
---     -           oil                  -> gone (netrw stays disabled)
+--     -           oil                  -> - (read-only directory buffers, lua/mvim/dirbuf.lua)
 --     <leader>g   neogit               -> gone
 --     <leader>q   quicker              -> :copen / :cclose
 --     <leader>a, <leader>o, <C-A-h/t/n/s>  harpoon -> gone (file marks: mA, 'A)
@@ -72,16 +58,20 @@ o.winborder = "rounded"
 o.wrap = false
 o.sessionoptions:append("localoptions")
 
--- Built-in colorschemes (`:colorscheme <Tab>` to preview):
+-- Tokyonight night, generated from tokyonight.nvim's extras by
+-- modules/meta/nvim.nix (no plugin code). bat's theme matches.
+-- Built-in alternatives (`:colorscheme <Tab>` to preview):
 --   blue catppuccin darkblue default delek desert elflord evening habamax
 --   industry koehler lunaperche morning murphy pablo peachpuff quiet retrobox
 --   ron shine slate sorbet torte unokai vim wildcharm zaibatsu zellner
-vim.cmd.colorscheme("default")
+vim.cmd.colorscheme("tokyonight")
 
 require("mvim.keymaps")
 require("mvim.lsp")
+require("mvim.lsp_keys")
 require("mvim.treesitter")
 require("mvim.picker").setup()
+require("mvim.dirbuf").setup()
 require("mvim.surround").setup()
 require("mvim.indent").setup()
 require("mvim.autopairs").setup()

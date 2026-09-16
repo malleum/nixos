@@ -36,9 +36,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
 
-    -- K is <Nop> globally, which stops neovim adding its hover default.
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = args.buf })
-
     if client:supports_method("textDocument/completion") then
       -- autotrigger only fires on the server's trigger characters (".", ":"
       -- ...); add word characters so the menu opens while typing, like blink.

@@ -66,7 +66,6 @@ in {
   keymaps = let
     maps = {
       "n" = {
-        "K" = "<Nop>";
         "-" = "<cmd>Oil<cr>";
         "<leader>g" = "<cmd>Neogit<cr>";
         "<leader>q" = "<cmd>lua require('quicker').toggle()<cr>";
@@ -182,27 +181,6 @@ in {
       };
       zls.enable = true;
     };
-    keymaps = let
-      default = {
-        "[d" = "<cmd>lua vim.diagnostic.jump({count=-1})<cr>";
-        "]d" = "<cmd>lua vim.diagnostic.jump({count=1})<cr>";
-        "gl" = "<cmd>lua vim.diagnostic.open_float()<cr>";
-
-        "gd" = "<cmd>lua require('telescope.builtin').lsp_definitions()<cr>";
-        "gr" = "<cmd>lua require('telescope.builtin').lsp_references()<cr>";
-      };
-      lspBuf = {
-        "K" = "hover";
-        "gD" = "definition";
-        "go" = "type_definition";
-        "gR" = "references";
-
-        "<leader>rn" = "rename";
-        "<leader>ra" = "code_action";
-      };
-    in
-      (lib.mapAttrsToList (key: lspBufAction: {inherit key lspBufAction;}) lspBuf)
-      ++ (lib.mapAttrsToList (key: action: {inherit key action;}) default);
   };
 
   extraPackages = [weave.weave];
@@ -215,17 +193,20 @@ in {
     inputs.domain.packages.${pkgs.stdenv.hostPlatform.system}.domain-nvim
     inputs.rask.packages.${pkgs.stdenv.hostPlatform.system}.rask-nvim
   ];
-  extraConfigLua = ''
-    require("weave").setup({
-      auto = true,
-      on_save = true,
-      input_patterns = { "*.txt", "*.in", "*.input", "input*", "in*" },
-      timeout_ms = 5000,
-      prefix = "  = ",
-      highlight = "WeaveTrace",
-      max_width = 120,
-    })
-  '';
+  # LSP keys are neovim's defaults plus grc (callers), shared with mvim.
+  extraConfigLua =
+    builtins.readFile ../mvim/lua/mvim/lsp_keys.lua
+    + ''
+        require("weave").setup({
+        auto = true,
+        on_save = true,
+        input_patterns = { "*.txt", "*.in", "*.input", "input*", "in*" },
+        timeout_ms = 5000,
+        prefix = "  = ",
+        highlight = "WeaveTrace",
+        max_width = 120,
+      })
+    '';
 
   plugins = {
     lspconfig.enable = true;
@@ -377,7 +358,6 @@ in {
         "<leader>h" = "find_files";
         "<leader>pg" = "git_files";
         "<leader>ps" = "live_grep";
-        "<leader>pr" = "lsp_references";
         "<leader>pd" = "diagnostics";
         "<leader>ph" = "help_tags";
         "<leader>pt" = "todo-comments";

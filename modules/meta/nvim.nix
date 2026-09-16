@@ -85,6 +85,32 @@
         }) (grammars ++ queryOnly)
       );
 
+    # Tokyonight night for mvim, from tokyonight.nvim's standalone extras (the
+    # same theme bat uses, see modules/programs/cli.nix). The extras file only
+    # defines the palette and highlight tables; the lines appended here apply
+    # them, so no plugin code runs.
+    mvimColors = pkgs.runCommand "mvim-tokyonight" {} ''
+      mkdir -p $out/colors
+      {
+        cat ${pkgs.vimPlugins.tokyonight-nvim}/extras/lua/tokyonight_night.lua
+        cat <<'EOF'
+
+      if vim.o.background ~= "dark" then
+        vim.o.background = "dark"
+      end
+      vim.cmd("highlight clear")
+      vim.g.colors_name = "tokyonight"
+      for group, hl in pairs(highlights) do
+        vim.api.nvim_set_hl(0, group, type(hl) == "string" and { link = hl } or hl)
+      end
+      for i, name in ipairs({ "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white" }) do
+        vim.g["terminal_color_" .. (i - 1)] = colors.terminal[name]
+        vim.g["terminal_color_" .. (i + 7)] = colors.terminal[name .. "_bright"]
+      end
+      EOF
+      } > $out/colors/tokyonight.lua
+    '';
+
     # -u skips ~/.config/nvim/init.lua; the config dir goes first on the
     # runtimepath so its lua/ and lsp/ directories resolve. To try edits
     # without rebuilding: nvim -u mvim/init.lua --cmd 'set rtp^=mvim'
@@ -95,7 +121,7 @@
       postBuild = ''
         wrapProgram $out/bin/nvim \
           --add-flags "-u ${../../mvim}/init.lua" \
-          --add-flags "--cmd 'set rtp^=${../../mvim},${mvimTreesitter}'" \
+          --add-flags "--cmd 'set rtp^=${../../mvim},${mvimTreesitter},${mvimColors}'" \
           --suffix PATH : ${lib.makeBinPath (with pkgs; [bat fd fzf ripgrep])}
         ln -s nvim $out/bin/vi
       '';

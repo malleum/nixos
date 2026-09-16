@@ -71,27 +71,32 @@ local function open_matches(lines)
   end
 end
 
-local file_preview = "--preview 'bat --color=always --style=numbers {}'"
+-- bat's theme comes from its config (tokyonight, modules/programs/cli.nix).
+local bat = "bat --color=always --style=numbers"
 
-function M.files(cwd) fzf("fd --type f --hidden --exclude .git", "--multi " .. file_preview, cwd, open_files(cwd)) end
+local function file_preview() return ("--preview %s"):format(vim.fn.shellescape(bat .. " {}")) end
+
+function M.files(cwd) fzf("fd --type f --hidden --exclude .git", "--multi " .. file_preview(), cwd, open_files(cwd)) end
 
 function M.git_files()
   local root = vim.fs.root(0, ".git") or vim.uv.cwd()
-  fzf("git ls-files --cached --others --exclude-standard", "--multi " .. file_preview, root, open_files(root))
+  fzf("git ls-files --cached --others --exclude-standard", "--multi " .. file_preview(), root, open_files(root))
 end
 
 local rg = "rg --column --line-number --no-heading --color=always --smart-case"
-local match_args = table.concat({
-  "--ansi --multi --delimiter :",
-  "--preview 'bat --color=always --style=numbers --highlight-line {2} {1}'",
-  "--preview-window '+{2}-/2'",
-}, " ")
+local function match_args()
+  return table.concat({
+    "--ansi --multi --delimiter :",
+    "--preview " .. vim.fn.shellescape(bat .. " --highlight-line {2} {1}"),
+    "--preview-window '+{2}-/2'",
+  }, " ")
+end
 
 function M.live_grep()
   local reload = vim.fn.shellescape(rg .. " -- {q} || true")
   fzf(
     "true",
-    match_args .. " --disabled --bind start:reload:" .. reload .. " --bind change:reload:" .. reload,
+    match_args() .. " --disabled --bind start:reload:" .. reload .. " --bind change:reload:" .. reload,
     nil,
     open_matches
   )
@@ -102,7 +107,7 @@ function M.grep(text, regex)
     return
   end
   local flags = regex and "" or " --fixed-strings"
-  fzf(rg .. flags .. " -- " .. vim.fn.shellescape(text), match_args, nil, open_matches)
+  fzf(rg .. flags .. " -- " .. vim.fn.shellescape(text), match_args(), nil, open_matches)
 end
 
 function M.setup()

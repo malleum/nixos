@@ -203,11 +203,13 @@ you would rather have the Ampere box do the compiling natively.
 │   └──  lua
 │       └──  mvim
 │           ├──  autopairs.lua
+│           ├──  dirbuf.lua
 │           ├──  format.lua
 │           ├──  gitsigns.lua
 │           ├──  indent.lua
 │           ├──  keymaps.lua
 │           ├──  lsp.lua
+│           ├──  lsp_keys.lua
 │           ├──  picker.lua
 │           ├──  session.lua
 │           ├──  surround.lua
