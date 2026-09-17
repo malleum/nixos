@@ -11,6 +11,22 @@ local function session_file()
   return dir .. "/" .. vim.uv.cwd():gsub("/", "%%") .. ".vim"
 end
 
+-- Sessions untouched for 30 days are deleted, so ones for directories you
+-- no longer work in don't pile up.
+local max_age = 30 * 24 * 60 * 60
+
+local function prune()
+  local dir = vim.fn.stdpath("state") .. "/sessions"
+  local now = os.time()
+  for name, type in vim.fs.dir(dir) do
+    local path = dir .. "/" .. name
+    local stat = type == "file" and vim.uv.fs_stat(path)
+    if stat and now - stat.mtime.sec > max_age then
+      os.remove(path)
+    end
+  end
+end
+
 -- Only save when a real file is open, so `nvim` + `:q` doesn't clobber a session.
 local function has_files()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -50,6 +66,7 @@ function M.setup()
       if has_files() then
         actions.save()
       end
+      prune()
     end,
   })
 end

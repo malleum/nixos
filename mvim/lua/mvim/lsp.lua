@@ -1,5 +1,7 @@
 -- Servers are configured in ../../lsp/<name>.lua and enabled only when their
 -- binary is on PATH, so a devshell decides which ones run. Nothing is bundled.
+-- PATH is checked again after :Direnv loads a dev shell's environment (see
+-- direnv.lua), so its servers start without restarting mvim.
 local servers = {
   "bashls",
   "clangd",
@@ -23,12 +25,21 @@ local servers = {
   "zls",
 }
 
-for _, name in ipairs(servers) do
-  local cmd = vim.lsp.config[name].cmd
-  if type(cmd) == "table" and vim.fn.executable(cmd[1]) == 1 then
-    vim.lsp.enable(name)
+local function enable_available()
+  for _, name in ipairs(servers) do
+    local cmd = vim.lsp.config[name].cmd
+    if not vim.lsp.is_enabled(name) and type(cmd) == "table" and vim.fn.executable(cmd[1]) == 1 then
+      vim.lsp.enable(name) -- also attaches to matching buffers already open
+    end
   end
 end
+
+enable_available()
+vim.api.nvim_create_autocmd("User", { pattern = "MvimEnvChanged", callback = enable_available })
+
+-- Diagnostic messages appear as lines under the cursor's line only; other
+-- lines keep just their sign.
+vim.diagnostic.config({ virtual_lines = { current_line = true } })
 
 vim.lsp.inlay_hint.enable(true)
 

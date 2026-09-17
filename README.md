@@ -200,23 +200,31 @@ you would rather have the Ampere box do the compiling natively.
 │   │   ├──  ty.lua
 │   │   ├──  yamlls.lua
 │   │   └──  zls.lua
-│   └──  lua
-│       └──  mvim
-│           ├──  autopairs.lua
-│           ├──  dirbuf.lua
-│           ├──  format.lua
-│           ├──  git.lua
-│           ├──  gitsigns.lua
-│           ├──  indent.lua
-│           ├──  keymaps.lua
-│           ├──  lsp.lua
-│           ├──  lsp_keys.lua
-│           ├──  multicursor.lua
-│           ├──  picker.lua
-│           ├──  session.lua
-│           ├──  surround.lua
-│           ├──  todo.lua
-│           └──  treesitter.lua
+│   ├──  lua
+│   │   └──  mvim
+│   │       ├──  autopairs.lua
+│   │       ├──  dirbuf.lua
+│   │       ├──  direnv.lua
+│   │       ├──  format.lua
+│   │       ├──  git.lua
+│   │       ├──  gitsigns.lua
+│   │       ├──  indent.lua
+│   │       ├──  keymaps.lua
+│   │       ├──  lsp.lua
+│   │       ├──  lsp_keys.lua
+│   │       ├──  multicursor.lua
+│   │       ├──  picker.lua
+│   │       ├──  session.lua
+│   │       ├──  surround.lua
+│   │       ├──  todo.lua
+│   │       └──  treesitter.lua
+│   └──  queries
+│       ├──  c
+│       │   └──  injections.scm
+│       ├──  lua
+│       │   └──  injections.scm
+│       └──  vim
+│           └──  injections.scm
 ├──  nixvim
 │   └──  default.nix
 └── 󰂺 README.md

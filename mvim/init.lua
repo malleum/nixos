@@ -71,6 +71,7 @@ o.sessionoptions:append("localoptions")
 vim.cmd.colorscheme("tokyonight")
 
 require("mvim.keymaps")
+require("mvim.direnv").setup()
 require("mvim.lsp")
 require("mvim.lsp_keys")
 require("mvim.treesitter")
