@@ -34,14 +34,23 @@ local function enable_available()
   end
 end
 
-enable_available()
+-- Loading vim.lsp and every server config takes about 10 ms, so it happens
+-- right after startup instead of before the first screen. Files opened at
+-- startup still get their servers: vim.lsp.enable attaches to open buffers.
+local function setup()
+  enable_available()
+  -- Diagnostic messages appear as lines under the cursor's line only; other
+  -- lines keep just their sign.
+  vim.diagnostic.config({ virtual_lines = { current_line = true } })
+  vim.lsp.inlay_hint.enable(true)
+end
+
+if vim.v.vim_did_enter == 1 then
+  setup()
+else
+  vim.api.nvim_create_autocmd("VimEnter", { once = true, callback = function() vim.schedule(setup) end })
+end
 vim.api.nvim_create_autocmd("User", { pattern = "MvimEnvChanged", callback = enable_available })
-
--- Diagnostic messages appear as lines under the cursor's line only; other
--- lines keep just their sign.
-vim.diagnostic.config({ virtual_lines = { current_line = true } })
-
-vim.lsp.inlay_hint.enable(true)
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)

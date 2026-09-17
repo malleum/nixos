@@ -87,34 +87,18 @@
         }) (grammars ++ queryOnly)
       );
 
-    # Tokyonight night for mvim, from tokyonight.nvim's standalone extras (the
-    # same theme bat uses, see modules/programs/cli.nix). The extras file only
-    # defines the palette and highlight tables; the lines appended here apply
-    # them, so no plugin code runs.
-    mvimColors = pkgs.runCommand "mvim-tokyonight" {} ''
-      mkdir -p $out/colors
-      {
-        cat ${pkgs.vimPlugins.tokyonight-nvim}/extras/lua/tokyonight_night.lua
-        cat <<'EOF'
-
-      if vim.o.background ~= "dark" then
-        vim.o.background = "dark"
-      end
-      vim.cmd("highlight clear")
-      vim.g.colors_name = "tokyonight"
-      for group, hl in pairs(highlights) do
-        vim.api.nvim_set_hl(0, group, type(hl) == "string" and { link = hl } or hl)
-      end
-      for i, name in ipairs({ "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white" }) do
-        vim.g["terminal_color_" .. (i - 1)] = colors.terminal[name]
-        vim.g["terminal_color_" .. (i + 7)] = colors.terminal[name .. "_bright"]
-      end
-      EOF
-      } > $out/colors/tokyonight.lua
+    # The mvim/ directory with its help tags generated, so `:help mvim` works.
+    # Named "mvim" so running panes still show ".../mvim/init.lua", which is
+    # how tmux-resurrect recognizes them (modules/programs/tmux.nix).
+    mvimConfig = pkgs.runCommand "mvim" {} ''
+      cp -r ${../../mvim} $out
+      chmod -R u+w $out
+      rm -rf $out/tests
+      ${pkgs.neovim-unwrapped}/bin/nvim --headless --clean -c "helptags $out/doc" -c q
     '';
 
     # -u skips ~/.config/nvim/init.lua; the config dir goes first on the
-    # runtimepath so its lua/ and lsp/ directories resolve. To try edits
+    # runtimepath so its lua/, lsp/ and doc/ directories resolve. To try edits
     # without rebuilding: nvim -u mvim/init.lua --cmd 'set rtp^=mvim'
     mvim = pkgs.symlinkJoin {
       name = "mvim";
@@ -122,14 +106,31 @@
       nativeBuildInputs = [pkgs.makeWrapper];
       postBuild = ''
         wrapProgram $out/bin/nvim \
-          --add-flags "-u ${../../mvim}/init.lua" \
-          --add-flags "--cmd 'set rtp^=${../../mvim},${mvimTreesitter},${mvimColors}'" \
+          --add-flags "-u ${mvimConfig}/init.lua" \
+          --add-flags "--cmd 'set rtp^=${mvimConfig},${mvimTreesitter}'" \
           --suffix PATH : ${lib.makeBinPath (with pkgs; [bat fd fzf ripgrep])}
         ln -s nvim $out/bin/vi
       '';
       meta.mainProgram = "nvim";
     };
+
+    # mvim's test suite (mvim/tests): drives a real mvim over RPC, about 3 s.
+    mvimTest = pkgs.writeShellScript "mvim-test" ''
+      MVIM=${mvim}/bin/nvim exec ${pkgs.neovim-unwrapped}/bin/nvim --clean -l ${../../mvim/tests}/run.lua "$@"
+    '';
   in {
+    checks.mvim = pkgs.runCommand "mvim-tests" {nativeBuildInputs = with pkgs; [direnv git];} ''
+      export HOME=$TMPDIR
+      ${mvimTest}
+      touch $out
+    '';
+
+    # `nix run .#mvim-test -- [filter]`
+    apps.mvim-test = {
+      type = "app";
+      program = "${mvimTest}";
+    };
+
     apps.default = {
       type = "app";
       program = "${mvim}/bin/nvim";

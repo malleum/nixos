@@ -1,0 +1,165 @@
+*mvim.txt*  Plugin-free neovim config                                     *mvim*
+
+mvim is plain neovim plus the Lua in this directory (mvim/ in the nixos
+repo), packaged by modules/meta/nvim.nix. No plugins, no nixvim, and no
+bundled language servers or formatters: those come from each project's dev
+shell (`devinit` writes one). Installed as `nvim` and `vi` on every host; the
+full nixvim build is `nixvim` on `dev` hosts.
+
+Leader is <Space>.
+
+                                      Type |gO| to see the table of contents.
+
+==============================================================================
+EDITING                                                         *mvim-editing*
+
+<leader>d, <leader>D    delete without touching the yank register
+<leader>y, <leader>Y    yank to the system clipboard (Y: to end of line)
+visual <leader>p        paste over the selection, keeping the yank register
+J                       join lines without moving the cursor
+<C-d>, <C-u>, n, N      scroll or search, then center the cursor line
+<C-j>, <C-k>            next / previous quickfix entry
+<Esc>                   also clears search highlighting
+:W                      same as :w
+insert <A-c>            replace the line with the value of the last yank,
+                        evaluated as an expression (e.g. yank `2*21`)
+
+Surround (lua/mvim/surround.lua)                               *mvim-surround*
+ys{motion}{char}        surround, e.g. `ysiw(`
+yss{char}               surround the line
+ds{char}                delete surrounding pair
+cs{old}{new}            change surrounding pair
+visual S{char}          surround the selection
+An opening bracket adds inner spaces ("( word )"), a closing one doesn't
+("(word)"). b B r a mean ) } ] >. `.` repeats `ys`.
+
+Text objects (lua/mvim/indent.lua)                               *mvim-indent*
+ii                      lines at the cursor's indent or deeper
+ai                      the same plus the line above (the header)
+
+Autopairs (lua/mvim/autopairs.lua)                            *mvim-autopairs*
+Brackets and quotes close themselves, typing a closer steps over an existing
+one, <BS> in an empty pair deletes both, <CR> between brackets opens a line.
+
+Formatting (lua/mvim/format.lua)                                 *mvim-format*
+<leader>f               trim trailing whitespace, then run the filetype's
+                        formatters found on PATH (alejandra, stylua, ruff,
+                        rustfmt, gofmt, prettierd, shfmt, taplo, typstyle,
+                        mix, ...), else LSP formatting
+
+==============================================================================
+MULTIPLE CURSORS                                            *mvim-multicursor*
+
+Modeled on vim-visual-multi (lua/mvim/multicursor.lua).
+
+Start:
+<C-n>                   select the word under the cursor
+visual <C-n>            charwise: select the selected text
+                        linewise / blockwise: a cursor on every selected line
+<C-Down>, <C-Up>        add a cursor below / above
+
+While active:
+<C-n>, n                add the next match
+N                       add the previous match
+q                       skip this match, add the next
+Q                       remove the cursor you're on
+], [                    go to the next / previous cursor
+c d i a                 change, delete, insert before, append to selections
+<Esc>                   stop
+
+Motions (w, e, $, f,, 3j, ...) run at every cursor as soon as they finish.
+Edits are made once, then repeated with `.` at every cursor when they finish
+(on leaving insert mode). One `u` undoes an edit everywhere. Searches typed
+with / move only the current cursor.
+
+==============================================================================
+FINDING FILES AND TEXT                                          *mvim-picker*
+
+fzf in a floating window (lua/mvim/picker.lua). <Tab> marks several entries;
+<CR> opens them. <C-d>, <C-u> scroll the preview.
+
+<leader>h               files in the working directory
+<leader>t               files in the current file's directory
+<leader>pg              files git knows about
+<leader>ps              live grep
+<leader>pw, <leader>pW  grep for the word / WORD under the cursor
+<leader>pS              grep for a prompted string
+<leader>pt              TODO:, FIXME:, NOTE: ... comments
+visual <leader>h        grep for the selected text
+
+The preview goes below the list when the terminal is taller than wide.
+
+Directories (lua/mvim/dirbuf.lua)                                *mvim-dirbuf*
+-                       open the parent directory, cursor on where you were
+<CR>                    open the entry under the cursor
+g.                      show / hide dotfiles
+<C-o>                   back
+`nvim dir` and `:edit dir` open the same read-only listing.
+
+==============================================================================
+LSP                                                                 *mvim-lsp*
+
+Servers are enabled when their binary is on PATH (configs in mvim/lsp/).
+Completion opens while typing; <CR> accepts. Neovim's default LSP keys
+apply (|lsp-defaults|): grn rename, gra code action, grr references,
+gri implementation, grt type definition, gO symbols, K hover, <C-s>
+signature help, [d ]d diagnostics, <C-w>d diagnostic float, an / in to
+grow / shrink a selection by syntax node.
+
+Added (lua/mvim/lsp_keys.lua, shared with nixvim):
+gd                      definition; <C-t> goes back
+grc                     callers from files under the working directory
+grC                     all callers
+Both jump straight to a single result; servers without call hierarchy fall
+back to references.
+
+The error or warning for the cursor's line shows as text beneath it.
+
+                                                                     *:Direnv*
+:Direnv                 load direnv's environment for the working directory
+                        into this mvim (in the background) and start servers
+                        that became available. Never automatic, so a slow
+                        flake shell only builds when asked.
+
+==============================================================================
+GIT                                                                 *mvim-git*
+
+Signs in the sign column show changes against the staged version.
+
+<leader>g               status page (lua/mvim/git.lua):
+  s / u                 stage / unstage the file, hunk, section or selection
+  x                     discard the hunk, or a whole file whose diff isn't
+                        shown (deletes an untracked file); asks first
+  S / U                 stage / unstage everything
+  <Tab>                 show / hide the file's diff
+  <CR>                  open the file
+  c                     commit: write the message, :wq (:q! aborts)
+  p / P                 pull / push (a first push sets the upstream)
+  !                     force push with --force-with-lease; asks first
+  r                     refresh
+  q                     close
+
+                                                               *:GitResetHunk*
+:GitResetHunk           put the changed lines under the cursor back to their
+                        staged version (in the buffer; :w keeps it)
+                                                                   *:GitBlame*
+:GitBlame               who last changed the line, or each line of a range
+
+==============================================================================
+EVERYTHING ELSE                                                  *mvim-other*
+
+Sessions                                                       *:AutoSession*
+A session per directory is saved on exit and restored with
+`:AutoSession restore` (tmux-resurrect does this). Sessions unused for 30
+days are deleted.
+
+Highlighting
+Tokyonight night. Treesitter for common languages starts just after a file
+is first drawn. TODO, FIXME, NOTE, HACK ... get badges inside comments.
+Spell checking is on for markdown, gitcommit, typst and text.
+
+Removed with nixvim's plugins: harpoon (use file marks, `mA` / `'A`),
+quicker (`:copen`), luasnip, telescope's help and diagnostics pickers
+(`:help`, `:lua vim.diagnostic.setqflist()`).
+
+ vim:tw=78:ts=8:ft=help:norl:

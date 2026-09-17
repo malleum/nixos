@@ -31,6 +31,10 @@ local ns_keys = api.nvim_create_namespace("mvim_multicursor_keys")
 
 local state -- nil when inactive
 
+-- Loaded on first use (keys in init.lua), so highlights are set here.
+api.nvim_set_hl(0, "MvimSelection", { link = "Visual", default = true })
+api.nvim_set_hl(0, "MvimCursor", { link = "Cursor", default = true })
+
 local function pos(region)
   local mark = api.nvim_buf_get_extmark_by_id(state.buf, ns, region.id, { details = true })
   return { row = mark[1], col = mark[2], end_row = mark[3].end_row, end_col = mark[3].end_col }
@@ -220,6 +224,8 @@ local function replay()
     vim.cmd("silent! normal! .")
   end)
 end
+
+function M._replay() replay() end
 
 -- Run the keys of the motion just made at the other regions.
 local function replay_motion()
@@ -446,11 +452,22 @@ function M.start()
       end
     end,
   })
-  -- Normal-mode changes end with TextChanged; insert-mode ones with InsertLeave.
-  api.nvim_create_autocmd({ "TextChanged", "InsertLeave" }, {
+  -- Normal-mode changes end with TextChanged, which only fires once no typed
+  -- keys are waiting, so scheduling is safe. Insert-mode edits end with
+  -- InsertLeave; keys typed right after <Esc> may already be queued, so the
+  -- replay goes to the front of the queue to run before them.
+  api.nvim_create_autocmd("TextChanged", {
     group = state.group,
     buffer = buf,
     callback = function() vim.schedule(replay) end,
+  })
+  api.nvim_create_autocmd("InsertLeave", {
+    group = state.group,
+    buffer = buf,
+    callback = function()
+      local keys = api.nvim_replace_termcodes("<Cmd>lua require('mvim.multicursor')._replay()<CR>", true, false, true)
+      api.nvim_feedkeys(keys, "ni", false)
+    end,
   })
   api.nvim_create_autocmd("BufLeave", { group = state.group, buffer = buf, callback = M.stop })
 end
@@ -532,13 +549,6 @@ function M.visual()
   capture()
 end
 
-function M.setup()
-  api.nvim_set_hl(0, "MvimSelection", { link = "Visual", default = true })
-  api.nvim_set_hl(0, "MvimCursor", { link = "Cursor", default = true })
-  vim.keymap.set("n", "<C-n>", M.word, { desc = "Multicursor: word under cursor / next match" })
-  vim.keymap.set("x", "<C-n>", M.visual, { desc = "Multicursor: selected text, or cursors on selected lines" })
-  vim.keymap.set("n", "<C-Down>", function() add_cursor_vertical(1) end, { desc = "Multicursor: add cursor below" })
-  vim.keymap.set("n", "<C-Up>", function() add_cursor_vertical(-1) end, { desc = "Multicursor: add cursor above" })
-end
+function M.vertical(step) add_cursor_vertical(step) end
 
 return M

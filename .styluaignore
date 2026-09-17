@@ -1,0 +1,2 @@
+# Generated upstream (tokyonight.nvim extras); kept byte-for-byte for easy updates.
+mvim/colors/tokyonight.lua

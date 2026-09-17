@@ -178,6 +178,10 @@ you would rather have the Ampere box do the compiling natively.
 │       ├──  virtualization.nix
 │       └──  xdg.nix
 ├──  mvim
+│   ├──  colors
+│   │   └──  tokyonight.lua
+│   ├──  doc
+│   │   └──  mvim.txt
 │   ├──  init.lua
 │   ├──  lsp
 │   │   ├──  bashls.lua
@@ -218,13 +222,20 @@ you would rather have the Ampere box do the compiling natively.
 │   │       ├──  surround.lua
 │   │       ├──  todo.lua
 │   │       └──  treesitter.lua
-│   └──  queries
-│       ├──  c
-│       │   └──  injections.scm
-│       ├──  lua
-│       │   └──  injections.scm
-│       └──  vim
-│           └──  injections.scm
+│   ├──  queries
+│   │   ├──  c
+│   │   │   └──  injections.scm
+│   │   ├──  lua
+│   │   │   └──  injections.scm
+│   │   └──  vim
+│   │       └──  injections.scm
+│   └──  tests
+│       ├──  run.lua
+│       └──  spec
+│           ├──  editing.lua
+│           ├──  git.lua
+│           ├──  misc.lua
+│           └──  multicursor.lua
 ├──  nixvim
 │   └──  default.nix
 └── 󰂺 README.md

@@ -502,22 +502,15 @@ function M.blame(first, last)
   vim.lsp.util.open_floating_preview(lines, "", { focus_id = "mvim_git_blame" })
 end
 
-function M.setup()
-  vim.api.nvim_create_user_command(
-    "GitBlame",
-    function(opts) M.blame(opts.line1, opts.line2) end,
-    { range = true, desc = "Who last changed these lines" }
-  )
-  vim.keymap.set("n", "<leader>g", M.open, { desc = "Git status" })
-  -- Keep the page current when coming back to it (after editing a file, say).
-  api.nvim_create_autocmd("BufEnter", {
-    pattern = "mvimgit://*",
-    callback = function(args)
-      if pages[args.buf] then
-        render(args.buf)
-      end
-    end,
-  })
-end
+-- Loaded on first use (keys and :GitBlame in init.lua). Keep the page current
+-- when coming back to it (after editing a file, say).
+api.nvim_create_autocmd("BufEnter", {
+  pattern = "mvimgit://*",
+  callback = function(args)
+    if pages[args.buf] then
+      render(args.buf)
+    end
+  end,
+})
 
 return M
