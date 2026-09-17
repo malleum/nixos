@@ -1,16 +1,18 @@
 {inputs, ...}: {
-  # Which neovim a host gets. The full build is nixvim with LSP servers,
-  # formatters and linters -- including ltex-ls-plus, which drags in a JDK --
-  # and measures 7.4 GiB of closure. mvim is plain neovim-unwrapped plus the
-  # hand-written Lua config in ../../mvim: no plugins, no nixvim, no bundled
-  # language tooling (servers and formatters are used when a devshell puts them
-  # on PATH). That is editor tooling, so it follows the `dev` module rather than
-  # the hostname.
+  # The neovim builds. mvim is plain neovim-unwrapped plus the hand-written Lua
+  # config in ../../mvim: no plugins, no nixvim, no bundled language tooling
+  # (servers and formatters are used when a devshell puts them on PATH). Every
+  # host gets it as `nvim` and `vi` (modules/packages/cli.nix).
+  #
+  # The full build is nixvim with LSP servers, formatters and linters --
+  # including ltex-ls-plus, which drags in a JDK -- and measures 7.4 GiB of
+  # closure. That is editor tooling, so it follows the `dev` module rather than
+  # the hostname, and is installed as `nixvim` alongside mvim.
   unify.nixos = {lib, ...}: {
     options.local.fullNvim = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Use the full nixvim (LSP, linters, ltex) rather than the plugin-free mvim.";
+      description = "Also install the full nixvim build (LSP, linters, ltex) as `nixvim`.";
     };
   };
 

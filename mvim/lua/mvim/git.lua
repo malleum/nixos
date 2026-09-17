@@ -4,7 +4,9 @@
 --   s / u      stage / unstage the file under the cursor; on a hunk of a shown
 --              diff, just that hunk; on a section heading, every file in it;
 --              in visual mode, every selected file
---   x          discard the unstaged hunk under the cursor (asks first)
+--   x          discard (asks first): the unstaged hunk under the cursor, or on
+--              a file whose diff isn't shown, all its unstaged changes (an
+--              untracked file is deleted)
 --   S / U      stage everything / unstage everything
 --   <Tab>      show or hide the file's diff inline
 --   <CR>       open the file
@@ -23,7 +25,7 @@ local ns = api.nvim_create_namespace("mvim_git")
 local pages = {} -- status buffer -> { root, expanded, items }
 
 local help =
-  "s stage  u unstage  x discard hunk  S/U all  <Tab> diff  <CR> open  c commit  p pull  P push  ! force push  r refresh  q close"
+  "s stage  u unstage  x discard  S/U all  <Tab> diff  <CR> open  c commit  p pull  P push  ! force push  r refresh  q close"
 
 -- Runs git synchronously in `root`. Returns ok, stdout, stderr.
 local function git(root, args)
@@ -267,19 +269,49 @@ local function unstage(buf, first, last)
   render(buf)
 end
 
-local function discard_hunk(buf)
-  local item = pages[buf].items[vim.fn.line(".")]
-  if not (item and item.hunk and item.section == "unstaged") then
-    vim.notify("Put the cursor on an unstaged hunk (<Tab> shows a file's diff)", vim.log.levels.INFO)
-    return
-  end
-  if vim.fn.confirm("Discard this hunk from " .. item.path .. "?", "&Yes\n&No", 2) ~= 1 then
-    return
-  end
-  if apply_hunk(pages[buf].root, item, { "--reverse" }) then
+-- x: on a hunk of a shown unstaged diff, discard that hunk. On a file line whose
+-- diff isn't shown, discard the whole file: unstaged changes go back to the
+-- staged version (git restore), an untracked file is deleted (git clean).
+local function discard(buf)
+  local s = pages[buf]
+  local item = s.items[vim.fn.line(".")]
+  local function done()
     vim.cmd("silent! checktime") -- reload the file if it's open
+    render(buf)
   end
-  render(buf)
+
+  if item and item.hunk and item.section == "unstaged" then
+    if vim.fn.confirm("Discard this hunk from " .. item.path .. "?", "&Yes\n&No", 2) == 1 then
+      apply_hunk(s.root, item, { "--reverse" })
+      done()
+    end
+    return
+  end
+
+  local expanded = item and item.path and s.expanded[item.section .. "\0" .. item.path]
+  if item and item.path and not item.hunk and not expanded then
+    local prompt, args
+    if item.section == "unstaged" then
+      prompt, args = "Discard all unstaged changes to " .. item.path .. "?", { "restore", "--", item.path }
+    elseif item.section == "untracked" then
+      prompt, args = "Delete untracked file " .. item.path .. "?", { "clean", "-f", "--", item.path }
+    end
+    if prompt then
+      if vim.fn.confirm(prompt, "&Yes\n&No", 2) == 1 then
+        local ok, out, err = git(s.root, args)
+        if not ok then
+          notify_output("git " .. args[1], ok, out, err)
+        end
+        done()
+      end
+      return
+    end
+  end
+
+  vim.notify(
+    "x discards an unstaged hunk, or an unstaged or untracked file whose diff isn't shown",
+    vim.log.levels.INFO
+  )
 end
 
 local function commit(buf)
@@ -379,7 +411,7 @@ local function set_maps(buf)
       vim.cmd.edit(vim.fn.fnameescape(vim.fs.joinpath(pages[buf].root, it.path)))
     end
   end)
-  map("n", "x", function() discard_hunk(buf) end)
+  map("n", "x", function() discard(buf) end)
   map("n", "c", function() commit(buf) end)
   map("n", "p", function() remote_op(buf, "Pull", { "pull" }) end)
   map("n", "P", function() remote_op(buf, "Push", { "push" }, true) end)
