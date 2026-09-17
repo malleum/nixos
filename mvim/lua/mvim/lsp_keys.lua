@@ -4,12 +4,13 @@
 --
 --   grn rename          gra code action      grr references (quickfix)
 --   gri implementation  grt type definition  grx run code lens
---   gO  document symbols  K hover  <C-s> signature help (insert)
+--   gO  document symbols  <C-s> signature help (insert)
 --   <C-]> definition (<C-t> back; g<C-]> lists several)
 --   [d ]d prev/next diagnostic  [D ]D first/last  <C-w>d diagnostic float
 --   an / in  grow / shrink selection by syntax node  [N ]N siblings
 --
 -- Added here:
+--   K    hover, and nothing when no server is attached (see below)
 --   gd   definition, in LSP buffers only (<C-]> is awkward on Dvorak). Jumps
 --        when there is one result (<C-t> back), quickfix when several. Buffers
 --        without LSP keep vim's own gd.
@@ -20,8 +21,15 @@
 -- when available, else quickfix). Servers without call hierarchy (nixd,
 -- lua_ls) fall back to references, filtered the same way.
 
--- K outside LSP buffers opens :help instead of a man page.
-vim.o.keywordprg = ":help"
+-- K is hover, and only hover: without a language server it says so instead of
+-- opening vim's keywordprg window (:help or a man page), which never had the
+-- documentation being looked for and hid that no server was running.
+vim.keymap.set(
+  "n",
+  "K",
+  function() vim.notify("No language server attached (:Direnv loads a devshell's)", vim.log.levels.WARN) end,
+  { desc = "Hover (LSP only)" }
+)
 
 local CALLS = "textDocument/prepareCallHierarchy"
 
@@ -113,6 +121,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client and client:supports_method("textDocument/definition") then
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = args.buf, desc = "LSP definition" })
+    end
+    -- neovim only maps its default K when nothing else has; ours above counts.
+    if client and client:supports_method("textDocument/hover") then
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = args.buf, desc = "LSP hover" })
     end
   end,
 })

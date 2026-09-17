@@ -181,3 +181,15 @@ test("startup defers LSP setup and leaves git and multicursor unloaded", functio
   }]])
   eq({ git = false, multicursor = false }, loaded)
 end)
+
+test("K without a language server opens nothing", function(c)
+  c:edit(c:write("a.txt", { "word" }))
+  local before = c:lua("return #vim.api.nvim_list_wins()")
+  c:keys("K")
+  c:settle()
+  eq(before, c:lua("return #vim.api.nvim_list_wins()"), "no window opened")
+  eq(
+    "No language server attached (:Direnv loads a devshell's)",
+    c:lua([==[return vim.split(vim.api.nvim_exec2("messages", { output = true }).output, "\n")[1]]==])
+  )
+end)

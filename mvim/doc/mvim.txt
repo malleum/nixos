@@ -102,9 +102,12 @@ LSP                                                                 *mvim-lsp*
 Servers are enabled when their binary is on PATH (configs in mvim/lsp/).
 Completion opens while typing; <CR> accepts. Neovim's default LSP keys
 apply (|lsp-defaults|): grn rename, gra code action, grr references,
-gri implementation, grt type definition, gO symbols, K hover, <C-s>
-signature help, [d ]d diagnostics, <C-w>d diagnostic float, an / in to
-grow / shrink a selection by syntax node.
+gri implementation, grt type definition, gO symbols, <C-s> signature
+help, [d ]d diagnostics, <C-w>d diagnostic float, an / in to grow /
+shrink a selection by syntax node.
+
+K                       hover. Without a language server attached it says
+                        so rather than opening vim's keywordprg window.
 
 Added (lua/mvim/lsp_keys.lua, shared with nixvim):
 gd                      definition; <C-t> goes back

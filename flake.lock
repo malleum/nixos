@@ -1532,11 +1532,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789662145,
-        "narHash": "sha256-a/WYacqsjDa88vGDWC1Vo3qM8ebxeCvmiv/8OZ19/5g=",
+        "lastModified": 1789668134,
+        "narHash": "sha256-Ys88OeVYYFdH+Q3t8xmHOhlNrn3p0OzVzSmI6J+WhzE=",
         "owner": "malleum",
         "repo": "teno",
-        "rev": "3362f7070432f9e37aa8789ef41de964d49f41bb",
+        "rev": "c836bfc5ea4dd8d6a134f247c77bcf5197f0ea08",
         "type": "github"
       },
       "original": {
