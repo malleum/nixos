@@ -22,13 +22,10 @@
       # --- Your Preferences ---
       "general.useragent.locale" = "en-US"; # Set language to US English
       "browser.shell.checkDefaultBrowser" = false; # Disable default browser check
-      "browser.download.useDownloadDir" = true; # Save files to Downloads folder
       "browser.download.always_ask_before_handling_new_types" = true; # Never auto-open downloads (csv etc.) — always ask/save, no LibreOffice autolaunch
-      "browser.tabs.loadInBackground" = true; # Open new tabs in background
       "browser.ctrlTab.recentlyUsedOrder" = false; # Cycle tabs in visual order, not LRU
       "browser.ssb.enabled" = false; # Disable "Site Specific Browser" (PWA-like) feature
       "browser.sessionstore.resume_from_crash" = false; # Never auto-restore session after a crash
-      "general.autoScroll" = false; # Middle-click auto-scroll
       "ui.systemUsesDarkTheme" = 1; # Enable Firefox's built-in dark UI
       "ui.key.menuAccessKey" = 0; # Disable Alt key opening menu
 
@@ -37,7 +34,6 @@
       "app.shield.optoutstudies.enabled" = false; # Disable Shield (telemetry/studies)
       "app.normandy.api_url" = ""; # Disable Normandy endpoint
       "app.normandy.enabled" = false; # Disable Normandy
-      "app.update.channel" = "default"; # Set update channel (managed by Nix)
       "extensions.update.enabled" = false; # Disable extension auto-updates (managed by Nix)
       "browser.discovery.enabled" = false; # Disable "Recommendations" feature
       "browser.startup.homepage" = "about:newtab"; # Set homepage to new tab
@@ -53,7 +49,6 @@
       "datareporting.policy.dataSubmissionEnabled" = false; # Disable data reporting
       "datareporting.healthreport.uploadEnabled" = false; # Disable health report upload
       "toolkit.telemetry.unified" = false; # Disable unified telemetry
-      "toolkit.telemetry.enabled" = false; # Disable all telemetry
       "toolkit.telemetry.server" = "data:,"; # Point telemetry server to nowhere
       "toolkit.telemetry.archive.enabled" = false; # Disable telemetry archive
       "toolkit.telemetry.newProfilePing.enabled" = false; # Disable telemetry ping
@@ -78,7 +73,6 @@
 
       # --- Privacy ---
       "browser.contentblocking.category" = "standard"; # "strict" can break sites
-      "dom.forms.autocomplete.formautofill" = false; # Disable form autofill
       "privacy.donottrackheader.enabled" = true; # Enable "Do Not Track" header
       "network.connectivity-service.enabled" = false; # Disable Mozilla connectivity check
 
@@ -88,19 +82,12 @@
       # --- Hardware Acceleration (Fix for Tearing) ---
       "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
       "gfx.webrender.enabled" = true; # Just to be sure
-      "gfx.webrender.compositor" = true; # Enable Wayland native-compositor passthrough for better performance (may cause jay protocol errors on monitor disconnects)
       "media.ffmpeg.vaapi.enabled" = true; # VA-API hardware video decode
       "media.ffvpx.enabled" = true; # Software VP8/VP9 fallback when VA-API can't handle codec
-      "media.rdd-process.enabled" = true; # Sandbox video decode in RDD process
-      "media.rdd-ffmpeg.enabled" = true; # Route ffmpeg/VA-API through RDD sandbox
-      "media.av1.enabled" = true; # AV1 decode (HW on new GPUs)
       "media.webrtc.pipewire.enabled" = true;
 
       # --- Wayland-specific ---
-      "widget.wayland.opaque-region.enabled" = true; # Proper Wayland compositing
       "widget.wayland-dmabuf-vaapi.enabled" = true; # Zero-copy VA-API → compositor via DMA-BUF
-      "widget.dmabuf-webgl.enabled" = true; # DMA-BUF for WebGL on Wayland
-      "gfx.x11-egl.force-enabled" = false; # Stay on Wayland EGL path
 
       # --- Auto-Enable Extensions & Hide Prompts ---
       "extensions.startupScanScopes" = 1; # Allow extensions from user profile
@@ -109,14 +96,11 @@
 
       # --- DRM (Widevine) auto-accept ---
       "media.eme.enabled" = true; # Master EME (DRM) switch — pre-accept
-      "media.gmp-widevinecdm.enabled" = true; # Enable Widevine CDM
-      "media.gmp-widevinecdm.visible" = true; # Show Widevine in plugins list
       "media.gmp-widevinecdm.autoupdate" = true; # Keep Widevine current
       "media.gmp-manager.updateEnabled" = true; # Allow GMP (Widevine etc.) downloads
 
       # --- Suppress mailto / protocol-handler registration popups ---
       "network.protocol-handler.external.mailto" = false; # Don't hand mailto to external app
-      "network.protocol-handler.expose.mailto" = false; # Hide mailto handler entirely
       "gecko.handlerService.allowRegisterFromDifferentHost" = false; # Block cross-host handler registration
 
       # --- Hide Bookmarks Bar ---
