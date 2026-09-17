@@ -1288,6 +1288,7 @@
         "sops-nix": "sops-nix",
         "stable": "stable",
         "stylix": "stylix",
+        "teno": "teno",
         "termword": "termword",
         "unify": "unify",
         "waywall": "waywall",
@@ -1521,6 +1522,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "teno": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789662145,
+        "narHash": "sha256-a/WYacqsjDa88vGDWC1Vo3qM8ebxeCvmiv/8OZ19/5g=",
+        "owner": "malleum",
+        "repo": "teno",
+        "rev": "3362f7070432f9e37aa8789ef41de964d49f41bb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "teno",
         "type": "github"
       }
     },

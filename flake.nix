@@ -126,6 +126,11 @@
       url = "github:malleum/termword";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    teno = {
+      url = "github:malleum/teno";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (
