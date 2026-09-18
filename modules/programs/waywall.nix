@@ -138,16 +138,29 @@
         mcsr = {
           layout = "mcsr";
           variant = "";
+          # Game inputs belong here; plain letters belong in the layout
+          # (modules/hardware/mcsr_keyboard.nix). GLFW on Wayland reads
+          # hardcoded evdev scancodes and ignores the xkb layout, so anything
+          # Minecraft treats as a bind has to be remapped at this level.
+          #
+          # 0 and Backspace are the awkward pair: they look like text, but
+          # Minecraft rejects the keycodes the layout emits for them and only
+          # accepts the ones a remap produces. So they stay here, and the
+          # layout deliberately leaves CAPS, AC03, AE10 and BKSP alone.
           remaps = {
             "m5" = "f3";
             "capslock" = "0";
+            "D" = "Backspace";
 
-            # Ctrl and Shift are swapped so sprint sits under the little
-            # finger; D becomes Backspace and Grave/Tab shift along to keep the
-            # search-craft keys reachable without moving the left hand.
+            # Ctrl and Shift are swapped so sprint sits under the little finger.
             "LeftShift" = "LeftCtrl";
             "LeftCtrl" = "LeftShift";
-            "D" = "Backspace";
+
+            # Grave takes over as the real Tab, which frees the physical Tab
+            # key -- the far more reachable one -- to be a search-craft key. It
+            # cannot simply keep emitting Tab, or grave and Tab would both
+            # produce the same input, so it is shunted onto Dot and the layout
+            # gives Dot the letter "i".
             "Grave" = "Tab";
             "Tab" = "Dot";
 
