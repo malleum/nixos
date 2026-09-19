@@ -227,6 +227,18 @@
 
       # Default toggleCommand drives the systemd user unit defined below.
 
+      # One-cycle practice: pause, open to LAN with cheats, perch the dragon.
+      # Input goes through ydotool (modules/programs/ydotool.nix) because
+      # neither jay nor waywall implements virtual-keyboard-unstable-v1, so
+      # wtype has nothing to bind to in either of them.
+      perch = {
+        enable = true;
+        # 2 for vanilla 1.16's pause menu, +1 for the button fast-reset adds.
+        # Drop this to 2 on an instance without that mod, or the bind lands on
+        # "Save and Quit to Title" instead of "Open to LAN".
+        pauseShiftTabs = 3;
+      };
+
       resizeAnimation = {
         # Feeds ~/.waywall_state, which resize_animation_waywall.py reads inside
         # OBS to tween the capture transform on every resolution change.
@@ -242,6 +254,9 @@
         ninbot = "*-ctrl-k";
         cps = "*-ctrl-7";
         crosshair = "*-ctrl-8";
+        # Out of the way on purpose: it pauses the game and rewrites the
+        # keymap, so it must not be within reach of a mid-run fumble.
+        perch = "*-ctrl-9";
       };
     };
 

@@ -91,7 +91,7 @@
     # Session daemons: supervised and scoped to the session, so PartOf stops
     # them when the target stops. The Signal and iamb units live in the `cht`
     # module, since a laptop that does not take chat should not pull them in.
-    mkSessionUnit = import ./_session-unit.nix {inherit lib;};
+    mkSessionUnit = import ./_session-unit.nix {inherit lib pkgs;};
   in {
     home.packages = [
       jayPkg

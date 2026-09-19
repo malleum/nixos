@@ -8,7 +8,7 @@
 
     # Launched at login, not supervised -- see the helper for why these are
     # Restart=no with X-SwitchMethod=keep-old.
-    mkSessionUnit = import ./jay/_session-unit.nix {inherit lib;};
+    mkSessionUnit = import ./jay/_session-unit.nix {inherit lib pkgs;};
 
     # Jay is not GNOME; Electron will not auto-pick libsecret.
     withGnomeLibsecret = pkg: bin:
@@ -47,6 +47,7 @@
         description = "Signal";
         exec = "${signal}/bin/signal-desktop";
         restart = false;
+        once = "signal";
         guard = "${pkgs.bash}/bin/bash -c '! ${pkgs.procps}/bin/pgrep -x -u \"$USER\" signal-desktop >/dev/null'";
       };
 
@@ -60,6 +61,9 @@
         # than hanging the session forever.
         exec = "${pkgs.bash}/bin/bash -c '${pkgs.networkmanager}/bin/nm-online -q -t 30; exec ${pkgs.foot}/bin/foot --app-id=iamb --title=iamb ${jiamb}/bin/iamb'";
         restart = false;
+        # Opened at most once per session: quitting iamb in favour of Element
+        # used to be undone by the next `nh os switch`. See _session-unit.nix.
+        once = "iamb";
         # Skip the start if an iamb is already up -- systemd-launched or
         # spawned by hand from a terminal. See _session-unit.nix.
         guard = "${pkgs.bash}/bin/bash -c '! ${pkgs.procps}/bin/pgrep -x -u \"$USER\" iamb >/dev/null'";
