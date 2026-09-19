@@ -16,6 +16,25 @@
       Type=Application
     '';
 
+    # Without this, late-boot console output (systemd unit status, kernel
+    # messages) is still written to the VT tuigreet is drawing on and paints
+    # over the form. Quiet the console, and let greetd own the tty: Type=idle
+    # holds the start until the rest of the boot job queue is drained, and the
+    # TTY* settings hand it a cleared VT.
+    boot.consoleLogLevel = 0;
+    boot.kernelParams = ["quiet" "udev.log_level=3"];
+    boot.initrd.verbose = false;
+
+    systemd.services.greetd.serviceConfig = {
+      Type = "idle";
+      StandardInput = "tty";
+      StandardOutput = "tty";
+      StandardError = "journal";
+      TTYReset = true;
+      TTYVHangup = true;
+      TTYVTDisallocate = true;
+    };
+
     services.greetd = {
       enable = true;
       settings.default_session = {
