@@ -237,6 +237,10 @@
         # Drop this to 2 on an instance without that mod, or the bind lands on
         # "Save and Quit to Title" instead of "Open to LAN".
         pauseShiftTabs = 3;
+        # standardoptions.txt -- the binds that survive a reset, unlike
+        # options.txt -- puts key_key.command on left bracket rather than the
+        # vanilla slash. Sending slash opens nothing at all.
+        commandKey = 26;
       };
 
       resizeAnimation = {
