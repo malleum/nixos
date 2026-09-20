@@ -152,6 +152,15 @@
             "capslock" = "0";
             "D" = "Backspace";
 
+            # F3+A reloads chunks *and* swallows the strafe-left press:
+            # handleDebugKeys consumes it, so KeyMapping.set never runs and the
+            # strafe silently dies mid-run. Minecraft reads the scancode and
+            # never the layout, so no arrangement of search-craft letters can
+            # avoid it -- the scancode itself has to stop being A. Right brace
+            # carries no debug combo, so the key keeps strafing (options.txt
+            # binds key_key.left to it) and xkb still types "a" from it.
+            "A" = "RIGHTBRACE";
+
             # Ctrl and Shift are swapped so sprint sits under the little finger.
             "LeftShift" = "LeftCtrl";
             "LeftCtrl" = "LeftShift";
@@ -171,6 +180,7 @@
             "0" = "F23";
             "Backspace" = "F22";
             "Dot" = "F21";
+            "RIGHTBRACE" = "F20";
           };
         };
 

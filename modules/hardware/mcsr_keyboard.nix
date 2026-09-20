@@ -51,7 +51,11 @@
       # CAPS -> 0 and AC03 -> Backspace are NOT here: Minecraft refuses the
       # keycodes this layer emits for those two and only accepts the ones
       # waywall's remap table produces, so both live there instead.
-      "AC01" = "a"; # a
+
+      # "a" sits on AD12, not AC01, because waywall remaps physical A ->
+      # RightBrace so that F3+A can never reach Minecraft. The key under the
+      # finger is still A.
+      "AD12" = "a"; # ] (reached by pressing A)
       "AC02" = "s"; # s
       "AC04" = "k"; # f
 
@@ -68,6 +72,7 @@
       "AD06" = "VoidSymbol"; # f
       "AD08" = "VoidSymbol"; # i
       "AD09" = "VoidSymbol"; # o
+      "AC01" = "VoidSymbol"; # a (no key emits this code any more)
       "AC06" = "VoidSymbol"; # h
       "AC07" = "VoidSymbol"; # j
       "AC08" = "VoidSymbol"; # k
