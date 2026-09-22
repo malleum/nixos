@@ -1,37 +1,17 @@
-{inputs, ...}: {
-  # The neovim builds. mvim is plain neovim-unwrapped plus the hand-written Lua
-  # config in ../../mvim: no plugins, no nixvim, no bundled language tooling
-  # (servers and formatters are used when a devshell puts them on PATH). Every
-  # host gets it as `nvim` and `vi` (modules/packages/cli.nix).
+{
+  # The neovim build. mvim is plain neovim-unwrapped plus the hand-written Lua
+  # config in ../../mvim: no plugins, no bundled language tooling (servers and
+  # formatters are used when a devshell puts them on PATH). Every host gets it
+  # as `nvim` and `vi` (modules/packages/cli.nix).
   #
-  # The full build is nixvim with LSP servers, formatters and linters --
-  # including ltex-ls-plus, which drags in a JDK -- and measures 7.4 GiB of
-  # closure. That is editor tooling, so it follows the `dev` module rather than
-  # the hostname, and is installed as `nixvim` alongside mvim.
-  unify.nixos = {lib, ...}: {
-    options.local.fullNvim = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Also install the full nixvim build (LSP, linters, ltex) as `nixvim`.";
-    };
-  };
-
+  # It is the only editor build here. The nixvim configuration that used to sit
+  # alongside it -- LSP servers, formatters, linters and a 7.4 GiB closure --
+  # is gone, along with its flake input and the `local.fullNvim` switch.
   perSystem = {
     pkgs,
     lib,
-    system,
     ...
   }: let
-    nixvim = inputs.nixvim.legacyPackages.${system}.makeNixvimWithModule {
-      inherit system;
-      module = {
-        imports = [(import ../../nixvim)];
-        nixpkgs.source = inputs.nixpkgs;
-        version.enableNixpkgsReleaseCheck = false;
-      };
-      extraSpecialArgs = {inherit pkgs inputs;};
-    };
-
     # Treesitter for mvim: neovim bundles c, lua, markdown, query, vim and
     # vimdoc; these add the languages in regular use. Highlight queries come
     # from nvim-treesitter (as data -- the plugin itself is not loaded), and
@@ -136,12 +116,6 @@
       program = "${mvim}/bin/nvim";
     };
     packages.default = mvim;
-
-    apps.nvim = {
-      type = "app";
-      program = "${nixvim}/bin/nvim";
-    };
-    packages.nvim = nixvim;
 
     apps.mvim = {
       type = "app";

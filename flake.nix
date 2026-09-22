@@ -55,11 +55,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Deliberately NOT following nixpkgs: Hyprland's cachix only has binaries
     # built against its own pin, and overriding it forces a local build.
     hypr.url = "github:hyprwm/Hyprland";
@@ -104,11 +99,6 @@
 
     weave = {
       url = "github:malleum/weave";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    mc = {
-      url = "github:malleum/mc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
