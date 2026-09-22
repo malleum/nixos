@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{
   unify.modules.gui.home = {pkgs, ...}: {
     home.packages = with pkgs; [
       acpi
@@ -13,8 +13,8 @@
       openssl
       sops
       speedtest-cli
-      inputs.lerni.packages.${pkgs.stdenv.hostPlatform.system}.default
-      inputs.termword.packages.${pkgs.stdenv.hostPlatform.system}.default
+      # lerni and termword are uncached flake inputs; they live in
+      # modules/meta/source-builds.nix so a host without `src` never builds them.
     ];
 
     xdg.dataFile."qalculate/definitions/units.xml".text = import ../../lib/qalculate_units.nix;

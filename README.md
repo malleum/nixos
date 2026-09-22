@@ -70,8 +70,7 @@ modules/
   services/   long-running things, desktop and server
   style/      stylix theme and wallpapers
   system/     boot, audio, network, locale, security
-mvim/         the everyday neovim config, plain Lua
-nixvim/       the full neovim build with language tooling
+mvim/         the neovim config, plain Lua
 lib/          plain Nix helpers, not auto-imported
 ```
 
@@ -103,7 +102,7 @@ A few conventions carry most of the structure:
 | `gui` | The desktop: jay, login manager, audio, bluetooth, terminal, browsers, theme, notifications, keyring |
 | `lap` | Battery and backlight handling |
 | `efi` | systemd-boot |
-| `dev` | Programming toolchains and the full `nixvim` build |
+| `dev` | Programming toolchains |
 | `ai` | Claude Code, Cursor and other assistant CLIs |
 | `cht` | Matrix (iamb) and Signal |
 | `med` | Media players, OBS, Spotify, Vesktop, text-to-speech |
@@ -193,12 +192,11 @@ the status bar.
 
 ## Editor
 
-Two neovim builds, both from this repo (`modules/meta/nvim.nix`):
+One neovim build, from this repo (`modules/meta/nvim.nix`):
 
 | Command | Build | Use |
 | :--- | :--- | :--- |
-| `nvim`, `vi` | **mvim**: plain neovim plus the Lua in `mvim/`, no plugin manager | Everyday editing, on every host |
-| `nixvim` | **nixvim**: LSP servers, formatters, linters bundled | `dev` hosts only; large closure |
+| `nvim`, `vi` | **mvim**: plain neovim plus the Lua in `mvim/`, no plugin manager | All editing, on every host |
 
 mvim ships no language tooling of its own. It uses whatever is on `PATH`, and
 `devinit` writes a per-project flake dev shell with the right servers and
