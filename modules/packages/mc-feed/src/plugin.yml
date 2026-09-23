@@ -1,0 +1,6 @@
+name: ServerFeed
+version: "1.0.0"
+main: com.joshammer.mcfeed.ServerFeed
+description: "Loopback HTTP feed of join/leave/death/advancement events, for the Matrix bot."
+api-version: "1.21"
+folia-supported: false

@@ -117,7 +117,14 @@
         # restarts as `vi` and answers to `:AutoSession restore`. There used to
         # be a second pattern for the nixvim build (matched on its
         # vim-pack-dir), which no longer exists.
-        set -g @resurrect-processes 'claude cursor-agent ca agy "~mvim/init.lua->vi -c AutoSession\ restore"'
+        # cursor-agent needs the `->` form: its wrapper ends in
+        # `exec -a "$0" node --use-system-ca .../index.js "$@"`, so argv[0]
+        # stays `cursor-agent` while the rest of the saved line is node's.
+        # Replaying that verbatim hands node's flag to index.js, which rejects
+        # it ("unknown option '--use-system-ca'"). resurrect cannot keep our
+        # own arguments through this, so the restored agent starts cold; teno
+        # strips the interpreter instead and resumes.
+        set -g @resurrect-processes 'claude agy "~cursor-agent->cursor-agent" "~mvim/init.lua->vi -c AutoSession\ restore"'
         set -g @continuum-save-interval '5'
         set -g @continuum-restore 'on'
 
