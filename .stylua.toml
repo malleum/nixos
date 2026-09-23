@@ -1,0 +1,5 @@
+# stylua settings for mvim/, matching how it is written.
+column_width = 120
+indent_type = "Spaces"
+indent_width = 2
+collapse_simple_statement = "FunctionOnly"

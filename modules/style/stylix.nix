@@ -50,7 +50,6 @@
 
       targets = {
         kmscon.enable = false;
-        nixvim.enable = false;
       };
     };
   };
@@ -76,8 +75,8 @@
     stylix.enableReleaseChecks = false;
 
     stylix.targets = {
+      bat.enable = false; # tokyonight, set in modules/programs/cli.nix
       hyprpaper.enable = lib.mkForce false;
-      nixvim.enable = false;
       rofi.enable = false;
       tmux.enable = false;
       waybar.enable = false;

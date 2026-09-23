@@ -33,6 +33,7 @@
     config,
     hostConfig,
     lib,
+    nixosConfig,
     pkgs,
     ...
   }: let
@@ -53,6 +54,12 @@
       then "1"
       else "303142";
 
+    # Built from a pinned git rev -- there is no cached wl-tray-bridge -- so it
+    # follows `local.buildFromSource` (modules/meta/source-builds.nix). A host
+    # without `src` gets no tray at all: nm-applet has no StatusNotifier host to
+    # register with, so it is gated alongside the bridge rather than left to
+    # start and do nothing.
+    tray = nixosConfig.local.buildFromSource;
     wlTrayBridge = import ./_tray-bridge.nix {inherit pkgs;};
     jayStatus = import ./_status.nix {
       inherit pkgs;
@@ -91,7 +98,7 @@
     # Session daemons: supervised and scoped to the session, so PartOf stops
     # them when the target stops. The Signal and iamb units live in the `cht`
     # module, since a laptop that does not take chat should not pull them in.
-    mkSessionUnit = import ./_session-unit.nix {inherit lib;};
+    mkSessionUnit = import ./_session-unit.nix {inherit lib pkgs;};
   in {
     home.packages = [
       jayPkg
@@ -114,67 +121,71 @@
       pkgs.wl-mirror
     ];
 
-    systemd.user.services = {
-      # The tray host. Needs privileged protocol access for jay_tray_v1, which
-      # a keybinding got via `privileged = true`; as a unit it has to ask for
-      # that itself through `jay run-privileged`.
-      wl-tray-bridge = mkSessionUnit {
-        description = "StatusNotifier tray bridge for jay";
-        exec = "${jayPkg}/bin/jay run-privileged -- ${wlTrayBridge}/bin/wl-tray-bridge";
-      };
+    systemd.user.services =
+      lib.optionalAttrs tray {
+        # The tray host. Needs privileged protocol access for jay_tray_v1, which
+        # a keybinding got via `privileged = true`; as a unit it has to ask for
+        # that itself through `jay run-privileged`.
+        wl-tray-bridge = mkSessionUnit {
+          description = "StatusNotifier tray bridge for jay";
+          exec = "${jayPkg}/bin/jay run-privileged -- ${wlTrayBridge}/bin/wl-tray-bridge";
+        };
 
-      nm-applet = mkSessionUnit {
-        description = "NetworkManager tray applet";
-        exec = "${pkgs.networkmanagerapplet}/bin/nm-applet";
-      };
+        nm-applet = mkSessionUnit {
+          description = "NetworkManager tray applet";
+          exec = "${pkgs.networkmanagerapplet}/bin/nm-applet";
+        };
+      }
+      // {
+        swaybg = mkSessionUnit {
+          description = "Wallpaper";
+          exec = "${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill";
+        };
 
-      swaybg = mkSessionUnit {
-        description = "Wallpaper";
-        exec = "${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill";
-      };
+        # Renders the password prompt when polkit returns auth_admin. polkitd
+        # itself only decides *whether* to ask; with no agent registered on the
+        # session bus the request fails silently, which is why GUI privilege
+        # escalation (nm-connection-editor on system connections, gparted,
+        # fwupdmgr) did nothing at all.
+        polkit-agent = mkSessionUnit {
+          description = "polkit authentication agent";
+          exec = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        };
 
-      # Renders the password prompt when polkit returns auth_admin. polkitd
-      # itself only decides *whether* to ask; with no agent registered on the
-      # session bus the request fails silently, which is why GUI privilege
-      # escalation (nm-connection-editor on system connections, gparted,
-      # fwupdmgr) did nothing at all.
-      polkit-agent = mkSessionUnit {
-        description = "polkit authentication agent";
-        exec = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      };
+        # Night light. jay exposes wlr-gamma-control to privileged clients only,
+        # hence run-privileged rather than a [[clients]] rule.
+        # Coordinates are Easley, SC.
+        wlsunset = mkSessionUnit {
+          description = "Day/night colour temperature";
+          exec = "${jayPkg}/bin/jay run-privileged -- ${pkgs.wlsunset}/bin/wlsunset -l 34.83 -L -82.60 -t 3500 -T 6500";
+        };
 
-      # Night light. jay exposes wlr-gamma-control to privileged clients only,
-      # hence run-privileged rather than a [[clients]] rule.
-      # Coordinates are Easley, SC.
-      wlsunset = mkSessionUnit {
-        description = "Day/night colour temperature";
-        exec = "${jayPkg}/bin/jay run-privileged -- ${pkgs.wlsunset}/bin/wlsunset -l 34.83 -L -82.60 -t 3500 -T 6500";
+        # Draws the volume/brightness/caps-lock overlay. Needs layer-shell,
+        # granted by a [[clients]] rule in _config.nix.
+        #
+        # --top-margin is a fraction of screen height and defaults to 0.85, i.e.
+        # near the bottom. 0.05 puts the popup just under the bar. Which output
+        # it lands on is decided per-invocation by jay-osd, not here.
+        swayosd = mkSessionUnit {
+          description = "On-screen volume/brightness indicator";
+          exec = "${pkgs.swayosd}/bin/swayosd-server --top-margin 0.05";
+        };
       };
-
-      # Draws the volume/brightness/caps-lock overlay. Needs layer-shell,
-      # granted by a [[clients]] rule in _config.nix.
-      #
-      # --top-margin is a fraction of screen height and defaults to 0.85, i.e.
-      # near the bottom. 0.05 puts the popup just under the bar. Which output
-      # it lands on is decided per-invocation by jay-osd, not here.
-      swayosd = mkSessionUnit {
-        description = "On-screen volume/brightness indicator";
-        exec = "${pkgs.swayosd}/bin/swayosd-server --top-margin 0.05";
-      };
-    };
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 
     # wl-tray-bridge: use a real icon theme (Hicolor lacks named tray icons,
     # which is why nm-applet/pasystray showed the fallback "OBJ" placeholder).
     # `color` recolors symbolic SVGs to match the bar foreground.
-    xdg.configFile."wl-tray-bridge/config.toml".text = ''
-      scale = 1.0
-      theme = "Papirus-Dark"
+    xdg.configFile."wl-tray-bridge/config.toml" = lib.mkIf tray {
+      text = ''
+        scale = 1.0
+        theme = "Papirus-Dark"
 
-      [icon]
-      color = "#${base16Scheme.base05}ff"
-    '';
+        [icon]
+        color = "#${base16Scheme.base05}ff"
+      '';
+    };
 
     # Satty config: save to downloads, copy to clipboard on save
     xdg.configFile."satty/config.toml".text = ''

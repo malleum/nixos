@@ -119,7 +119,7 @@
       # start off rather than in whatever state it was left in, with
       # super-shift-m toggling from there.
       on-graphics-initialized = [
-        { type = "exec", exec = { shell = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
+        { type = "exec", exec = { shell = "rm -rf \"$XDG_RUNTIME_DIR/jay-session-apps\" && systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
         ${
         if hostName == "magnus"
         then ''{ type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}", "off"] },''
@@ -243,7 +243,11 @@
       # iamb and signal are already running as jay-session login units
       # (see iamb.nix), so these just focus their workspace instead of
       # relaunching -- a plain $launch action spawned a duplicate process.
-      ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus", { type = "exec", exec = { shell = "systemctl --user restart iamb.service" } } ]
+      # iamb is `once`-stamped, so pressing this after quitting it is the one
+      # place that clears the stamp: an explicit reopen, unlike the implicit
+      # one a switch used to do. `start`, not `restart`, so a running iamb is
+      # left alone instead of being killed and resynced.
+      ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus", { type = "exec", exec = { shell = "rm -f \"$XDG_RUNTIME_DIR/jay-session-apps/iamb\"; systemctl --user start iamb.service" } } ]
       ${mod}-shift-i = [{ type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
       ${mod}-ctrl-c = "open-control-center"
       ${mod}-shift-c = "$launch-calendar"
@@ -577,6 +581,7 @@
         { comm = "foot" },
         { comm = "kitty" },
         { comm = "tmux" },
+        { comm = "teno" },
         { comm = "nvim" },
         { comm = ".nvim-wrapped" },
         { comm = ".vorto-wrapped" },

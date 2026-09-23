@@ -14,79 +14,82 @@
         period = "greater"; # . -> >
         comma = "less"; # , -> <
         apostrophe = "quotedbl"; # ' -> "
-        aring = "Aring";
-        oslash = "Oslash";
+        ccircumflex = "Ccircumflex";
+        underscore = "underscore";
+        BackSpace = "BackSpace";
+        VoidSymbol = "VoidSymbol";
       };
     in
       if specialCases ? ${str}
       then specialCases.${str}
       else lib.strings.toUpper str;
     footer = "\n\t};";
-    keys = {
-      "'" = "AD01";
-      "," = "AD02";
-      "." = "AD03";
-      "p" = "AD04";
-      "y" = "AD05";
-      "f" = "AD06";
-      "g" = "AD07";
-      "c" = "AD08";
-      "r" = "AD09";
-      "l" = "AD10";
-      "/" = "AD11";
-      "=" = "AD12";
-      "\\" = "AD13";
-      "a" = "AC01";
-      "o" = "AC02";
-      "e" = "AC03";
-      "u" = "AC04";
-      "i" = "AC05";
-      "d" = "AC06";
-      "h" = "AC07";
-      "t" = "AC08";
-      "n" = "AC09";
-      "s" = "AC10";
-      "-" = "AC11";
-      ";" = "AB01";
-      "q" = "AB02";
-      "j" = "AB03";
-      "k" = "AB04";
-      "x" = "AB05";
-      "b" = "AB06";
-      "m" = "AB07";
-      "w" = "AB08";
-      "v" = "AB09";
-      "z" = "AB10";
-      "lalt" = "LALT";
-    };
-    key = f: l: "\nkey <${keys.${f}}> { [ ${l}, ${capitalize l} ] };";
+
+    key = code: l: "\nkey <${code}> { [ ${l}, ${capitalize l} ] };";
+
+    # Esperanto searchcrafting layout (see ~/documents/gh/mcsr/esperanto.md).
+    # Keys are raw xkb codes, i.e. physical positions; the letter next to each
+    # is the QWERTY legend of that position, not what the key now produces.
+    #
+    # This layer owns everything that arrives as *text* in the recipe-search
+    # box. Game binds are not here: GLFW on Wayland keys off raw evdev
+    # scancodes and never consults the layout, so those live in waywall's
+    # remap table (modules/programs/waywall.nix).
     layout = {
-      # nreuf
-      # øtZhw
-      # salib
-      "'" = "n";
-      "," = "r";
-      "." = "e";
-      "p" = "u";
-      "y" = "f";
+      #        t o ĉ n
+      #  i     a s ⌫ k
+      #  0     _ h f r
+      #                j
+      # "i" sits on Dot, not Tab, because waywall remaps physical Tab -> Dot so
+      # that Grave can be the real Tab. The key under the finger is still Tab.
+      "AB09" = "i"; # . (reached by pressing Tab)
+      "AD01" = "t"; # q
+      "AD02" = "o"; # w
+      "AD03" = "ccircumflex"; # e
+      "AD04" = "n"; # r
 
-      "a" = "oslash";
-      "o" = "t";
-      "e" = "d"; # will be replaced with Backspace
-      "u" = "h";
-      "i" = "g";
+      # CAPS -> 0 and AC03 -> Backspace are NOT here: Minecraft refuses the
+      # keycodes this layer emits for those two and only accepts the ones
+      # waywall's remap table produces, so both live there instead.
 
-      ";" = "s";
-      "q" = "a";
-      "j" = "l";
-      "k" = "i";
-      "x" = "b";
+      # "a" sits on AD12, not AC01, because waywall remaps physical A ->
+      # RightBrace so that F3+A can never reach Minecraft. The key under the
+      # finger is still A.
+      "AD12" = "a"; # ] (reached by pressing A)
+      "AC02" = "s"; # s
+      "AC04" = "k"; # f
 
-      "lalt" = "aring";
+      "AB01" = "underscore"; # z
+      "AB02" = "h"; # x
+      "AB03" = "f"; # c
+      "AB04" = "r"; # v
+
+      "LALT" = "j";
+
+      # MCSR rule A.10.1: one output may come from at most one key. "us" still
+      # types these at their QWERTY spots, so blank every duplicate source.
+      "AD05" = "VoidSymbol"; # t
+      "AD06" = "VoidSymbol"; # f
+      "AD08" = "VoidSymbol"; # i
+      "AD09" = "VoidSymbol"; # o
+      "AC01" = "VoidSymbol"; # a (no key emits this code any more)
+      "AC06" = "VoidSymbol"; # h
+      "AC07" = "VoidSymbol"; # j
+      "AC08" = "VoidSymbol"; # k
+      "AB06" = "VoidSymbol"; # n
+      # AE10 (0) and BKSP stay live: they are the targets waywall remaps CAPS
+      # and D onto. Their originals are parked on F23/F22 over there, so each
+      # output still has exactly one source.
     };
+
+    # Shift+minus is the other source of "_", so kill only that level and keep
+    # the unshifted "-" usable.
+    extraKeys = "\nkey <AE11> { [ minus, VoidSymbol ] };";
+
     keyboard = lib.strings.concatLines [
       header
       (lib.strings.concatLines (lib.mapAttrsToList key layout))
+      extraKeys
       footer
     ];
   in {

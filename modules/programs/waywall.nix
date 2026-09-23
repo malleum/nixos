@@ -138,18 +138,49 @@
         mcsr = {
           layout = "mcsr";
           variant = "";
+          # Game inputs belong here; plain letters belong in the layout
+          # (modules/hardware/mcsr_keyboard.nix). GLFW on Wayland reads
+          # hardcoded evdev scancodes and ignores the xkb layout, so anything
+          # Minecraft treats as a bind has to be remapped at this level.
+          #
+          # 0 and Backspace are the awkward pair: they look like text, but
+          # Minecraft rejects the keycodes the layout emits for them and only
+          # accepts the ones a remap produces. So they stay here, and the
+          # layout deliberately leaves CAPS, AC03, AE10 and BKSP alone.
           remaps = {
             "m5" = "f3";
             "capslock" = "0";
+            "D" = "Backspace";
 
-            # Ctrl and Shift are swapped so sprint sits under the little
-            # finger; D becomes Backspace and Grave/Tab shift along to keep the
-            # search-craft keys reachable without moving the left hand.
+            # F3+A reloads chunks *and* swallows the strafe-left press:
+            # handleDebugKeys consumes it, so KeyMapping.set never runs and the
+            # strafe silently dies mid-run. Minecraft reads the scancode and
+            # never the layout, so no arrangement of search-craft letters can
+            # avoid it -- the scancode itself has to stop being A. Right brace
+            # carries no debug combo, so the key keeps strafing (options.txt
+            # binds key_key.left to it) and xkb still types "a" from it.
+            "A" = "RIGHTBRACE";
+
+            # Ctrl and Shift are swapped so sprint sits under the little finger.
             "LeftShift" = "LeftCtrl";
             "LeftCtrl" = "LeftShift";
-            "D" = "Backspace";
+
+            # Grave takes over as the real Tab, which frees the physical Tab
+            # key -- the far more reachable one -- to be a search-craft key. It
+            # cannot simply keep emitting Tab, or grave and Tab would both
+            # produce the same input, so it is shunted onto Dot and the layout
+            # gives Dot the letter "i".
             "Grave" = "Tab";
             "Tab" = "Dot";
+
+            # Rule A.10.1: one physical key per game input. Every key that is
+            # a remap target above gets parked on an unbound key so the
+            # original no longer doubles up.
+            "F3" = "F24";
+            "0" = "F23";
+            "Backspace" = "F22";
+            "Dot" = "F21";
+            "RIGHTBRACE" = "F20";
           };
         };
 
@@ -206,6 +237,22 @@
 
       # Default toggleCommand drives the systemd user unit defined below.
 
+      # One-cycle practice: pause, open to LAN with cheats, perch the dragon.
+      # Input goes through ydotool (modules/programs/ydotool.nix) because
+      # neither jay nor waywall implements virtual-keyboard-unstable-v1, so
+      # wtype has nothing to bind to in either of them.
+      perch = {
+        enable = true;
+        # 2 for vanilla 1.16's pause menu, +1 for the button fast-reset adds.
+        # Drop this to 2 on an instance without that mod, or the bind lands on
+        # "Save and Quit to Title" instead of "Open to LAN".
+        pauseShiftTabs = 3;
+        # standardoptions.txt -- the binds that survive a reset, unlike
+        # options.txt -- puts key_key.command on left bracket rather than the
+        # vanilla slash. Sending slash opens nothing at all.
+        commandKey = 26;
+      };
+
       resizeAnimation = {
         # Feeds ~/.waywall_state, which resize_animation_waywall.py reads inside
         # OBS to tween the capture transform on every resolution change.
@@ -221,6 +268,9 @@
         ninbot = "*-ctrl-k";
         cps = "*-ctrl-7";
         crosshair = "*-ctrl-8";
+        # Out of the way on purpose: it pauses the game and rewrites the
+        # keymap, so it must not be within reach of a mid-run fumble.
+        perch = "*-ctrl-9";
       };
     };
 

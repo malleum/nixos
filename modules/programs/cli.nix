@@ -20,6 +20,16 @@
         nix-direnv.enable = true;
       };
       zsh.shellAliases = shellAliases;
+      # Tokyonight night, matching mvim's colorscheme (same tokyonight.nvim
+      # extras). mvim's fzf previews and MANPAGER pick it up from this config.
+      bat = {
+        enable = true;
+        config.theme = "tokyonight_night";
+        themes.tokyonight_night = {
+          src = pkgs.vimPlugins.tokyonight-nvim;
+          file = "extras/sublime/tokyonight_night.tmTheme";
+        };
+      };
     };
 
     home = {

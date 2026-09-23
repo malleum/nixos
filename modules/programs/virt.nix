@@ -18,7 +18,6 @@
       nixos-shell
       quickemu
       qemu
-      adb-sync
       android-tools
     ];
   };

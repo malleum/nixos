@@ -32,6 +32,20 @@
     # Overrides common-gpu-amd's mkDefault ["modesetting"].
     services.xserver.videoDrivers = ["amdgpu"];
 
+    # Render-node numbering is not stable across boots on magnus: the dGPU is
+    # four bridges deep (00:01.1 -> 01:00.0 -> 02:00.0 -> 03:00.0) while the
+    # Raphael iGPU is direct (00:08.1 -> 0f:00.0), so whichever probes first
+    # takes renderD128. All the display outputs are on the dGPU, so on boots
+    # where the iGPU wins the race every Mesa client that just takes the first
+    # render node renders on the iGPU and copies each frame back over PCIe.
+    # Measured on such a boot: Minecraft 180 -> 120 fps, iGPU pinned at 100%
+    # and 45 W (stealing package power from the cores) while the dGPU sat at
+    # 1378 of 2226 MHz. DRI_PRIME matches the pci- tag against the device
+    # address, so it picks the right GPU whatever order the nodes come up in.
+    environment.sessionVariables = lib.optionalAttrs (!isApu) {
+      DRI_PRIME = "pci-0000_03_00_0";
+    };
+
     users.users.${hostConfig.user.username}.extraGroups = ["render"];
 
     # ROCm compute, discrete GPU only. clr and clr.icd are ~878 MiB each and

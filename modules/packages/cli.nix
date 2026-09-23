@@ -1,23 +1,13 @@
 {self, ...}: {
-  unify.home = {
-    pkgs,
-    nixosConfig,
-    ...
-  }: let
-    # mvim unless the host takes `dev`; see modules/meta/nvim.nix.
-    variant =
-      if nixosConfig.local.fullNvim
-      then "nvim"
-      else "mvim";
-    nvim = self.packages.${pkgs.stdenv.hostPlatform.system}.${variant};
-    cls = self.packages.${pkgs.stdenv.hostPlatform.system}.cls;
+  unify.home = {pkgs, ...}: let
+    packages = self.packages.${pkgs.stdenv.hostPlatform.system};
+    # mvim is the everyday editor (`nvim`, `vi`); see modules/meta/nvim.nix.
+    nvim = packages.mvim;
   in {
     home.packages = with pkgs; [
-      bat
       bc
       btop
       choose
-      cls
       fastfetch
       fd
       file

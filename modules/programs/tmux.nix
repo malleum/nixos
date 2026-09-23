@@ -112,7 +112,12 @@
         # should be the last plugin in the list").
         set -g @resurrect-capture-pane-contents 'on'
         set -g @resurrect-strategy-vim 'session'
-        set -g @resurrect-processes 'claude cursor-agent ca agy "~nvim->nvim -c AutoSession\ restore"'
+        # mvim's command line carries its init.lua however it was started
+        # (nvim, vi, a store path), so that is what the pattern matches; it
+        # restarts as `vi` and answers to `:AutoSession restore`. There used to
+        # be a second pattern for the nixvim build (matched on its
+        # vim-pack-dir), which no longer exists.
+        set -g @resurrect-processes 'claude cursor-agent ca agy "~mvim/init.lua->vi -c AutoSession\ restore"'
         set -g @continuum-save-interval '5'
         set -g @continuum-restore 'on'
 

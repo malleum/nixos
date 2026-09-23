@@ -55,11 +55,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Deliberately NOT following nixpkgs: Hyprland's cachix only has binaries
     # built against its own pin, and overriding it forces a local build.
     hypr.url = "github:hyprwm/Hyprland";
@@ -112,11 +107,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mc = {
-      url = "git+file:///home/joshammer/documents/gh/mc";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     jay = {
       url = "git+https://github.com/mahkoh/jay?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -129,6 +119,11 @@
 
     termword = {
       url = "github:malleum/termword";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    teno = {
+      url = "github:malleum/teno";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

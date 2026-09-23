@@ -1,0 +1,6 @@
+name: KeepInvList
+version: "1.0.0"
+main: com.joshammer.keepinv.KeepInvList
+description: "Per-player keep-inventory, driven by a NixOS-written name list."
+api-version: "1.21"
+folia-supported: false
