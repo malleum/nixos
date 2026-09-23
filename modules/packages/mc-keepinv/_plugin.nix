@@ -30,9 +30,10 @@
 
   # javac resolves the whole signature of everything it touches, so the API's
   # own dependencies have to be on the classpath even though this plugin names
-  # none of them: Player implements adventure's Audience, the API is annotated
-  # with JetBrains' and JSpecify's nullability annotations. Versions come from
-  # paper-api's pom (adventure-bom 5.2.0).
+  # none of them: Player implements adventure's Audience, ItemMeta returns a
+  # Guava Multimap, the API is annotated with JetBrains' and JSpecify's
+  # nullability annotations. Versions come from paper-api's pom
+  # (adventure-bom 5.2.0, guava 33.4.8-jre).
   deps = [
     (fetchurl {
       url = "https://repo1.maven.org/maven2/net/kyori/adventure-api/5.2.0/adventure-api-5.2.0.jar";
@@ -41,6 +42,10 @@
     (fetchurl {
       url = "https://repo1.maven.org/maven2/net/kyori/adventure-key/5.2.0/adventure-key-5.2.0.jar";
       hash = "sha256-AYTRcyAOLu+PvHkfYi0dWP1Fn4kwxha1pP556D7abFU=";
+    })
+    (fetchurl {
+      url = "https://repo1.maven.org/maven2/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar";
+      hash = "sha256-89f1f2f9Yi9NRo391pKzpeOQkkbCgBesMmNAXw/mF+0=";
     })
     (fetchurl {
       url = "https://repo1.maven.org/maven2/org/jetbrains/annotations/26.0.2/annotations-26.0.2.jar";
