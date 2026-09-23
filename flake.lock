@@ -912,11 +912,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785422573,
-        "narHash": "sha256-UUX8Y5RMQYvunDqeMIv8rPn+qdpORQaEGerCHKCfbu8=",
+        "lastModified": 1790196766,
+        "narHash": "sha256-vcEYrDOfCEqxyH+6qM/73QdB7UgPvvEeEXutnRLVSzA=",
         "owner": "malleum",
         "repo": "iamb",
-        "rev": "7e3b7c7fb3baca79173b6017b32e0be5c7fa59e3",
+        "rev": "400d512e0e474790091b504689fc66889102adc0",
         "type": "github"
       },
       "original": {
