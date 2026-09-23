@@ -45,6 +45,9 @@ vim.cmd.colorscheme("tokyonight")
 
 require("mvim.keymaps")
 require("mvim.direnv").setup()
+-- Before lsp: a dev shell's lsp/<name>.lua has to be on the runtimepath before
+-- servers are enabled, on startup and again after :Direnv.
+require("mvim.shellrtp").setup()
 require("mvim.lsp")
 require("mvim.lsp_keys")
 require("mvim.treesitter")

@@ -124,6 +124,20 @@ The error or warning for the cursor's line shows as text beneath it.
                         that became available. Never automatic, so a slow
                         flake shell only builds when asked.
 
+                                                                   *$MVIM_RTP*
+A dev shell can hand mvim more than binaries. $MVIM_RTP is a colon-separated
+list of plugin-shaped directories (lua/ plugin/ ftplugin/ queries/ parser/
+lsp/) which lua/mvim/shellrtp.lua appends to the runtimepath -- at startup for
+a shell that was already active, and on :Direnv for one loaded since -- then
+sources their plugin/*.lua. That is how a project brings its own grammar,
+language server and plugin without every host carrying them, and mvim stays
+plugin-free everywhere else. Appended, not prepended: a dev shell can add to
+mvim, never shadow it.
+
+Weave (github:malleum/weave) is the worked example: its `aoc` dev shell puts
+the compiler on PATH and its packages.mvim-weave on $MVIM_RTP, which is the
+grammar, the highlight queries, weave.nvim and an lsp/weave.lua.
+
 ==============================================================================
 GIT                                                                 *mvim-git*
 

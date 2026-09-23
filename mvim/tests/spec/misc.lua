@@ -139,6 +139,29 @@ test(":Direnv loads the environment only when asked", function(c)
   c:wait_for([[vim.env.MVIM_TEST == "loaded"]], 10000)
 end)
 
+test("$MVIM_RTP adds a dev shell's plugin directory on :Direnv", function(c)
+  if vim.fn.executable("direnv") == 0 then
+    return io.write("  (skipped: no direnv)\n")
+  end
+  -- A plugin directory of the shape a dev shell hands over: a filetype mvim
+  -- has never heard of, and an ftplugin only this directory provides.
+  c:write("rtp/plugin/fake.lua", { [[vim.filetype.add({ extension = { fake = "fake" } })]] })
+  c:write("rtp/ftplugin/fake.lua", { [[vim.bo.shiftwidth = 3]] })
+  c:write(".envrc", { "export MVIM_RTP=" .. c.work .. "/rtp" })
+  c:sh("direnv allow .")
+  c:cmd("cd " .. c.work)
+
+  -- Opened before the directory arrives: the extension means nothing yet.
+  c:write("a.fake", { "x" })
+  c:edit("a.fake")
+  eq("", c:lua("return vim.bo.filetype"), "filetype unknown before")
+
+  c:cmd("Direnv")
+  c:wait_for([[vim.bo.filetype == "fake"]], 10000)
+  eq(3, c:lua("return vim.bo.shiftwidth"), "the directory's ftplugin ran")
+  eq(true, c:lua([[return vim.o.runtimepath:find(vim.env.MVIM_RTP, 1, true) ~= nil]]), "on the runtimepath")
+end)
+
 test(":help mvim opens the help page", function(c)
   c:cmd("help mvim")
   eq("mvim.txt", c:lua([[return vim.fn.expand("%:t")]]))

@@ -1,32 +1,19 @@
--- Servers are configured in ../../lsp/<name>.lua and enabled only when their
--- binary is on PATH, so a devshell decides which ones run. Nothing is bundled.
--- PATH is checked again after :Direnv loads a dev shell's environment (see
+-- Servers are configured in ../../lsp/<name>.lua -- every file there is one,
+-- and so is every lsp/<name>.lua a dev shell puts on the runtimepath (see
+-- shellrtp.lua). Each is enabled only when its binary is on PATH, so a devshell
+-- decides which ones run. Nothing is bundled. Both the runtimepath and PATH are
+-- looked at again after :Direnv loads a dev shell's environment (see
 -- direnv.lua), so its servers start without restarting mvim.
-local servers = {
-  "bashls",
-  "clangd",
-  "cssls",
-  "elixirls",
-  "gopls",
-  "html",
-  "jdtls",
-  "jsonls",
-  "ltex_plus",
-  "lua_ls",
-  "marksman",
-  "nixd",
-  "rust_analyzer",
-  "sqls",
-  "taplo",
-  "tinymist",
-  "ts_ls",
-  "ty",
-  "yamlls",
-  "zls",
-}
+local function configured()
+  local names = {}
+  for _, path in ipairs(vim.api.nvim_get_runtime_file("lsp/*.lua", true)) do
+    names[#names + 1] = vim.fn.fnamemodify(path, ":t:r")
+  end
+  return names
+end
 
 local function enable_available()
-  for _, name in ipairs(servers) do
+  for _, name in ipairs(configured()) do
     local cmd = vim.lsp.config[name].cmd
     if not vim.lsp.is_enabled(name) and type(cmd) == "table" and vim.fn.executable(cmd[1]) == 1 then
       vim.lsp.enable(name) -- also attaches to matching buffers already open
