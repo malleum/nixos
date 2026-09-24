@@ -39,14 +39,33 @@
     ## ─────────────────────────── switches ───────────────────────────
 
     # Nether and End are shut for progression reasons: portals light, and then
-    # do nothing at all. Paper enforces both at the server level, so there is
-    # no plugin and no datapack involved, and nothing to clean up when they
-    # open -- flip the flag, rebuild, and the dimension is simply there.
+    # do nothing at all. No plugin and no datapack is involved, and there is
+    # nothing to clean up when they open -- flip the flag, rebuild, and the
+    # dimension is simply there.
     #
-    # Opening the Nether later does NOT regenerate anything: world_nether is
+    # The two flags reach the server by different routes, because the server
+    # honours different keys for them:
+    #
+    #   * End  -- bukkit.yml `settings.allow-end`, which Bukkit reads.
+    #   * Nether -- paper-global.yml `misc.enable-nether`, which Paper reads.
+    #     `allow-nether` in server.properties is VANILLA's key and Paper
+    #     ignores it outright, so setting that alone leaves the Nether open.
+    #     It is still written, for a reader who greps server.properties.
+    #
+    # Opening the Nether later does NOT regenerate anything: the dimension is
     # created the first time somebody steps through, whenever that is.
     allowNether = false;
     allowEnd = false;
+
+    # RCON: the admin console, on loopback only. The port is deliberately NOT
+    # in allowedTCPPorts, so the only way in is from the box itself. The
+    # password is generated on the box at first start and never enters this
+    # repo or the nix store -- see rconPasswordScript.
+    #
+    # RCON is a level-4 console with no account behind it: whoever can reach
+    # the port can run any command. That it is unreachable from outside is the
+    # whole of its security, hence the firewall note above.
+    rconPort = 25575;
 
     # The world seed. Empty means "generate a random one on first start", and
     # that random seed is then recorded in world/level.dat -- so this only has
@@ -67,8 +86,12 @@
       "emyfun14"
     ];
 
-    # Server operators: level 4, full command access.
-    admins = ["malleum"];
+    # Server operators: level 4, full command access. Deliberately empty --
+    # nobody has commands in-game, and administration goes through the RCON
+    # console instead (see rconPort below). A name here would hand that
+    # account every command from a survival session, which is the thing this
+    # server is trying not to have.
+    admins = [];
 
     # The keep-inventory list. These players keep their items and XP on death;
     # everybody else drops both exactly like vanilla. Names must match the
@@ -190,9 +213,17 @@
       level-name = "42";
       level-seed = levelSeed;
       enable-command-block = false;
-      # No rcon: there is no secret plumbed for it, and operators have every
-      # command in-game anyway. Console output is in the journal.
-      enable-rcon = false;
+      # The console. `rcon.password` is a placeholder: rconPasswordScript
+      # overwrites this line on the box at every start with the generated
+      # password, so the value here never has to be a secret. RCON binds
+      # whatever `server-ip` is (empty, so every interface) -- the firewall is
+      # what keeps it local, not this file.
+      enable-rcon = true;
+      "rcon.port" = rconPort;
+      "rcon.password" = "PLACEHOLDER";
+      # An RCON command is administration, not chat; there is nobody opped to
+      # broadcast it to anyway.
+      broadcast-rcon-to-ops = false;
       enable-status = true;
       sync-chunk-writes = false; # Paper recommends off on Linux; big TPS win
     };
@@ -239,6 +270,11 @@
     # to be unable to tell this is not a Mojang server.
 
     paperGlobalOverlay = pkgs.writeText "paper-global-overlay.yml" ''
+      misc:
+        # THE Nether switch. server.properties `allow-nether` is vanilla's key
+        # and Paper ignores it, so this is the one that decides. Named here so
+        # Paper's default (true) cannot drift back in on an upgrade.
+        enable-nether: ${lib.boolToString allowNether}
       chunk-loading-advanced:
         # Send a client only as many chunks as it actually asked for, rather
         # than view-distance to everyone. A player rendering at 12 costs 12.
@@ -309,6 +345,55 @@
 
       merge ${paperGlobalOverlay} ${dataDir}/config/paper-global.yml
       merge ${paperWorldDefaultsOverlay} ${dataDir}/config/paper-world-defaults.yml
+    '';
+
+    # The RCON password lives on the box and nowhere else: generated once, on
+    # the first start that finds no password file, and reused afterwards so a
+    # rebuild does not invalidate a session. server.properties has to carry it
+    # in the clear, so that file drops to 0640 minecraft:minecraft here -- it
+    # is installed 0644 by preStart and narrowed immediately below.
+    #
+    # Rotating it is `rm .rcon-password` plus a restart.
+    rconPasswordScript = pkgs.writeShellScript "minecraft-rcon-password" ''
+      set -eu
+      PATH=${lib.makeBinPath (with pkgs; [coreutils gnused])}
+
+      file=${dataDir}/.rcon-password
+      if [ ! -s "$file" ]; then
+        # head closing the pipe makes tr report EPIPE; the password is already
+        # written by then, so the message is noise and only the exit status of
+        # head (0) reaches set -e.
+        (umask 077
+          LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom 2>/dev/null \
+            | head -c 40 > "$file")
+        echo "minecraft: generated a new RCON password in $file" >&2
+      fi
+      chmod 600 "$file"
+
+      # Alphanumeric by construction, so nothing here needs escaping.
+      sed -i "s|^rcon.password=.*|rcon.password=$(cat "$file")|" \
+        ${dataDir}/server.properties
+      chmod 640 ${dataDir}/server.properties
+    '';
+
+    # `sudo mc-console` for a prompt, `sudo mc-console <command>` for one
+    # command. It needs root (or the minecraft user) only to read the password
+    # file; the connection itself is loopback.
+    mcConsole = pkgs.writeShellScriptBin "mc-console" ''
+      set -eu
+      file=${dataDir}/.rcon-password
+      if [ ! -r "$file" ]; then
+        echo "mc-console: cannot read $file -- run this as root" >&2
+        exit 1
+      fi
+      pw=$(cat "$file")
+      # -t is mcrcon's interactive terminal mode. With arguments, each one is
+      # sent as a whole command, so a command with spaces has to stay quoted.
+      if [ $# -eq 0 ]; then
+        exec ${pkgs.mcrcon}/bin/mcrcon -H 127.0.0.1 -P ${toString rconPort} -p "$pw" -t
+      else
+        exec ${pkgs.mcrcon}/bin/mcrcon -H 127.0.0.1 -P ${toString rconPort} -p "$pw" "$@"
+      fi
     '';
 
     keepInvConfig = pkgs.writeText "keepinvlist-config.yml" ''
@@ -499,7 +584,11 @@
           description = "Minecraft server";
         };
 
+        # Note what is NOT here: rconPort. The console is reachable from the
+        # box and from nowhere else.
         networking.firewall.allowedTCPPorts = [port];
+
+        environment.systemPackages = [mcConsole];
 
         systemd.services.minecraft = {
           description = "Minecraft server (Paper ${mcVersion} build ${paperBuild})";
@@ -512,6 +601,7 @@
           # never survives. The world, player data and plugin state are untouched.
           preStart = ''
             install -m644 ${propertiesFile} ${dataDir}/server.properties
+            ${rconPasswordScript}
             install -m644 ${bukkitFile} ${dataDir}/bukkit.yml
             echo "eula=true" > ${dataDir}/eula.txt
             ${paperConfigScript}
