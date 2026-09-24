@@ -28,6 +28,13 @@
   in {
     imports = [inputs.waywall.homeModules.default];
 
+    # home-manager gained its own programs.ninjabrain-bot (an attrsOf
+    # bool/int/float/str written straight to prefs.xml), which collides with the
+    # waywall flake's module of the same name. Drop the upstream one: waywall's
+    # types the settings, derives the hotkey encoding, and themes the bot from
+    # the stylix palette below.
+    disabledModules = ["programs/ninjabrain-bot.nix"];
+
     home.packages = [waywallPkgs.cps-wl];
 
     # The CPS counter runs against jay, not inside waywall. waywall replaces its
