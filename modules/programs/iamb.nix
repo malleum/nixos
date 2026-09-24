@@ -22,24 +22,37 @@
       };
 
     signal = withGnomeLibsecret pkgs.signal-desktop "signal-desktop";
-    element = withGnomeLibsecret (pkgs.element-desktop.override {
-      element-web = pkgs.element-web.override {
-        conf = {
-          default_server_config."m.homeserver" = {
-            base_url = "https://ws42.top";
-            server_name = "ws42.top";
-          };
-          element_call = {
-            url = "https://call.element.io";
-            use_exclusively = true;
-          };
-          features = {
-            feature_group_calls = true;
-            feature_video_rooms = true;
-            feature_element_call_video_rooms = true;
-          };
+
+    elementWebConfigured = pkgs.element-web.override {
+      conf = {
+        default_server_config."m.homeserver" = {
+          base_url = "https://ws42.top";
+          server_name = "ws42.top";
+        };
+        element_call = {
+          url = "https://call.element.io";
+          use_exclusively = true;
+        };
+        features = {
+          feature_group_calls = true;
+          feature_video_rooms = true;
+          feature_element_call_video_rooms = true;
         };
       };
+    };
+
+    # The element-web `conf` wrapper only symlinks into the unwrapped store
+    # path, and element-desktop's asar pack refuses symlinks that point out of
+    # the package ("links out of the package"), so hand it real files.
+    elementWeb =
+      pkgs.runCommandLocal "element-web-${elementWebConfigured.version}-copied" {}
+      ''
+        mkdir -p $out
+        cp -rL --no-preserve=mode ${elementWebConfigured}/. $out/
+      '';
+
+    element = withGnomeLibsecret (pkgs.element-desktop.override {
+      element-web = elementWeb;
     }) "element-desktop";
   in {
     systemd.user.services = {
