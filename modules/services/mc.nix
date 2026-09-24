@@ -182,9 +182,10 @@
     # 23 GiB on the box. Xms == Xmx is deliberate (Aikar): a heap that never
     # resizes is a heap G1 never has to grow mid-tick.
     #
-    # If this crosses the 12G line in either direction the four G1 sizing flags
-    # in ExecStart have to move with it -- Aikar publishes a different set
-    # above and below it. See the comment there.
+    # Aikar publishes a second set of G1 sizing flags for a heap STRICTLY
+    # above 12G. 12G is not above 12G, so the base set is what belongs in
+    # ExecStart; raising this past 12G means moving those flags too. See the
+    # comment there.
     heap = "12G";
 
     serverProperties = {
@@ -642,21 +643,23 @@
               "-Xms${heap}"
               "-Xmx${heap}"
               # Aikar's flags, the standard G1 tuning for a Minecraft heap.
-              # The four sizing flags below are the >=12G variant; at a heap
-              # under 12G they go back to 30 / 40 / 8M / 15.
+              # These are the base set, which is what a 12G heap takes --
+              # Aikar's larger variant is for a heap strictly above 12G and
+              # would move five of them: 40 / 50 / 16M, G1ReservePercent to
+              # 15, and IHOP to 20.
               "-XX:+UseG1GC"
               "-XX:+ParallelRefProcEnabled"
               "-XX:MaxGCPauseMillis=200"
               "-XX:+UnlockExperimentalVMOptions"
               "-XX:+DisableExplicitGC"
               "-XX:+AlwaysPreTouch"
-              "-XX:G1NewSizePercent=40"
-              "-XX:G1MaxNewSizePercent=50"
-              "-XX:G1HeapRegionSize=16M"
+              "-XX:G1NewSizePercent=30"
+              "-XX:G1MaxNewSizePercent=40"
+              "-XX:G1HeapRegionSize=8M"
               "-XX:G1ReservePercent=20"
               "-XX:G1HeapWastePercent=5"
               "-XX:G1MixedGCCountTarget=4"
-              "-XX:InitiatingHeapOccupancyPercent=20"
+              "-XX:InitiatingHeapOccupancyPercent=15"
               "-XX:G1MixedGCLiveThresholdPercent=90"
               "-XX:G1RSetUpdatingPauseTimePercent=5"
               "-XX:SurvivorRatio=32"
