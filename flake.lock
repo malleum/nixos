@@ -563,6 +563,26 @@
         "type": "github"
       }
     },
+    "hjem": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789399209,
+        "narHash": "sha256-LQuDxwEd7zEQx0IoYZYHp/gPhfunoWCEFASiPCp1Uyk=",
+        "owner": "malleum",
+        "repo": "hjem",
+        "rev": "38134b1a7672f58ad1e64ba3f1eccd07bb1aba1c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "hjem",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1209,6 +1229,7 @@
         "flake-parts": "flake-parts_2",
         "git-hooks": "git-hooks",
         "grapple": "grapple",
+        "hjem": "hjem",
         "home-manager": "home-manager",
         "hypr": "hypr",
         "iamb": "iamb",
