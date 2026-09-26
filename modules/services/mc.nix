@@ -71,7 +71,7 @@
     # that random seed is then recorded in world/level.dat -- so this only has
     # any effect on a world that does not exist yet. Setting it after the world
     # has generated changes nothing; the world would have to be deleted first.
-    levelSeed = "";
+    levelSeed = "4405134068028";
 
     # Only these names can connect (enforce-whitelist makes the server kick
     # anyone removed from the list, not just refuse new logins).
@@ -84,6 +84,7 @@
       "tczcatlipoca"
       "siocledesea"
       "emyfun14"
+      "ConejoFresco"
     ];
 
     # Server operators: level 4, full command access. Deliberately empty --
