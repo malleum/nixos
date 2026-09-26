@@ -235,6 +235,20 @@
     # would otherwise have pulled it in.
     hardware.graphics.enable = true;
 
+    # Undo the silent console that modules/services/login_manager.nix asks for.
+    # There, `quiet` plus loglevel 0 exists so that late-boot kernel and unit
+    # output does not paint over the tuigreet form; here the kiosk covers the
+    # screen the moment it starts, so there is nothing to protect -- and the
+    # screen is the only diagnostic this machine has. A panel with no keyboard
+    # in front of it that shows absolutely nothing for the length of a boot
+    # cannot be told apart from one that failed to boot, which is how a slow
+    # boot gets power-cycled halfway through. Let it narrate.
+    #
+    # 4 is KERN_WARNING: unit lines and warnings, not the full amdgpu firmware
+    # dump. It lands after `quiet` on the kernel command line, so it wins.
+    boot.consoleLogLevel = lib.mkForce 4;
+    boot.initrd.verbose = lib.mkForce true;
+
     # The `lap` TLP profile is tuned for a laptop in a bag. minoris is a wall
     # panel on mains power whose entire job is compositing a canvas, so the AC
     # side of that profile is undone here. The battery side is left exactly as

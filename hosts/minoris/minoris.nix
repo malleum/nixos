@@ -25,7 +25,10 @@ in {
         ;
     };
 
-    nixos.imports = [./_hardware-configuration.nix];
+    nixos.imports = [
+      ./_hardware-configuration.nix
+      ./_tpm-quirk.nix
+    ];
     users.${username} = {inherit (config) modules;};
   };
 }
