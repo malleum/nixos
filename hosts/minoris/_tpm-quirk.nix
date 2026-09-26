@@ -32,8 +32,21 @@
 # blacklisting tpm_crb: the wait is systemd expecting a device node, not the
 # module trying and failing to load, so neither touches it.
 #
+# systemd also has a documented switch for exactly this case. The wait is not
+# a static dependency: systemd-tpm2-generator adds sysinit.target -> tpm2.target
+# at boot because the firmware reported a TPM the kernel never exposed, and its
+# man page (systemd 261) says `systemd.tpm2_wait=false` stops it inserting the
+# synchronisation point at all, "useful in environments where a suitable TPM2
+# driver for the available hardware is not available". The generator runs in
+# the initrd and again in stage 2, and both read the kernel command line, so
+# one parameter covers both waits. The masks below stay as a second line: if a
+# future systemd ever pulls the device units in some other way, they still
+# fail fast instead of timing out.
+#
 # If the TPM is ever fixed in a BIOS update, delete this file.
 {
+  boot.kernelParams = ["systemd.tpm2_wait=false"];
+
   boot.initrd.systemd.units = {
     "dev-tpm0.device".enable = false;
     "dev-tpmrm0.device".enable = false;

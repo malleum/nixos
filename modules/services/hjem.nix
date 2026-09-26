@@ -43,22 +43,33 @@
       # Then: sudo systemctl restart hjem
     '';
 
-    # Presence detection: the panel brings its backlight up when the webcam
-    # sees movement in the room at night. Off, because it turns on a camera.
+    # The webcam, doing two jobs (see hjem's web/js/camera.js):
     #
-    # Turning it on means two edits: this, and `presence = true` below.
+    #   presence    at night, bring the backlight up while someone is standing
+    #               in front of the panel, and let it fall when the room empties
+    #   lightMeter  whenever the room is dark -- lights off, curtains drawn --
+    #               dim the panel to darkRoomBrightness
+    #
+    # On, both. The dark-room dimming is what makes a wall panel livable in a
+    # bedroom, and presence is what makes a dimmed one readable when you walk
+    # up to it; each is a little strange without the other.
+    #
     # The flag is what makes the camera usable at all -- getUserMedia would
     # otherwise raise a permission prompt that nobody is standing there to
     # answer, and a kiosk has no chrome to answer it with. It grants camera
     # access to whatever the browser loads, which here is one page on
-    # 127.0.0.1 and nothing else, for the life of the session.
+    # 127.0.0.1 and nothing else, for the life of the session. Opening
+    # /dev/video0 itself is covered by `video` in modules/meta/user.nix.
     #
-    # What the page does with it is in hjem's web/js/presence.js: a 48x36 grey
-    # frame, subtracted from the previous one, discarded. No image is stored or
-    # sent anywhere; the only thing that leaves the browser is an empty POST.
-    presence = false;
+    # What leaves the page: an empty POST when something moves, and one number
+    # -- the mean brightness of a 48x36 grey frame -- for the light meter. No
+    # image is stored or sent anywhere. The camera LED is on while the panel is
+    # dark, and for a few seconds every ten minutes in daylight while it takes
+    # a reading; otherwise off.
+    presence = true;
+    lightMeter = true;
 
-    presenceFlags = lib.optional presence "--use-fake-ui-for-media-stream";
+    presenceFlags = lib.optional (presence || lightMeter) "--use-fake-ui-for-media-stream";
 
     # Chromium rather than Firefox: this page leans on canvas, and chromium's
     # is faster on the integrated graphics in a machine of this vintage.
@@ -84,27 +95,47 @@
 
     kiosk = pkgs.writeShellApplication {
       name = "hjem-kiosk";
-      runtimeInputs = [pkgs.cage pkgs.chromium pkgs.curl pkgs.coreutils];
+      runtimeInputs = [pkgs.cage pkgs.chromium pkgs.curl pkgs.coreutils pkgs.systemd];
       text = ''
         # greetd stops the session by signalling this script; exit cleanly so
         # the greeter comes back rather than the restart loop below fighting it.
         trap 'exit 0' TERM INT
 
+        # Everything this script and cage say goes to the journal under one tag,
+        # because a greetd session's stderr otherwise goes nowhere you can read
+        # afterwards:  journalctl -b -t hjem-kiosk
+        # `|| true` because this runs under errexit, and a journal that is not up
+        # yet must not be what takes the panel down.
+        say() { echo "$*" | systemd-cat -t hjem-kiosk -p info || true; }
+
         profile="''${XDG_CACHE_HOME:-$HOME/.cache}/hjem-kiosk"
         mkdir -p "$profile"
 
-        # Wait for the server rather than letting chromium cache a connection
-        # error as the page. hjem is up in a second or two; 60 is for the case
-        # where the network is not.
+        # amdgpu loads from udev in stage 2, and greetd can get here first. With
+        # no /dev/dri/card* cage has nothing to open and exits at once -- five of
+        # those and this script used to give up before the GPU ever arrived.
         for _ in $(seq 1 60); do
+          if compgen -G "/dev/dri/card*" >/dev/null; then break; fi
+          sleep 1
+        done
+        compgen -G "/dev/dri/card*" >/dev/null || say "no DRM device after 60s; trying anyway"
+
+        # Wait for the server rather than letting chromium cache a connection
+        # error as the page -- chromium does not retry an error page on its own,
+        # so a panel that loaded too early would show "site can't be reached"
+        # until someone walked up with a keyboard. hjem no longer waits for the
+        # network before it listens, so this is normally a second or two.
+        for _ in $(seq 1 180); do
           if curl -fsS --max-time 2 ${url}/api/health >/dev/null 2>&1; then break; fi
           sleep 1
         done
 
         # Consecutive *immediate* exits mean something is actually broken (no
-        # GPU, no seat, a bad flag). Restarting forever would hide that behind a
-        # flickering black screen, so after five we stand down and let greetd
-        # show a login prompt you can debug from.
+        # GPU, no seat, a bad flag). Two in a row and the next attempts use
+        # wlroots' software renderer: a panel drawn slowly beats a black one,
+        # and it is the difference between "the GPU driver is unhappy" and "the
+        # machine is dead" when you are looking at it from across a room. Five
+        # and we stand down, so greetd shows a login prompt to debug from.
         fails=0
         while true; do
           started=$(date +%s)
@@ -112,16 +143,23 @@
           # A leftover lock from a hard power cut makes chromium refuse to start.
           rm -f "$profile/Singleton"*
 
-          cage -s -- chromium ${browserFlags} --user-data-dir="$profile" ${url} || true
+          if [ "$fails" -ge 2 ]; then
+            export WLR_RENDERER=pixman
+            say "attempt after $fails fast exits: software rendering"
+          fi
+
+          cage -s -- chromium ${browserFlags} --user-data-dir="$profile" ${url} \
+            2> >(systemd-cat -t hjem-kiosk -p warning) || true
 
           if [ $(( $(date +%s) - started )) -lt 15 ]; then
             fails=$(( fails + 1 ))
+            say "cage exited after $(( $(date +%s) - started ))s ($fails in a row)"
           else
             fails=0
           fi
 
           if [ "$fails" -ge 5 ]; then
-            echo "hjem-kiosk: five immediate exits; handing back to greetd" >&2
+            say "five immediate exits; handing back to greetd"
             exit 1
           fi
           sleep 2
@@ -214,13 +252,16 @@
       backlight = "auto";
       nightBrightness = 0.18;
 
-      # The other half of the presence switch at the top of this file; both
-      # have to be on for it to do anything. When it is on, the backlight comes
-      # up to presenceBrightness while someone is standing in front of the
-      # panel at night, and drops back after presenceGrace seconds of an empty
-      # room. The palette stays in its night amber either way -- the point is
-      # to be readable in a dark room, not to light the room.
-      inherit presence;
+      # The other half of the camera switches at the top of this file. The
+      # palette stays in its night amber either way -- the point is to be
+      # readable in a dark room, not to light the room.
+      #
+      # The dark-room threshold is a guess until it has seen this room. The
+      # footer shows what the meter reads as "ĉambro N": look at it with the
+      # lights on and with them off, and set darkRoomLevel between the two.
+      inherit presence lightMeter;
+      darkRoomLevel = 40.0;
+      darkRoomBrightness = 0.06;
     };
 
     systemd.tmpfiles.rules = [
@@ -244,10 +285,24 @@
     # cannot be told apart from one that failed to boot, which is how a slow
     # boot gets power-cycled halfway through. Let it narrate.
     #
-    # 4 is KERN_WARNING: unit lines and warnings, not the full amdgpu firmware
-    # dump. It lands after `quiet` on the kernel command line, so it wins.
+    # 4 is KERN_WARNING: warnings and errors from the kernel, not the full
+    # amdgpu firmware dump. It lands after `quiet` on the kernel command line,
+    # so it wins -- for the kernel.
+    #
+    # That was only half of it, and the photo of the boot shows which half:
+    # four kernel lines and then nothing. The unit lines come from systemd, not
+    # the kernel, and systemd reads `quiet` too -- per systemd(1) in 261,
+    # show_status "defaults to enabled, unless quiet is passed ... in which case
+    # it defaults to error". So loglevel alone gave the kernel its voice back and
+    # left PID 1 printing failures only. Setting show_status explicitly
+    # overrides the quiet-derived default regardless of where it sits on the
+    # command line; the rd. form is the same switch for the initrd's systemd.
     boot.consoleLogLevel = lib.mkForce 4;
     boot.initrd.verbose = lib.mkForce true;
+    boot.kernelParams = [
+      "systemd.show_status=true"
+      "rd.systemd.show_status=true"
+    ];
 
     # The `lap` TLP profile is tuned for a laptop in a bag. minoris is a wall
     # panel on mains power whose entire job is compositing a canvas, so the AC
