@@ -262,6 +262,18 @@
       inherit presence lightMeter;
       darkRoomLevel = 40.0;
       darkRoomBrightness = 0.06;
+
+      # The menu's update button (two taps): git pull in this repo and
+      # `nh os build -U hjem`, both as you, then the switch as root, with the
+      # panel showing how it went and reloading onto the new build. The log is
+      # `journalctl -u hjem-update`. The pull runs with no terminal and no ssh
+      # agent, so the remote has to answer that way: https, or a key without a
+      # passphrase.
+      selfUpdate = {
+        enable = true;
+        flake = hostConfig.flakePath;
+        user = username;
+      };
     };
 
     systemd.tmpfiles.rules = [
