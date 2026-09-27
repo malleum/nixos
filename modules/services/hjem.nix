@@ -296,8 +296,10 @@
       # The dark-room threshold is a guess until it has seen this room. The
       # footer shows what the meter reads as "ĉambro N": look at it with the
       # lights on and with them off, and set darkRoomLevel between the two.
+      # 40 turned the panel off with the lamps on; 15 is the module default,
+      # and it comes back above 24.
       inherit presence lightMeter;
-      darkRoomLevel = 40.0;
+      darkRoomLevel = 15.0;
       # 0 = off: the backlight at 0 was never dark on this amdgpu panel, so
       # the page goes pure black as well. Raise it (0.06 was the old value)
       # to dim instead of switching off.
