@@ -48,9 +48,10 @@
     #   presence    at night, bring the backlight up while someone is standing
     #               in front of the panel, and let it fall when the room empties
     #   lightMeter  whenever the room is dark -- lights off, curtains drawn --
-    #               dim the panel to darkRoomBrightness
+    #               turn the panel off (black page, backlight 0) until the
+    #               lights come back or someone touches it
     #
-    # On, both. The dark-room dimming is what makes a wall panel livable in a
+    # On, both. Going dark with the room is what makes a wall panel livable in a
     # bedroom, and presence is what makes a dimmed one readable when you walk
     # up to it; each is a little strange without the other.
     #
@@ -93,9 +94,35 @@
         "--check-for-update-interval=31536000"
       ]);
 
+    # What cage runs: the browser, and -- once it is up -- the pointer parked
+    # in the bottom-right corner. cage warps the pointer to the middle of the
+    # screen as it starts and draws its arrow there, over the clock, and
+    # nothing moves it until a mouse does: the page's `cursor: none` only
+    # applies once the pointer has moved over the page. cage speaks the
+    # virtual-pointer protocol, so wlrctl can make that move -- into the
+    # corner, where what is left of the arrow is off the edge of the screen
+    # and the page, having had its motion event, hides it anyway. Twice,
+    # because the first can land before the page has loaded.
+    session = pkgs.writeShellApplication {
+      name = "hjem-kiosk-session";
+      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.coreutils];
+      text = ''
+        chromium ${browserFlags} --user-data-dir="$1" ${url} &
+        browser=$!
+        trap 'kill "$browser" 2>/dev/null || true' TERM INT
+
+        park() { wlrctl pointer move 100000 100000 >/dev/null 2>&1 || true; }
+        (sleep 5 && park && sleep 20 && park) &
+        parker=$!
+
+        wait "$browser" || true
+        kill "$parker" 2>/dev/null || true
+      '';
+    };
+
     kiosk = pkgs.writeShellApplication {
       name = "hjem-kiosk";
-      runtimeInputs = [pkgs.cage pkgs.chromium pkgs.curl pkgs.coreutils pkgs.systemd];
+      runtimeInputs = [pkgs.cage pkgs.curl pkgs.coreutils pkgs.systemd];
       text = ''
         # greetd stops the session by signalling this script; exit cleanly so
         # the greeter comes back rather than the restart loop below fighting it.
@@ -114,11 +141,21 @@
         # amdgpu loads from udev in stage 2, and greetd can get here first. With
         # no /dev/dri/card* cage has nothing to open and exits at once -- five of
         # those and this script used to give up before the GPU ever arrived.
+        #
+        # A glob, not `compgen -G`: nixpkgs' script bash is built without
+        # programmable completion, so compgen does not exist in it, and every
+        # check printed "command not found" to the console for the full minute.
+        gpu() {
+          for card in /dev/dri/card*; do
+            [ -e "$card" ] && return 0
+          done
+          return 1
+        }
         for _ in $(seq 1 60); do
-          if compgen -G "/dev/dri/card*" >/dev/null; then break; fi
+          if gpu; then break; fi
           sleep 1
         done
-        compgen -G "/dev/dri/card*" >/dev/null || say "no DRM device after 60s; trying anyway"
+        gpu || say "no DRM device after 60s; trying anyway"
 
         # Wait for the server rather than letting chromium cache a connection
         # error as the page -- chromium does not retry an error page on its own,
@@ -148,7 +185,7 @@
             say "attempt after $fails fast exits: software rendering"
           fi
 
-          cage -s -- chromium ${browserFlags} --user-data-dir="$profile" ${url} \
+          cage -s -- ${lib.getExe session} "$profile" \
             2> >(systemd-cat -t hjem-kiosk -p warning) || true
 
           if [ $(( $(date +%s) - started )) -lt 15 ]; then
@@ -261,7 +298,10 @@
       # lights on and with them off, and set darkRoomLevel between the two.
       inherit presence lightMeter;
       darkRoomLevel = 40.0;
-      darkRoomBrightness = 0.06;
+      # 0 = off: the backlight at 0 was never dark on this amdgpu panel, so
+      # the page goes pure black as well. Raise it (0.06 was the old value)
+      # to dim instead of switching off.
+      darkRoomBrightness = 0.0;
 
       # The menu's update button (two taps): git pull in this repo and
       # `nh os build -U hjem`, both as you, then the switch as root, with the
