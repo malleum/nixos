@@ -333,11 +333,14 @@
       # `lap` already turns on hardware.acpilight, which is what gives the
       # service's `video` group write access to the backlight.
       backlight = "auto";
-      nightBrightness = 0.18;
+      # On at full brightness or off, nothing in between: the night palette
+      # (amber) is the only difference after dark, and a dark room turns the
+      # panel off (below). 0.18 made the clock hard to read, and the dead
+      # hours took it down to 0 whatever the room was doing.
+      nightBrightness = 1.0;
+      deadHours = "off";
 
-      # The other half of the camera switches at the top of this file. The
-      # palette stays in its night amber either way -- the point is to be
-      # readable in a dark room, not to light the room.
+      # The other half of the camera switches at the top of this file.
       #
       # The dark-room threshold is a guess until it has seen this room. The
       # footer shows what the meter reads as "ĉambro N": look at it with the
