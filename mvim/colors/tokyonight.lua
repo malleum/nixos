@@ -2,12 +2,14 @@
 -- (extras/lua/tokyonight_night.lua, which only defines the palette and
 -- highlight tables) plus the lines at the end that apply them. Vendored so
 -- building mvim doesn't download the whole tokyonight package for one style.
--- bat's theme (modules/programs/cli.nix) comes from the same package.
+-- bat's theme (modules/programs/tokyonight_night.tmTheme) is vendored from
+-- the same package's extras/sublime/tokyonight_night.tmTheme.
 --
 -- To update from the flake's nixpkgs:
 --   t=$(nix build --no-link --print-out-paths --impure --expr \
 --     '(builtins.getFlake (toString ./.)).inputs.nixpkgs.legacyPackages.x86_64-linux.vimPlugins.tokyonight-nvim')
 --   then replace everything above "-- Apply" with $t/extras/lua/tokyonight_night.lua
+--   and copy $t/extras/sublime/tokyonight_night.tmTheme over bat's
 -- (stylua skips this file; see .styluaignore)
 
 local colors = {

@@ -22,13 +22,12 @@
       zsh.shellAliases = shellAliases;
       # Tokyonight night, matching mvim's colorscheme (same tokyonight.nvim
       # extras). mvim's fzf previews and MANPAGER pick it up from this config.
+      # Vendored like mvim/colors/tokyonight.lua, so no host builds the whole
+      # plugin for one file; see that file's header for how to refresh both.
       bat = {
         enable = true;
         config.theme = "tokyonight_night";
-        themes.tokyonight_night = {
-          src = pkgs.vimPlugins.tokyonight-nvim;
-          file = "extras/sublime/tokyonight_night.tmTheme";
-        };
+        themes.tokyonight_night.src = ./tokyonight_night.tmTheme;
       };
     };
 

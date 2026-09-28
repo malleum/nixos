@@ -83,8 +83,9 @@
       "marvin1984"
       "tczcatlipoca"
       "siocledesea"
-      "emyfun14"
+      "embograce"
       "ConejoFresco"
+      "PWT05"
     ];
 
     # Server operators: level 4, full command access. Deliberately empty --
@@ -105,7 +106,7 @@
     keepInventoryPlayers = [
       "tczcatlipoca"
       "siocledesea"
-      "emyfun14"
+      "embograce"
     ];
 
     # Half-measure: these players keep their items and XP on a coin flip, rolled
@@ -287,6 +288,12 @@
         # twenty-second trickle. Generation and load rates are left at Paper's
         # defaults on purpose -- those gate real work.
         player-max-chunk-send-rate: 150.0
+      player-auto-save:
+        # Default -1 is "with the world autosave", every five minutes. Saving a
+        # player is three small files, and one of them is the stats JSON that
+        # joshammer.com/mc reads off disk (grapple.nix) -- once a minute is
+        # what makes that page live. Staggered by Paper, never a spike.
+        rate: 1200
     '';
 
     paperWorldDefaultsOverlay = pkgs.writeText "paper-world-defaults-overlay.yml" ''

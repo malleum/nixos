@@ -31,6 +31,12 @@ in {
         Environment = [
           "PORT=${toString port}"
           "HOME=/var/lib/grapple"
+          # joshammer.com/mc reads the Minecraft server's per-player stats
+          # straight off disk (mc.nix). Paper writes them world-readable, so
+          # this is all it takes. Deliberately NOT the minecraft group:
+          # server.properties is 0640 because it holds the RCON password, and
+          # an internet-facing process has no business being able to read it.
+          "MC_DIR=/var/lib/minecraft"
         ];
 
         # Hardening
