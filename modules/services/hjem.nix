@@ -76,6 +76,8 @@
     # is faster on the integrated graphics in a machine of this vintage.
     # --kiosk hides everything; the rest suppress the first-run, crash-restore
     # and translate furniture that would otherwise sit over the clock forever.
+    # (Translate in --disable-features is a no-op in current Chromium; the
+    # translate bubble is kept away by the page's own notranslate meta.)
     browserFlags = lib.concatStringsSep " " (presenceFlags
       ++ [
         "--kiosk"
