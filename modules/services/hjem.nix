@@ -105,9 +105,20 @@
     # corner, where what is left of the arrow is off the edge of the screen
     # and the page, having had its motion event, hides it anyway. Twice,
     # because the first can land before the page has loaded.
+    #
+    # And the panel's off switch. In a dark room hjem sets the backlight to 0
+    # and the page to black, but this amdgpu panel is still lit at 0 -- only
+    # powering the output down makes it dark. cage cannot blank on its own,
+    # but it does speak wlr-output-management, so wlr-randr can turn the
+    # output off and on; the server says which on /api/display, polled every
+    # second. With the output off cage has nowhere to deliver a touch, so the
+    # page never hears it: swayidle does instead -- any input after a second
+    # of none is a "resume" -- and tells the server, which wakes the panel as
+    # if the page had. If the server stops answering, the output comes back
+    # on rather than leaving a dead black panel.
     session = pkgs.writeShellApplication {
       name = "hjem-kiosk-session";
-      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.coreutils];
+      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.wlr-randr pkgs.swayidle pkgs.curl pkgs.gawk pkgs.coreutils];
       text = ''
         chromium ${browserFlags} --user-data-dir="$1" ${url} &
         browser=$!
@@ -117,8 +128,41 @@
         (sleep 5 && park && sleep 20 && park) &
         parker=$!
 
+        outputs() { wlr-randr | awk '/^[^ ]/ { print $1 }'; }
+        power() {
+          for output in $(outputs); do
+            wlr-randr --output "$output" --"$1" || true
+          done
+        }
+        display() {
+          shown=on
+          misses=0
+          while sleep 1; do
+            want=on
+            if reply=$(curl -fsS --max-time 2 ${url}/api/display 2>/dev/null); then
+              misses=0
+              case "$reply" in *'"off": true'*) want=off ;; esac
+            else
+              misses=$((misses + 1))
+              # A restart mid-update is a few seconds; keep the state until
+              # it has been gone longer than that.
+              [ "$misses" -lt 10 ] && continue
+            fi
+            [ "$want" = "$shown" ] && continue
+            power "$want"
+            shown=$want
+          done
+        }
+        display &
+        watcher=$!
+
+        swayidle timeout 1 true \
+          resume 'curl -fsS -X POST --max-time 2 ${url}/api/touch >/dev/null 2>&1 || true' &
+        idler=$!
+
+        trap 'kill "$browser" "$watcher" "$idler" 2>/dev/null || true' TERM INT
         wait "$browser" || true
-        kill "$parker" 2>/dev/null || true
+        kill "$parker" "$watcher" "$idler" 2>/dev/null || true
       '';
     };
 
