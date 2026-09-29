@@ -19,7 +19,7 @@ let
   # Leave null for the default Element background.
   elementWelcomeBackground = ../style/wallpapers/ws42.png;
 in {
-  unify.modules.matrix.nixos = {
+  flake.modules.nixos.matrix = {
     pkgs,
     hostConfig,
     config,

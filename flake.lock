@@ -1246,7 +1246,6 @@
         "stylix": "stylix",
         "teno": "teno",
         "termword": "termword",
-        "unify": "unify",
         "waywall": "waywall",
         "weave": "weave"
       }
@@ -1567,32 +1566,6 @@
         "owner": "tinted-theming",
         "repo": "base16-zed",
         "type": "github"
-      }
-    },
-    "unify": {
-      "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1765403820,
-        "narHash": "sha256-3VJMOW8DOFgWerzUmOI5YiGA3auqW4ZbIDHNaqvLp0E=",
-        "ref": "refs/heads/main",
-        "rev": "35824b87edab3df89474b426a8fcbe02cb720504",
-        "revCount": 41,
-        "type": "git",
-        "url": "https://codeberg.org/quasigod/unify.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://codeberg.org/quasigod/unify.git"
       }
     },
     "waywall": {

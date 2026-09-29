@@ -1,5 +1,5 @@
 {
-  unify.modules.vrt.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.vrt = {hostConfig, ...}: {
     # virtualisation.virtualbox.host = {enable = true;};
 
     users.users.${hostConfig.user.username}.extraGroups = [
@@ -7,7 +7,7 @@
     ];
   };
 
-  unify.modules.vrt.home = {pkgs, ...}: {
+  flake.modules.homeManager.vrt = {pkgs, ...}: {
     # dconf.settings = {
     #   "org/virt-manager/virt-manager/connections" = {
     #     autoconnect = ["qemu:///system"];

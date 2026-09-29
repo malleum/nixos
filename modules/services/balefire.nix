@@ -9,7 +9,7 @@
 # the Oracle VCN already permits them. 8090 rather than the obvious 8080, which
 # lk-jwt-service already has.
 {
-  unify.modules.balefire.nixos = {
+  flake.modules.nixos.balefire = {
     hostConfig,
     pkgs,
     ...

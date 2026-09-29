@@ -4,7 +4,7 @@
 
 **One flake for every machine I use: laptops, a desktop, and a cloud server.**
 
-[unify](https://codeberg.org/quasigod/unify) · flake-parts · import-tree · home-manager · sops-nix · stylix
+flake-parts · import-tree · home-manager · sops-nix · stylix
 
 </div>
 
@@ -82,13 +82,17 @@ A few conventions carry most of the structure:
 - **A leading underscore opts out.** `_config.nix`, `_hardware-configuration.nix`
   and the like are skipped by import-tree and imported by hand from a sibling
   file. Use it for helpers and for anything that isn't a module.
-- **Modules say where they apply.** With [unify](https://codeberg.org/quasigod/unify),
-  a file writes to one of:
-  - `unify.nixos` / `unify.home`: every host
-  - `unify.modules.<tag>.nixos` / `.home`: only hosts that list `<tag>`
+- **Modules say where they apply.** A file writes to one of flake-parts'
+  `flake.modules` slots:
+  - `flake.modules.nixos.base` / `flake.modules.homeManager.base`: every host
+  - `flake.modules.nixos.<tag>` / `flake.modules.homeManager.<tag>`: only hosts
+    that list `<tag>`
 
   System and home-manager config for the same feature live side by side in one
   file.
+- **Hosts are `hosts.<name>`.** A host file lists its `tags` and its own
+  `modules` (hardware config, quirks); `modules/meta/hosts.nix` turns each into
+  a `nixosConfiguration` with home-manager wired in.
 - **Host facts come from `hostConfig`.** Username, browser, flake path and
   hostname are defined once (`modules/meta/userConfig.nix`, `flakepath.nix`)
   and passed to every module as `hostConfig`.
@@ -120,7 +124,7 @@ A few conventions carry most of the structure:
 | `dbt` | Windows entry and the UEFI shell in the boot menu |
 | `matrix` `grapple` `balefire` `mc` | Server services on minimus |
 
-The authoritative list is `grep -rho 'unify\.modules\.[a-z-]*' modules | sort -u`.
+The authoritative list is `grep -rhoE 'flake\.modules\.(nixos|homeManager)\.[a-z-]+' modules | sed 's/.*\.//' | sort -u`.
 
 ## Common tasks
 
@@ -144,8 +148,9 @@ After it boots, add tags to the host file and `nh os switch`.
 ### Add a feature
 
 1. Create a file in the matching `modules/` directory.
-2. Write to `unify.modules.<tag>` for an opt-in feature, or to `unify.nixos` /
-   `unify.home` for something every host should have.
+2. Write to `flake.modules.nixos.<tag>` / `flake.modules.homeManager.<tag>` for
+   an opt-in feature, or to the `base` slots for something every host should
+   have.
 3. Add the tag to the hosts that want it and switch.
 
 ### Add a script

@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     lib,
     hostConfig,
     pkgs,

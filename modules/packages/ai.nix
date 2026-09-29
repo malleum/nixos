@@ -1,5 +1,5 @@
 {
-  unify.modules.ai.home = {pkgs, ...}: {
+  flake.modules.homeManager.ai = {pkgs, ...}: {
     home.packages = with pkgs; [
       cursor-cli
       antigravity-cli

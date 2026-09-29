@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.gui = {hostConfig, ...}: {
     security.rtkit.enable = true;
 
     services = {

@@ -1,5 +1,5 @@
 {
-  unify.home = {
+  flake.modules.homeManager.base = {
     config,
     pkgs,
     ...

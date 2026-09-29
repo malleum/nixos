@@ -56,7 +56,7 @@
 # swapping the backend and the roaming policy in one go would make a
 # recurrence impossible to attribute. Revisit once this has been stable.
 {
-  unify.modules.ath.nixos = {
+  flake.modules.nixos.ath = {
     networking.wireless.iwd = {
       enable = true;
       settings = {

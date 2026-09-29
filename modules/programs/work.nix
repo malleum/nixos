@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.wrk.home = {pkgs, ...}: {
+  flake.modules.homeManager.wrk = {pkgs, ...}: {
     programs.zsh.initContent = ''
       typeset -gA _zsh_abbrs
       _zsh_abbrs=(

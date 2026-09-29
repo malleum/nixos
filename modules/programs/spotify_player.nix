@@ -1,5 +1,5 @@
 {
-  unify.modules.med.home = {config, ...}: {
+  flake.modules.homeManager.med = {config, ...}: {
     programs.spotify-player = {
       enable = true;
       settings = {

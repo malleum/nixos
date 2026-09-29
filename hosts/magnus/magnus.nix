@@ -1,36 +1,26 @@
-{config, ...}: let
-  inherit (config.unify) modules;
+{
+  hosts.magnus = {
+    tags = [
+      "ai"
+      "amd"
+      "ath"
+      "bt-audio"
+      "cht"
+      "dbt"
+      "dev"
+      "doc"
+      "efi"
+      "gam"
+      "gui"
+      "hyp"
+      "med"
+      "off"
+      "prt"
+      "src"
+      "vrt"
+      "wrk"
+    ];
 
-  hostName = "magnus";
-in {
-  unify.hosts.nixos.${hostName} = {config, ...}: let
-    inherit (config.user) username;
-  in {
-    modules = builtins.attrValues {
-      inherit
-        (modules)
-        ai
-        amd
-        ath
-        bt-audio
-        cht
-        dbt
-        dev
-        doc
-        efi
-        gam
-        gui
-        hyp
-        med
-        off
-        prt
-        src
-        vrt
-        wrk
-        ;
-    };
-
-    nixos.imports = [./_hardware-configuration.nix];
-    users.${username} = {inherit (config) modules;};
+    modules = [./_hardware-configuration.nix];
   };
 }

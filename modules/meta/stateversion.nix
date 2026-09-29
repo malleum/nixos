@@ -1,8 +1,8 @@
 let
   stateVersion = "26.05";
 in {
-  unify = {
-    home.home = {inherit stateVersion;};
-    nixos.system = {inherit stateVersion;};
+  flake.modules = {
+    homeManager.base.home = {inherit stateVersion;};
+    nixos.base.system = {inherit stateVersion;};
   };
 }

@@ -1,5 +1,5 @@
 {
-  unify.modules.cht.home = {
+  flake.modules.homeManager.cht = {
     lib,
     pkgs,
     ...

@@ -1,5 +1,5 @@
 {
-  unify.modules.hyp.home = {
+  flake.modules.homeManager.hyp = {
     config,
     lib,
     hostConfig,

@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.nixos = {config, ...}: let
+  flake.modules.nixos.base = {config, ...}: let
     allowed-users = ["@wheel"];
   in {
     sops.templates.nix-access-tokens = {

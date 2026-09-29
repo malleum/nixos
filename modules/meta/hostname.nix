@@ -1,5 +1,5 @@
 {
-  unify.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.base = {hostConfig, ...}: {
     networking.hostName = hostConfig.name;
   };
 }

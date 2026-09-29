@@ -1,44 +1,30 @@
-{
-  config,
-  inputs,
-  ...
-}: let
-  inherit (config.unify) modules;
-
-  hostName = "manus";
-in {
-  unify.hosts.nixos.${hostName} = {config, ...}: let
-    inherit (config.user) username;
-  in {
-    modules = builtins.attrValues {
-      inherit
-        (modules)
-        ai
-        amd
-        cht
-        dev
-        doc
-        efi
-        gui
-        hyp
-        lap
-        med
-        off
-        prt
-        src
-        vrt
-        wif
-        wrk
-        ;
-    };
+{inputs, ...}: {
+  hosts.manus = {
+    tags = [
+      "ai"
+      "amd"
+      "cht"
+      "dev"
+      "doc"
+      "efi"
+      "gui"
+      "hyp"
+      "lap"
+      "med"
+      "off"
+      "prt"
+      "src"
+      "vrt"
+      "wif"
+      "wrk"
+    ];
 
     # ThinkPad P16s Gen 4 AMD (21QR001SUS, Ryzen AI 7 PRO 350). Pulls in
     # trackpoint support + the amd cpu/gpu and pc-laptop/ssd baselines.
-    nixos.imports = [
+    modules = [
       ./_hardware-configuration.nix
       ./_keyboard-quirk.nix
       inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p16s-amd-gen4
     ];
-    users.${username} = {inherit (config) modules;};
   };
 }

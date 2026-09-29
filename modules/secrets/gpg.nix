@@ -1,5 +1,5 @@
 {
-  unify.nixos = {pkgs, ...}: {
+  flake.modules.nixos.base = {pkgs, ...}: {
     programs.gnupg = {
       agent = {
         enable = true;

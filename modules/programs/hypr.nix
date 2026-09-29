@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.hyp.nixos = {pkgs, ...}: {
+  flake.modules.nixos.hyp = {pkgs, ...}: {
     programs.hyprland = {
       enable = true;
       package = inputs.hypr.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
@@ -7,7 +7,7 @@
     };
   };
 
-  unify.modules.hyp.home = {
+  flake.modules.homeManager.hyp = {
     config,
     hostConfig,
     lib,

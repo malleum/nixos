@@ -1,27 +1,17 @@
-{config, ...}: let
-  inherit (config.unify) modules;
+{
+  hosts.malleum = {
+    tags = [
+      "ai"
+      "amd"
+      "cht"
+      "dev"
+      "efi"
+      "gui"
+      "lap"
+      "prt"
+      "src"
+    ];
 
-  hostName = "malleum";
-in {
-  unify.hosts.nixos.${hostName} = {config, ...}: let
-    inherit (config.user) username;
-  in {
-    modules = builtins.attrValues {
-      inherit
-        (modules)
-        ai
-        amd
-        cht
-        dev
-        efi
-        gui
-        lap
-        prt
-        src
-        ;
-    };
-
-    nixos.imports = [./_hardware-configuration.nix];
-    users.${username} = {inherit (config) modules;};
+    modules = [./_hardware-configuration.nix];
   };
 }

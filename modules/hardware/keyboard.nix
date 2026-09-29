@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  flake.modules.nixos.gui = {pkgs, ...}: {
     console.useXkbConfig = true;
     services.xserver.xkb = {
       layout = "us";
@@ -10,7 +10,7 @@
     environment.variables.XLOCALEDIR = "${pkgs.libx11}/share/X11/locale";
   };
 
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     home.file.".XCompose".text = ''
       include "%L"
 

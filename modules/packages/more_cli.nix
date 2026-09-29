@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {pkgs, ...}: {
+  flake.modules.homeManager.gui = {pkgs, ...}: {
     home.packages = with pkgs; [
       acpi
       age

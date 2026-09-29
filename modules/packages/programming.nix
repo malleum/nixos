@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.dev.home = {
+  flake.modules.homeManager.dev = {
     lib,
     nixosConfig,
     pkgs,

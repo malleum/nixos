@@ -2,7 +2,7 @@
 # MCSR JDK are not here -- they come with their configuration from
 # modules/programs/waywall.nix.
 {...}: {
-  unify.modules.gam.home = {pkgs, ...}: {
+  flake.modules.homeManager.gam = {pkgs, ...}: {
     home = {
       packages = with pkgs; [
         prismlauncher

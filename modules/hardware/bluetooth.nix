@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  flake.modules.nixos.gui = {pkgs, ...}: {
     hardware.bluetooth.enable = true;
 
     # Headsets reconnect on their own when they power on. bluez asks a

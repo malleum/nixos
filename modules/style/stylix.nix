@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.gui.nixos = {
+  flake.modules.nixos.gui = {
     pkgs,
     hostConfig,
     ...
@@ -54,7 +54,7 @@
     };
   };
 
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     lib,
     pkgs,
     ...

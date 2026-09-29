@@ -1,11 +1,5 @@
-{config, ...}: let
-  inherit (config.unify) modules;
-
-  hostName = "minoris";
-in {
-  unify.hosts.nixos.${hostName} = {config, ...}: let
-    inherit (config.user) username;
-  in {
+{
+  hosts.minoris = {
     # The wall panel. `hjem` autologins straight into a kiosk browser at boot;
     # quitting it drops back to tuigreet, so this is still an ordinary laptop
     # when you want one. Add as needed:
@@ -15,20 +9,16 @@ in {
     #   off        libreoffice          ai   assistant CLIs
     #   doc        docker               vrt  qemu / quickemu
     #   wrk        work tooling         src  build jay+iamb from source
-    modules = builtins.attrValues {
-      inherit
-        (modules)
-        efi
-        gui
-        hjem
-        lap
-        ;
-    };
+    tags = [
+      "efi"
+      "gui"
+      "hjem"
+      "lap"
+    ];
 
-    nixos.imports = [
+    modules = [
       ./_hardware-configuration.nix
       ./_tpm-quirk.nix
     ];
-    users.${username} = {inherit (config) modules;};
   };
 }

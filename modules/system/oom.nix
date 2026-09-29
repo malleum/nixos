@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {
+  flake.modules.nixos.gui = {
     services.earlyoom = {
       enable = true;
       freeMemThreshold = 5;

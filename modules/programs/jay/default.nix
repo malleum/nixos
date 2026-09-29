@@ -11,7 +11,7 @@
 # flake packages by modules/packages/scripts.nix. They depend on nothing here,
 # so they are runnable standalone: `nix run .#jay-power-menu`.
 {inputs, ...}: {
-  unify.modules.gui.nixos = {pkgs, ...}: let
+  flake.modules.nixos.gui = {pkgs, ...}: let
     jayPkg = pkgs.jay;
   in {
     environment.systemPackages = [jayPkg pkgs.papirus-icon-theme];
@@ -29,7 +29,7 @@
     };
   };
 
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     config,
     hostConfig,
     lib,

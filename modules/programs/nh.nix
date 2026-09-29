@@ -1,5 +1,5 @@
 {
-  unify.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.base = {hostConfig, ...}: {
     environment.variables = {
       NH_NO_CHECKS = 1;
     };

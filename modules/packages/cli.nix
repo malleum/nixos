@@ -1,5 +1,5 @@
 {self, ...}: {
-  unify.home = {pkgs, ...}: let
+  flake.modules.homeManager.base = {pkgs, ...}: let
     packages = self.packages.${pkgs.stdenv.hostPlatform.system};
     # mvim is the everyday editor (`nvim`, `vi`); see modules/meta/nvim.nix.
     nvim = packages.mvim;

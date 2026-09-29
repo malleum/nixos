@@ -1,5 +1,5 @@
 {
-  unify.modules.prt.nixos = {pkgs, ...}: {
+  flake.modules.nixos.prt = {pkgs, ...}: {
     # Enable CUPS to print documents.
     services.printing.enable = true;
 

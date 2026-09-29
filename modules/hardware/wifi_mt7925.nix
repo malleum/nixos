@@ -8,7 +8,7 @@
 # CQM signal monitoring. Fix: switch backend to iwd (no wpa_supplicant
 # bgscan, smarter roaming logic).
 {
-  unify.modules.wif.nixos = {
+  flake.modules.nixos.wif = {
     networking.wireless.iwd = {
       enable = true;
       settings = {

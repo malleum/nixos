@@ -1,5 +1,5 @@
 {
-  unify.home = {lib, ...}: {
+  flake.modules.homeManager.base = {lib, ...}: {
     programs.starship = {
       enable = true;
       enableFishIntegration = true;
