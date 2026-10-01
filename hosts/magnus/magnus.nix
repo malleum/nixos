@@ -30,7 +30,10 @@ in {
         ;
     };
 
-    nixos.imports = [./_hardware-configuration.nix];
+    nixos.imports = [
+      ./_hardware-configuration.nix
+      ./_rgb-off.nix
+    ];
     users.${username} = {inherit (config) modules;};
   };
 }
