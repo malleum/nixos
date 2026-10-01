@@ -1,12 +1,12 @@
 {
-  unify.nixos = {pkgs, ...}: {
+  flake.modules.nixos.base = {pkgs, ...}: {
     programs.zsh.enable = true;
     environment.shells = [pkgs.zsh];
 
     users.defaultUserShell = pkgs.zsh;
   };
 
-  unify.home = {
+  flake.modules.homeManager.base = {
     pkgs,
     config,
     ...

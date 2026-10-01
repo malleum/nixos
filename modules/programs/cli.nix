@@ -1,5 +1,5 @@
 {
-  unify.home = {pkgs, ...}: let
+  flake.modules.homeManager.base = {pkgs, ...}: let
     shellAliases = {
       la = "eza -lah";
       cat = "bat";

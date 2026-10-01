@@ -1,5 +1,5 @@
 {
-  unify.modules.doc.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.doc = {hostConfig, ...}: {
     users.users.${hostConfig.user.username}.extraGroups = ["docker"];
 
     virtualisation.docker = {

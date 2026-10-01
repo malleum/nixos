@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.base = {hostConfig, ...}: {
     imports = [inputs.sops-nix.nixosModules.sops];
 
     sops = {
@@ -17,7 +17,7 @@
     };
   };
 
-  unify.home = {hostConfig, ...}: {
+  flake.modules.homeManager.base = {hostConfig, ...}: {
     imports = [inputs.sops-nix.homeManagerModules.sops];
     sops = {
       defaultSopsFile = ./default.yaml;

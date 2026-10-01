@@ -2,7 +2,7 @@
 # Editors/toolchains -> dev, players/editors -> med, documents -> off,
 # the GlobalProtect client -> wrk.
 {
-  unify.modules.gui.home = {pkgs, ...}: {
+  flake.modules.homeManager.gui = {pkgs, ...}: {
     home.packages = with pkgs; [
       networkmanagerapplet
 

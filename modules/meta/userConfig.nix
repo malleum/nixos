@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}: let
+{lib, ...}: let
   inherit (lib) mkOption types;
 
   email = "jph33@outlook.com";
@@ -28,11 +24,5 @@ in {
         browser2
         ;
     };
-  };
-
-  config.unify.options.user = mkOption {
-    type = types.attrsOf types.str;
-    internal = true;
-    default = config.user;
   };
 }

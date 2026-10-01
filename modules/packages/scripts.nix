@@ -21,7 +21,7 @@
     '';
   };
 
-  unify.home = {
+  flake.modules.homeManager.base = {
     pkgs,
     lib,
     ...

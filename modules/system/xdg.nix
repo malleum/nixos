@@ -1,5 +1,5 @@
 {
-  unify.home = {hostConfig, ...}: let
+  flake.modules.homeManager.base = {hostConfig, ...}: let
     mkDirStr = dir: "${hostConfig.user.homeDirectory}/${dir}";
   in {
     xdg.userDirs = {
@@ -10,7 +10,7 @@
     };
   };
 
-  unify.modules.gui.home = {hostConfig, ...}: {
+  flake.modules.homeManager.gui = {hostConfig, ...}: {
     xdg = {
       # Opening a folder drops into a terminal there. foot has no directory
       # argument of its own, so wrap it in a hidden entry.

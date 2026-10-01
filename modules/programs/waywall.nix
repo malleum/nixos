@@ -7,7 +7,7 @@
 # sets the geometry and keybinds. ~/.config/waywall then holds nothing but the
 # generated init.lua and waywall's own layout_state.lua.
 {inputs, ...}: {
-  unify.modules.gam.home = {
+  flake.modules.homeManager.gam = {
     config,
     pkgs,
     ...

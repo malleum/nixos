@@ -14,7 +14,7 @@
 # still needs `--password-store=gnome-libsecret` because XDG_CURRENT_DESKTOP
 # is `jay` and Chromium will not auto-select the libsecret backend.
 {
-  unify.modules.gui.nixos = {
+  flake.modules.nixos.gui = {
     lib,
     pkgs,
     ...
@@ -35,7 +35,7 @@
     environment.systemPackages = [pkgs.libsecret];
   };
 
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     lib,
     pkgs,
     ...

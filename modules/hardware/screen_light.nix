@@ -1,5 +1,5 @@
 {
-  unify.modules.lap.nixos = {
+  flake.modules.nixos.lap = {
     hardware.acpilight.enable = true;
   };
 }

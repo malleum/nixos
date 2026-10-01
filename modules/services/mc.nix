@@ -28,7 +28,7 @@
 # marked "switches" below: the two dimension gates, the whitelist, the
 # keep-inventory list and the Matrix bot. Edit, `nh os switch`, done.
 {inputs, ...}: {
-  unify.modules.mc.nixos = {
+  flake.modules.nixos.mc = {
     config,
     lib,
     pkgs,

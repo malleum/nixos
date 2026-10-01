@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.home = {
+  flake.modules.homeManager.gui = {
     programs = {
       foot = {
         enable = true;

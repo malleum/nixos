@@ -1,27 +1,17 @@
-{config, ...}: let
-  inherit (config.unify) modules;
+{
+  hosts.minimus = {
+    tags = [
+      "balefire"
+      "efi"
+      "grapple"
+      "matrix"
+      "mc"
+    ];
 
-  hostName = "minimus";
-in {
-  unify.hosts.nixos.${hostName} = {config, ...}: let
-    inherit (config.user) username;
-  in {
-    modules = builtins.attrValues {
-      inherit
-        (modules)
-        balefire
-        efi
-        grapple
-        matrix
-        mc
-        ;
-    };
-
-    nixos.imports = [
+    modules = [
       ./_hardware-configuration.nix
       ./_network.nix
       ./_server.nix
     ];
-    users.${username} = {inherit (config) modules;};
   };
 }

@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.lap.nixos = {
+  flake.modules.nixos.lap = {
     # common-pc-laptop turns TLP on by default (gated on
     # power-profiles-daemon being off, which it is below).
     imports = [inputs.nixos-hardware.nixosModules.common-pc-laptop];

@@ -7,7 +7,7 @@
 # ~/.ssh/vs_gitlab) while the config that points at them was not. Both halves
 # live here now, sharing the same path values.
 {
-  unify.home = {hostConfig, ...}: let
+  flake.modules.homeManager.base = {hostConfig, ...}: let
     inherit (hostConfig.user) homeDirectory;
 
     oracleKey = "${homeDirectory}/.ssh/oracle";

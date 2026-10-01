@@ -1,5 +1,5 @@
 {
-  unify.modules.med.nixos = {pkgs, ...}: {
+  flake.modules.nixos.med = {pkgs, ...}: {
     programs = {
       obs-studio = {
         enable = true;
@@ -23,7 +23,7 @@
   # writing a temp file and rename(2)ing it over the target, which replaces a
   # file symlink with a regular file and silently detaches the repo. Renames
   # land *inside* a directory symlink, so this one survives.
-  unify.modules.gam.home = {config, ...}: {
+  flake.modules.homeManager.gam = {config, ...}: {
     home.file.".config/obs-studio/basic/scenes".source =
       config.lib.file.mkOutOfStoreSymlink
       "/home/joshammer/documents/gh/waywall-nix/obs/scenes";

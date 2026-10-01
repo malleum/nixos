@@ -18,7 +18,7 @@
 # The binary is exposed as `waywall-sdl` so it can sit in the same profile as
 # the real one without colliding on bin/waywall.
 {
-  unify.modules.gam.home = {pkgs, ...}: let
+  flake.modules.homeManager.gam = {pkgs, ...}: let
     patched = pkgs.waywall.overrideAttrs (old: {
       pname = "waywall-sdl";
 

@@ -1,6 +1,6 @@
 {inputs, ...}: {
   # services.fstrim.enable, from upstream.
-  unify.modules.gui.nixos.imports = [
+  flake.modules.nixos.gui.imports = [
     inputs.nixos-hardware.nixosModules.common-pc-ssd
   ];
 }

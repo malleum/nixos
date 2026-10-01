@@ -1,5 +1,5 @@
 {
-  unify.modules.dbt.nixos = {
+  flake.modules.nixos.dbt = {
     boot.loader.systemd-boot = {
       edk2-uefi-shell.enable = true;
       windows."11".efiDeviceHandle = "HD1b";

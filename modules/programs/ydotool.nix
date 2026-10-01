@@ -8,7 +8,7 @@
 # enter as a kernel input device, so the host compositor routes them to whatever
 # is focused and waywall forwards them to Minecraft like any real key.
 {
-  unify.modules.gam.nixos = {hostConfig, ...}: {
+  flake.modules.nixos.gam = {hostConfig, ...}: {
     programs.ydotool.enable = true;
 
     # The daemon's socket is group-owned (0660), so membership is what makes

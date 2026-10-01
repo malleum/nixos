@@ -3,7 +3,7 @@
 # root and for system units too, which is a much wider blast radius than
 # intended for a reimplementation.
 {
-  unify.home = {pkgs, ...}: {
+  flake.modules.homeManager.base = {pkgs, ...}: {
     home.packages = [pkgs.uutils-coreutils-noprefix];
   };
 }

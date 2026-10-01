@@ -5,7 +5,7 @@
 
   # Fix 3: never USB-autosuspend the Bluetooth controller mid-stream.
   # 0489:e10a is the WCN7850 module's BT interface. Applies on plug/boot.
-  unify.modules.bt-audio.nixos = {
+  flake.modules.nixos.bt-audio = {
     services.udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0489", ATTR{idProduct}=="e10a", TEST=="power/control", ATTR{power/control}="on"
     '';
@@ -20,7 +20,7 @@
   # services.pipewire.wireplumber.extraConfig option builds a package but does
   # not get wired into the wireplumber user unit in this setup, so it never
   # loads. wireplumber reads ~/.config/wireplumber/wireplumber.conf.d reliably.
-  unify.modules.bt-audio.home = {
+  flake.modules.homeManager.bt-audio = {
     xdg.configFile."wireplumber/wireplumber.conf.d/51-bluez-sbc-xq.conf".text = ''
       monitor.bluez.properties = {
         bluez5.enable-sbc-xq = true

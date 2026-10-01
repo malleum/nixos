@@ -14,7 +14,7 @@
 # Nothing here is enabled by a host unless it lists `hjem` in its module set,
 # which is why the greetd autologin below cannot surprise another machine.
 {inputs, ...}: {
-  unify.modules.hjem.nixos = {
+  flake.modules.nixos.hjem = {
     pkgs,
     lib,
     hostConfig,

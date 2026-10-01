@@ -47,14 +47,8 @@
     # Nix string into an indented shell heredoc mangles the leading whitespace.
     # @HOSTNAME@ is substituted at run time.
     hostTemplate = pkgs.writeText "host-template.nix" ''
-      {config, ...}: let
-        inherit (config.unify) modules;
-
-        hostName = "@HOSTNAME@";
-      in {
-        unify.hosts.nixos.''${hostName} = {config, ...}: let
-          inherit (config.user) username;
-        in {
+      {
+        hosts."@HOSTNAME@" = {
           # Minimal usable laptop. Add as needed:
           #   amd / wif  hardware quirks      hyp  hyprland as a second session
           #   dev        toolchains           cht  matrix + signal
@@ -62,17 +56,13 @@
           #   off        libreoffice          ai   assistant CLIs
           #   doc        docker               vrt  qemu / quickemu
           #   wrk        work tooling         src  build jay+iamb from source
-          modules = builtins.attrValues {
-            inherit
-              (modules)
-              efi
-              gui
-              lap
-              ;
-          };
+          tags = [
+            "efi"
+            "gui"
+            "lap"
+          ];
 
-          nixos.imports = [./_hardware-configuration.nix];
-          users.''${username} = {inherit (config) modules;};
+          modules = [./_hardware-configuration.nix];
         };
       }
     '';

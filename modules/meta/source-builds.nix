@@ -22,7 +22,7 @@
   # Read by modules that build from source as a side effect of other config,
   # where moving the package here would mean moving the config with it --
   # currently jay's wl-tray-bridge.
-  unify.nixos = {lib, ...}: {
+  flake.modules.nixos.base = {lib, ...}: {
     options.local.buildFromSource = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -30,7 +30,7 @@
     };
   };
 
-  unify.modules.src.nixos = {pkgs, ...}: let
+  flake.modules.nixos.src = {pkgs, ...}: let
     inherit (pkgs.stdenv.hostPlatform) system;
   in {
     local.buildFromSource = true;
@@ -50,7 +50,7 @@
   #   cls      -- was in modules/packages/cli.nix
   #   lerni    -- was in modules/packages/more_cli.nix
   #   termword -- likewise
-  unify.modules.src.home = {pkgs, ...}: let
+  flake.modules.homeManager.src = {pkgs, ...}: let
     inherit (pkgs.stdenv.hostPlatform) system;
   in {
     home.packages = [

@@ -22,5 +22,5 @@ in {
     nixpkgs.hostPlatform = {inherit system;};
   };
 
-  unify.nixos = {inherit nixpkgs;};
+  flake.modules.nixos.base = {inherit nixpkgs;};
 }

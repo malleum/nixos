@@ -11,10 +11,4 @@ in {
 
     default = "${configHome}/nixos";
   };
-
-  config.unify.options.flakePath = mkOption {
-    type = types.str;
-    internal = true;
-    default = config.flakePath;
-  };
 }

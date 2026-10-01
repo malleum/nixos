@@ -2,7 +2,7 @@
 # meta/source-builds.nix, it only goes on hosts that opt into source builds
 # with `src`; minimus and minoris keep just tmux.
 {inputs, ...}: {
-  unify.modules.src.home = {config, ...}: let
+  flake.modules.homeManager.src = {config, ...}: let
     color = key: default:
       if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${key}
       then "#${config.stylix.base16Scheme.${key}}"

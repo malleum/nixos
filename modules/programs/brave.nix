@@ -5,7 +5,7 @@
   # job -- it is the correct place for these, and hand-rolling an
   # environment.etc entry instead would also drop stylix, which injects
   # BrowserThemeColor through extraOpts.
-  unify.modules.gui.nixos = {
+  flake.modules.nixos.gui = {
     programs.chromium = {
       enable = true;
       extraOpts = {
@@ -15,7 +15,7 @@
     };
   };
 
-  unify.modules.gui.home = {pkgs, ...}: {
+  flake.modules.homeManager.gui = {pkgs, ...}: {
     programs.chromium = {
       enable = true;
       # pkgs.brave lost its `.override` in this nixpkgs (double-callPackage

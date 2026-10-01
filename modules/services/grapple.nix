@@ -2,7 +2,7 @@
   domain = "joshammer.com";
   port = 3000;
 in {
-  unify.modules.grapple.nixos = {pkgs, ...}: let
+  flake.modules.nixos.grapple = {pkgs, ...}: let
     grapplePkg = inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     # --- Grapple User & Group ---

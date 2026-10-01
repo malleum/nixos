@@ -50,7 +50,7 @@
     };
   };
 
-  unify.modules.med.home = {pkgs, ...}: let
+  flake.modules.homeManager.med = {pkgs, ...}: let
     system = pkgs.stdenv.hostPlatform.system;
     sayCmd = self.packages.${system}.say;
     voiceDir = self.packages.${system}.piper-voice-no-talesyntese;

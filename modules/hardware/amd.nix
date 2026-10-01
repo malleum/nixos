@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  unify.modules.amd.nixos = {
+  flake.modules.nixos.amd = {
     pkgs,
     lib,
     hostConfig,

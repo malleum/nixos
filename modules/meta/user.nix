@@ -1,5 +1,5 @@
 {
-  unify.nixos = {hostConfig, ...}: let
+  flake.modules.nixos.base = {hostConfig, ...}: let
     inherit (hostConfig.user) name username;
   in {
     users.users.${username} = {

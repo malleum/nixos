@@ -1,5 +1,5 @@
 {
-  unify.modules.med.home = {pkgs, ...}: let
+  flake.modules.homeManager.med = {pkgs, ...}: let
     # home-manager does `cfg.package.override { withSystemVencord = ... }`,
     # so the wrap has to survive `.override` (symlinkJoin would drop it).
     wrapVesktop = vesktop:

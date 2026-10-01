@@ -1,5 +1,5 @@
 {
-  unify.modules.gui.nixos = {pkgs, ...}: {
+  flake.modules.nixos.gui = {pkgs, ...}: {
     systemd.user.services = {
       cliphist = {
         description = "Clipboard manager";

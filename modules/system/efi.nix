@@ -1,5 +1,5 @@
 {
-  unify.modules.efi.nixos = {
+  flake.modules.nixos.efi = {
     boot.loader = {
       systemd-boot = {
         enable = true;

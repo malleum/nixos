@@ -1,5 +1,5 @@
 {
-  unify.modules.gam.nixos = {lib, ...}: let
+  flake.modules.nixos.gam = {lib, ...}: let
     header = ''
       default partial alphanumeric_keys
       xkb_symbols "mcsr" {

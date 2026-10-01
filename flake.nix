@@ -15,15 +15,6 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    unify = {
-      url = "git+https://codeberg.org/quasigod/unify.git";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-        home-manager.follows = "home-manager";
-      };
-    };
-
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";

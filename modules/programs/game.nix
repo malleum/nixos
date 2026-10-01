@@ -1,5 +1,5 @@
 {
-  unify.modules.gam.nixos = {pkgs, ...}: {
+  flake.modules.nixos.gam = {pkgs, ...}: {
     services.flatpak.enable = true;
     environment.systemPackages = [pkgs.gamescope];
     programs.steam = {

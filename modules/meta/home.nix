@@ -1,6 +1,6 @@
 {
-  unify = {
-    home = {
+  flake.modules = {
+    homeManager.base = {
       hostConfig,
       lib,
       ...
@@ -32,7 +32,7 @@
       };
     };
 
-    nixos.home-manager = {
+    nixos.base.home-manager = {
       # Overwrite colliding files rather than leaving .bak clutter behind.
       # backupCommand runs on each pre-existing file instead of aborting
       # activation; backupFileExtension would move it aside forever.
