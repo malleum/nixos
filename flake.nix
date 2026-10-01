@@ -117,6 +117,11 @@
       url = "github:malleum/teno";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    mechphyll = {
+      url = "github:LibertyLutherMoffitt/mechphyll/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (
