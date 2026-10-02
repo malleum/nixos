@@ -1287,6 +1287,7 @@
         "stylix": "stylix",
         "teno": "teno",
         "termword": "termword",
+        "ultimate-grapple": "ultimate-grapple",
         "waywall": "waywall",
         "weave": "weave"
       }
@@ -1621,6 +1622,27 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "base16-zed",
+        "type": "github"
+      }
+    },
+    "ultimate-grapple": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790899766,
+        "narHash": "sha256-6bKUl/mPZbkI6W0lOnPdJeo7WyTsafmOhSKyHGzJ9fI=",
+        "owner": "malleum",
+        "repo": "ultimategrapple",
+        "rev": "0916b307e3b7d108869d6db4591ee8f287225037",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "ref": "main",
+        "repo": "ultimategrapple",
         "type": "github"
       }
     },

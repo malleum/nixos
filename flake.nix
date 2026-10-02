@@ -122,6 +122,10 @@
       url = "github:LibertyLutherMoffitt/mechphyll/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ultimate-grapple = {
+      url = "github:malleum/ultimategrapple/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (

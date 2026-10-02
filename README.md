@@ -122,7 +122,7 @@ A few conventions carry most of the structure:
 | `ath` / `wif` | WiFi fixes for the Qualcomm WCN7850 and MediaTek MT7925 cards |
 | `bt-audio` | Bluetooth audio stutter fixes for the WCN7850 combo card |
 | `dbt` | Windows entry and the UEFI shell in the boot menu |
-| `matrix` `grapple` `balefire` `mc` | Server services on minimus |
+| `matrix` `grapple` `balefire` `mc` `mechphyll` `ultimate-grapple` | Server services on minimus |
 
 The authoritative list is `grep -rhoE 'flake\.modules\.(nixos|homeManager)\.[a-z-]+' modules | sed 's/.*\.//' | sort -u`.
 

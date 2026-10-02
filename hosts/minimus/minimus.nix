@@ -7,6 +7,7 @@
       "matrix"
       "mc"
       "mechphyll"
+      "ultimate-grapple"
     ];
 
     modules = [
