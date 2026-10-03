@@ -96,6 +96,28 @@
         "--check-for-update-interval=31536000"
       ]);
 
+    # cage, with DPMS patched in (wlr-output-power-management; the patch is
+    # _hjem-cage-dpms.patch next to this file). The panel used to go off by
+    # disabling the output with wlr-randr, but that takes it out of cage's
+    # layout: chromium is told to size itself to nothing, shrinks to 500x1,
+    # and every so often never comes back to full screen -- the clock and the
+    # weather in a strip in the top-left corner and the rest of the panel
+    # blank. DPMS powers the panel down and leaves the layout, and so the
+    # window, alone. wlroots implements the protocol; cage only has to create
+    # the manager and act on its requests, and the generated protocol header
+    # the wlroots one includes is made here, since cage has no use for it.
+    cage = pkgs.cage.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [./_hjem-cage-dpms.patch];
+      nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.wayland-scanner];
+      postPatch =
+        (old.postPatch or "")
+        + ''
+          wayland-scanner server-header \
+            ${pkgs.wlr-protocols}/share/wlr-protocols/unstable/wlr-output-power-management-unstable-v1.xml \
+            wlr-output-power-management-unstable-v1-protocol.h
+        '';
+    });
+
     # What cage runs: the browser, and -- once it is up -- the pointer parked
     # in the bottom-right corner. cage warps the pointer to the middle of the
     # screen as it starts and draws its arrow there, over the clock, and
@@ -108,17 +130,15 @@
     #
     # And the panel's off switch. In a dark room hjem sets the backlight to 0
     # and the page to black, but this amdgpu panel is still lit at 0 -- only
-    # powering the output down makes it dark. cage cannot blank on its own,
-    # but it does speak wlr-output-management, so wlr-randr can turn the
-    # output off and on; the server says which on /api/display, polled every
-    # second. With the output off cage has nowhere to deliver a touch, so the
-    # page never hears it: swayidle does instead -- any input after a second
-    # of none is a "resume" -- and tells the server, which wakes the panel as
-    # if the page had. If the server stops answering, the output comes back
-    # on rather than leaving a dead black panel.
+    # powering the output down makes it dark. That is DPMS, through wlopm and
+    # the patched cage below; the server says which on /api/display, polled
+    # every second. swayidle passes input to the server as well -- any input
+    # after a second of none is a "resume" -- so any touch wakes the panel,
+    # whatever the page makes of it. If the server stops answering, the
+    # output comes back on rather than leaving a dead black panel.
     session = pkgs.writeShellApplication {
       name = "hjem-kiosk-session";
-      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.wlr-randr pkgs.swayidle pkgs.curl pkgs.gawk pkgs.coreutils];
+      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.wlopm pkgs.swayidle pkgs.curl pkgs.coreutils];
       text = ''
         chromium ${browserFlags} --user-data-dir="$1" ${url} &
         browser=$!
@@ -128,12 +148,7 @@
         (sleep 5 && park && sleep 20 && park) &
         parker=$!
 
-        outputs() { wlr-randr | awk '/^[^ ]/ { print $1 }'; }
-        power() {
-          for output in $(outputs); do
-            wlr-randr --output "$output" --"$1" || true
-          done
-        }
+        power() { wlopm --"$1" '*' || true; }
         display() {
           shown=on
           misses=0
@@ -168,7 +183,7 @@
 
     kiosk = pkgs.writeShellApplication {
       name = "hjem-kiosk";
-      runtimeInputs = [pkgs.cage pkgs.curl pkgs.coreutils pkgs.systemd];
+      runtimeInputs = [cage pkgs.curl pkgs.coreutils pkgs.systemd];
       text = ''
         # greetd stops the session by signalling this script; exit cleanly so
         # the greeter comes back rather than the restart loop below fighting it.
@@ -439,7 +454,7 @@
       CPU_MAX_PERF_ON_AC = lib.mkForce 100;
     };
 
-    environment.systemPackages = [kiosk pkgs.cage pkgs.chromium];
+    environment.systemPackages = [kiosk cage pkgs.chromium];
 
     # initial_session logs straight into the panel at boot. default_session is
     # still tuigreet (modules/services/login_manager.nix), so quitting the kiosk

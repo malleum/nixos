@@ -1,0 +1,108 @@
+diff --git a/cage.c b/cage.c
+index f4b661d..c15758d 100644
+--- a/cage.c
++++ b/cage.c
+@@ -31,6 +31,7 @@
+ #include <wlr/types/wlr_idle_notify_v1.h>
+ #include <wlr/types/wlr_output_layout.h>
+ #include <wlr/types/wlr_output_management_v1.h>
++#include <wlr/types/wlr_output_power_management_v1.h>
+ #include <wlr/types/wlr_presentation_time.h>
+ #include <wlr/types/wlr_primary_selection_v1.h>
+ #include <wlr/types/wlr_relative_pointer_v1.h>
+@@ -512,6 +513,15 @@ main(int argc, char *argv[])
+ 	server.output_manager_test.notify = handle_output_manager_test;
+ 	wl_signal_add(&server.output_manager_v1->events.test, &server.output_manager_test);
+ 
++	server.output_power_manager_v1 = wlr_output_power_manager_v1_create(server.wl_display);
++	if (!server.output_power_manager_v1) {
++		wlr_log(WLR_ERROR, "Unable to create the output power manager");
++		ret = 1;
++		goto end;
++	}
++	server.output_power_manager_set_mode.notify = handle_output_power_manager_set_mode;
++	wl_signal_add(&server.output_power_manager_v1->events.set_mode, &server.output_power_manager_set_mode);
++
+ #if WLR_HAS_DRM_BACKEND
+ 	server.drm_lease_v1 = wlr_drm_lease_v1_manager_create(server.wl_display, server.backend);
+ 	if (server.drm_lease_v1) {
+@@ -646,6 +656,7 @@ main(int argc, char *argv[])
+ 	wl_list_remove(&server.new_virtual_keyboard.link);
+ 	wl_list_remove(&server.output_manager_apply.link);
+ 	wl_list_remove(&server.output_manager_test.link);
++	wl_list_remove(&server.output_power_manager_set_mode.link);
+ 	wl_list_remove(&server.xdg_toplevel_decoration.link);
+ 	wl_list_remove(&server.new_xdg_toplevel.link);
+ 	wl_list_remove(&server.new_xdg_popup.link);
+diff --git a/output.c b/output.c
+index 9f2a708..5c26bf8 100644
+--- a/output.c
++++ b/output.c
+@@ -28,6 +28,7 @@
+ #include <wlr/types/wlr_output.h>
+ #include <wlr/types/wlr_output_layout.h>
+ #include <wlr/types/wlr_output_management_v1.h>
++#include <wlr/types/wlr_output_power_management_v1.h>
+ #include <wlr/types/wlr_output_swapchain_manager.h>
+ #include <wlr/types/wlr_scene.h>
+ #include <wlr/types/wlr_xdg_shell.h>
+@@ -416,6 +417,33 @@ handle_output_manager_apply(struct wl_listener *listener, void *data)
+ 	wlr_output_configuration_v1_destroy(config);
+ }
+ 
++/* DPMS. Unlike disabling the output through output management, this leaves
++ * it in the layout: the views keep their size, input keeps mapping onto it,
++ * and powering back on is a commit, not a reconfiguration. */
++void
++handle_output_power_manager_set_mode(struct wl_listener *listener, void *data)
++{
++	struct wlr_output_power_v1_set_mode_event *event = data;
++	struct wlr_output *wlr_output = event->output;
++	bool on = event->mode == ZWLR_OUTPUT_POWER_V1_MODE_ON;
++
++	if (wlr_output->enabled == on) {
++		return;
++	}
++
++	struct wlr_output_state state;
++	wlr_output_state_init(&state);
++	wlr_output_state_set_enabled(&state, on);
++	if (!wlr_output_commit_state(wlr_output, &state)) {
++		wlr_log(WLR_ERROR, "Failed to power %s output %s", on ? "on" : "off", wlr_output->name);
++	}
++	wlr_output_state_finish(&state);
++
++	if (on) {
++		wlr_output_schedule_frame(wlr_output);
++	}
++}
++
+ void
+ handle_output_manager_test(struct wl_listener *listener, void *data)
+ {
+diff --git a/output.h b/output.h
+index fa72545..363f701 100644
+--- a/output.h
++++ b/output.h
+@@ -22,6 +22,7 @@ struct cg_output {
+ 
+ void handle_output_manager_apply(struct wl_listener *listener, void *data);
+ void handle_output_manager_test(struct wl_listener *listener, void *data);
++void handle_output_power_manager_set_mode(struct wl_listener *listener, void *data);
+ void handle_output_layout_change(struct wl_listener *listener, void *data);
+ void handle_new_output(struct wl_listener *listener, void *data);
+ void output_set_window_title(struct cg_output *output, const char *title);
+diff --git a/server.h b/server.h
+index 27f212a..b2cd198 100644
+--- a/server.h
++++ b/server.h
+@@ -61,6 +61,9 @@ struct cg_server {
+ 	struct wl_listener output_manager_apply;
+ 	struct wl_listener output_manager_test;
+ 
++	struct wlr_output_power_manager_v1 *output_power_manager_v1;
++	struct wl_listener output_power_manager_set_mode;
++
+ #if WLR_HAS_DRM_BACKEND
+ 	struct wlr_drm_lease_v1_manager *drm_lease_v1;
+ 	struct wl_listener drm_lease_request;
