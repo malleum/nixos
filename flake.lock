@@ -1032,11 +1032,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790817520,
-        "narHash": "sha256-ipHs+yPLqRI8FF6Aj/X08zi3mvs5nvIMNGKffW+FWVk=",
+        "lastModified": 1790886220,
+        "narHash": "sha256-jGM54W0YPNzhlzrcdO/m5BXtwty5ZUdGwwBcy2qMqk0=",
         "owner": "LibertyLutherMoffitt",
         "repo": "mechphyll",
-        "rev": "fbe2e53fa2809b4bef0f3966da5d352cd0576719",
+        "rev": "bb80c0d5759d7e11d57fd55a8a03e8fd1ae458d7",
         "type": "github"
       },
       "original": {
@@ -1632,11 +1632,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790954035,
-        "narHash": "sha256-TPpzfP5ah1+pffEXqZZuzYYRbK/YHkRISASsXUDLZeM=",
+        "lastModified": 1791065456,
+        "narHash": "sha256-xNvYjJRtGB+bwRGEVlJt8vKsztimyEnie3I8b9P9U8k=",
         "owner": "malleum",
         "repo": "ultimategrapple",
-        "rev": "0d79891a98a094487bdcfe8d3938bbb023c3d1b0",
+        "rev": "0805f926c69ffde08b7976c38440e0cf27adca68",
         "type": "github"
       },
       "original": {
