@@ -256,6 +256,7 @@ in {
       recommendedOptimisation = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
+      clientMaxBodySize = "50m"; # match Synapse max_upload_size
 
       virtualHosts.${matrixDomain} = {
         forceSSL = true;
