@@ -1632,11 +1632,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790954035,
-        "narHash": "sha256-TPpzfP5ah1+pffEXqZZuzYYRbK/YHkRISASsXUDLZeM=",
+        "lastModified": 1791155710,
+        "narHash": "sha256-l+7mhZfqiMCy0mVkkBSuK1/FZ+bl1zgivbbrzpOuA1I=",
         "owner": "malleum",
         "repo": "ultimategrapple",
-        "rev": "0d79891a98a094487bdcfe8d3938bbb023c3d1b0",
+        "rev": "3a57f46660611426df13549c8b5f67513d4d3783",
         "type": "github"
       },
       "original": {
