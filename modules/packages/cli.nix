@@ -15,7 +15,6 @@
       htop
       jq
       killall
-      ltrace
       nitch
       nmap
       nvim

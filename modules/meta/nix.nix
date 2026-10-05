@@ -12,8 +12,6 @@
     nix = {
       # This makes 'nix shell nixpkgs#...' use the same nixpkgs as your system
       registry.nixpkgs.flake = inputs.nixpkgs;
-      # This makes legacy commands like 'nix-shell -p' use the same nixpkgs
-      nixPath = ["nixpkgs=${inputs.nixpkgs}"];
 
       extraOptions = ''
         !include ${config.sops.templates.nix-access-tokens.path}
@@ -28,6 +26,8 @@
 
       settings = {
         inherit allowed-users;
+        # This makes legacy commands like 'nix-shell -p' use the same nixpkgs
+        nix-path = ["nixpkgs=${inputs.nixpkgs}"];
         trusted-users = allowed-users;
 
         # Deliberately NOT auto-optimise-store: that hashes every path inline

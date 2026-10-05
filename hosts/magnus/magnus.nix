@@ -16,6 +16,7 @@
       "med"
       "off"
       "prt"
+      "reverse-ssh"
       "src"
       "vrt"
       "wrk"
