@@ -19,6 +19,7 @@
       "reverse-ssh"
       "src"
       "vrt"
+      "wake"
       "wrk"
     ];
 

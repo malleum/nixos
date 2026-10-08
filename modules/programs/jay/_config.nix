@@ -310,7 +310,11 @@
       # ─ Window management ─
       ${mod}-shift-q = "close"
       ${mod}-ctrl-shift-semicolon = "quit"
-      ${mod}-shift-z = { type = "exec", exec = "poweroff" }
+      ${mod}-shift-z = { type = "exec", exec = "${
+        if hostName == "magnus"
+        then "systemctl suspend"
+        else "poweroff"
+      }" }
       ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
 
       # ─ Screenshots (jay screenshot + satty) ─

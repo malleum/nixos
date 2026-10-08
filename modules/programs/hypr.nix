@@ -409,7 +409,11 @@
 
             (mkBind "SUPER + SHIFT + q" ''hl.dsp.window.close()'')
             (mkBind "SUPER + CONTROL + SHIFT + semicolon" ''hl.dsp.exit()'')
-            (mkBind "SUPER + SHIFT + z" ''hl.dsp.exec_cmd("poweroff")'')
+            (mkBind "SUPER + SHIFT + z" ''hl.dsp.exec_cmd("${
+                if hostConfig.name == "magnus"
+                then "systemctl suspend"
+                else "poweroff"
+              }")'')
             (mkBind "SUPER + CONTROL + z" ''hl.dsp.exec_cmd("reboot")'')
 
             (mkBind "print" ''hl.dsp.exec_cmd("${pkgs.hyprshot}/bin/hyprshot -m active -z --clipboard-only")'')

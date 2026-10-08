@@ -979,11 +979,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791214946,
-        "narHash": "sha256-2ZF52J2yJ7ITpq/NxVQMNMDElTZcRdnB+BDt/0Wfrlo=",
+        "lastModified": 1791307173,
+        "narHash": "sha256-XQEMh2KuoB6+ZNhtuTUiDVQa7KxM9XHsD2sdVqAh61I=",
         "owner": "malleum",
         "repo": "iamb",
-        "rev": "a610bac12628c4739920fc126d0815809f054ec3",
+        "rev": "7c987ab4ec302c432f9904a7dc731dc36eae706f",
         "type": "github"
       },
       "original": {
@@ -1039,11 +1039,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790022886,
-        "narHash": "sha256-okbD0LdB7U/Kd4jNEsKeGOBiZDEUsADvX3LU2PHhZ5E=",
+        "lastModified": 1791301392,
+        "narHash": "sha256-ciM5yp35QqimsTRFqEFDD/QUxunSYIGHLVSKvpfp16I=",
         "owner": "malleum",
         "repo": "laering_norsk",
-        "rev": "f0d3ded88eb905e002943530edf0cefde1fa04ef",
+        "rev": "13f83bdf89a2f00413929884126ccb88bf7cb328",
         "type": "github"
       },
       "original": {
