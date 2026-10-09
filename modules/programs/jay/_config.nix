@@ -300,6 +300,9 @@
       # ─ Calculator (rofi-calc with live preview) ─
       ${mod}-c = { type = "exec", exec = { shell = "rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy", privileged = true } }
 
+      # ─ Esperanto -> English (rofi; script in modules/scripts) ─
+      ${mod}-shift-t = { type = "exec", exec = { prog = "eo-translate", privileged = true } }
+
       # ─ Emoji picker ─
       ${mod}-shift-e = { type = "exec", exec = { shell = "rofi -modi emoji -show emoji | wl-copy", privileged = true } }
 
