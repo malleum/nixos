@@ -1253,11 +1253,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791645894,
-        "narHash": "sha256-QYQk2UrCLuRbfMZ6nN69MQi84Qzg0cbOHR3Quave4uA=",
+        "lastModified": 1791646160,
+        "narHash": "sha256-izKK7h1sc4HxktyQ4G1l4gcaqZu41tsIpKEKFrjGYZg=",
         "owner": "malleum",
         "repo": "pipedream",
-        "rev": "1a97e600823162d53ce6517b30a632041fe8ba68",
+        "rev": "d907fc033c18c1c495304335ec2c8d2277cf9d2e",
         "type": "github"
       },
       "original": {
