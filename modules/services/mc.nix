@@ -54,7 +54,7 @@
     #
     # Opening the Nether later does NOT regenerate anything: the dimension is
     # created the first time somebody steps through, whenever that is.
-    allowNether = false;
+    allowNether = true;
     allowEnd = false;
 
     # RCON: the admin console, on loopback only. The port is deliberately NOT
