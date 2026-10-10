@@ -512,7 +512,7 @@
       action = { type = "move-to-workspace", name = "3" }
 
       [[windows]]
-      match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident).*"
+      match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident|Pipedream).*"
       match.just-mapped = true
       action = { type = "move-to-workspace", name = "4" }
 
