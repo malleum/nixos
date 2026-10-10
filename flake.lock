@@ -1246,6 +1246,26 @@
         "type": "github"
       }
     },
+    "pipedream": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791645894,
+        "narHash": "sha256-QYQk2UrCLuRbfMZ6nN69MQi84Qzg0cbOHR3Quave4uA=",
+        "owner": "malleum",
+        "repo": "pipedream",
+        "rev": "1a97e600823162d53ce6517b30a632041fe8ba68",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "pipedream",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -1310,6 +1330,7 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
+        "pipedream": "pipedream",
         "rask": "rask",
         "sops-nix": "sops-nix",
         "stable": "stable",

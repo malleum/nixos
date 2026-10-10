@@ -7,6 +7,7 @@
       "matrix"
       "mc"
       "mechphyll"
+      "pipedream"
       "reverse-ssh-hub"
       "ultimate-grapple"
     ];

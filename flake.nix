@@ -126,6 +126,10 @@
       url = "github:malleum/ultimategrapple/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    pipedream = {
+      url = "github:malleum/pipedream";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} (

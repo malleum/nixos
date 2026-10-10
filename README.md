@@ -30,7 +30,7 @@ flake-parts · import-tree · home-manager · sops-nix · stylix
 | **malleum** | Laptop | AMD APU |
 | **manus** | Laptop | AMD APU, MT7925 WiFi, LG UltraGear external monitor |
 | **minoris** | Laptop | The bare minimum: `efi gui lap`. Also the shape new hosts start from |
-| **minimus** | Server | aarch64 Oracle Cloud box: Matrix, game servers, websites |
+| **minimus** | Server | aarch64 Oracle Cloud box: Matrix, game servers (incl. the pipedream relay), websites |
 
 Each host is a single file, `hosts/<name>/<name>.nix`, that lists the
 [module tags](#module-tags) it wants, next to its generated hardware config.
@@ -122,7 +122,7 @@ A few conventions carry most of the structure:
 | `ath` / `wif` | WiFi fixes for the Qualcomm WCN7850 and MediaTek MT7925 cards |
 | `bt-audio` | Bluetooth audio stutter fixes for the WCN7850 combo card |
 | `dbt` | Windows entry and the UEFI shell in the boot menu |
-| `matrix` `grapple` `balefire` `mc` `mechphyll` `ultimate-grapple` | Server services on minimus |
+| `matrix` `grapple` `balefire` `mc` `mechphyll` `ultimate-grapple` `pipedream` | Server services on minimus |
 
 The authoritative list is `grep -rhoE 'flake\.modules\.(nixos|homeManager)\.[a-z-]+' modules | sed 's/.*\.//' | sort -u`.
 
