@@ -107,6 +107,7 @@
       "tczcatlipoca"
       "siocledesea"
       "embograce"
+      "ConejoFresco"
     ];
 
     # Half-measure: these players keep their items and XP on a coin flip, rolled
