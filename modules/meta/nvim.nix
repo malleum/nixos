@@ -69,7 +69,6 @@
 
     # The mvim/ directory with its help tags generated, so `:help mvim` works.
     # Named "mvim" so running panes still show ".../mvim/init.lua", which is
-    # how tmux-resurrect recognizes them (modules/programs/tmux.nix).
     mvimConfig = pkgs.runCommand "mvim" {} ''
       cp -r ${../../mvim} $out
       chmod -R u+w $out

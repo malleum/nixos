@@ -88,7 +88,6 @@
       hyprland.hyprpaper.enable = lib.mkForce false;
       hyprpaper.enable = lib.mkForce false;
       rofi.enable = false;
-      tmux.enable = false;
       waybar.enable = false;
     };
   };

@@ -589,7 +589,6 @@
         { comm = "iamb" },
         { comm = "foot" },
         { comm = "kitty" },
-        { comm = "tmux" },
         { comm = "teno" },
         { comm = "nvim" },
         { comm = ".nvim-wrapped" },

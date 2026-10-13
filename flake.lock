@@ -130,11 +130,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791906541,
-        "narHash": "sha256-Nto8N8S5MTFbUywdop3QTP4RECD+pGbBB0P+pYd1GUk=",
+        "lastModified": 1791908035,
+        "narHash": "sha256-yfVoNgnt4J0i1gTP46dkpRKAcJtriHjJmqYTPup3fF0=",
         "owner": "malleum",
         "repo": "cerbo",
-        "rev": "06166ac37b68b7a5f28b7898e5768b3fcca1873e",
+        "rev": "0404ce3cf34b96eab7ed798f90d2ad83d2175b55",
         "type": "github"
       },
       "original": {

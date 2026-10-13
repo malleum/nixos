@@ -64,7 +64,7 @@ modules/
   hardware/   drivers, firmware quirks, input devices
   meta/       the flake itself: user, nix settings, formatting, bootstrap
   packages/   package sets, plus the auto-packaging of modules/scripts
-  programs/   configured applications (jay, zsh, tmux, firefox, ...)
+  programs/   configured applications (jay, zsh, firefox, ...)
   scripts/    standalone tools, each one a flake package
   secrets/    sops-encrypted yaml and the modules that decrypt it
   services/   long-running things, desktop and server
@@ -190,7 +190,7 @@ the status bar.
 
 - Status bar: a small Rust program (`jay/_status.rs`) speaking i3bar JSON.
   Audio updates instantly; everything else refreshes every two seconds.
-- Theme: stylix sets base16 colours once, and jay, the status bar, tmux, rofi,
+- Theme: stylix sets base16 colours once, and jay, the status bar, rofi,
   notifications and the lock screen all read from them.
 - Hyprland (`hyp`) is a second session on the login screen, kept working as a
   fallback.

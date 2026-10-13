@@ -19,6 +19,26 @@
       NixOS config is a repo at ~/.config/nixos.
   '';
 
+  # The Minecraft server (services/mc.nix) runs on minimus. Each command was
+  # checked against the live server: mc-console's -c drops the colour codes
+  # that would otherwise fill the model's context, and the world is "42".
+  # `sudo -n` is passwordless for wheel, and spelled out as the exception
+  # because cerbo's built-in rules say never to use sudo. Only minimus gets
+  # these: cerbo elsewhere is not meant to reach the server.
+  mcLocal = ''
+    - Minecraft server: Paper, systemd unit `minecraft`, data in /var/lib/minecraft
+      (root-only), world "42". Its console is the one place sudo is allowed:
+      `sudo -n mc-console -c "<command>"` runs one server command and prints
+      plain output, e.g. `list` (who is online), `tps`, `say <message>`
+      (broadcast to chat), `whitelist list`.
+    - Minecraft chat, joins and leaves:
+      `journalctl -u minecraft --since today --no-pager | grep -E '<[^>]+>|joined the game|left the game'`
+    - Minecraft player stats: UUIDs by name in /var/lib/minecraft/usercache.json, then
+      `sudo -n jq '.stats["minecraft:custom"]["minecraft:play_time"]' /var/lib/minecraft/42/players/stats/<uuid>.json`
+      play_time is in ticks (20 per second: hours = ticks / 72000); other keys under
+      "minecraft:custom" include "minecraft:deaths" and "minecraft:jump".
+  '';
+
   # jay, PipeWire, nmcli, git and nix already have built-in recipes in cerbo,
   # chosen by what is installed; these are only what it cannot know.
   desktopHints = repoHints;
@@ -26,11 +46,12 @@
   serverHints =
     repoHints
     + ''
-      - This is a headless aarch64 server (Oracle Cloud): no desktop, no audio.
-        Everything it does is a system service; start from
+      - This is minimus, a headless aarch64 server (Oracle Cloud): no desktop, no
+        audio. Everything it does is a system service; start from
         `systemctl list-units --type=service --state=running`. Websites go through
         nginx (`systemctl status nginx`).
-    '';
+    ''
+    + mcLocal;
 in {
   flake.modules.nixos.cerbo = {
     imports = [inputs.cerbo.nixosModules.default];
