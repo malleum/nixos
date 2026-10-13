@@ -2,6 +2,7 @@
   hosts.minimus = {
     tags = [
       "balefire"
+      "cerbo-client"
       "efi"
       "grapple"
       "matrix"

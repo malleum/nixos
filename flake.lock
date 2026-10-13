@@ -123,6 +123,26 @@
         "type": "github"
       }
     },
+    "cerbo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791906541,
+        "narHash": "sha256-Nto8N8S5MTFbUywdop3QTP4RECD+pGbBB0P+pYd1GUk=",
+        "owner": "malleum",
+        "repo": "cerbo",
+        "rev": "06166ac37b68b7a5f28b7898e5768b3fcca1873e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "cerbo",
+        "type": "github"
+      }
+    },
     "cls": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -568,11 +588,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790612711,
-        "narHash": "sha256-UcmcS9jK78wG0NicOB2+a9Vsq/Q+FtfkpxU+WhAu638=",
+        "lastModified": 1791811268,
+        "narHash": "sha256-z1TQFIpLSqlrAVjHUmYWTkLgPXwTogK3HJ80DXieHh8=",
         "owner": "malleum",
         "repo": "malleusite",
-        "rev": "c736a5e260b146174759d87eab527e143c123cae",
+        "rev": "36792f4c74bc5141b040a5ab937184fdd0d5642d",
         "type": "github"
       },
       "original": {
@@ -1312,6 +1332,7 @@
     "root": {
       "inputs": {
         "ago": "ago",
+        "cerbo": "cerbo",
         "cls": "cls",
         "domain": "domain",
         "fix-python": "fix-python",

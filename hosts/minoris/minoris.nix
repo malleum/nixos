@@ -10,6 +10,7 @@
     #   doc        docker               vrt  qemu / quickemu
     #   wrk        work tooling         src  build jay+iamb from source
     tags = [
+      "cerbo-client"
       "efi"
       "gui"
       "hjem"

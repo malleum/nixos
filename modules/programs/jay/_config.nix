@@ -313,11 +313,13 @@
       # ─ Window management ─
       ${mod}-shift-q = "close"
       ${mod}-ctrl-shift-semicolon = "quit"
-      ${mod}-shift-z = { type = "exec", exec = "${
+      # magnus locks first: -f makes swaylock fork only once the session lock
+      # is held, so the machine never wakes to an unlocked desktop.
+      ${mod}-shift-z = { type = "exec", exec = { shell = "${
         if hostName == "magnus"
-        then "systemctl suspend"
+        then "${jayLock}/bin/jay-lock -f && systemctl suspend"
         else "poweroff"
-      }" }
+      }", privileged = true } }
       ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
 
       # ─ Screenshots (jay screenshot + satty) ─

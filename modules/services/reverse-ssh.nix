@@ -27,6 +27,13 @@ in {
       hostNames = ["minimus" "oracle" "158.101.121.4"];
       publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6Z2xMaLOJDTmpCqAcX27wnJx0fSIBN9UB25RWR9U2i";
     };
+    # magnus's own key, under the HostKeyAlias the `magnus` ssh block uses.
+    # Pinned rather than TOFU'd so non-interactive clients (cerbo's tunnel,
+    # BatchMode) work on a host that has never connected by hand.
+    programs.ssh.knownHosts.magnus = {
+      hostNames = ["magnus"];
+      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFdgNpzWC8idTUCQJJ838vcrAODNMgMXoyKAH99WRMJ";
+    };
   };
 
   # minimus side: accept the tunnel.

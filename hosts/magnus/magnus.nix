@@ -5,6 +5,7 @@
       "amd"
       "ath"
       "bt-audio"
+      "cerbo"
       "cht"
       "dbt"
       "dev"
