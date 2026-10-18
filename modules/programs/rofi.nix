@@ -8,17 +8,18 @@
       inherit (config.lib.formats.rasi) mkLiteral;
     in {
       enable = true;
-      # Not "$TERMINAL": rofi does no env expansion in rasi strings, so it
-      # execs a binary literally named $TERMINAL and every Terminal=true
-      # .desktop entry (iamb, etc.) fails with ENOENT.
-      terminal = "${pkgs.foot}/bin/foot";
-      location = "center";
       plugins = with pkgs; [
         rofi-emoji
         rofi-calc
       ];
 
-      extraConfig = {
+      settings = {
+        # Not "$TERMINAL": rofi does no env expansion in rasi strings, so it
+        # execs a binary literally named $TERMINAL and every Terminal=true
+        # .desktop entry (iamb, etc.) fails with ENOENT.
+        terminal = "${pkgs.foot}/bin/foot";
+        # 0 = center (rofi's numeric location).
+        location = 0;
         kb-primary-paste = "Control+V,Shift+Insert";
         drun-display-format = "{icon} {name}";
         show-icons = true;

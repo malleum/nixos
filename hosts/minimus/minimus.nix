@@ -2,11 +2,14 @@
   hosts.minimus = {
     tags = [
       "balefire"
+      "cerbo-client"
       "efi"
       "grapple"
       "matrix"
       "mc"
       "mechphyll"
+      "pipedream"
+      "reverse-ssh-hub"
       "ultimate-grapple"
     ];
 

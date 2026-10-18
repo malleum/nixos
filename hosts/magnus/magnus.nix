@@ -5,6 +5,7 @@
       "amd"
       "ath"
       "bt-audio"
+      "cerbo"
       "cht"
       "dbt"
       "dev"
@@ -16,8 +17,10 @@
       "med"
       "off"
       "prt"
+      "reverse-ssh"
       "src"
       "vrt"
+      "wake"
       "wrk"
     ];
 

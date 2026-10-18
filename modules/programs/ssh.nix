@@ -36,6 +36,19 @@
           identitiesOnly = true;
         };
 
+        # Desktop behind home NAT, reached through its reverse tunnel on
+        # minimus (modules/services/reverse-ssh.nix). HostKeyAlias keeps the
+        # known_hosts entry under "magnus" rather than "[localhost]:2222".
+        "magnus" = {
+          hostname = "localhost";
+          port = 2222;
+          proxyJump = "minimus";
+          hostKeyAlias = "magnus";
+          user = hostConfig.user.username;
+          identityFile = oracleKey;
+          identitiesOnly = true;
+        };
+
         "gitlab.visiostack.com" = {
           user = "git";
           identityFile = gitlabKey;

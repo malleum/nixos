@@ -3,6 +3,7 @@
     tags = [
       "ai"
       "amd"
+      "cerbo-client"
       "cht"
       "dev"
       "efi"

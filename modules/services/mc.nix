@@ -54,7 +54,7 @@
     #
     # Opening the Nether later does NOT regenerate anything: the dimension is
     # created the first time somebody steps through, whenever that is.
-    allowNether = false;
+    allowNether = true;
     allowEnd = false;
 
     # RCON: the admin console, on loopback only. The port is deliberately NOT
@@ -107,6 +107,7 @@
       "tczcatlipoca"
       "siocledesea"
       "embograce"
+      "ConejoFresco"
     ];
 
     # Half-measure: these players keep their items and XP on a coin flip, rolled
@@ -294,6 +295,10 @@
         # joshammer.com/mc reads off disk (grapple.nix) -- once a minute is
         # what makes that page live. Staggered by Paper, never a spike.
         rate: 1200
+      unsupported-settings:
+        # Vanilla's piston duplication -- TNT, carpet and rail dupers. Paper
+        # patches it out by default; a vanilla player expects it to work.
+        allow-piston-duplication: true
     '';
 
     paperWorldDefaultsOverlay = pkgs.writeText "paper-world-defaults-overlay.yml" ''

@@ -29,5 +29,18 @@
       })
       .fhs
     ];
+
+    # Escape is for vim mode, not for cancelling a running turn (ctrl+c still
+    # interrupts).
+    home.file.".claude/keybindings.json".text = builtins.toJSON {
+      "$schema" = "https://www.schemastore.org/claude-code-keybindings.json";
+      "$docs" = "https://code.claude.com/docs/en/keybindings";
+      bindings = [
+        {
+          context = "Chat";
+          bindings.escape = null;
+        }
+      ];
+    };
   };
 }

@@ -30,7 +30,7 @@ flake-parts · import-tree · home-manager · sops-nix · stylix
 | **malleum** | Laptop | AMD APU |
 | **manus** | Laptop | AMD APU, MT7925 WiFi, LG UltraGear external monitor |
 | **minoris** | Laptop | The bare minimum: `efi gui lap`. Also the shape new hosts start from |
-| **minimus** | Server | aarch64 Oracle Cloud box: Matrix, game servers, websites |
+| **minimus** | Server | aarch64 Oracle Cloud box: Matrix, game servers (incl. the pipedream relay), websites |
 
 Each host is a single file, `hosts/<name>/<name>.nix`, that lists the
 [module tags](#module-tags) it wants, next to its generated hardware config.
@@ -64,7 +64,7 @@ modules/
   hardware/   drivers, firmware quirks, input devices
   meta/       the flake itself: user, nix settings, formatting, bootstrap
   packages/   package sets, plus the auto-packaging of modules/scripts
-  programs/   configured applications (jay, zsh, tmux, firefox, ...)
+  programs/   configured applications (jay, zsh, firefox, ...)
   scripts/    standalone tools, each one a flake package
   secrets/    sops-encrypted yaml and the modules that decrypt it
   services/   long-running things, desktop and server
@@ -122,7 +122,7 @@ A few conventions carry most of the structure:
 | `ath` / `wif` | WiFi fixes for the Qualcomm WCN7850 and MediaTek MT7925 cards |
 | `bt-audio` | Bluetooth audio stutter fixes for the WCN7850 combo card |
 | `dbt` | Windows entry and the UEFI shell in the boot menu |
-| `matrix` `grapple` `balefire` `mc` `mechphyll` `ultimate-grapple` | Server services on minimus |
+| `matrix` `grapple` `balefire` `mc` `mechphyll` `ultimate-grapple` `pipedream` | Server services on minimus |
 
 The authoritative list is `grep -rhoE 'flake\.modules\.(nixos|homeManager)\.[a-z-]+' modules | sed 's/.*\.//' | sort -u`.
 
@@ -190,7 +190,7 @@ the status bar.
 
 - Status bar: a small Rust program (`jay/_status.rs`) speaking i3bar JSON.
   Audio updates instantly; everything else refreshes every two seconds.
-- Theme: stylix sets base16 colours once, and jay, the status bar, tmux, rofi,
+- Theme: stylix sets base16 colours once, and jay, the status bar, rofi,
   notifications and the lock screen all read from them.
 - Hyprland (`hyp`) is a second session on the login screen, kept working as a
   fallback.
