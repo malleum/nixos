@@ -152,11 +152,25 @@
         display() {
           shown=on
           misses=0
+          restarts=""
           while sleep 1; do
             want=on
             if reply=$(curl -fsS --max-time 2 ${url}/api/display 2>/dev/null); then
               misses=0
               case "$reply" in *'"off": true'*) want=off ;; esac
+              # The page saying its window has shrunk to a corner of the
+              # panel, which no reload can fix: restart the browser, and the
+              # kiosk loop brings cage and chromium back up. The count only
+              # rises while hjem runs; a lower one is a restarted server.
+              if [[ $reply =~ \"restarts\":\ ([0-9]+) ]]; then
+                count=''${BASH_REMATCH[1]}
+                if [ -n "$restarts" ] && [ "$count" -gt "$restarts" ]; then
+                  echo "the page reports a shrunken window; restarting the browser" >&2
+                  power on
+                  kill "$browser" 2>/dev/null || true
+                fi
+                restarts=$count
+              fi
             else
               misses=$((misses + 1))
               # A restart mid-update is a few seconds; keep the state until
