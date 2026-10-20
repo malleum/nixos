@@ -7,7 +7,10 @@
           command = "cat";
           args = [config.sops.secrets.spotify_client_id.path];
         };
-        device.volume = 100;
+        device = {
+          volume = 100;
+          normalize = true;
+        };
       };
     };
   };

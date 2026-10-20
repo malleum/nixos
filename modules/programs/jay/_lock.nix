@@ -9,6 +9,10 @@
 # shows the shape and colour of whatever was on screen. The wallpaper is used
 # as the background instead, so a locked screen leaks nothing about the
 # session while still looking like the rest of the theme.
+#
+# No --fade-in either: a fading surface starts fully transparent, and after a
+# resume the outputs come back as new ones, and (suspected) their fresh lock
+# surfaces stayed see-through -- locked, but showing the desktop underneath.
 {
   pkgs,
   colors,
@@ -30,7 +34,6 @@ pkgs.writeShellApplication {
       --indicator-radius 110 \
       --indicator-thickness 8 \
       --indicator-idle-visible \
-      --fade-in 0.2 \
       --color "${colors.base00}" \
       --inside-color "${colors.base00}CC" \
       --inside-ver-color "${colors.base00}CC" \

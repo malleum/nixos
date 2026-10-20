@@ -49,6 +49,11 @@
           truncation_length = 13;
           truncate_to_repo = false;
         };
+        # gitoxide status walks the worktree in-process and is slow on large repos.
+        # Spawn `git status` instead; Starship sets GIT_OPTIONAL_LOCKS=0.
+        git_status = {
+          use_git_executable = true;
+        };
       };
     };
   };
