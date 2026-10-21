@@ -80,6 +80,31 @@ in {
       chmod -R +w $out
       echo '{"restrictBaseUrl": "https://${adminDomain}"}' > $out/config.json
     '';
+
+    # Synapse's bundled oEmbed list only covers X and YouTube Shorts, so ordinary
+    # YouTube links fall back to scraping the watch page, which YouTube answers
+    # with a consent/bot wall for datacenter IPs -> no preview. Synapse does not
+    # fall back to scraping when an oEmbed fetch fails, so only list URL shapes
+    # YouTube's endpoint actually answers (/live/ returns no title; left out).
+    # No "?" in schemes: Synapse turns globs into regexes and "?" stays a metachar.
+    oembedProviders = pkgs.writeText "oembed-providers.json" (builtins.toJSON [
+      {
+        provider_name = "YouTube";
+        provider_url = "https://www.youtube.com/";
+        endpoints = [
+          {
+            schemes = [
+              "https://*.youtube.com/watch*"
+              "https://youtube.com/watch*"
+              "https://youtu.be/*"
+              "https://*.youtube.com/playlist*"
+              "https://youtube.com/playlist*"
+            ];
+            url = "https://www.youtube.com/oembed";
+          }
+        ];
+      }
+    ]);
   in {
     # --- Sops: Matrix secrets (DB password, registration shared secret, LiveKit key) ---
     sops.secrets.matrix-db-password = {
@@ -172,6 +197,7 @@ in {
         max_upload_size = "50M";
         max_image_pixels = "32M";
         url_preview_enabled = true;
+        oembed.additional_providers = ["${oembedProviders}"];
         report_stats = false;
         presence.enabled = true;
 
