@@ -131,10 +131,19 @@
       profileNames = ["default"];
     };
 
+    # Loaded by tridactyl via the native messenger (`:source` to reload)
+    xdg.configFile."tridactyl/tridactylrc".text = ''
+      bind / fillcmdline find
+      bind ? fillcmdline find --reverse
+      bind n findnext --search-from-view
+      bind N findnext --search-from-view --reverse
+    '';
+
     programs.firefox = {
       enable = true;
       package = pkgs.firefox;
       configPath = ".mozilla/firefox";
+      nativeMessagingHosts = [pkgs.tridactyl-native]; # Lets tridactyl read tridactylrc
 
       profiles.default = {
         id = 0;

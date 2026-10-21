@@ -8,7 +8,7 @@
           args = [config.sops.secrets.spotify_client_id.path];
         };
         device = {
-          volume = 100;
+          volume = 50;
           normalize = true;
         };
       };
