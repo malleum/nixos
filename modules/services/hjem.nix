@@ -138,7 +138,7 @@
     # output comes back on rather than leaving a dead black panel.
     session = pkgs.writeShellApplication {
       name = "hjem-kiosk-session";
-      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.wlopm pkgs.swayidle pkgs.curl pkgs.coreutils];
+      runtimeInputs = [pkgs.chromium pkgs.wlrctl pkgs.wlopm pkgs.swayidle pkgs.curl pkgs.coreutils pkgs.gnugrep];
       text = ''
         chromium ${browserFlags} --user-data-dir="$1" ${url} &
         browser=$!
@@ -149,6 +149,12 @@
         parker=$!
 
         power() { wlopm --"$1" '*' || true; }
+        # What the output is actually doing, as against what this loop last
+        # told it: wlopm with no arguments lists each output and its mode. A
+        # power call can fail, and the output can come back on by some other
+        # road -- and the loop used to only ever act on a change of mind, so
+        # either left the panel lit and black until the next one.
+        powered() { wlopm 2>/dev/null | grep -qw "$1"; }
         display() {
           shown=on
           misses=0
@@ -158,15 +164,18 @@
             if reply=$(curl -fsS --max-time 2 ${url}/api/display 2>/dev/null); then
               misses=0
               case "$reply" in *'"off": true'*) want=off ;; esac
-              # The page saying its window has shrunk to a corner of the
-              # panel, which no reload can fix: restart the browser, and the
-              # kiosk loop brings cage and chromium back up. The count only
-              # rises while hjem runs; a lower one is a restarted server.
+              # hjem asking for the browser to be restarted -- the page saying
+              # its window has shrunk to a corner of the panel, or the page
+              # not having drawn since the panel came back on -- which no
+              # reload can fix: restart the browser, and the kiosk loop brings
+              # cage and chromium back up. The count only rises while hjem
+              # runs; a lower one is a restarted server.
               if [[ $reply =~ \"restarts\":\ ([0-9]+) ]]; then
                 count=''${BASH_REMATCH[1]}
                 if [ -n "$restarts" ] && [ "$count" -gt "$restarts" ]; then
-                  echo "the page reports a shrunken window; restarting the browser" >&2
+                  echo "hjem asks for a browser restart; restarting it" >&2
                   power on
+                  shown=on
                   kill "$browser" 2>/dev/null || true
                 fi
                 restarts=$count
@@ -177,9 +186,18 @@
               # it has been gone longer than that.
               [ "$misses" -lt 10 ] && continue
             fi
-            [ "$want" = "$shown" ] && continue
-            power "$want"
-            shown=$want
+            if [ "$want" != "$shown" ]; then
+              echo "display: $want" >&2
+              power "$want"
+              shown=$want
+              continue
+            fi
+            other=off
+            [ "$want" = off ] && other=on
+            if powered "$other"; then
+              echo "display: the output is $other but should be $want; again" >&2
+              power "$want"
+            fi
           done
         }
         display &
