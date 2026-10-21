@@ -5,7 +5,7 @@
 # Before first deploy:
 # 1. Put your generated secrets in modules/secrets/matrix.yaml (replace placeholders).
 # 2. Encrypt: sops -e -i modules/secrets/matrix.yaml
-# 3. Point DNS for ws42.top and admin.ws42.top to this host; open 80, 443, 5349/tcp, 3478/udp, UDP 50000-51000 in Oracle VCN.
+# 3. Point DNS for ws42.top, admin.ws42.top and beta.ws42.top to this host; open 80, 443, 5349/tcp, 3478/udp, UDP 50000-51000 in Oracle VCN.
 #
 # If Element shows "Cannot reach homeserver": from the server run
 #   curl -sI https://ws42.top/_matrix/client/versions
@@ -13,6 +13,14 @@
 let
   matrixDomain = "ws42.top";
   adminDomain = "admin.ws42.top";
+  # The ws42 Element fork (https://github.com/malleum/element-web) is served here, so new
+  # builds get tried by whoever opts in before they replace the stock client at matrixDomain.
+  betaDomain = "beta.ws42.top";
+  # Bump both after each fork release; the release notes give the hash.
+  elementWs42 = {
+    version = "1.12.32-ws42.2";
+    hash = "sha256-gtSNrsvZLeWgwwCoigZEW/MniEAUAq7jqtJvOiMPuSk=";
+  };
   matrixSecretsFile = ../secrets/matrix.yaml;
   # Optional: custom background for Element login/startup page.
   # Set to a store path (e.g. ./my-bg.jpg) or a URL string (e.g. "https://example.com/bg.jpg").
@@ -38,40 +46,58 @@ in {
       mkdir -p $out/custom
       cp ${elementWelcomeBackground} $out/custom/welcome-bg
     '';
-    # Element Web with ws42.top as default homeserver (login/signup pre-configured)
-    elementWeb = pkgs.element-web.override {
-      conf = {
-        default_server_config = {
-          "m.homeserver" = {
-            base_url = "https://${matrixDomain}";
-            server_name = matrixDomain;
-          };
-        };
-        default_theme = "dark";
-        # On mobile: stay on the web app for sign-up/login instead of prompting to download the app
-        mobile_guide_toast = false;
-        # When they do choose "Get the app", recommend Element Classic (not Element X)
-        mobile_guide_app_variant = "element-classic";
-        mobile_builds = {
-          ios = "https://apps.apple.com/app/element-messenger/id1083446067";
-          android = "https://play.google.com/store/apps/details?id=im.vector.app";
-          fdroid = "https://f-droid.org/en/packages/im.vector.app/";
-        };
-        branding = pkgs.lib.optionalAttrs (welcomeBgUrl != null) {
-          welcome_background_url = welcomeBgUrl;
-        };
-        # Element Call: use LiveKit-backed calls instead of Jitsi
-        element_call = {
-          url = "https://call.element.io";
-          use_exclusively = true;
-          brand = "Element Call";
-        };
-        features = {
-          feature_group_calls = true;
-          feature_video_rooms = true;
-          feature_element_call_video_rooms = true;
+    # Element Web config with ws42.top as default homeserver (login/signup pre-configured).
+    # Shared by the stock client and the fork, so the two differ only in the build.
+    elementConf = {
+      default_server_config = {
+        "m.homeserver" = {
+          base_url = "https://${matrixDomain}";
+          server_name = matrixDomain;
         };
       };
+      default_theme = "dark";
+      # On mobile: stay on the web app for sign-up/login instead of prompting to download the app
+      mobile_guide_toast = false;
+      # When they do choose "Get the app", recommend Element Classic (not Element X)
+      mobile_guide_app_variant = "element-classic";
+      mobile_builds = {
+        ios = "https://apps.apple.com/app/element-messenger/id1083446067";
+        android = "https://play.google.com/store/apps/details?id=im.vector.app";
+        fdroid = "https://f-droid.org/en/packages/im.vector.app/";
+      };
+      branding = pkgs.lib.optionalAttrs (welcomeBgUrl != null) {
+        welcome_background_url = welcomeBgUrl;
+      };
+      # Element Call: use LiveKit-backed calls instead of Jitsi
+      element_call = {
+        url = "https://call.element.io";
+        use_exclusively = true;
+        brand = "Element Call";
+      };
+      features = {
+        feature_group_calls = true;
+        feature_video_rooms = true;
+        feature_element_call_video_rooms = true;
+      };
+    };
+    elementWeb = pkgs.element-web.override {conf = elementConf;};
+    # The fork's prebuilt web app (the same build its desktop apps ship) with the same config.
+    # disable_guests matches what nixpkgs' element-web adds to every config.
+    elementWebBeta = pkgs.stdenvNoCC.mkDerivation {
+      pname = "element-web-ws42";
+      inherit (elementWs42) version;
+      src = pkgs.fetchurl {
+        url = "https://github.com/malleum/element-web/releases/download/v${elementWs42.version}/element-ws42-web-${elementWs42.version}.tar.gz";
+        inherit (elementWs42) hash;
+      };
+      nativeBuildInputs = [pkgs.jq];
+      installPhase = ''
+        mkdir -p $out
+        cp -r . $out/
+        jq -s '.[0] * $conf' config.sample.json \
+          --argjson conf ${pkgs.lib.escapeShellArg (builtins.toJSON ({disable_guests = true;} // elementConf))} \
+          > $out/config.json
+      '';
     };
 
     # Synapse Admin with ws42.top as default homeserver (using the main domain for API)
@@ -375,6 +401,14 @@ in {
               extraConfig = "default_type image/png;";
             };
           });
+      };
+
+      # --- ws42 Element fork at beta.ws42.top (same homeserver and accounts) ---
+      virtualHosts.${betaDomain} = {
+        forceSSL = true;
+        enableACME = true;
+        root = elementWebBeta;
+        locations."/".tryFiles = "$uri $uri/ /index.html";
       };
 
       # --- Synapse Admin UI at admin.ws42.top ---
