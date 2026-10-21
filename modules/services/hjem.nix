@@ -371,14 +371,14 @@
 
       # The other half of the camera switches at the top of this file.
       #
-      # The dark-room threshold is a guess until it has seen this room. The
-      # footer shows what the meter reads as "ĉambro N": look at it with the
-      # lights on, and with them off and the panel lit, and set darkRoomLevel
-      # between the two. 40 turned the panel off with the lamps on; 15 left
-      # it on all night, lit by its own glow. 25 is the module default, and
-      # it comes back above 40.
+      # The dark-room threshold, from the panel's light log (menu > lumo >
+      # registri): lamps on read 37, lamps off with the panel lit read 3. So
+      # 10, and the room counts as lit again above 16 (1.6x). 25 came back
+      # only above 40, which the lamps never reach, so one lights-off left the
+      # panel off with them on again. Record another log after changing the
+      # lamps or moving the panel.
       inherit presence lightMeter;
-      darkRoomLevel = 25.0;
+      darkRoomLevel = 10.0;
       # Seconds a touch (or movement) keeps the panel on in a dark room; it
       # goes off the moment this runs out. The module default is 120.
       presenceGrace = 30;
