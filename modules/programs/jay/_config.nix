@@ -313,11 +313,14 @@
       # ─ Window management ─
       ${mod}-shift-q = "close"
       ${mod}-ctrl-shift-semicolon = "quit"
-      # magnus locks first: -f makes swaylock fork only once the session lock
-      # is held, so the machine never wakes to an unlocked desktop.
+      # magnus logs out, then suspends, so it wakes to the greeter. The suspend
+      # is a transient timer in PID 1 because `jay quit` kills this shell and
+      # ends the session; a plain `systemctl suspend` afterwards would no
+      # longer come from an active session, which polkit refuses. sudo is
+      # passwordless for wheel (modules/system/security.nix).
       ${mod}-shift-z = { type = "exec", exec = { shell = "${
         if hostName == "magnus"
-        then "${jayLock}/bin/jay-lock -f && systemctl suspend"
+        then "/run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemd-run --on-active=3 --timer-property=AccuracySec=100ms ${pkgs.systemd}/bin/systemctl suspend && jay quit"
         else "poweroff"
       }", privileged = true } }
       ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
