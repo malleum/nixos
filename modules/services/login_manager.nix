@@ -23,7 +23,6 @@
     # TTY* settings hand it a cleared VT.
     boot.consoleLogLevel = 0;
     boot.kernelParams = ["quiet" "udev.log_level=3"];
-    boot.initrd.verbose = false;
 
     systemd.services.greetd.serviceConfig = {
       Type = "idle";

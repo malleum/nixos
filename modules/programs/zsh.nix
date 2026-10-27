@@ -189,6 +189,10 @@
               '=(#b)(--[^ =]*)( -- )(*)=1=2=3;36'
             # Group headers in dim parens (e.g. "(options)" above the flags list)
             zstyle ':completion:*:descriptions' format '%F{8}(%d)%f'
+
+            # rip2's completion offers files for the first argument only, then
+            # expects a subcommand.
+            compdef _files rip
           '';
       };
     };

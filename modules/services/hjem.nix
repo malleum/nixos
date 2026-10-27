@@ -452,7 +452,6 @@
     # overrides the quiet-derived default regardless of where it sits on the
     # command line; the rd. form is the same switch for the initrd's systemd.
     boot.consoleLogLevel = lib.mkForce 4;
-    boot.initrd.verbose = lib.mkForce true;
     boot.kernelParams = [
       "systemd.show_status=true"
       "rd.systemd.show_status=true"
