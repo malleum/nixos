@@ -2,7 +2,11 @@
   domain = "joshammer.com";
   port = 3000;
 in {
-  flake.modules.nixos.grapple = {pkgs, ...}: let
+  flake.modules.nixos.grapple = {
+    config,
+    pkgs,
+    ...
+  }: let
     grapplePkg = inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default;
   in {
     # --- Grapple User & Group ---
@@ -14,6 +18,14 @@ in {
     };
 
     users.users.joshammer.extraGroups = ["grapple"];
+
+    # joshammer.com/workout's password (the workout from hjem, on a phone).
+    # Root-only; systemd hands it to the service as the credential
+    # `workout-password`, which is where malleusite looks for it.
+    sops.secrets.workout_password = {
+      sopsFile = ../secrets/workout.yaml;
+      key = "password";
+    };
 
     # --- Systemd Service ---
     systemd.services.grapple-game = {
@@ -28,6 +40,7 @@ in {
         User = "grapple";
         Group = "grapple";
         StateDirectory = "grapple";
+        LoadCredential = ["workout-password:${config.sops.secrets.workout_password.path}"];
         Environment = [
           "PORT=${toString port}"
           "HOME=/var/lib/grapple"

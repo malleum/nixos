@@ -15,6 +15,7 @@
 # which is why the greetd autologin below cannot surprise another machine.
 {inputs, ...}: {
   flake.modules.nixos.hjem = {
+    config,
     pkgs,
     lib,
     hostConfig,
@@ -316,6 +317,15 @@
     # calendar configured the panel simply drops the agenda card, so nothing
     # sits there reporting its own absence.
 
+    # joshammer.com/workout (grapple.nix) is this panel's workout on a phone;
+    # the two keep one log of days done, and hjem signs in to the site with the
+    # page's own password. Root-only here: systemd reads it and hands it to the
+    # service as a credential (services.hjem.workoutSync.passwordFile).
+    sops.secrets.hjem_workout_password = {
+      sopsFile = ../secrets/workout.yaml;
+      key = "password";
+    };
+
     services.hjem = {
       enable = true;
       inherit port;
@@ -415,6 +425,12 @@
         enable = true;
         flake = hostConfig.flakePath;
         user = username;
+      };
+
+      # Done on the phone, ticked here -- and the other way round. See above.
+      workoutSync = {
+        url = "https://joshammer.com";
+        passwordFile = config.sops.secrets.hjem_workout_password.path;
       };
     };
 
