@@ -67,7 +67,11 @@
     # Java path:      ~/.local/share/jdks/mcsr-graalvm/bin/java
     # Java arguments: nix eval --json github:malleum/waywall#mcsr-jdk.jvmArgs
     # Max heap:       nix eval github:malleum/waywall#mcsr-jdk.heapMegabytes
-    home.file.".local/share/jdks/mcsr-graalvm".source = waywallPkgs.mcsr-jdk;
+    #
+    # The install check is off because buildGraalvm's smoke test compiles a
+    # HelloWorld with native-image, and GraalVM 21's native-image segfaults
+    # under current nixpkgs. Minecraft only runs bin/java, never native-image.
+    home.file.".local/share/jdks/mcsr-graalvm".source = waywallPkgs.mcsr-jdk.overrideAttrs {doInstallCheck = false;};
 
     programs.waywall = {
       enable = true;
