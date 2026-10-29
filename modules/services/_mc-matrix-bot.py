@@ -453,7 +453,15 @@ async def main() -> None:
     ) as session:
         bot = Bot(session)
 
-        who = await bot.call("GET", "/account/whoami")
+        # A switch can start the bot before Synapse is listening, ordering or
+        # not; wait for it here rather than crash into systemd's restart.
+        while True:
+            try:
+                who = await bot.call("GET", "/account/whoami")
+                break
+            except (aiohttp.ClientConnectorError, asyncio.TimeoutError) as error:
+                log.warning("homeserver not up yet: %s", error)
+                await asyncio.sleep(5)
         log.info("logged in as %s, owner is %s", who["user_id"], OWNER)
 
         await bot.ensure_room()

@@ -242,6 +242,8 @@ in {
       livekitUrl = "wss://${matrixDomain}/_livekit/";
       port = 8080;
     };
+    # lk-jwt-service >= 0.5.0 refuses to start without this (no more implicit "*").
+    systemd.services.lk-jwt-service.environment.LIVEKIT_FULL_ACCESS_HOMESERVERS = matrixDomain;
 
     # --- TLS with ACME (Let's Encrypt); use your userconfig email ---
     security.acme = {
