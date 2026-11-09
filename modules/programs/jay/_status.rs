@@ -11,6 +11,7 @@
 //     main loop the moment a sink or source changes. Only the audio blocks
 //     are re-read then.
 //   * Everything else refreshes on a fixed 2s tick, so it never gates audio.
+//     Nothing here touches the network: the claude pill only reads a file.
 
 use std::io::{BufRead, BufReader, Write};
 use std::os::unix::process::CommandExt;
@@ -183,6 +184,18 @@ fn battery_block() -> Option<String> {
     Some(pill("battery", color, icon, &format!("{text}%")))
 }
 
+/// Releases the claude-code / claude-desktop flake inputs are behind, as
+/// "c<N> d<M>". The count file is written by `claude-updates --bar` from a
+/// timer that only manus runs, so other hosts never show the pill.
+fn claude_block() -> Option<String> {
+    let dir = std::env::var_os("XDG_RUNTIME_DIR")?;
+    let text = std::fs::read_to_string(std::path::Path::new(&dir).join("claude-updates")).ok()?;
+    let mut counts = text.split_whitespace();
+    let (code, desktop) = (counts.next()?, counts.next()?);
+    let color = if code == "0" && desktop == "0" { C_DIM } else { C_CLAUDE };
+    Some(pill("claude", color, '\u{F06A9}', &format!("c{code} d{desktop}")))
+}
+
 /// Kill any jay-status the same jay started before this one: a leftover from
 /// before a config reload. Matching the parent keeps a copy run by hand in a
 /// terminal from killing the real bar.
@@ -277,6 +290,7 @@ fn main() {
             let duod: String = format_duod(now.ms_of_day).chars().take(4).collect();
 
             slow.clear();
+            slow.extend(claude_block());
             slow.push(pill("cpu", C_CPU, '\u{F035B}', &format!("{cpu_pct:02}%")));
             slow.push(memory_block());
             slow.push(disk_block());

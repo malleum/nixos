@@ -1,9 +1,9 @@
 # Session secret service (GNOME Keyring via libsecret).
 #
 # Jay is not a GNOME/KDE session, so Electron/Chromium cannot discover a
-# password store and fall back to `basic` (hardcoded key). That is why Cursor
-# MCP OAuth failed with "Encryption is not available" and why Brave was
-# wrapped with `--password-store=basic`.
+# password store and fall back to `basic` (hardcoded key). That is why Claude
+# Desktop warned "No system keyring is available" and why Brave was wrapped
+# with `--password-store=basic`.
 #
 # Unlock is empty-password, not the greetd login password. A PAM unlock
 # would pop a second password dialog whenever the keyring password does

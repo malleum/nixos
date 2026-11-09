@@ -3,6 +3,7 @@
     home.packages = with pkgs; [
       gimp
       losslesscut-bin
+      spotify
       vlc
     ];
   };

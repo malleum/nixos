@@ -1,47 +1,24 @@
 {inputs, ...}: {
-  flake.modules.homeManager.ai = {
-    pkgs,
-    lib,
-    ...
-  }: let
+  flake.modules.homeManager.ai = {pkgs, ...}: let
     inherit (pkgs.stdenv.hostPlatform) system;
-    # Cursor's Linux sandbox tmpfs-mounts /run, which hides
-    # /run/current-system/sw/bin/zsh (NixOS's default $SHELL). Point SHELL at
-    # the store path so cursorsandbox can exec the shell; /nix/store stays
-    # visible inside the sandbox.
-    #
-    # patchelf 0.19 (nixpkgs unstable) writes overlapping LOAD
-    # headers into this package's node, and ld.so segfaults. 0.15 from stable
-    # does not. The September tarball breaks the same way under 0.19, so the
-    # pin that works is the current tarball built with the older patchelf.
-    # Drop the preFixup once `.../share/cursor-agent/node --version` works
-    # without it.
-    cursorCliPkg = pkgs.cursor-cli.overrideAttrs (old: {
-      preFixup = ''
-        export PATH="${pkgs.stable.patchelf}/bin:$PATH"
-      '';
-    });
-    cursorCli = pkgs.symlinkJoin {
-      name = "cursor-cli";
-      paths = [cursorCliPkg];
+    # XDG_CURRENT_DESKTOP is `jay`, so Electron falls back to `basic` and
+    # Claude warns "No system keyring is available" (see
+    # modules/services/keyring.nix). The upstream launcher passes
+    # --password-store from this var.
+    claudeDesktop = pkgs.symlinkJoin {
+      name = "claude-desktop";
+      paths = [inputs.claude-desktop.packages.${system}.claude-desktop-fhs];
       nativeBuildInputs = [pkgs.makeWrapper];
       postBuild = ''
-        wrapProgram $out/bin/cursor-agent \
-          --set SHELL ${lib.getExe pkgs.zsh}
+        wrapProgram $out/bin/claude-desktop \
+          --set CLAUDE_PASSWORD_STORE gnome-libsecret
       '';
     };
   in {
     home.packages = with pkgs; [
-      cursorCli
       antigravity-cli
-      claude-code
-      inputs.claude-desktop.packages.${system}.claude-desktop-fhs
-      # Jay is not GNOME, so Electron will not auto-pick libsecret. Point
-      # Cursor at gnome-keyring (see modules/services/keyring.nix).
-      (code-cursor.override {
-        commandLineArgs = "--password-store=gnome-libsecret";
-      })
-      .fhs
+      inputs.claude-code.packages.${system}.claude-code
+      claudeDesktop
     ];
 
     # Escape is for vim mode, not for cancelling a running turn (ctrl+c still

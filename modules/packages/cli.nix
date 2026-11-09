@@ -26,7 +26,6 @@
       tldr
       universal-ctags
       wget
-      xan
     ];
   };
 }

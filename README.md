@@ -107,7 +107,7 @@ A few conventions carry most of the structure:
 | `lap` | Battery and backlight handling |
 | `efi` | systemd-boot |
 | `dev` | Programming toolchains |
-| `ai` | Claude Code, Cursor and other assistant CLIs |
+| `ai` | Claude Code, Claude Desktop and other assistant CLIs |
 | `cht` | Matrix (iamb) and Signal |
 | `med` | Media players, OBS, Spotify, Vesktop, text-to-speech |
 | `gam` | Games, the speedrun keyboard and mouse setup, waywall |

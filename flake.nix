@@ -2,6 +2,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     stable.url = "github:NixOS/nixpkgs/nixos-26.05";
+    # TEMPORARY: nixpkgs removed brave (2026-11) and it is on its way back.
+    # The last nixpkgs we had with it, so the build is a cache hit. Delete this
+    # and the overlay in modules/meta/nixpkgs.nix once `pkgs.brave` evaluates.
+    nixpkgs-brave.url = "github:NixOS/nixpkgs/09063bd1f2b36fd9fd793c36dfade7bd40a93dfc";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -135,6 +139,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Both track upstream releases within hours, unlike nixpkgs. Bump just
+    # these two with `claude-up` (modules/scripts/_claude-up.nix).
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     claude-desktop = {
       url = "github:aaddrick/claude-desktop-debian";
       inputs.nixpkgs.follows = "nixpkgs";

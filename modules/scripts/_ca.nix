@@ -1,8 +1,8 @@
-# ca: launch cursor-agent in a python-code worktree.
+# ca: launch claude in a python-code worktree.
 #
-#   ca                         cursor-agent in the current directory
+#   ca                         claude in the current directory
 #   ca <branch> [args...]      cd to ~/.vs/<branch> (create the worktree if
-#                              needed) and run cursor-agent; args are passed
+#                              needed) and run claude; args are passed
 #                              through. Flags (ca --resume) stay in the
 #                              current directory.
 #
@@ -173,7 +173,7 @@ pkgs.writeShellApplication {
 
     if [[ $# -eq 0 || $1 == -* ]]; then
       stamp_used
-      exec cursor-agent "$@"
+      exec claude "$@"
     fi
 
     branch="$1"
@@ -196,6 +196,6 @@ pkgs.writeShellApplication {
 
     cd "$path" || exit 1
     stamp_used
-    exec cursor-agent "$@"
+    exec claude "$@"
   '';
 }

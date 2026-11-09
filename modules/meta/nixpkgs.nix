@@ -12,6 +12,15 @@
         };
       })
 
+      # TEMPORARY: see nixpkgs-brave in flake.nix.
+      (final: prev: {
+        brave =
+          (import inputs.nixpkgs-brave {
+            system = prev.stdenv.hostPlatform.system;
+            config.allowUnfree = true;
+          }).brave;
+      })
+
       (final: prev: {
         pythonPackagesExtensions =
           prev.pythonPackagesExtensions

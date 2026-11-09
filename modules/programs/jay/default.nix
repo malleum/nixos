@@ -79,7 +79,12 @@
       jay-power-menu
       jay-window-switch
       jay-osd
+      claude-updates
       ;
+
+    # The bar's "claude releases behind" pill. Only manus polls GitHub; on other
+    # hosts the count file never exists, so jay-status leaves the pill out.
+    claudePill = hostConfig.name == "manus";
 
     jayConfig = import ./_config.nix {
       inherit pkgs leftMonitorSerial wallpaper jayStatus jayLock;
@@ -170,7 +175,29 @@
           description = "On-screen volume/brightness indicator";
           exec = "${pkgs.swayosd}/bin/swayosd-server --top-margin 0.05";
         };
+      }
+      // lib.optionalAttrs claudePill {
+        claude-updates = {
+          Unit.Description = "Count pending claude-code / claude-desktop releases for the bar";
+          Service = {
+            Type = "oneshot";
+            # environment.variables does not reach user units.
+            Environment = "NH_FLAKE=${hostConfig.flakePath}";
+            ExecStart = "${claude-updates}/bin/claude-updates --bar";
+          };
+        };
       };
+
+    systemd.user.timers = lib.optionalAttrs claudePill {
+      claude-updates = {
+        Unit.Description = "Poll for claude-code / claude-desktop releases";
+        Timer = {
+          OnStartupSec = "30s";
+          OnUnitActiveSec = "10min";
+        };
+        Install.WantedBy = ["timers.target"];
+      };
+    };
 
     xdg.configFile."jay/config.toml".text = jayConfig;
 

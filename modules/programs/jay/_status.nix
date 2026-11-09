@@ -21,6 +21,7 @@ in
     (const "C_BAT_LOW" "#${colors.base08}")
     (const "C_DATE" "#${colors.base0A}")
     (const "C_DUOD" "#${colors.base0F}")
+    (const "C_CLAUDE" "#${colors.base09}")
     (const "C_DIM" "#${colors.base03}")
     (const "C_BG" "#${colors.base01}") # bar background, for the invisible spacer
     (const "C_PILL" "#${colors.base02}") # pill fill, one shade above the bar
