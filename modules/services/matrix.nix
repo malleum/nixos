@@ -241,6 +241,18 @@ in {
       keyFile = config.sops.secrets.matrix-livekit-key.path;
       livekitUrl = "wss://${matrixDomain}/_livekit/";
       port = 8080;
+      # TEMPORARY: nixpkgs' cargo setup hook now exports AWS_LC_SYS_USE_SYSTEM=1
+      # for every Rust build, and lk-jwt-service 0.9.0 does not list aws-lc, so
+      # its aws-lc-sys panics ("requires a system-installed AWS-LC") and there
+      # is no cached build either. Unsetting it builds the bundled copy, as
+      # before. Drop once nixpkgs' lk-jwt-service builds on its own again.
+      package = pkgs.lk-jwt-service.overrideAttrs (old: {
+        preBuild =
+          (old.preBuild or "")
+          + ''
+            unset AWS_LC_SYS_USE_SYSTEM
+          '';
+      });
     };
     # lk-jwt-service >= 0.5.0 refuses to start without this (no more implicit "*").
     systemd.services.lk-jwt-service.environment.LIVEKIT_FULL_ACCESS_HOMESERVERS = matrixDomain;
