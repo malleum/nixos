@@ -12,6 +12,8 @@
   wallpaper,
   browser,
   browser2,
+  # "firefox-work" on wrk hosts (see firefox.nix), null elsewhere.
+  workBrowser,
   mod,
   leftMonitorSerial,
   jayStatus,
@@ -22,6 +24,16 @@
   windowSwitch,
   osd,
 }: let
+  inherit (pkgs) lib;
+
+  # The work Firefox profile gets its own launcher, and Teams (work) opens there.
+  workBrowserAction = lib.optionalString (workBrowser != null) ''launch-browser-work = { type = "exec", exec = "${workBrowser}" }'';
+  workBrowserShortcut = lib.optionalString (workBrowser != null) ''${mod}-ctrl-shift-b = "$launch-browser-work"'';
+  teamsBrowser =
+    if workBrowser != null
+    then workBrowser
+    else browser;
+
   # Monitor config per host
   # NOTE: Run `jay randr` to discover serial numbers and connector names,
   # then replace the match fields below with your actual serial numbers
@@ -226,8 +238,9 @@
       launch-kitty = { type = "exec", exec = "kitty" }
       launch-browser = { type = "exec", exec = "${browser}" }
       launch-browser2 = { type = "exec", exec = "${browser2}" }
+      ${workBrowserAction}
       launch-vesktop = { type = "exec", exec = "vesktop" }
-      launch-teams = { type = "exec", exec = ["${browser}", "--new-window", "https://teams.microsoft.com/v2/"] }
+      launch-teams = { type = "exec", exec = ["${teamsBrowser}", "--new-window", "https://teams.microsoft.com/v2/"] }
       launch-calendar = { type = "exec", exec = ["${browser}", "--new-window", "https://calendar.google.com/calendar/r"] }
 
       # ── Shortcuts ────────────────────────────────────────────────
@@ -238,6 +251,7 @@
       ${mod}-shift-Return = "$launch-kitty"
       ${mod}-b = "$launch-browser"
       ${mod}-shift-b = "$launch-browser2"
+      ${workBrowserShortcut}
       ${mod}-d = "$launch-vesktop"
       ${mod}-shift-d = "$launch-teams"
       # iamb and signal are already running as jay-session login units

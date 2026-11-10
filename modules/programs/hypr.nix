@@ -16,6 +16,13 @@
   }: let
     wallpaper = config.stylix.image;
 
+    # wrk hosts have a separate work Firefox profile (firefox.nix); Teams opens there.
+    hasWorkBrowser = config.programs.firefox.profiles ? work;
+    teamsBrowser =
+      if hasWorkBrowser
+      then "firefox-work"
+      else "$BROWSER";
+
     mkLua = lib.generators.mkLuaInline;
     mkBind = key: disp: {_args = [key (mkLua disp)];};
     mkBindM = key: disp: {_args = [key (mkLua disp) {mouse = true;}];};
@@ -387,7 +394,7 @@
             (mkBind "SUPER + b" ''hl.dsp.exec_cmd("$BROWSER")'')
             (mkBind "SUPER + SHIFT + b" ''hl.dsp.exec_cmd("$BROWSER2")'')
             (mkBind "SUPER + d" ''hl.dsp.exec_cmd("vesktop")'')
-            (mkBind "SUPER + SHIFT + d" ''hl.dsp.exec_cmd("$BROWSER 'https://teams.microsoft.com/v2/'")'')
+            (mkBind "SUPER + SHIFT + d" ''hl.dsp.exec_cmd("${teamsBrowser} 'https://teams.microsoft.com/v2/'")'')
             (mkBind "SUPER + i" ''hl.dsp.exec_cmd("$TERMINAL iamb")'')
             (mkBind "SUPER + SHIFT + i" ''hl.dsp.exec_cmd("signal-desktop")'')
 
@@ -453,6 +460,7 @@
             (mkBindM "SUPER + mouse:272" ''hl.dsp.window.drag()'')
             (mkBindM "SUPER + mouse:273" ''hl.dsp.window.resize()'')
           ]
+          ++ lib.optional hasWorkBrowser (mkBind "SUPER + CONTROL + SHIFT + b" ''hl.dsp.exec_cmd("firefox-work")'')
           ++ many "SUPER" (n: ''hl.dsp.focus({ workspace = ${n} })'') wkspaces
           ++ many "SUPER + SHIFT" (n: ''hl.dsp.window.move({ workspace = ${n} })'') wkspaces
           ++ many "SUPER" (d: ''hl.dsp.focus({ direction = "${d}" })'') lettertodirection

@@ -92,6 +92,10 @@
       colors = base16Scheme;
       browser = hostConfig.user.browser;
       browser2 = hostConfig.user.browser2;
+      workBrowser =
+        if config.programs.firefox.profiles ? work
+        then "firefox-work"
+        else null;
       mod = "logo";
       audioSwitch = jay-audio-switch;
       monitorToggle = jay-toggle-monitor;
