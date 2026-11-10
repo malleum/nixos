@@ -3,14 +3,18 @@
 #   ca                         claude in the current directory
 #   ca <branch> [args...]      cd to ~/.vs/<branch> (create the worktree if
 #                              needed) and run claude; args are passed
-#                              through. Flags (ca --resume) stay in the
-#                              current directory.
+#                              through. With no args, continue the most
+#                              recent session in that checkout if there is
+#                              one (claude --continue).
+#   ca <branch> --new [args]   same, but always start a new session.
+#   ca --resume ...            flags stay in the current directory.
 #
 # Tab completion with an empty word lists checked-out worktrees only, most
 # recently used first (`ca --complete --open`). A prefix lists those first,
 # then every other local and origin branch. Each launch inside this repo
 # writes an epoch timestamp to $(git rev-parse --absolute-git-dir)/ca-last-used
-# so agents can prune worktrees that have not been opened in 14 days.
+# so agents can prune worktrees that have not been opened in 14 days. A sibling
+# typescript-code worktree, ~/.vs/<branch>-ts, is passed along with --add-dir.
 {pkgs}:
 pkgs.writeShellApplication {
   name = "ca";
@@ -171,13 +175,27 @@ pkgs.writeShellApplication {
       exit 0
     fi
 
-    if [[ $# -eq 0 || $1 == -* ]]; then
+    # --add-dir takes several directories, so it goes after the passed-through
+    # arguments, where it cannot swallow a prompt.
+    launch() {
       stamp_used
+      if [[ -d $PWD-ts ]]; then
+        exec claude "$@" --add-dir "$PWD-ts"
+      fi
       exec claude "$@"
+    }
+
+    if [[ $# -eq 0 || $1 == -* ]]; then
+      launch "$@"
     fi
 
     branch="$1"
     shift
+    fresh=0
+    if [[ ''${1-} == --new ]]; then
+      fresh=1
+      shift
+    fi
     valid_branch "$branch" || die "invalid branch name: $branch"
     require_repo
 
@@ -195,7 +213,18 @@ pkgs.writeShellApplication {
     fi
 
     cd "$path" || exit 1
-    stamp_used
-    exec claude "$@"
+
+    # Claude keeps a checkout's sessions in ~/.claude/projects/<cwd with every
+    # non-alphanumeric character turned into ->/*.jsonl.
+    if (( ! fresh && $# == 0 )); then
+      sessions="''${CLAUDE_CONFIG_DIR:-$HOME/.claude}/projects/''${PWD//[^a-zA-Z0-9]/-}"
+      shopt -s nullglob
+      found=("$sessions"/*.jsonl)
+      shopt -u nullglob
+      if (( ''${#found[@]} > 0 )); then
+        set -- --continue
+      fi
+    fi
+    launch "$@"
   '';
 }

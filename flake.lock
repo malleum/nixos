@@ -1027,11 +1027,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792679723,
-        "narHash": "sha256-OWeaeVmkSNADdJ1nSQWx3TwsaaLp/A3h5DXZAa9bp54=",
+        "lastModified": 1794260835,
+        "narHash": "sha256-fvYFASNbjp8TBfQjWIM3+1M5zxt97hKxjm8nmw8rFVA=",
         "owner": "malleum",
         "repo": "iamb",
-        "rev": "0607ee08b36a0c6b8dd244226e87b5430c73a905",
+        "rev": "9a64552d3abf76c2a979de01428685615e10dc6b",
         "type": "github"
       },
       "original": {
