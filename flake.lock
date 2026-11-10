@@ -1087,11 +1087,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791492417,
-        "narHash": "sha256-QlXW7U+SNhNereAp8p/72y1TUOJngmDJdwX7jc5clVc=",
+        "lastModified": 1794344173,
+        "narHash": "sha256-BAvVSt94WuLhZI1UDw8uAf7FRVmymnsfgXgtVEk0njo=",
         "owner": "malleum",
         "repo": "laering_norsk",
-        "rev": "daf8fb030b33e9344e10502a1dd0a4379523405c",
+        "rev": "9cb37049aeb1bc39b4b0f8f81a53bfcdd688b34b",
         "type": "github"
       },
       "original": {
