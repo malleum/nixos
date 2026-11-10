@@ -10,6 +10,7 @@
       darkreader # Dark mode for all websites
       istilldontcareaboutcookies # Auto-removes cookie banners
       link-cleaner # Removes tracking parameters from URLs
+      multi-account-containers # Per-container cookie jars (work vs personal logins side by side)
       privacy-badger # Blocks trackers
       ublock-origin # Content blocker (ads, etc.)
       unpaywall # Finds free versions of academic papers
@@ -152,6 +153,24 @@
         extensions = {
           packages = myExtensions;
           force = true; # Overwrite extensions.json so Nix-managed addons enable on first run
+        };
+
+        # Each container has its own cookies/storage, so claude.ai (or any site)
+        # can be logged into different accounts at once and each one stays signed in.
+        # Open via the containers toolbar button, long-press/right-click the "+" new-tab
+        # button, or right-click a link -> "Open Link in New Container Tab".
+        containersForce = true;
+        containers = {
+          Personal = {
+            id = 1;
+            color = "blue";
+            icon = "fingerprint";
+          };
+          Work = {
+            id = 2;
+            color = "orange";
+            icon = "briefcase";
+          };
         };
 
         search = {
