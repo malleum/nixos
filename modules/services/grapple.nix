@@ -4,10 +4,22 @@
 in {
   flake.modules.nixos.grapple = {
     config,
+    hostConfig,
     pkgs,
     ...
   }: let
     grapplePkg = inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    inherit (hostConfig.user) username;
+
+    # joshammer.com/lerni is the Esperanto drill on a phone, with the terminal
+    # tool's own progress. The tool syncs by reading and writing
+    # ~/.cache/lerni/progress.json on this box over ssh; the website serves
+    # that same file. It lives in the site's state, group-writable, and the
+    # path the tool knows is a symlink to it (lerni-progress-link below), so
+    # neither side needs to know about the other.
+    lerniDir = "/var/lib/grapple/lerni";
+    lerniProgress = "${lerniDir}/progress.json";
+    lerniLink = "${config.users.users.${username}.home}/.cache/lerni/progress.json";
   in {
     # --- Grapple User & Group ---
     users.groups.grapple = {};
@@ -18,6 +30,38 @@ in {
     };
 
     users.users.joshammer.extraGroups = ["grapple"];
+
+    # setgid, so whichever of the two writes the file it stays the group's.
+    systemd.tmpfiles.rules = ["d ${lerniDir} 2775 grapple grapple -"];
+
+    # Moves the progress the tool already synced here into the site's state,
+    # once, and leaves a symlink where it was. Runs as the user: the directory
+    # is group-writable and ${username} is in the group.
+    systemd.services.lerni-progress-link = {
+      description = "Share lerni's progress file with the website";
+      after = ["systemd-tmpfiles-setup.service"];
+      before = ["grapple-game.service"];
+      wantedBy = ["multi-user.target"];
+      path = [pkgs.coreutils];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        User = username;
+        UMask = "0002";
+      };
+      script = ''
+        link=${lerniLink}
+        mkdir -p "$(dirname "$link")"
+        if [ -f "$link" ] && [ ! -L "$link" ]; then
+          # The site's copy wins only if there already is one; either way the
+          # old file is kept beside the link rather than deleted.
+          [ -e ${lerniProgress} ] || cp "$link" ${lerniProgress}
+          mv "$link" "$link.before-website"
+        fi
+        [ ! -e ${lerniProgress} ] || chmod 664 ${lerniProgress} || true
+        ln -sfn ${lerniProgress} "$link"
+      '';
+    };
 
     # joshammer.com/workout's password (the workout from hjem, on a phone).
     # Root-only; systemd hands it to the service as the credential
@@ -50,6 +94,7 @@ in {
           # server.properties is 0640 because it holds the RCON password, and
           # an internet-facing process has no business being able to read it.
           "MC_DIR=/var/lib/minecraft"
+          "MALLEUSITE_LERNI=${lerniProgress}"
         ];
 
         # Hardening
