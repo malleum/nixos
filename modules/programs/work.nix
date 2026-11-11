@@ -31,10 +31,9 @@
       bindkey -M isearch ' ' self-insert
     '';
 
-    # Work sessions run in auto mode (settings.json defaultMode); the sandbox
-    # below is currently off. --dangerously-skip-permissions would also skip
-    # the GitLab and Sentry write prompts.
-    programs.zsh.shellAliases.claude = lib.mkForce "claude";
+    # ~/.claude is the work setup (GitLab/Sentry MCPs, work permissions);
+    # personal Claude (`cl`, `cld`) gets its own login and history here.
+    claude.personalConfigDir = ".claude-personal";
 
     claude.mcpServers = {
       GitLab = {
@@ -184,5 +183,15 @@
       pnpm # typescript-code; it switches itself to the version package.json pins
       uv
     ];
+  };
+
+  # The machine work happens on day to day, as opposed to one that merely can
+  # (wrk alone). Personal `cl`/`cld` ask before opening there, and jay puts
+  # the work browser on mod+b (programs/jay/_config.nix).
+  flake.modules.homeManager.base = {lib, ...}: {
+    options.work.primary = lib.mkEnableOption "the primary work machine (the wrk-primary tag)";
+  };
+  flake.modules.homeManager.wrk-primary = {
+    work.primary = true;
   };
 }

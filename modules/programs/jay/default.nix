@@ -96,6 +96,7 @@
         if config.programs.firefox.profiles ? work
         then "firefox-work"
         else null;
+      workPrimary = config.work.primary;
       mod = "logo";
       audioSwitch = jay-audio-switch;
       monitorToggle = jay-toggle-monitor;

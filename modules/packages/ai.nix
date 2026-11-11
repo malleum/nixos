@@ -3,6 +3,7 @@
     config,
     lib,
     pkgs,
+    hostConfig,
     ...
   }: let
     inherit (pkgs.stdenv.hostPlatform) system;
@@ -23,6 +24,38 @@
       '';
     };
     settingsFragment = json.generate "claude-settings-fragment.json" cfg.settings;
+
+    # cl / cld: personal Claude, kept apart from the work setup (`ca`, plain
+    # `claude`) by CLAUDE_CONFIG_DIR when personalConfigDir is set. On the
+    # primary work machine they ask first, in case `ca` was meant.
+    #
+    # Inside teno the tab bar shows the foreground program's argv[0], so the
+    # launch dir goes there: argv[0] becomes `claude:<name>/<dir>`. teno shows
+    # the part after the last `/`, and its restore rules (programs/teno.nix)
+    # match the `claude:<name>/` prefix to relaunch with `<name> --continue`.
+    # CLAUDE_SKIP_WORK_CHECK=1 skips the question (teno sets it on restore).
+    personal = name: extraArgs:
+      pkgs.writeShellApplication {
+        inherit name;
+        runtimeInputs = [pkgs.coreutils];
+        text = ''
+          ${lib.optionalString (cfg.personalConfigDir != null) ''
+            export CLAUDE_CONFIG_DIR="$HOME/${cfg.personalConfigDir}"
+          ''}
+          ${lib.optionalString config.work.primary ''
+            if [[ -z ''${CLAUDE_SKIP_WORK_CHECK-} && -t 0 ]]; then
+              read -r -p "This is ${hostConfig.name}. Open this agent, not ca? [y/N] " reply
+              [[ $reply == [yY]* ]] || exit 1
+            fi
+          ''}
+          unset CLAUDE_SKIP_WORK_CHECK
+          if [[ -n ''${TENO-} ]]; then
+            if [[ $PWD == "$HOME" ]]; then label="~"; else label=$(basename -- "$PWD"); fi
+            exec -a "claude:${name}/$label" ${claudeCode}/bin/claude ${lib.escapeShellArgs extraArgs} "$@"
+          fi
+          exec ${claudeCode}/bin/claude ${lib.escapeShellArgs extraArgs} "$@"
+        '';
+      };
   in {
     options.claude = {
       settings = lib.mkOption {
@@ -44,6 +77,15 @@
           alone so OAuth sign-ins and hand edits survive.
         '';
       };
+      personalConfigDir = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = ".claude-personal";
+        description = ''
+          Config dir for `cl`/`cld`, relative to home. Null: they share
+          ~/.claude with plain `claude`.
+        '';
+      };
     };
 
     config = {
@@ -51,20 +93,30 @@
         antigravity-cli
         claudeCode
         claudeDesktop
+        (personal "cl" [])
+        (personal "cld" ["--dangerously-skip-permissions"])
       ];
+
+      programs.zsh.shellAliases.clauded = "cld";
 
       # Escape is for vim mode, not for cancelling a running turn (ctrl+c still
       # interrupts).
-      home.file.".claude/keybindings.json".text = builtins.toJSON {
-        "$schema" = "https://www.schemastore.org/claude-code-keybindings.json";
-        "$docs" = "https://code.claude.com/docs/en/keybindings";
-        bindings = [
-          {
-            context = "Chat";
-            bindings.escape = null;
-          }
-        ];
-      };
+      home.file = let
+        keybindings.text = builtins.toJSON {
+          "$schema" = "https://www.schemastore.org/claude-code-keybindings.json";
+          "$docs" = "https://code.claude.com/docs/en/keybindings";
+          bindings = [
+            {
+              context = "Chat";
+              bindings.escape = null;
+            }
+          ];
+        };
+      in
+        {".claude/keybindings.json" = keybindings;}
+        // lib.optionalAttrs (cfg.personalConfigDir != null) {
+          "${cfg.personalConfigDir}/keybindings.json" = keybindings;
+        };
 
       # A broken settings.json or a failed `claude mcp` call only warns: it must
       # not fail the whole switch.

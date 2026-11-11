@@ -6,7 +6,7 @@
 #            anything else) can be signed in to a work account here and a
 #            personal one there, both at once, each remembering who it is.
 #            It runs as its own window: `firefox-work`, mod+ctrl+shift+b, or
-#            "Firefox (Work)" in rofi. Orange chrome and a WORK tag in front of
+#            "Firefox (Work)" in rofi. Orange chrome and a blue visiostack tag in front of
 #            the address bar tell the two apart at a glance.
 let
   extensionsFor = pkgs:
@@ -218,6 +218,7 @@ in {
   }: let
     c = config.lib.stylix.colors.withHashtag;
     accent = c.base09; # orange in every scheme we use
+    tag = c.base0D; # blue
 
     # `--name` sets the Wayland app_id (and X11 WM_CLASS), so the compositor,
     # rofi and the bar see a separate app rather than a second Firefox window.
@@ -248,7 +249,7 @@ in {
 
       # Only the chrome changes, never page content. The tab strip is tinted
       # orange, the selected tab and the address bar are outlined in it, and a
-      # WORK tag sits in front of the address bar.
+      # blue visiostack tag sits in front of the address bar.
       userChrome = ''
         :root {
           --work-accent: ${accent};
@@ -269,12 +270,12 @@ in {
         }
 
         #urlbar-container::before {
-          content: "WORK";
+          content: "visiostack";
           align-self: center;
           margin-inline-end: 6px;
           padding: 2px 6px;
           border-radius: 4px;
-          background-color: var(--work-accent);
+          background-color: ${tag};
           color: ${c.base00};
           font-weight: bold;
           font-size: 0.85em;

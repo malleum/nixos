@@ -4,7 +4,6 @@
       la = "eza -lah";
       cat = "bat";
       choose = "choose -x";
-      claude = "claude --dangerously-skip-permissions";
     };
   in {
     programs = {

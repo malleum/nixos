@@ -14,6 +14,9 @@
   browser2,
   # "firefox-work" on wrk hosts (see firefox.nix), null elsewhere.
   workBrowser,
+  # The wrk-primary tag: work Firefox takes mod+b, personal Firefox moves to
+  # mod+shift-b and workspace 5, and Brave loses its key.
+  workPrimary,
   mod,
   leftMonitorSerial,
   jayStatus,
@@ -26,13 +29,42 @@
 }: let
   inherit (pkgs) lib;
 
-  # The work Firefox profile gets its own launcher, and Teams (work) opens there.
-  workBrowserAction = lib.optionalString (workBrowser != null) ''launch-browser-work = { type = "exec", exec = "${workBrowser}" }'';
-  workBrowserShortcut = lib.optionalString (workBrowser != null) ''${mod}-ctrl-shift-b = "$launch-browser-work"'';
-  teamsBrowser =
-    if workBrowser != null
-    then workBrowser
-    else browser;
+  # Launchers, commands and window rules shared with hyprland.
+  desktop = import ../_desktop.nix {
+    inherit pkgs lib hostName browser browser2 workBrowser workPrimary windowSwitch audioSwitch osd;
+    compositor = "jay";
+    lock = jayLock;
+  };
+  # JSON strings and string arrays are valid TOML.
+  toml = builtins.toJSON;
+  exec = b: let
+    priv = lib.optionalString (b.privileged or false) ", privileged = true";
+  in
+    if b ? sh
+    then ''{ type = "exec", exec = { shell = ${toml b.sh}${priv} } }''
+    else ''{ type = "exec", exec = { prog = ${toml (lib.head b.argv)}, args = ${toml (lib.tail b.argv)}${priv} } }'';
+  anyMods = b: b.anyMods or false;
+  sharedShortcuts = lib.concatMapStrings (b: "${lib.replaceStrings ["MOD-"] ["${mod}-"] b.key} = ${exec b}\n") (lib.filter (b: !anyMods b) desktop.binds);
+  sharedComplex = lib.concatMapStrings (b: ''
+
+    [complex-shortcuts.${b.key}]
+    mod-mask = ""
+    action = ${exec b}
+  '') (lib.filter anyMods desktop.binds);
+  sharedRules = lib.concatMapStrings (r: let
+    m = r.match;
+    line = cond: text: lib.optionalString cond "${text}\n";
+  in
+    "\n[[windows]]\n"
+    + line (m ? title) "match.title-regex = ${toml (m.title or "")}"
+    + line (m ? titleExact) "match.title = ${toml (m.titleExact or "")}"
+    + line (m ? appId) "match.app-id = ${toml (m.appId or "")}"
+    + line (m ? appIdRegex) "match.any = [{ app-id-regex = ${toml (m.appIdRegex or "")} }, { x-class-regex = ${toml (m.appIdRegex or "")} }]"
+    + line (m ? notTitle) "match.not.title-regex = ${toml (m.notTitle or "")}"
+    + line (r ? workspace && (r.justMapped or true)) "match.just-mapped = true"
+    + line (r ? workspace) ''action = { type = "move-to-workspace", name = ${toml (r.workspace or "")} }''
+    + line (r.float or false) ''initial-tile-state = "floating"'')
+  desktop.rules;
 
   # Monitor config per host
   # NOTE: Run `jay randr` to discover serial numbers and connector names,
@@ -232,28 +264,12 @@
       i3bar-separator = "  "
       exec = "${jayStatus}/bin/jay-status"
 
-      # ── Named Actions ────────────────────────────────────────────
-      [actions]
-      launch-terminal = { type = "exec", exec = { shell = "$TERMINAL" } }
-      launch-kitty = { type = "exec", exec = "kitty" }
-      launch-browser = { type = "exec", exec = "${browser}" }
-      launch-browser2 = { type = "exec", exec = "${browser2}" }
-      ${workBrowserAction}
-      launch-vesktop = { type = "exec", exec = "vesktop" }
-      launch-teams = { type = "exec", exec = ["${teamsBrowser}", "--new-window", "https://teams.microsoft.com/v2/"] }
-      launch-calendar = { type = "exec", exec = ["${browser}", "--new-window", "https://calendar.google.com/calendar/r"] }
-
       # ── Shortcuts ────────────────────────────────────────────────
+      # The launchers and commands shared with hyprland come from
+      # ../_desktop.nix; the jay-only actions follow them.
       [shortcuts]
-
-      # ─ App launchers ─
-      ${mod}-Return = "$launch-terminal"
-      ${mod}-shift-Return = "$launch-kitty"
-      ${mod}-b = "$launch-browser"
-      ${mod}-shift-b = "$launch-browser2"
-      ${workBrowserShortcut}
-      ${mod}-d = "$launch-vesktop"
-      ${mod}-shift-d = "$launch-teams"
+      ${sharedShortcuts}
+      # ─ Workspace apps / control center ─
       # iamb and signal are already running as jay-session login units
       # (see iamb.nix), so these just focus their workspace instead of
       # relaunching -- a plain $launch action spawned a duplicate process.
@@ -264,61 +280,12 @@
       ${mod}-i = [{ type = "show-workspace", name = "2" }, "warp-mouse-to-focus", { type = "exec", exec = { shell = "rm -f \"$XDG_RUNTIME_DIR/jay-session-apps/iamb\"; systemctl --user start iamb.service" } } ]
       ${mod}-shift-i = [{ type = "show-workspace", name = "5" }, "warp-mouse-to-focus"]
       ${mod}-ctrl-c = "open-control-center"
-      ${mod}-shift-c = "$launch-calendar"
-
-      # ─ Clipboard copypaste ─
-      ${mod}-x = { type = "exec", exec = { prog = "${pkgs.wl-clipboard}/bin/wl-copy", args = ["https://xkcd.com/1475/"], privileged = true } }
-      ${mod}-shift-x = { type = "exec", exec = { prog = "${pkgs.wl-clipboard}/bin/wl-copy", args = ["Neida, jeg ville vinne"], privileged = true } }
-
-      # ─ Notifications (swaync) ─
-      ${mod}-n = { type = "exec", exec = ["swaync-client", "--close-all"] }
-      ${mod}-shift-n = { type = "exec", exec = { shell = "swaync-client --dnd-off && notify-send 'Notifications Enabled' -t 1000" } }
-      ${mod}-ctrl-n = { type = "exec", exec = { shell = "notify-send 'Notifications Disabled' -t 300; sleep 0.3; swaync-client --dnd-on" } }
-      ${mod}-ctrl-shift-n = { type = "exec", exec = ["swaync-client", "-a", "0"] }
-
-      # ─ App launcher (rofi) ─
-      ${mod}-s = { type = "exec", exec = { shell = "rofi -show drun" } }
-
-      # ─ Audio output switch (default + move all streams) ─
-      ${mod}-ctrl-a = { type = "exec", exec = "${audioSwitch}/bin/jay-audio-switch" }
-
-      # ─ Media control (MPRIS: browser tabs, spotify, vesktop) ─
-      # Duplicates the XF86Audio* keys for keyboards that lack them.
-      ${mod}-ctrl-p = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "play-pause"] }
-      ${mod}-ctrl-l = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "next"] }
-      ${mod}-ctrl-h = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "previous"] }
-
-      # ─ Network / bluetooth / audio pickers (all rofi-driven) ─
-      ${mod}-w = { type = "exec", exec = ["${pkgs.iwmenu}/bin/iwmenu", "--launcher", "rofi"] }
-      ${mod}-shift-w = { type = "exec", exec = ["${pkgs.bzmenu}/bin/bzmenu", "--launcher", "rofi"] }
-      # Distinct app-id and title so the generic "foot -> workspace 3" rule
-      # below does not catch it; the window rule floats it on whichever
-      # workspace is active instead.
-      ${mod}-ctrl-w = { type = "exec", exec = ["${pkgs.foot}/bin/foot", "--app-id=wiremix", "--title=wiremix", "${pkgs.wiremix}/bin/wiremix"] }
-
-      # ─ Window switcher (all workspaces) ─
-      ${mod}-Tab = { type = "exec", exec = "${windowSwitch}/bin/jay-window-switch" }
 
       # ─ Power menu ─
       ${mod}-ctrl-e = { type = "exec", exec = "${powerMenu}/bin/jay-power-menu" }
 
-      # ─ Click anywhere from the keyboard ─
-      ${mod}-g = { type = "exec", exec = { prog = "${pkgs.wl-kbptr}/bin/wl-kbptr", privileged = true } }
-
       # ─ Toggle left monitor on/off ─
       ${mod}-shift-m = { type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}"] }
-
-      # ─ Clipboard history ─
-      ${mod}-v = { type = "exec", exec = { shell = "${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy", privileged = true } }
-
-      # ─ Calculator (rofi-calc with live preview) ─
-      ${mod}-c = { type = "exec", exec = { shell = "rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy", privileged = true } }
-
-      # ─ Esperanto -> English (rofi; script in modules/scripts) ─
-      ${mod}-shift-t = { type = "exec", exec = { prog = "eo-translate", privileged = true } }
-
-      # ─ Emoji picker ─
-      ${mod}-shift-e = { type = "exec", exec = { shell = "rofi -modi emoji -show emoji | wl-copy", privileged = true } }
 
       # ─ Keyboard layout switching ─
       ${mod}-backslash = { type = "set-keymap", map = { name = "qwerty" } }
@@ -327,23 +294,6 @@
       # ─ Window management ─
       ${mod}-shift-q = "close"
       ${mod}-ctrl-shift-semicolon = "quit"
-      # magnus logs out, then suspends, so it wakes to the greeter. The suspend
-      # is a transient timer in PID 1 because `jay quit` kills this shell and
-      # ends the session; a plain `systemctl suspend` afterwards would no
-      # longer come from an active session, which polkit refuses. sudo is
-      # passwordless for wheel (modules/system/security.nix).
-      ${mod}-shift-z = { type = "exec", exec = { shell = "${
-        if hostName == "magnus"
-        then "/run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemd-run --on-active=3 --timer-property=AccuracySec=100ms ${pkgs.systemd}/bin/systemctl suspend && jay quit"
-        else "poweroff"
-      }", privileged = true } }
-      ${mod}-ctrl-z = { type = "exec", exec = "reboot" }
-
-      # ─ Screenshots (jay screenshot + satty) ─
-      Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.wl-clipboard}/bin/wl-copy < /tmp/jay-screenshot.png", privileged = true } }
-      shift-Print = { type = "exec", exec = { shell = "jay screenshot /tmp/jay-screenshot.png && ${pkgs.satty}/bin/satty -f /tmp/jay-screenshot.png", privileged = true } }
-      ${mod}-shift-s = { type = "exec", exec = { shell = "${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only", privileged = true } }
-      ${mod}-ctrl-s = { type = "exec", exec = { shell = "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.satty}/bin/satty -f -", privileged = true } }
 
       # ─ Floating / layout ─
       ${mod}-a = ["focus-parent", "warp-mouse-to-focus"]
@@ -351,12 +301,6 @@
       ${mod}-t = "toggle-split"
       ${mod}-f = "toggle-mono"
       ${mod}-shift-f = "toggle-fullscreen"
-
-      # ─ Screen lock ─
-      # jay-lock is swaylock-effects with the theme's colors (see _lock.nix).
-      # The binary it execs is still called swaylock, so the [[clients]] rule
-      # granting session-lock below still matches it.
-      ${mod}-BackSpace = { type = "exec", exec = { prog = "${jayLock}/bin/jay-lock", privileged = true } }
 
       # ─ Wallpaper restart ─
       ${mod}-bracketleft = { type = "exec", exec = { shell = "pkill swaybg; ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill &" } }
@@ -369,10 +313,6 @@
       # active (dvorak) keymap, so bracketleft/bracketright sit on the physical
       # keys qwerty calls - and =.
       ${mod}-bracketright = "reload-config-toml"
-
-      # ─ Kill electron ─
-      ${mod}-ctrl-d = { type = "exec", exec = { shell = "killall electron" } }
-      ${mod}-ctrl-shift-d = { type = "exec", exec = { shell = "killall .electron-wrapp; killall electron" } }
 
       # ─ Move workspace to other output ─
       # No focus action here on purpose. move_ws_to_output (src/state.rs) does
@@ -441,159 +381,10 @@
       # swayosd-client both performs the change and draws the on-screen
       # indicator, so these stay one action. It talks to swayosd-server,
       # which runs as a jay-session unit.
-      [complex-shortcuts.XF86AudioLowerVolume]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--output-volume", "lower"] }
+      ${sharedComplex}
 
-      [complex-shortcuts.XF86AudioRaiseVolume]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--output-volume", "raise", "--max-volume", "150"] }
-
-      [complex-shortcuts.XF86AudioMute]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--output-volume", "mute-toggle"] }
-
-      [complex-shortcuts.XF86AudioMicMute]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--input-volume", "mute-toggle"] }
-
-      # Media keys: playerctl drives whatever holds the MPRIS bus, which
-      # includes Firefox/Brave tabs, Spotify and vesktop.
-      [complex-shortcuts.XF86AudioPlay]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "play-pause"] }
-
-      [complex-shortcuts.XF86AudioNext]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "next"] }
-
-      [complex-shortcuts.XF86AudioPrev]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "previous"] }
-
-      [complex-shortcuts.XF86AudioStop]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${pkgs.playerctl}/bin/playerctl", "stop"] }
-
-      [complex-shortcuts.XF86MonBrightnessUp]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--brightness", "raise"] }
-
-      [complex-shortcuts.XF86MonBrightnessDown]
-      mod-mask = ""
-      action = { type = "exec", exec = ["${osd}/bin/jay-osd", "--brightness", "lower"] }
-
-      # ── Window Rules ─────────────────────────────────────────────
-
-      # Workspace assignments
-      [[windows]]
-      match.title-regex = ".*Microsoft Teams.*"
-      action = { type = "move-to-workspace", name = "2" }
-
-      [[windows]]
-      match.title-regex = ".*Brave.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "1" }
-
-      [[windows]]
-      match.title-regex = ".*Firefox.*"
-      match.not.title-regex = ".*Microsoft Teams.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "1" }
-
-      [[windows]]
-      match.title-regex = ".*Ninjabrain Bot.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "1" }
-
-      [[windows]]
-      match.title-regex = ".*e4mc.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "1" }
-
-      # Matched on app-id, set by the launcher, so this fires at map time.
-      # Matching the title instead meant foot's placeholder title ("foot") hit
-      # the foot -> workspace 3 rule below first, and the window only moved to
-      # 2 once iamb got around to setting its own title.
-      [[windows]]
-      match.app-id = "iamb"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "2" }
-
-      [[windows]]
-      match.title = "kitty"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "3" }
-
-      [[windows]]
-      match.title = "foot"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "3" }
-
-      [[windows]]
-      match.title-regex = ".*(Steam|Minecraft|Prism Launcher|Terraria|War|resident|Resident|Pipedream).*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "4" }
-
-      [[windows]]
-      match.title-regex = ".*OBS.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "5" }
-
-      [[windows]]
-      match.title-regex = ".*MainPicker.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "5" }
-
-      [[windows]]
-      match.title = "Signal"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "5" }
-
-      [[windows]]
-      match.title-regex = ".*Discord.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "5" }
-
-      [[windows]]
-      match.title-regex = ".*Element.*"
-      match.just-mapped = true
-      action = { type = "move-to-workspace", name = "2" }
-
-      # Float file dialogs
-      [[windows]]
-      match.title-regex = ".*(All|Save) Files?.*"
-      initial-tile-state = "floating"
-
-      # Float pavucontrol
-      [[windows]]
-      match.app-id = "pavucontrol"
-      initial-tile-state = "floating"
-
-      # Float nm-connection-editor
-      [[windows]]
-      match.app-id = "nm-connection-editor"
-      initial-tile-state = "floating"
-
-      # Float satty
-      [[windows]]
-      match.app-id = "com.gabm.satty"
-      initial-tile-state = "floating"
-
-      # Float the polkit password prompt
-      [[windows]]
-      match.app-id = "polkit-gnome-authentication-agent-1"
-      initial-tile-state = "floating"
-
-      # Float the audio mixers. No move-to-workspace rule, so they open
-      # floating on whatever workspace is active.
-      [[windows]]
-      match.app-id = "com.saivert.pwvucontrol"
-      initial-tile-state = "floating"
-
-      [[windows]]
-      match.app-id = "wiremix"
-      initial-tile-state = "floating"
+      # ── Window Rules (../_desktop.nix) ───────────────────────────
+      ${sharedRules}
 
       # ── Client Rules (grant privileged protocol access) ─────────
       [[clients]]

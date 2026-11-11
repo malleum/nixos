@@ -15,6 +15,11 @@
 # writes an epoch timestamp to $(git rev-parse --absolute-git-dir)/ca-last-used
 # so agents can prune worktrees that have not been opened in 14 days. A sibling
 # typescript-code worktree, ~/.vs/<branch>-ts, is passed along with --add-dir.
+#
+# Always the work setup (~/.claude, with the MCPs), even when started from a
+# shell that has CLAUDE_CONFIG_DIR set. Inside teno, claude runs with argv[0]
+# `claude:ca/<branch>` (dir name off a branch) so the tab bar shows the branch;
+# teno's restore rule for that prefix relaunches `ca --continue`.
 {pkgs}:
 pkgs.writeShellApplication {
   name = "ca";
@@ -179,10 +184,20 @@ pkgs.writeShellApplication {
     # arguments, where it cannot swallow a prompt.
     launch() {
       stamp_used
-      if [[ -d $PWD-ts ]]; then
-        exec claude "$@" --add-dir "$PWD-ts"
+      unset CLAUDE_CONFIG_DIR
+      local -a argv0=()
+      if [[ -n ''${TENO-} ]]; then
+        local label
+        label=$(git branch --show-current 2>/dev/null) || label=""
+        [[ -n $label ]] || label=$(basename -- "$PWD")
+        # teno names the tab after the last /, so keep branch slashes visible
+        # with a lookalike.
+        argv0=(-a "claude:ca/''${label//\//∕}")
       fi
-      exec claude "$@"
+      if [[ -d $PWD-ts ]]; then
+        exec "''${argv0[@]}" claude "$@" --add-dir "$PWD-ts"
+      fi
+      exec "''${argv0[@]}" claude "$@"
     }
 
     if [[ $# -eq 0 || $1 == -* ]]; then

@@ -18,6 +18,7 @@
       "vrt"
       "wif"
       "wrk"
+      "wrk-primary"
     ];
 
     # ThinkPad P16s Gen 4 AMD (21QR001SUS, Ryzen AI 7 PRO 350). Pulls in

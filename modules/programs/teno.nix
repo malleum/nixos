@@ -2,7 +2,11 @@
 # meta/source-builds.nix, it only goes on hosts that opt into source builds
 # with `src`; minimus and minoris keep just tmux.
 {inputs, ...}: {
-  flake.modules.homeManager.src = {config, ...}: let
+  flake.modules.homeManager.src = {
+    config,
+    options,
+    ...
+  }: let
     color = key: default:
       if config ? stylix && config.stylix ? base16Scheme && config.stylix.base16Scheme ? ${key}
       then "#${config.stylix.base16Scheme.${key}}"
@@ -25,6 +29,26 @@
       # the jay session. The restore happens inside the daemon, so nothing
       # blocks the unit from becoming active.
       systemd.target = "jay-session.target";
+      # ca/cl/cld run claude as `claude:<launcher>/<label>` so the tab shows
+      # the branch or dir (see modules/scripts/_ca.nix, packages/ai.nix).
+      # The saved argv[0] is not a command, so relaunch through the launcher
+      # in the restored cwd. Before the defaults: first match wins.
+      restoreRules =
+        [
+          {
+            contains = "claude:ca/";
+            command = "ca --continue";
+          }
+          {
+            contains = "claude:cl/";
+            command = "CLAUDE_SKIP_WORK_CHECK=1 cl --continue";
+          }
+          {
+            contains = "claude:cld/";
+            command = "CLAUDE_SKIP_WORK_CHECK=1 cld --continue";
+          }
+        ]
+        ++ options.programs.teno.restoreRules.default;
     };
   };
 }

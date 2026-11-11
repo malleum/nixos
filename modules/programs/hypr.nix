@@ -16,16 +16,63 @@
   }: let
     wallpaper = config.stylix.image;
 
-    # wrk hosts have a separate work Firefox profile (firefox.nix); Teams opens there.
-    hasWorkBrowser = config.programs.firefox.profiles ? work;
-    teamsBrowser =
-      if hasWorkBrowser
-      then "firefox-work"
-      else "$BROWSER";
+    # Launchers, commands and window rules shared with jay (../_desktop.nix).
+    scripts = inputs.self.packages.${pkgs.stdenv.hostPlatform.system};
+    desktop = import ./_desktop.nix {
+      inherit pkgs lib;
+      compositor = "hyprland";
+      hostName = hostConfig.name;
+      inherit (hostConfig.user) browser browser2;
+      workBrowser =
+        if config.programs.firefox.profiles ? work
+        then "firefox-work"
+        else null;
+      workPrimary = config.work.primary;
+      lock = import ./jay/_lock.nix {
+        inherit pkgs wallpaper;
+        colors = config.stylix.base16Scheme;
+      };
+      windowSwitch = scripts.jay-window-switch;
+      audioSwitch = scripts.jay-audio-switch;
+    };
 
     mkLua = lib.generators.mkLuaInline;
     mkBind = key: disp: {_args = [key (mkLua disp)];};
     mkBindM = key: disp: {_args = [key (mkLua disp) {mouse = true;}];};
+    # Lua long brackets need no escaping.
+    luaStr = str: "[==[${str}]==]";
+
+    # "MOD-ctrl-shift-b" -> "SUPER + CONTROL + SHIFT + b"
+    hyprKey = key:
+      lib.concatStringsSep " + " (map (part:
+        {
+          MOD = "SUPER";
+          shift = "SHIFT";
+          ctrl = "CONTROL";
+          alt = "ALT";
+        }
+        .${
+          part
+        }
+        or part) (lib.splitString "-" key));
+    sharedBinds =
+      map (b: mkBind (hyprKey b.key) "hl.dsp.exec_cmd(${luaStr (b.sh or (lib.escapeShellArgs b.argv))})")
+      desktop.binds;
+    # jay's title matches are regexes written as full matches; hyprland
+    # anchors its own. notTitle and justMapped are jay-only.
+    sharedRules = map (r: let
+      m = r.match;
+    in
+      {
+        match =
+          lib.optionalAttrs (m ? title) {title = "^(${m.title})$";}
+          // lib.optionalAttrs (m ? titleExact) {title = "^(${m.titleExact})$";}
+          // lib.optionalAttrs (m ? appId) {class = "^(${m.appId})$";}
+          // lib.optionalAttrs (m ? appIdRegex) {class = m.appIdRegex;};
+      }
+      // lib.optionalAttrs (r ? workspace) {inherit (r) workspace;}
+      // lib.optionalAttrs (r.float or false) {float = true;})
+    desktop.rules;
 
     wkspaces = {
       apostrophe = "1";
@@ -295,82 +342,7 @@
           }
         ];
 
-        window_rule = [
-          {
-            match.title = "^(.*Microsoft Teams.*)$";
-            workspace = "2";
-          }
-
-          {
-            match.title = "^(.*Brave.*)$";
-            workspace = "1";
-          }
-          {
-            match.title = "^(.*Firefox.*)$";
-            workspace = "1";
-          }
-          {
-            match.title = "^(.*Ninjabrain Bot.*)$";
-            workspace = "1";
-          }
-          {
-            match.title = "^(.*e4mc.*)$";
-            workspace = "1";
-          }
-          {
-            match.title = "^(iamb.*)$";
-            workspace = "2";
-          }
-          {
-            match.title = "^(kitty)$";
-            workspace = "3";
-          }
-          {
-            match.title = "^(foot)$";
-            workspace = "3";
-          }
-          {
-            match.title = "^(.*Steam.*)$";
-            workspace = "4";
-          }
-          {
-            match.title = "^(.*Minecraft.*)$";
-            workspace = "4";
-          }
-          {
-            match.title = "^(.*Prism Launcher.*)$";
-            workspace = "4";
-          }
-          {
-            match.title = "^(.*Terraria.*)$";
-            workspace = "4";
-          }
-          {
-            match.title = "^(.*War.*)$";
-            workspace = "4";
-          }
-          {
-            match.title = "^(.*OBS.*)$";
-            workspace = "5";
-          }
-          {
-            match.title = "^(.*MainPicker.*)$";
-            workspace = "5";
-          }
-          {
-            match.title = "^(Signal)$";
-            workspace = "5";
-          }
-          {
-            match.title = "^(.*Discord.*)$";
-            workspace = "5";
-          }
-
-          {
-            match.title = "^(.*(All|Save) Files?.*)$";
-            float = true;
-          }
-        ];
+        window_rule = sharedRules;
 
         on = {
           _args = [
@@ -382,85 +354,58 @@
                 hl.exec_cmd("waybar")
                 hl.exec_cmd("sleep 2")
                 hl.exec_cmd("signal-desktop")
-                hl.exec_cmd("$TERMINAL iamb")
+                hl.exec_cmd("foot --app-id=iamb --title=iamb iamb")
               end'')
           ];
         };
 
+        # The shared launchers and commands, then the hyprland side of jay's
+        # own actions (jay/_config.nix), in the same keys.
         bind =
-          [
-            (mkBind "SUPER + return" ''hl.dsp.exec_cmd("$TERMINAL")'')
-            (mkBind "SUPER + SHIFT + return" ''hl.dsp.exec_cmd("kitty")'')
-            (mkBind "SUPER + b" ''hl.dsp.exec_cmd("$BROWSER")'')
-            (mkBind "SUPER + SHIFT + b" ''hl.dsp.exec_cmd("$BROWSER2")'')
-            (mkBind "SUPER + d" ''hl.dsp.exec_cmd("vesktop")'')
-            (mkBind "SUPER + SHIFT + d" ''hl.dsp.exec_cmd("${teamsBrowser} 'https://teams.microsoft.com/v2/'")'')
-            (mkBind "SUPER + i" ''hl.dsp.exec_cmd("$TERMINAL iamb")'')
-            (mkBind "SUPER + SHIFT + i" ''hl.dsp.exec_cmd("signal-desktop")'')
+          sharedBinds
+          ++ [
+            # iamb and Signal open at login (hyprland.start below); these
+            # focus their workspace and reopen them only if they were closed.
+            (mkBind "SUPER + i" ''
+              function()
+                hl.dispatch(hl.dsp.focus({ workspace = 2 }))
+                hl.exec_cmd("pgrep -x iamb >/dev/null || foot --app-id=iamb --title=iamb iamb")
+              end'')
+            (mkBind "SUPER + SHIFT + i" ''
+              function()
+                hl.dispatch(hl.dsp.focus({ workspace = 5 }))
+                hl.exec_cmd("pgrep -x signal-desktop >/dev/null || signal-desktop")
+              end'')
 
-            (mkBind "SUPER + x" ''hl.dsp.exec_cmd("wl-copy 'https://xkcd.com/1475/'")'')
-            (mkBind "SUPER + SHIFT + x" ''hl.dsp.exec_cmd("wl-copy 'Neida, jeg ville vinne'")'')
-            (mkBind "SUPER + CONTROL + x" ''hl.dsp.exec_cmd([[wl-copy '"Do you feel blame? Are you mad? Do you feel like woosh kabob rob vanish, efranish bw-bwooch pajooj, bea-ramich agij gij gij gij googood, do blegehthethamis sergeant British frazzlebaga?"']])'')
-
-            (mkBind "SUPER + n" ''hl.dsp.exec_cmd("swaync-client --close-all")'')
-            (mkBind "SUPER + SHIFT + n" ''hl.dsp.exec_cmd("swaync-client --dnd-off && notify-send 'Notifications Enabled' -t 1000")'')
-            (mkBind "SUPER + CONTROL + n" ''hl.dsp.exec_cmd("notify-send 'Notifications Disabled' -t 300; sleep 0.3; swaync-client --dnd-on")'')
-            (mkBind "SUPER + SHIFT + CONTROL + n" ''hl.dsp.exec_cmd("swaync-client -a 0")'')
-
-            (mkBind "SUPER + backslash" ''hl.dsp.exec_cmd("hyprctl switchxkblayout all next")'')
-
-            (mkBind "SUPER + s" ''hl.dsp.exec_cmd("rofi -show drun")'')
-            (mkBind "SUPER + c" ''hl.dsp.exec_cmd("rofi -theme-str 'window {width: 75%;}' -show calc -modi calc -no-show-match -no-sort -qalc-binary qalc | wl-copy")'')
-            (mkBind "SUPER + SHIFT + e" ''hl.dsp.exec_cmd("rofi -modi emoji -show emoji")'')
-            (mkBind "SUPER + v" ''hl.dsp.exec_cmd("${pkgs.cliphist}/bin/cliphist list | rofi -theme-str 'window {width: 75%;}' -dmenu | ${pkgs.cliphist}/bin/cliphist decode | wl-copy")'')
+            # Keyboard layouts: kb_layout lists dvorak first, qwerty second.
+            (mkBind "SUPER + backslash" ''hl.dsp.exec_cmd("hyprctl switchxkblayout all 1")'')
+            (mkBind "SUPER + SHIFT + backslash" ''hl.dsp.exec_cmd("hyprctl switchxkblayout all 0")'')
 
             (mkBind "SUPER + SHIFT + q" ''hl.dsp.window.close()'')
             (mkBind "SUPER + CONTROL + SHIFT + semicolon" ''hl.dsp.exit()'')
-            (mkBind "SUPER + SHIFT + z" ''hl.dsp.exec_cmd("${
-                if hostConfig.name == "magnus"
-                then "systemctl suspend"
-                else "poweroff"
-              }")'')
-            (mkBind "SUPER + CONTROL + z" ''hl.dsp.exec_cmd("reboot")'')
-
-            (mkBind "print" ''hl.dsp.exec_cmd("${pkgs.hyprshot}/bin/hyprshot -m active -z --clipboard-only")'')
-            (mkBind "SHIFT + print" ''hl.dsp.exec_cmd("${pkgs.hyprshot}/bin/hyprshot -m region -z --clipboard-only")'')
-            (mkBind "SUPER + SHIFT + s" ''hl.dsp.exec_cmd("${pkgs.hyprshot}/bin/hyprshot -m region --clipboard-only")'')
-            (mkBind "SUPER + CONTROL + s" ''hl.dsp.exec_cmd("wl-paste | ${pkgs.swappy}/bin/swappy -f -")'')
 
             (mkBind "SUPER + space" ''hl.dsp.window.float({ action = "toggle" })'')
             (mkBind "SUPER + t" ''hl.dsp.layout("togglesplit")'')
-
             (mkBind "SUPER + f" ''hl.dsp.window.fullscreen({ mode = "maximized" })'')
             (mkBind "SUPER + SHIFT + f" ''hl.dsp.window.fullscreen({ mode = "fullscreen" })'')
 
-            (mkBind "SUPER + Backspace" ''hl.dsp.exec_cmd("${pkgs.swaylock}/bin/swaylock -c 000000")'')
-
+            # Wallpaper and bar restart; jay refreshes its bar by reloading.
             (mkBind "SUPER + bracketleft" ''hl.dsp.exec_cmd("awww kill; awww-daemon && awww img ${wallpaper}")'')
             (mkBind "SUPER + bracketright" ''hl.dsp.exec_cmd("pkill waybar; sleep 0.5 && waybar")'')
-            (mkBind "SUPER + CONTROL + bracketleft" ''hl.dsp.exec_cmd("awww kill")'')
-            (mkBind "SUPER + CONTROL + bracketright" ''hl.dsp.exec_cmd("pkill waybar")'')
-            (mkBind "SUPER + CONTROL + d" ''hl.dsp.exec_cmd("killall electron")'')
-            (mkBind "SUPER + CONTROL + SHIFT + d" ''hl.dsp.exec_cmd("killall .electron-wrapp; killall electron")'')
+            (mkBind "SUPER + SHIFT + r" ''hl.dsp.reload_config()'')
+            (mkBind "SUPER + CONTROL + b" ''hl.dsp.exec_cmd("pkill -SIGUSR1 waybar")'')
 
             (mkBind "SUPER + o" ''hl.dsp.workspace.move({ monitor = "+1" })'')
             (mkBind "SUPER + SHIFT + o" ''hl.dsp.workspace.move({ monitor = "-1" })'')
 
-            # Scroll through existing workspaces with SUPER + scroll
+            # Scroll through existing workspaces with mainMod + scroll
             (mkBind "SUPER + mouse_down" ''hl.dsp.focus({ workspace = "e+1" })'')
             (mkBind "SUPER + mouse_up" ''hl.dsp.focus({ workspace = "e-1" })'')
-
-            (mkBind "XF86AudioLowerVolume" ''hl.dsp.exec_cmd("pulsemixer --change-volume -5")'')
-            (mkBind "XF86AudioRaiseVolume" ''hl.dsp.exec_cmd("pulsemixer --change-volume +5")'')
-            (mkBind "XF86AudioMute" ''hl.dsp.exec_cmd("pulsemixer --toggle-mute")'')
-            (mkBind "XF86MonBrightnessUp" ''hl.dsp.exec_cmd("xbacklight -inc 10")'')
-            (mkBind "XF86MonBrightnessDown" ''hl.dsp.exec_cmd("xbacklight -dec 10")'')
 
             # Move/resize windows with SUPER + LMB/RMB and dragging
             (mkBindM "SUPER + mouse:272" ''hl.dsp.window.drag()'')
             (mkBindM "SUPER + mouse:273" ''hl.dsp.window.resize()'')
           ]
-          ++ lib.optional hasWorkBrowser (mkBind "SUPER + CONTROL + SHIFT + b" ''hl.dsp.exec_cmd("firefox-work")'')
           ++ many "SUPER" (n: ''hl.dsp.focus({ workspace = ${n} })'') wkspaces
           ++ many "SUPER + SHIFT" (n: ''hl.dsp.window.move({ workspace = ${n} })'') wkspaces
           ++ many "SUPER" (d: ''hl.dsp.focus({ direction = "${d}" })'') lettertodirection
