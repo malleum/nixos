@@ -5,106 +5,46 @@
 # Desktop warned "No system keyring is available" and why Brave was wrapped
 # with `--password-store=basic`.
 #
-# Unlock is empty-password, not the greetd login password. A PAM unlock
-# would pop a second password dialog whenever the keyring password does
-# not match (including the first-run "create a keyring" prompt). swaylock
-# PAM is left alone so screen unlock stays the existing jay-lock path.
+# The keyring is encrypted with the login password and unlocked by logging in:
+# pam_gnome_keyring keeps the password typed at greetd, starts the daemon when
+# the session opens and unlocks the "login" keyring with it. There is no
+# second prompt as long as the two passwords are the same. A first login on a
+# new machine creates the keyring with that password, so there is nothing to
+# set up.
+#
+# They stop being the same when the login password changes, because it comes
+# from sops (meta/user.nix), not `passwd`, so PAM never sees the change. After
+# changing the hash: Seahorse -> right-click "Login" -> Change Password, on
+# each machine. Until then every login asks for the old password in a dialog.
+#
+# A machine that still has the old plaintext, empty-password keyring needs no
+# Seahorse step: it opens as before, and the first write after a login through
+# PAM saves it encrypted with the login password, items intact (checked in a
+# VM, 2026-11-11). To force that write:
+#   printf x | secret-tool store --label=migrate migrate once
+#   secret-tool clear migrate once
+#   head -c 12 ~/.local/share/keyrings/login.keyring    # want GnomeKeyring
+#
+# Nothing here starts the daemon. PAM starts it at login; the first program to
+# ask for org.freedesktop.secrets on the session bus finishes the job through
+# D-Bus activation. swaylock is left out on purpose: the keyring stays open
+# for the whole session, so unlocking the screen has nothing to unlock.
 #
 # GTK/libsecret apps talk to the daemon over D-Bus with no flags. Electron
 # still needs `--password-store=gnome-libsecret` because XDG_CURRENT_DESKTOP
 # is `jay` and Chromium will not auto-select the libsecret backend.
 {
-  flake.modules.nixos.gui = {
-    lib,
-    pkgs,
-    ...
-  }: {
+  flake.modules.nixos.gui = {pkgs, ...}: {
     programs.dconf.enable = true;
     programs.seahorse.enable = true;
 
+    # Also turns on pam_gnome_keyring for `login`, which greetd's own PAM
+    # service includes wholesale.
     services.gnome.gnome-keyring.enable = true;
     # Default-on whenever gnome-keyring is enabled. We only want secrets,
     # not an SSH agent that would steal SSH_AUTH_SOCK from identityFile SSH.
     services.gnome.gcr-ssh-agent.enable = false;
 
-    # The gnome-keyring module turns this on for `login`; greetd includes
-    # that stack. Force it off so tuigreet never grows a keyring prompt.
-    security.pam.services.login.enableGnomeKeyring = lib.mkForce false;
-    security.pam.services.greetd.enableGnomeKeyring = lib.mkForce false;
-
     environment.systemPackages = [pkgs.libsecret];
-  };
-
-  flake.modules.homeManager.gui = {
-    lib,
-    pkgs,
-    ...
-  }: let
-    emptyLoginKeyring = pkgs.writeText "login.keyring" ''
-      [keyring]
-      display-name=login
-      ctime=0
-      mtime=0
-      lock-on-idle=false
-      lock-after=false
-    '';
-
-    unlock = pkgs.writeShellScript "gnome-keyring-unlock-empty" ''
-      set -eu
-      dir="''${XDG_RUNTIME_DIR}/keyring"
-      daemon=${pkgs.gnome-keyring}/bin/gnome-keyring-daemon
-      busctl=${pkgs.systemd}/bin/busctl
-      i=0
-      while [ "$i" -lt 40 ]; do
-        i=$((i + 1))
-        if [ -S "$dir/control" ]; then
-          ${pkgs.coreutils}/bin/printf "" | "$daemon" --control-directory="$dir" --unlock >/dev/null 2>&1 || true
-          locked=$("$busctl" --user get-property org.freedesktop.secrets /org/freedesktop/secrets/collection/login org.freedesktop.Secret.Collection Locked 2>/dev/null || true)
-          case "$locked" in
-            *false*) exit 0 ;;
-          esac
-        fi
-        ${pkgs.coreutils}/bin/sleep 0.25
-      done
-      exit 1
-    '';
-  in {
-    services.gnome-keyring = {
-      enable = true;
-      components = ["secrets"];
-    };
-
-    systemd.user.services = {
-      gnome-keyring.Service.ExecStart = lib.mkForce "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=secrets --control-directory=%t/keyring";
-
-      # Separate unit: `--unlock` as ExecStartPost of the daemon itself
-      # tries to become the secret service (same cgroup) and then systemd
-      # kills the daemon when the post script fails.
-      gnome-keyring-unlock = {
-        Unit = {
-          Description = "Unlock GNOME Keyring (empty password)";
-          After = ["gnome-keyring.service"];
-          Requires = ["gnome-keyring.service"];
-        };
-        Service = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = "${unlock}";
-        };
-        Install.WantedBy = ["gnome-keyring.service"];
-      };
-    };
-
-    # Seed once. Never overwrite: stored secrets live in this file.
-    home.activation.seedEmptyLoginKeyring = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      dir="$HOME/.local/share/keyrings"
-      run mkdir -p "$dir"
-      if [ ! -f "$dir/login.keyring" ]; then
-        run cp ${emptyLoginKeyring} "$dir/login.keyring"
-      fi
-      if [ ! -f "$dir/default" ]; then
-        run printf '%s\n' login > "$dir/default"
-      fi
-    '';
   };
 }
