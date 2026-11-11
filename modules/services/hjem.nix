@@ -503,7 +503,33 @@
       CPU_ENERGY_PERF_POLICY_ON_AC = lib.mkForce "balance_performance";
       CPU_BOOST_ON_AC = lib.mkForce 1;
       CPU_MAX_PERF_ON_AC = lib.mkForce 100;
+
+      # Always on mains, so hold the battery at 70% instead of topping it off.
+      # As of BIOS 1.3.0 this Inspiron 3185's firmware refuses the request:
+      # dell_laptop exposes charge_control_*_threshold and charge_types, but
+      # every read or write returns EIO, so TLP logs a failure and nothing
+      # changes. It's kept here so a BIOS update that adds "Primary Battery
+      # Charge Configuration" picks it up with no further edits. Check with:
+      #   cat /sys/class/power_supply/BAT0/charge_control_end_threshold
+      START_CHARGE_THRESH_BAT0 = 65;
+      STOP_CHARGE_THRESH_BAT0 = 70;
     };
+
+    # The AT&T gateway's DNS (192.168.1.254) is the first thing to go when the
+    # wifi is busy, which is exactly what an update does: with the panel's 16
+    # substitution jobs pulling from cache.nixos.org, queries to the gateway
+    # timed out or took 1-2 s while 1.1.1.1 still answered. The substitutions
+    # ride on connections the daemon already has open, so they carry on; the
+    # fixed-output fetches (the Firefox add-ons from addons.mozilla.org)
+    # resolve fresh inside the build sandbox, get nothing, and fail the whole
+    # update -- the menu's update button failed that way every time from
+    # October on. This narrows it rather than ending it: with the link fully
+    # saturated even 1.1.1.1 goes unanswered, which is why hjem-update now
+    # retries a failed build once. NetworkManager puts these ahead of the DHCP
+    # server's, and glibc only falls through on a timeout, so the gateway is
+    # now a last resort. Nothing on this host needs its attlocal.net names:
+    # magnus is reached through minimus.
+    networking.networkmanager.insertNameservers = ["1.1.1.1" "9.9.9.9"];
 
     environment.systemPackages = [kiosk cage pkgs.chromium];
 
