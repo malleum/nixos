@@ -84,6 +84,16 @@ let
     "browser.newtabpage.enabled" = false; # Disables the complex new tab page
     "browser.newtab.preload" = false; # No need to preload it
 
+    # --- Bitwarden is the only thing that saves or fills forms ---
+    # about:logins still lists what Firefox already holds, and can export it.
+    "signon.rememberSignons" = false; # Never offer to save a password
+    "signon.autofillForms" = false; # Never fill a saved login
+    "signon.generation.enabled" = false; # No "use a securely generated password"
+    "signon.management.page.breach-alerts.enabled" = false; # Bitwarden reports breaches
+    "signon.firefoxRelay.feature" = "disabled"; # No Relay email-mask offers in login fields
+    "extensions.formautofill.addresses.enabled" = false; # No saved addresses
+    "extensions.formautofill.creditCards.enabled" = false; # No saved payment cards
+
     # --- Hardware Acceleration (Fix for Tearing) ---
     "gfx.webrender.all" = true; # Force-enable WebRender (Firefox's GPU renderer)
     "gfx.webrender.enabled" = true; # Just to be sure
