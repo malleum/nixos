@@ -47,6 +47,14 @@ Compare the toplevel with `~/.vs/<branch>` for `git branch --show-current`.
 
 Mention a path only when you removed it, or when you kept it because it was dirty or had commits that are not on a remote. If neither happened, say nothing about pruning.
 
+When a worktree meets the merged or stale condition in step 3 and its only problem is untracked files (every `status --porcelain` line starts with `??`), always tell the user, even mid-task. Name the path, say it is merged (or stale) and would have been removed, and list the untracked files, summarizing by directory or prefix when there are many. Ask whether to delete them and remove the worktree. Do not delete them without that answer.
+
+## Scratch files
+
+Put throwaway files (one-off scripts, logs, dry-run and execute output, query dumps) in the session scratchpad directory from the system prompt. Never put them in the worktree, including `.tmp_*` files or untracked folders at the repo root. Untracked files keep a merged worktree from being pruned.
+
+If something has to outlive the session, such as a script still to be run against prod or the logs from a run, ask the user where to keep it before writing it.
+
 ## Environment
 
 If the worktree has no `.venv`, run `UV_OFFLINE=1 uv sync --all-extras --inexact` there before tests or `uv run`. If that fails because the cache is missing a package, rerun without `UV_OFFLINE=1`.
