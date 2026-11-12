@@ -1675,11 +1675,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790170253,
-        "narHash": "sha256-8T/oYsG6JbpGbeuJKMpc+QZ3fqURBKrq9qkBVmCK8Ng=",
+        "lastModified": 1794494947,
+        "narHash": "sha256-crN4C+isYIznc07I+IuaChzWx5bJMX51G8wXDkhiqIc=",
         "owner": "malleum",
         "repo": "teno",
-        "rev": "17596ae0e8daf414a337cb2c2a7b06f61cdee042",
+        "rev": "b4e4ac4e948c9ce01cb4d2c77563c9f477d1d6b7",
         "type": "github"
       },
       "original": {
