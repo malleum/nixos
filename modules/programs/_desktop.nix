@@ -391,6 +391,10 @@ in {
 
       # Dialogs and small tools float on whatever workspace is active.
       (float {title = ".*(All|Save) Files?.*";})
+      # Portal file choosers (Electron, Firefox). The title rule above only
+      # catches "All Files"/"Save File"; a chooser titled anything else tiled
+      # into whichever workspace had focus, often on another monitor.
+      (float {appId = "xdg-desktop-portal-gtk";})
       (float {appId = "pavucontrol";})
       (float {appId = "nm-connection-editor";})
       (float {appId = "com.gabm.satty";})
