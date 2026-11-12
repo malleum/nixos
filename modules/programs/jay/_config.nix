@@ -394,6 +394,27 @@
       # ── Window Rules (../_desktop.nix) ───────────────────────────
       ${sharedRules}
 
+      # The Bitwarden extension's window. It opens itself to run the
+      # system-authentication unlock (once per browser start), which is never
+      # a moment anyone wants to look at it, so it is sent to a workspace of
+      # its own (`b`) that nothing shows. It keeps running there; the workspace is
+      # in the bar if the window is ever wanted.
+      #
+      # This is an `action`, which fires when the title starts matching, and
+      # not initial-tile-state/initial-floating-position, which would let it
+      # be parked off-screen without ever appearing: those are read once, at
+      # map time, and Firefox maps the window before giving it this title.
+      # Traced 2026-11-12: at its first buffer the window is title "Mozilla
+      # Firefox", app-id "firefox", no parent, no tag -- exactly what any new
+      # Firefox window is -- and the "Extension: ..." title follows 45 ms
+      # later. Nothing jay can match on tells the two apart in time, so the
+      # window is visible, tiled, for those few frames. No action can place a
+      # floating window afterwards either.
+      [[windows]]
+      match.app-id-regex = "^firefox"
+      match.title-regex = "^Extension: \\(Bitwarden Password Manager\\)"
+      action = { type = "move-to-workspace", name = "b" }
+
       # ── Client Rules (grant privileged protocol access) ─────────
       [[clients]]
       match.any = [
