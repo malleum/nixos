@@ -162,8 +162,16 @@
       # gets forced off here -- it's kept off most of the time, so it should
       # start off rather than in whatever state it was left in, with
       # super-shift-m toggling from there.
+      #
+      # The stop + reset-failed come first because the user manager outlives
+      # the compositor: after `jay quit` the targets stay active and their
+      # units crash-loop against the dead socket until they hit the start
+      # limit. Back from the greeter, a bare `start` of an already-active
+      # target is a no-op and the failed units stay failed -- no wallpaper, no
+      # tray. Stopping the targets (PartOf takes the units with them) and
+      # clearing the failure/start-limit state makes every login a cold start.
       on-graphics-initialized = [
-        { type = "exec", exec = { shell = "rm -rf \"$XDG_RUNTIME_DIR/jay-session-apps\" && systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
+        { type = "exec", exec = { shell = "rm -rf \"$XDG_RUNTIME_DIR/jay-session-apps\"; systemctl --user stop jay-session.target graphical-session.target; systemctl --user reset-failed; systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && systemctl --user start jay-session.target" } },
         ${
         if hostName == "magnus"
         then ''{ type = "exec", exec = ["${monitorToggle}/bin/jay-toggle-monitor", "${leftMonitorSerial}", "off"] },''
