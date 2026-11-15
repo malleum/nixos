@@ -130,6 +130,10 @@
       url = "github:malleum/ultimategrapple/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    heartstone = {
+      url = "github:malleum/heartstone";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     pipedream = {
       url = "github:malleum/pipedream";
       inputs.nixpkgs.follows = "nixpkgs";

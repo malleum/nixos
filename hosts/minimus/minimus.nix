@@ -5,6 +5,7 @@
       "cerbo-client"
       "efi"
       "grapple"
+      "heartstone"
       "matrix"
       "mc"
       "mechphyll"
