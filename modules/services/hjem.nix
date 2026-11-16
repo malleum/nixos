@@ -95,6 +95,15 @@
         "--autoplay-policy=no-user-gesture-required"
         "--password-store=basic"
         "--check-for-update-interval=31536000"
+        # The output is powered down every night (DPMS), and chromium takes a
+        # window on no screen for a hidden one: it throttles the page's timers
+        # and suspends its media -- the camera that meters the room included,
+        # which more than once never came back, leaving the panel lit all the
+        # next night. The page has to stay fully awake while the screen sleeps.
+        "--disable-background-timer-throttling"
+        "--disable-renderer-backgrounding"
+        "--disable-backgrounding-occluded-windows"
+        "--disable-background-media-suspend"
       ]);
 
     # cage, with DPMS patched in (wlr-output-power-management; the patch is

@@ -688,11 +688,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794371409,
-        "narHash": "sha256-p8K1tX0mu79IV0TxTObBdbSjo3vni1Ks/UNtdIa2pjA=",
+        "lastModified": 1794801536,
+        "narHash": "sha256-6F7JalfpktD/64f9Ncn1GtZHIygvas0A3uhi6ffQ+tc=",
         "owner": "malleum",
         "repo": "hjem",
-        "rev": "7efe7be65c4b657d3a81fef475d92967221763dd",
+        "rev": "422189dad9cd056f9d6cf416aa142a7e30f2585d",
         "type": "github"
       },
       "original": {
