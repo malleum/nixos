@@ -142,6 +142,10 @@
       url = "github:malleum/cerbo";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mc = {
+      url = "github:malleum/mc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Both track upstream releases within hours, unlike nixpkgs. Bump just
     # these two with `claude-up` (modules/scripts/_claude-up.nix).

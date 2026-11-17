@@ -20,7 +20,14 @@
 # shell that has CLAUDE_CONFIG_DIR set. Inside teno, claude runs with argv[0]
 # `claude:ca/<branch>` (dir name off a branch) so the tab bar shows the branch;
 # teno's restore rule for that prefix relaunches `ca --continue`.
-{pkgs}:
+#
+# `claude` defaults to a PATH lookup. Hosts with the `ai` tag install a copy
+# from packages/ai.nix pointed at the real binary instead, since plain `claude`
+# on PATH is a stub there.
+{
+  pkgs,
+  claude ? "claude",
+}:
 pkgs.writeShellApplication {
   name = "ca";
   runtimeInputs = with pkgs; [coreutils git];
@@ -195,9 +202,9 @@ pkgs.writeShellApplication {
         argv0=(-a "claude:ca/''${label//\//∕}")
       fi
       if [[ -d $PWD-ts ]]; then
-        exec "''${argv0[@]}" claude "$@" --add-dir "$PWD-ts"
+        exec "''${argv0[@]}" ${claude} "$@" --add-dir "$PWD-ts"
       fi
-      exec "''${argv0[@]}" claude "$@"
+      exec "''${argv0[@]}" ${claude} "$@"
     }
 
     if [[ $# -eq 0 || $1 == -* ]]; then

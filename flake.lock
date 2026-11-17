@@ -1121,6 +1121,26 @@
         "type": "github"
       }
     },
+    "mc": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794927449,
+        "narHash": "sha256-NxIPZ0O7RifgM+Nvcc1rE/LYoChN5SipcSoO7eF1SCg=",
+        "owner": "malleum",
+        "repo": "mc",
+        "rev": "c7f6daf74e8e6cae0648b1edd13123daafae2d54",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malleum",
+        "repo": "mc",
+        "type": "github"
+      }
+    },
     "mechphyll": {
       "inputs": {
         "flake-utils": "flake-utils_5",
@@ -1428,6 +1448,7 @@
         "import-tree": "import-tree",
         "jay": "jay",
         "lerni": "lerni",
+        "mc": "mc",
         "mechphyll": "mechphyll",
         "nix-alien": "nix-alien",
         "nixos-hardware": "nixos-hardware",

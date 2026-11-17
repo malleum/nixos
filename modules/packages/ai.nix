@@ -23,10 +23,18 @@
           --set CLAUDE_PASSWORD_STORE gnome-libsecret
       '';
     };
+    # Plain `claude` is a no-op on purpose: the choice between `ca` (work) and
+    # `cl`/`cld` (personal) has to be made every time, so the muscle memory
+    # forms around those. Everything that really runs Claude Code uses
+    # claudeCode by store path.
+    claudeStub = pkgs.writeShellScriptBin "claude" ''
+      echo "claude: pick one -- ca (work), cl / cld (personal)" >&2
+      exit 1
+    '';
     settingsFragment = json.generate "claude-settings-fragment.json" cfg.settings;
 
-    # cl / cld: personal Claude, kept apart from the work setup (`ca`, plain
-    # `claude`) by CLAUDE_CONFIG_DIR when personalConfigDir is set. On the
+    # cl / cld: personal Claude, kept apart from the work setup (`ca`) by
+    # CLAUDE_CONFIG_DIR when personalConfigDir is set. On the
     # primary work machine they ask first, in case `ca` was meant.
     #
     # Inside teno the tab bar shows the foreground program's argv[0], so the
@@ -83,7 +91,7 @@
         example = ".claude-personal";
         description = ''
           Config dir for `cl`/`cld`, relative to home. Null: they share
-          ~/.claude with plain `claude`.
+          ~/.claude with `ca`.
         '';
       };
     };
@@ -91,8 +99,11 @@
     config = {
       home.packages = with pkgs; [
         antigravity-cli
-        claudeCode
+        claudeStub
         claudeDesktop
+        # Shadows the base copy of ca (packages/scripts.nix), which looks
+        # `claude` up on PATH and would find the stub.
+        (lib.hiPrio (pkgs.callPackage ../scripts/_ca.nix {claude = "${claudeCode}/bin/claude";}))
         (personal "cl" [])
         (personal "cld" ["--dangerously-skip-permissions"])
       ];
