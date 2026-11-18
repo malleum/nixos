@@ -151,11 +151,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1794603688,
-        "narHash": "sha256-ayfDlD5d9U5b06xxwZndph+/tRgusLaKg4Dcj7bvnEM=",
+        "lastModified": 1794960137,
+        "narHash": "sha256-+pARhHaJijnv8acZJR93NoQjgud6NsoYa0zEpmgA5nc=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "2c0782ecf4d07e4395cb56b33555fa4eb30f6784",
+        "rev": "409e35c59fab5c280bebb72a997ff505b419bba3",
         "type": "github"
       },
       "original": {
@@ -668,11 +668,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794978316,
-        "narHash": "sha256-0shxBj3zjzuMy4yrkeLmVYWWOM/sSWEWPE1rzvhQTmY=",
+        "lastModified": 1795026373,
+        "narHash": "sha256-F5ANqn+WvDoD+I9fBIEB0dVK6wBw2ElG7BITry4RJ6c=",
         "owner": "malleum",
         "repo": "heartstone",
-        "rev": "27916862d2a3b4ae58ec9febd416b3a8d97b0cc7",
+        "rev": "03668e47371a58bef8b1b44be69cd922b5522d2c",
         "type": "github"
       },
       "original": {
@@ -1863,11 +1863,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794536790,
-        "narHash": "sha256-5t2px+deruLr4Hy4XpITeO6D4X+ouDaJOKFCVcDqr98=",
+        "lastModified": 1794926539,
+        "narHash": "sha256-tGzPGplhFDgXGZR7RjOidKlu1UxYKRgHUKd8qGTN5Ns=",
         "owner": "malleum",
         "repo": "weave",
-        "rev": "9b19cb7b3ecabebb0141c9e4d0bdf8bc35a79b41",
+        "rev": "172d51b042e8fa40b1d5a2a9aac0f002f47d6352",
         "type": "github"
       },
       "original": {

@@ -30,6 +30,10 @@
       port = 24690;
       openFirewall = true;
       environmentFile = config.sops.secrets.heartstone_env.path;
+      # Keeps itself on the newest commit of master (restarting when nobody is in
+      # a fight), so a change to the game needs no switch here. The token (the
+      # same one gh and nix use) lets it read the private repository.
+      autoUpdate.tokenFile = config.sops.secrets.github_token.path;
     };
   };
 }
