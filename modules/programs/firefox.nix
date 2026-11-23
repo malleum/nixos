@@ -294,4 +294,21 @@ in {
       '';
     };
   };
+
+  # On the primary work machine, web links open in the work profile. xdg.nix
+  # maps these to the personal browser on every host, and mimeApps merges two
+  # values into a list rather than replacing one, hence mkForce. PDFs, images
+  # and text files stay with personal Firefox. BROWSER overrides env.nix in
+  # shells (Claude Code included); xdg-open follows the mime defaults.
+  flake.modules.homeManager.wrk-primary = {lib, ...}: {
+    xdg.mimeApps.defaultApplications = lib.genAttrs [
+      "text/html"
+      "application/xhtml+xml"
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+      "x-scheme-handler/about"
+      "x-scheme-handler/unknown"
+    ] (_: lib.mkForce "firefox-work.desktop");
+    home.sessionVariables.BROWSER = "firefox-work";
+  };
 }
