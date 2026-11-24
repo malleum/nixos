@@ -17,6 +17,10 @@
     environment.systemPackages = [jayPkg pkgs.papirus-icon-theme];
     services.displayManager.sessionPackages = [jayPkg];
 
+    # jay starts Xwayland from PATH for X11 apps ([xwayland] in _config.nix).
+    # programs.hyprland used to install it as a side effect.
+    programs.xwayland.enable = true;
+
     # jay ships its own portal (ScreenCast, RemoteDesktop) and jay-portals.conf,
     # which sends FileChooser and the rest to the GTK portal. Flatpak also
     # refuses to evaluate without a portal.
