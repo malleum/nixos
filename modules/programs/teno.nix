@@ -1,6 +1,6 @@
 # teno has no binary cache, so it is compiled locally. Like jay and iamb in
 # meta/source-builds.nix, it only goes on hosts that opt into source builds
-# with `src`; minimus and minoris keep just tmux.
+# with `src`.
 {inputs, ...}: {
   flake.modules.homeManager.src = {
     config,
@@ -14,7 +14,6 @@
   in {
     imports = [inputs.teno.homeManagerModules.default];
 
-    # Runs alongside tmux until it has proven itself; tmux stays installed.
     programs.teno = {
       enable = true;
       colors = {
@@ -25,8 +24,7 @@
         muted = color "base02" "3a424d";
         highlight = color "base0C" "88c0d0";
       };
-      # Same reasoning as tmux.nix: a foreground daemon (Type=exec) tied to
-      # the jay session. The restore happens inside the daemon, so nothing
+      # A foreground daemon (Type=exec) tied to the jay session. The restore happens inside the daemon, so nothing
       # blocks the unit from becoming active.
       systemd.target = "jay-session.target";
       # ca/cl/cld run claude as `claude:<launcher>/<label>` so the tab shows

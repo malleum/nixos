@@ -32,8 +32,8 @@
 #
 # The template takes the smallest module set that still gives a usable laptop,
 # and nothing in it builds from source. Notably it omits `src`, so jay and iamb
-# come prebuilt from the binary cache instead of needing a Rust toolchain, and
-# omits `hyp`, so Hyprland is never fetched. Adding a module later is a one-line
+# come prebuilt from the binary cache instead of needing a Rust toolchain.
+# Adding a module later is a one-line
 # edit in the generated host file, which lists the options in a comment.
 {
   perSystem = {
@@ -50,7 +50,7 @@
       {
         hosts."@HOSTNAME@" = {
           # Minimal usable laptop. Add as needed:
-          #   amd / wif  hardware quirks      hyp  hyprland as a second session
+          #   amd / wif  hardware quirks
           #   dev        toolchains           cht  matrix + signal
           #   gam        games                med  players, obs, spotify
           #   off        libreoffice          ai   assistant CLIs

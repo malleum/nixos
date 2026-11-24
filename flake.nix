@@ -1,11 +1,10 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Kept on purpose even when nothing uses it: `pkgs.stable.<name>` (overlay
+    # in modules/meta/nixpkgs.nix) is the quick way out when something breaks
+    # on unstable. Not a cleanup candidate.
     stable.url = "github:NixOS/nixpkgs/nixos-26.05";
-    # TEMPORARY: nixpkgs removed brave (2026-11) and it is on its way back.
-    # The last nixpkgs we had with it, so the build is a cache hit. Delete this
-    # and the overlay in modules/meta/nixpkgs.nix once `pkgs.brave` evaluates.
-    nixpkgs-brave.url = "github:NixOS/nixpkgs/09063bd1f2b36fd9fd793c36dfade7bd40a93dfc";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -29,14 +28,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Both default to their own pinned nixpkgs — fix-python's is from 2023-04
-    # and would be evaluated and fetched in full alongside ours.
+    # Defaults to its own pinned nixpkgs from 2023-04, which would be
+    # evaluated and fetched in full alongside ours.
     fix-python = {
       url = "github:GuillaumeDesforges/fix-python";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-alien = {
-      url = "github:thiagokokada/nix-alien";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -50,9 +45,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Deliberately NOT following nixpkgs: Hyprland's cachix only has binaries
-    # built against its own pin, and overriding it forces a local build.
-    hypr.url = "github:hyprwm/Hyprland";
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";

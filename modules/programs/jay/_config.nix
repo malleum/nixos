@@ -29,10 +29,9 @@
 }: let
   inherit (pkgs) lib;
 
-  # Launchers, commands and window rules shared with hyprland.
+  # Launcher keybinds and window rules (../_desktop.nix).
   desktop = import ../_desktop.nix {
     inherit pkgs lib hostName browser browser2 workBrowser workPrimary windowSwitch audioSwitch osd;
-    compositor = "jay";
     lock = jayLock;
   };
   # JSON strings and string arrays are valid TOML.
@@ -273,8 +272,8 @@
       exec = "${jayStatus}/bin/jay-status"
 
       # ── Shortcuts ────────────────────────────────────────────────
-      # The launchers and commands shared with hyprland come from
-      # ../_desktop.nix; the jay-only actions follow them.
+      # The launchers and commands come from
+      # ../_desktop.nix; the compositor actions follow them.
       [shortcuts]
       ${sharedShortcuts}
       # ─ Workspace apps / control center ─

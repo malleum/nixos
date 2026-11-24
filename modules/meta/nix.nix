@@ -37,14 +37,6 @@
           "flakes"
           "nix-command"
         ];
-        # cache.nixos.org and its key are already NixOS defaults; listing them
-        # again just produced a duplicate entry in nix.conf's substituters.
-        substituters = [
-          "https://hyprland.cachix.org"
-        ];
-        trusted-public-keys = [
-          "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        ];
       };
     };
   };

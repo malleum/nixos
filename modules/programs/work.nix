@@ -1,17 +1,8 @@
 {inputs, ...}: {
-  flake.modules.homeManager.wrk = {
-    config,
-    lib,
-    pkgs,
-    ...
-  }: let
+  flake.modules.homeManager.wrk = {pkgs, ...}: let
     gitlab = "https://gitlab.visiostack.com";
     mcp = server: map (tool: "mcp__${server}__${tool}");
     bash = map (cmd: "Bash(${cmd})");
-    # Claude writes command paths either way, so excludedCommands lists both
-    # spellings. Read/Edit rules match the resolved path, so ~/ alone covers
-    # them (a single leading / there is relative to ~/.claude; // is absolute).
-    home = path: ["~/${path}" "${config.home.homeDirectory}/${path}"];
   in {
     programs.zsh.initContent = ''
       typeset -gA _zsh_abbrs
@@ -47,10 +38,9 @@
     };
 
     claude.settings = {
-      # Claude's git talks to GitLab over HTTPS with the glab token, so it works
-      # inside the sandbox: ssh there rejects ~/.ssh/config (a store symlink,
-      # so the owner looks wrong) and the proxy does not carry ssh. Only
-      # Claude's shells get this; the remotes stay ssh.
+      # Claude's git talks to GitLab over HTTPS with the glab token, so it never
+      # needs ~/.ssh (denied below). Only Claude's shells get this; the remotes
+      # stay ssh.
       env = {
         GIT_CONFIG_COUNT = "2";
         GIT_CONFIG_KEY_0 = "url.${gitlab}/.insteadOf";
@@ -95,12 +85,12 @@
           # AGENTS.md: never point a command at prod without the developer
           # saying so.
           ++ bash ["*VS_RUN_PROD=*" "*USE_PROD_S3=*"];
-        # Merged into the sandbox's denyRead/denyWrite as well, so this covers
-        # both the Read/Edit tools and bash. ~/.aws and glab's config stay
-        # readable: boto3 and the git credential helper need them.
+        # ~/ is home, a single leading / is relative to ~/.claude, // is
+        # absolute. ~/.aws and glab's config stay readable: boto3 and the git
+        # credential helper need them.
         deny =
           map (p: "Read(~/${p})") [
-            ".ssh/**" # git goes over HTTPS here; the proxy does not carry ssh
+            ".ssh/**" # git goes over HTTPS here
             ".gnupg/**"
             ".config/sops/**"
             ".config/gh/**"
@@ -114,61 +104,9 @@
           ]
           ++ ["Read(//run/user/1000/secrets.d/**)"]
           # The clones' .git is writable for worktree commits, but a hook
-          # planted there runs outside the sandbox at your next commit.
+          # planted there runs at your next commit, outside Claude's checks.
           # .git/config stays writable (push -u and switch --track need it).
           ++ map (p: "Edit(~/.vs/${p}/.git/hooks/**)") ["python-code" "typescript-code"];
-      };
-
-      # Off since 2026-11-09: it blocked the Oracle connection behind CID=…
-      # prefixes and pipes, and every GUI/browser launch. Auto mode still
-      # checks each command, and the Read deny rules above still cover the
-      # Read tool (not bash). The rest is kept so turning it back on is a
-      # one-line change.
-      sandbox = {
-        enabled = false;
-        failIfUnavailable = false;
-        # No retrying a blocked command outside the sandbox. What really needs
-        # out is listed in excludedCommands.
-        allowUnsandboxedCommands = false;
-        # Still permission-checked, just not sandboxed. A chain leaves the
-        # sandbox only when every part matches, and a cd, a redirect, or a
-        # wrapper such as `timeout` keeps it in.
-        excludedCommands =
-          [
-            # The nix daemon is a unix socket, which the sandbox blocks.
-            "nix:*"
-            "nix-shell:*"
-          ]
-          # Worktrees live directly in ~/.vs, which is not writable, so the
-          # python-code-worktrees skill's prune and the -ts sibling need out.
-          ++ lib.concatMap (p: ["git -C ${p}/python-code worktree remove:*" "git -C ${p}/typescript-code worktree remove:*" "git -C ${p}/typescript-code worktree add:*"]) (home ".vs")
-          # The proxy only carries HTTP(S), not the Oracle connection, so
-          # anything that reads the DB needs out: `vs sql`, plugins run
-          # locally (`vs run`), and one-off scripts in ~/.vs/local_scripts.
-          # A command with a `VAR=value` prefix (CID=10, UV_OFFLINE=1) stays
-          # sandboxed whatever is listed here (tested 2026-11-09), so these
-          # only help when the CID goes in as a flag (-c 10).
-          ++ ["uv run vs sql *" "uv run vs run *"]
-          ++ lib.concatMap (s: ["uv run python ${s}/*" "uv run --offline python ${s}/*"]) (home ".vs/local_scripts");
-        filesystem.allowWrite = [
-          # Worktrees under ~/.vs commit into the canonical clones' .git.
-          "~/.vs/python-code/.git"
-          "~/.vs/typescript-code/.git"
-          # One-off scripts and their outputs (plots, CSVs).
-          "~/.vs/local_scripts"
-          "~/.cache"
-          "~/.local/share/pnpm"
-          "~/.local/share/uv"
-        ];
-        network.allowedDomains = [
-          "gitlab.visiostack.com"
-          "*.amazonaws.com"
-          "pypi.org"
-          "files.pythonhosted.org"
-          "registry.npmjs.org"
-          "github.com"
-          "*.githubusercontent.com"
-        ];
       };
     };
 

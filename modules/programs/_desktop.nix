@@ -1,31 +1,27 @@
-# Keybinds and window rules shared by jay (jay/_config.nix) and hyprland
-# (hypr.nix). Each compositor imports this with its own `compositor` and
-# renders the two lists into its own syntax; anything that only one of them
-# can do (focus/move/workspace actions, layout, outputs, jay's privileged
-# protocols) stays in that compositor's file.
+# Launcher keybinds and window rules for jay, kept apart from jay/_config.nix
+# (which imports this and renders the two lists into jay's TOML) so the
+# compositor-specific parts -- focus/move/workspace actions, layout, outputs --
+# stay readable there.
 #
 # binds: { key; sh | argv; privileged?; anyMods?; }
 #   key        jay spelling: modifiers then a keysym, `MOD` for the main
 #              modifier ("MOD-shift-b", "shift-Print", "XF86AudioMute").
-#              Hyprland matches keysyms case-insensitively, so the same names
-#              work there.
 #   sh / argv  a shell command line, or a program and its arguments.
-#   privileged jay only: hand the program jay's privileged protocols
+#   privileged hand the program jay's privileged protocols
 #              (clipboard, screencopy, virtual pointer).
 #   anyMods    fire whatever modifiers are held (jay complex-shortcuts).
 #
 # rules: { match; workspace? | float?; justMapped?; }
 #   match.title       regex on the title (written as a full match, ".*X.*")
 #   match.titleExact  exact title (plain text, no regex characters)
-#   match.appId       exact app-id (Wayland) / class (hyprland)
+#   match.appId       exact app-id
 #   match.appIdRegex  regex on the app-id, or the X class under XWayland
-#   match.notTitle    jay only: skip windows whose title matches this regex
-#   justMapped        jay only, default true for workspace rules: apply when
+#   match.notTitle    skip windows whose title matches this regex
+#   justMapped        default true for workspace rules: apply when
 #                     the window first maps, not whenever the match turns true.
 {
   pkgs,
   lib,
-  compositor, # "jay" or "hyprland"
   hostName,
   browser,
   browser2,
@@ -33,14 +29,13 @@
   workBrowser,
   # The wrk-primary tag (work.primary).
   workPrimary,
-  # The themed swaylock (jay/_lock.nix); it locks either compositor.
+  # The themed swaylock (jay/_lock.nix).
   lock,
   windowSwitch,
   audioSwitch,
-  # jay-osd (jay only).
-  osd ? null,
+  # jay-osd.
+  osd,
 }: let
-  jay = compositor == "jay";
   hasWork = workBrowser != null;
   # On the primary work machine work Firefox takes MOD+b, personal Firefox
   # moves to MOD+shift+b and workspace 5, and Brave loses its key.
@@ -50,36 +45,24 @@
   wlCopy = "${pkgs.wl-clipboard}/bin/wl-copy";
   wide = "rofi -theme-str 'window {width: 75%;}'";
 
-  # jay's media keys go through jay-osd (swayosd pinned to the focused output,
-  # which needs jay's tree). swayosd-server only runs in the jay session, so
-  # hyprland changes the values directly, without a popup.
-  wpctl = "${pkgs.wireplumber}/bin/wpctl";
-  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
-  media = jayArgs: hyprSh:
-    if jay
-    then {argv = ["${osd}/bin/jay-osd"] ++ jayArgs;}
-    else {sh = hyprSh;};
+  # Media keys go through jay-osd (swayosd pinned to the focused output,
+  # which needs jay's tree).
+  media = args: {argv = ["${osd}/bin/jay-osd"] ++ args;};
 
   # magnus logs out, then suspends, so it wakes to the greeter. The suspend is
   # a transient timer in PID 1 because quitting the compositor kills this
   # shell and ends the session; a plain `systemctl suspend` afterwards would
   # no longer come from an active session, which polkit refuses. sudo is
   # passwordless for wheel (modules/system/security.nix).
-  quit =
-    if jay
-    then "jay quit"
-    else "hyprctl dispatch exit";
+  quit = "jay quit";
   shutdown =
     if hostName == "magnus"
     then "/run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemd-run --on-active=3 --timer-property=AccuracySec=100ms ${pkgs.systemd}/bin/systemctl suspend && ${quit}"
     else "poweroff";
 
-  # Full-screen shots: jay has its own screenshot command, hyprland uses grim.
+  # Full-screen shots: jay's own screenshot command, then a consumer.
   satty = "${pkgs.satty}/bin/satty";
-  shot = jayThen: grimTo:
-    if jay
-    then "jay screenshot /tmp/jay-screenshot.png && ${jayThen}"
-    else "${pkgs.grim}/bin/grim - | ${grimTo}";
+  shot = andThen: "jay screenshot /tmp/jay-screenshot.png && ${andThen}";
 
   # Focused-monitor shot to the clipboard. jay can only capture the whole
   # layout, so crop it to the focused output (found as in jay-osd: the output
@@ -295,20 +278,17 @@ in {
       # ─ Screenshots ─
       {
         key = "Print";
-        sh = shot "${wlCopy} < /tmp/jay-screenshot.png" wlCopy;
+        sh = shot "${wlCopy} < /tmp/jay-screenshot.png";
         privileged = true;
       }
       {
         key = "shift-Print";
-        sh = shot "${satty} -f /tmp/jay-screenshot.png" "${satty} -f -";
+        sh = shot "${satty} -f /tmp/jay-screenshot.png";
         privileged = true;
       }
       {
         key = "MOD-ctrl-shift-s";
-        sh =
-          if jay
-          then "${focusedShot}"
-          else "${pkgs.hyprshot}/bin/hyprshot -m output -m active --clipboard-only";
+        sh = "${focusedShot}";
         privileged = true;
       }
       {
@@ -333,32 +313,32 @@ in {
       }
 
       # ─ Media keys, whatever modifiers are held ─
-      (media ["--output-volume" "lower"] "${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+      (media ["--output-volume" "lower"]
         // {
           key = "XF86AudioLowerVolume";
           anyMods = true;
         })
-      (media ["--output-volume" "raise" "--max-volume" "150"] "${wpctl} set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
+      (media ["--output-volume" "raise" "--max-volume" "150"]
         // {
           key = "XF86AudioRaiseVolume";
           anyMods = true;
         })
-      (media ["--output-volume" "mute-toggle"] "${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle"
+      (media ["--output-volume" "mute-toggle"]
         // {
           key = "XF86AudioMute";
           anyMods = true;
         })
-      (media ["--input-volume" "mute-toggle"] "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+      (media ["--input-volume" "mute-toggle"]
         // {
           key = "XF86AudioMicMute";
           anyMods = true;
         })
-      (media ["--brightness" "raise"] "${brightnessctl} set 10%+"
+      (media ["--brightness" "raise"]
         // {
           key = "XF86MonBrightnessUp";
           anyMods = true;
         })
-      (media ["--brightness" "lower"] "${brightnessctl} set 10%-"
+      (media ["--brightness" "lower"]
         // {
           key = "XF86MonBrightnessDown";
           anyMods = true;

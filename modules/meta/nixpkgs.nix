@@ -5,20 +5,13 @@
     overlays = [
       inputs.nur.overlays.default
 
+      # `pkgs.stable.<name>`: the quick fallback to the release branch when
+      # something breaks on unstable. Kept even while nothing uses it.
       (final: prev: {
         stable = import inputs.stable {
           system = prev.stdenv.hostPlatform.system;
           config.allowUnfree = true;
         };
-      })
-
-      # TEMPORARY: see nixpkgs-brave in flake.nix.
-      (final: prev: {
-        brave =
-          (import inputs.nixpkgs-brave {
-            system = prev.stdenv.hostPlatform.system;
-            config.allowUnfree = true;
-          }).brave;
       })
 
       (final: prev: {

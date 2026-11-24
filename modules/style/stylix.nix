@@ -54,11 +54,7 @@
     };
   };
 
-  flake.modules.homeManager.gui = {
-    lib,
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.gui = {pkgs, ...}: {
     # Cursor theme. Only meaningful with a display, and its name/package come
     # from stylix.cursor above — so this belongs to the gui module, not the
     # global home config: headless hosts get no stylix, and enabling it there
@@ -76,19 +72,7 @@
 
     stylix.targets = {
       bat.enable = false; # tokyonight, set in modules/programs/cli.nix
-      # Two separate options, and both are needed. `hyprpaper.enable` is the
-      # target that writes hyprpaper's config; `hyprland.hyprpaper.enable` is
-      # what actually turns the daemon on, and it auto-enables from
-      # stylix.image being set. With only the first one off, hyprpaper ran with
-      # no wallpaper to paint, aborted once per login and left a coredump.
-      #
-      # Nothing here wants it: jay draws the wallpaper with swaybg
-      # (modules/programs/jay/default.nix) and hyprland uses awww
-      # (modules/programs/hypr.nix).
-      hyprland.hyprpaper.enable = lib.mkForce false;
-      hyprpaper.enable = lib.mkForce false;
       rofi.enable = false;
-      waybar.enable = false;
     };
   };
 }

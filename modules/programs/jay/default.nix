@@ -17,6 +17,15 @@
     environment.systemPackages = [jayPkg pkgs.papirus-icon-theme];
     services.displayManager.sessionPackages = [jayPkg];
 
+    # jay ships its own portal (ScreenCast, RemoteDesktop) and jay-portals.conf,
+    # which sends FileChooser and the rest to the GTK portal. Flatpak also
+    # refuses to evaluate without a portal.
+    xdg.portal = {
+      enable = true;
+      extraPortals = [jayPkg pkgs.xdg-desktop-portal-gtk];
+      configPackages = [jayPkg];
+    };
+
     # jay has no session manager, so graphical-session.target (which refuses
     # manual start) never activates and graphical-session user services like
     # cliphist never run. This target is started from jay's on-graphics-initialized

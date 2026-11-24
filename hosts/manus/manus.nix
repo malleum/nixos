@@ -9,7 +9,6 @@
       "doc"
       "efi"
       "gui"
-      "hyp"
       "lap"
       "med"
       "off"

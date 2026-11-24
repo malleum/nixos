@@ -117,10 +117,8 @@ A few conventions carry most of the structure:
 | `prt` | Printing and network printer discovery |
 | `wrk` | Work tooling |
 | `src` | Build jay and iamb from their source flakes instead of the binary cache |
-| `hyp` | Hyprland and waybar, kept as a backup session |
-| `amd` | AMD GPU tuning, with APU workarounds kept off the desktop's discrete card |
+| `amd` | AMD GPU tuning (ROCm and render-node fix on the desktop's discrete card) |
 | `ath` / `wif` | WiFi fixes for the Qualcomm WCN7850 and MediaTek MT7925 cards |
-| `bt-audio` | Bluetooth audio stutter fixes for the WCN7850 combo card |
 | `dbt` | Windows entry and the UEFI shell in the boot menu |
 | `matrix` `malleusite` `balefire` `mc` `mechphyll` `ultimate-grapple` `pipedream` | Server services on minimus |
 
@@ -192,8 +190,6 @@ the status bar.
   Audio updates instantly; everything else refreshes every two seconds.
 - Theme: stylix sets base16 colours once, and jay, the status bar, rofi,
   notifications and the lock screen all read from them.
-- Hyprland (`hyp`) is a second session on the login screen, kept working as a
-  fallback.
 
 ## Editor
 
