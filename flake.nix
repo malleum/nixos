@@ -62,7 +62,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    grapple = {
+    malleusite = {
       url = "github:malleum/malleusite";
       inputs.nixpkgs.follows = "nixpkgs";
     };

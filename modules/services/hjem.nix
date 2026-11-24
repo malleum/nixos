@@ -326,7 +326,7 @@
     # calendar configured the panel simply drops the agenda card, so nothing
     # sits there reporting its own absence.
 
-    # joshammer.com/workout (grapple.nix) is this panel's workout on a phone;
+    # joshammer.com/workout (malleusite.nix) is this panel's workout on a phone;
     # the two keep one log of days done, and hjem signs in to the site with the
     # page's own password. Root-only here: systemd reads it and hands it to the
     # service as a credential (services.hjem.workoutSync.passwordFile).

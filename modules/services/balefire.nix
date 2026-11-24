@@ -56,7 +56,7 @@
         Restart = "on-failure";
         RestartSec = 5;
 
-        # Lighter than grapple's hardening on purpose: this runs out of a home
+        # Lighter than malleusite's hardening on purpose: this runs out of a home
         # directory the user edits, so ProtectSystem/PrivateTmp would fight the
         # workflow. The dedicated user and full hardening arrive with the flake.
         NoNewPrivileges = true;

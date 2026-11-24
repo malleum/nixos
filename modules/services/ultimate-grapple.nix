@@ -9,8 +9,6 @@
 #
 # Oracle Cloud also filters at the VCN: add an ingress rule for UDP 24680 in
 # the Security List, or the firewall line below alone does nothing.
-#
-# Not the `grapple` tag: that one is the malleusite website.
 {inputs, ...}: {
   flake.modules.nixos.ultimate-grapple = {
     imports = [inputs.ultimate-grapple.nixosModules.server];

@@ -641,7 +641,7 @@
         "type": "gitlab"
       }
     },
-    "grapple": {
+    "malleusite": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -1439,7 +1439,7 @@
         "fix-python": "fix-python",
         "flake-parts": "flake-parts_3",
         "git-hooks": "git-hooks",
-        "grapple": "grapple",
+        "malleusite": "malleusite",
         "heartstone": "heartstone",
         "hjem": "hjem",
         "home-manager": "home-manager",

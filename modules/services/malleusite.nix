@@ -2,13 +2,13 @@
   domain = "joshammer.com";
   port = 3000;
 in {
-  flake.modules.nixos.grapple = {
+  flake.modules.nixos.malleusite = {
     config,
     hostConfig,
     pkgs,
     ...
   }: let
-    grapplePkg = inputs.grapple.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    malleusitePkg = inputs.malleusite.packages.${pkgs.stdenv.hostPlatform.system}.default;
     inherit (hostConfig.user) username;
 
     # joshammer.com/lerni is the Esperanto drill on a phone, with the terminal
@@ -17,22 +17,27 @@ in {
     # that same file. It lives in the site's state, group-writable, and the
     # path the tool knows is a symlink to it (lerni-progress-link below), so
     # neither side needs to know about the other.
-    lerniDir = "/var/lib/grapple/lerni";
+    # The site's state stays at /var/lib/grapple, the name from before the
+    # rename: moving it would strand the lerni progress and anything else the
+    # site has written. systemd re-owns it to the malleusite user on start.
+    stateDirName = "grapple";
+    stateDir = "/var/lib/${stateDirName}";
+    lerniDir = "${stateDir}/lerni";
     lerniProgress = "${lerniDir}/progress.json";
     lerniLink = "${config.users.users.${username}.home}/.cache/lerni/progress.json";
   in {
-    # --- Grapple User & Group ---
-    users.groups.grapple = {};
-    users.users.grapple = {
+    # --- malleusite User & Group ---
+    users.groups.malleusite = {};
+    users.users.malleusite = {
       isSystemUser = true;
-      group = "grapple";
-      description = "Grapple Game Service User";
+      group = "malleusite";
+      description = "malleusite website service user";
     };
 
-    users.users.joshammer.extraGroups = ["grapple"];
+    users.users.joshammer.extraGroups = ["malleusite"];
 
     # setgid, so whichever of the two writes the file it stays the group's.
-    systemd.tmpfiles.rules = ["d ${lerniDir} 2775 grapple grapple -"];
+    systemd.tmpfiles.rules = ["d ${lerniDir} 2775 malleusite malleusite -"];
 
     # Moves the progress the tool already synced here into the site's state,
     # once, and leaves a symlink where it was. Runs as the user: the directory
@@ -40,7 +45,7 @@ in {
     systemd.services.lerni-progress-link = {
       description = "Share lerni's progress file with the website";
       after = ["systemd-tmpfiles-setup.service"];
-      before = ["grapple-game.service"];
+      before = ["malleusite.service"];
       wantedBy = ["multi-user.target"];
       path = [pkgs.coreutils];
       serviceConfig = {
@@ -72,22 +77,22 @@ in {
     };
 
     # --- Systemd Service ---
-    systemd.services.grapple-game = {
-      description = "Grapple Game (malleusite)";
+    systemd.services.malleusite = {
+      description = "malleusite website (joshammer.com)";
       after = ["network.target"];
       wantedBy = ["multi-user.target"];
 
       serviceConfig = {
-        ExecStart = "${grapplePkg}/bin/malleusite";
-        WorkingDirectory = "/var/lib/grapple";
+        ExecStart = "${malleusitePkg}/bin/malleusite";
+        WorkingDirectory = stateDir;
         Restart = "always";
-        User = "grapple";
-        Group = "grapple";
-        StateDirectory = "grapple";
+        User = "malleusite";
+        Group = "malleusite";
+        StateDirectory = stateDirName;
         LoadCredential = ["workout-password:${config.sops.secrets.workout_password.path}"];
         Environment = [
           "PORT=${toString port}"
-          "HOME=/var/lib/grapple"
+          "HOME=${stateDir}"
           # joshammer.com/mc reads the Minecraft server's per-player stats
           # straight off disk (mc.nix). Paper writes them world-readable, so
           # this is all it takes. Deliberately NOT the minecraft group:

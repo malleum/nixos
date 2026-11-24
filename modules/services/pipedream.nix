@@ -5,7 +5,7 @@
 # their room; the game clients do the rest. Nothing is written to disk.
 #
 # No new ports: the relay listens on loopback and nginx (which already owns
-# 80/443 for joshammer.com, see grapple.nix) forwards the WebSocket. 8091 sits
+# 80/443 for joshammer.com, see malleusite.nix) forwards the WebSocket. 8091 sits
 # next to balefire's 8090.
 {inputs, ...}: {
   flake.modules.nixos.pipedream = {
