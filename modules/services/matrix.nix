@@ -267,6 +267,7 @@ in {
     services.nginx = {
       enable = true;
       recommendedGzipSettings = true;
+      recommendedBrotliSettings = true;
       recommendedOptimisation = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;

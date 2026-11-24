@@ -117,6 +117,21 @@ in {
         proxyPass = "http://127.0.0.1:${toString port}";
         proxyWebsockets = true;
       };
+      # Legi only works under its trailing slash.
+      locations."= /legi".return = "301 /legi/$is_args$args";
+
+      # Server-level, so every location inherits them as long as it adds no
+      # add_header of its own (nginx drops inherited ones if it does). No full
+      # CSP: the site pulls Google Fonts and Phaser from CDNs, so only the
+      # framing rule, which can't break anything. No includeSubDomains on HSTS
+      # so a subdomain without TLS can't be locked out.
+      extraConfig = ''
+        add_header Strict-Transport-Security "max-age=31536000" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header Content-Security-Policy "frame-ancestors 'self'" always;
+      '';
     };
 
     # Redirect joshammer.xyz -> joshammer.com (301 permanent)
