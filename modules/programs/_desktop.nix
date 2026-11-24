@@ -80,6 +80,36 @@
     if jay
     then "jay screenshot /tmp/jay-screenshot.png && ${jayThen}"
     else "${pkgs.grim}/bin/grim - | ${grimTo}";
+
+  # Focused-monitor shot to the clipboard. jay can only capture the whole
+  # layout, so crop it to the focused output (found as in jay-osd: the output
+  # whose subtree holds the activated toplevel). Offsets are relative to the
+  # layout's top-left, which is not always 0,0.
+  focusedShot = pkgs.writeShellScript "jay-shot-focused" ''
+    export PATH=${lib.makeBinPath [pkgs.jq pkgs.imagemagick pkgs.wl-clipboard]}:$PATH
+    tmp=$(mktemp --suffix=.png)
+    trap 'rm -f "$tmp"' EXIT
+    jay screenshot "$tmp" >/dev/null 2>&1 || exit 1
+
+    line=$(wlrctl toplevel list state:activated 2>/dev/null | head -1) || true
+    app_id="${"$"}{line%%:*}"
+    title="${"$"}{line#*: }"
+    out=$(jay --json tree query -r root 2>/dev/null | jq -r --arg a "$app_id" --arg t "$title" '
+      .children[] | select(.type=="output") | .output as $n
+      | if [.. | objects | select(.app_id==$a and .title==$t)] | length > 0 then $n else empty end' | head -1)
+
+    geom=$(jay --json randr show | jq -r --arg o "$out" '
+      [.drm_devices[].connectors[] | select(.output) | {n:.name} + .output] as $all
+      | ($all | map(.x) | min) as $mx | ($all | map(.y) | min) as $my
+      | ($all | map(select(.n==$o)) | first // empty)
+      | "\(.width)x\(.height)+\(.x - $mx)+\(.y - $my)"')
+
+    if [ -n "$geom" ]; then
+      magick "$tmp" -crop "$geom" +repage png:- | wl-copy --type image/png
+    else
+      wl-copy --type image/png < "$tmp"
+    fi
+  '';
 in {
   binds =
     [
@@ -271,6 +301,14 @@ in {
       {
         key = "shift-Print";
         sh = shot "${satty} -f /tmp/jay-screenshot.png" "${satty} -f -";
+        privileged = true;
+      }
+      {
+        key = "MOD-ctrl-shift-s";
+        sh =
+          if jay
+          then "${focusedShot}"
+          else "${pkgs.hyprshot}/bin/hyprshot -m output -m active --clipboard-only";
         privileged = true;
       }
       {
