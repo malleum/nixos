@@ -1,10 +1,25 @@
 {
   flake.modules.nixos.base = {
+    config,
     hostConfig,
+    lib,
     pkgs,
     ...
   }: {
     networking.networkmanager.enable = true;
+
+    # iwd is the wifi backend everywhere NetworkManager runs (minimus turns NM
+    # off for static networking, so it gets neither). NM still owns addressing;
+    # iwd only does the wifi. Per-card tweaks live in modules/hardware/wifi_*.
+    networking.wireless.iwd = lib.mkIf config.networking.networkmanager.enable {
+      enable = true;
+      settings.General.EnableNetworkConfiguration = false;
+    };
+    networking.networkmanager.wifi = {
+      backend = "iwd";
+      macAddress = "preserve";
+      scanRandMacAddress = false;
+    };
 
     # Nothing was ever setting a country, so the cfg80211 core sits at the "00"
     # world domain, where most of 5 GHz is PASSIVE-SCAN and 6 GHz is absent.
@@ -18,7 +33,7 @@
     # 5 GHz trouble documented in wifi_ath12k.nix was never regulatory.
     #
     # Kept for the hosts whose drivers are not self-managed (mt7925 and the
-    # wpa_supplicant laptops), where the core domain is what they actually use.
+    # other laptops), where the core domain is what they actually use.
     # Always check the per-phy stanza from `iw reg get`, not the global one.
     boot.extraModprobeConfig = ''
       options cfg80211 ieee80211_regdom="US"

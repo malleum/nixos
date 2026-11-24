@@ -52,29 +52,13 @@
 # does, restore the settings from git history -- but re-measure first rather
 # than trusting the analysis above, which was made blind.
 #
-# iwd is kept for now. It was adopted as part of the same workaround, but
-# swapping the backend and the roaming policy in one go would make a
-# recurrence impossible to attribute. Revisit once this has been stable.
+# iwd is now the backend on every host (modules/system/network.nix), so the
+# only thing left here is the band preference.
 {
   flake.modules.nixos.ath = {
-    networking.wireless.iwd = {
-      enable = true;
-      settings = {
-        General.EnableNetworkConfiguration = false;
-
-        Rank = {
-          # Not a workaround: this host is a desktop a wall from the AP with a
-          # 2x2 80 MHz radio, so 2.4 GHz is never the right answer for it. 0.0
-          # disables the band for scanning and connecting -- iwd.config(5).
-          BandModifier2_4GHz = 0.0;
-        };
-      };
-    };
-
-    networking.networkmanager.wifi = {
-      backend = "iwd";
-      macAddress = "preserve";
-      scanRandMacAddress = false;
-    };
+    # Not a workaround: this host is a desktop a wall from the AP with a 2x2
+    # 80 MHz radio, so 2.4 GHz is never the right answer for it. 0.0 disables
+    # the band for scanning and connecting -- iwd.config(5).
+    networking.wireless.iwd.settings.Rank.BandModifier2_4GHz = 0.0;
   };
 }

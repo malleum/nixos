@@ -1,30 +1,18 @@
-# MediaTek MT7925 (Filogic 360) WiFi stability fixes.
+# MediaTek MT7925 (Filogic 360) WiFi quirks. iwd itself is the backend on
+# every host (modules/system/network.nix); this is only what the card needs.
 #
-# Symptom: AP band-steers to 6 GHz, mt7925e firmware fails 6 GHz auth
-# ("SME: Authentication request to the driver failed", AssocResp status=30,
-# deauth reason 6). Driver wedges; NM stops answering D-Bus so nmtui prints
-# "NetworkManager is not running" even though the unit is active.
-# wpa_supplicant `bgscan simple` keeps re-roaming because the driver lacks
-# CQM signal monitoring. Fix: switch backend to iwd (no wpa_supplicant
-# bgscan, smarter roaming logic).
+# Symptom that led here: the AP band-steers to 6 GHz, the mt7925e firmware
+# fails 6 GHz auth (AssocResp status=30, deauth reason 6) and the driver
+# wedges until NM stops answering D-Bus. ANQP and PMKSA caching are off, and
+# ASPM is disabled on the PCIe link.
 {
   flake.modules.nixos.wif = {
-    networking.wireless.iwd = {
-      enable = true;
-      settings = {
-        General = {
-          EnableNetworkConfiguration = false;
-          DisableANQP = true;
-          DisablePMKSA = true;
-        };
-        DriverQuirks.DefaultInterface = "*";
+    networking.wireless.iwd.settings = {
+      General = {
+        DisableANQP = true;
+        DisablePMKSA = true;
       };
-    };
-
-    networking.networkmanager.wifi = {
-      backend = "iwd";
-      macAddress = "preserve";
-      scanRandMacAddress = false;
+      DriverQuirks.DefaultInterface = "*";
     };
 
     boot.extraModprobeConfig = ''
