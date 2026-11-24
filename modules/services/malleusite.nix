@@ -5,6 +5,7 @@ in {
   flake.modules.nixos.malleusite = {
     config,
     hostConfig,
+    lib,
     pkgs,
     ...
   }: let
@@ -121,16 +122,39 @@ in {
       locations."= /legi".return = "301 /legi/$is_args$args";
 
       # Server-level, so every location inherits them as long as it adds no
-      # add_header of its own (nginx drops inherited ones if it does). No full
-      # CSP: the site pulls Google Fonts and Phaser from CDNs, so only the
-      # framing rule, which can't break anything. No includeSubDomains on HSTS
-      # so a subdomain without TLS can't be locked out.
-      extraConfig = ''
+      # add_header of its own (nginx drops inherited ones if it does). No
+      # includeSubDomains on HSTS so a subdomain without TLS can't be locked out.
+      #
+      # The CSP lists everything the site really loads: since malleusite
+      # self-hosts its fonts and bundles Phaser, the only outside host a browser
+      # touches is mc-heads.net, for the player faces on /mc. Inline scripts and
+      # styles stay allowed because the homepage, /hanzi, /legi and the 404 page
+      # carry small inline ones; the policy still stops scripts, frames and
+      # plugins from anywhere else, and keeps forms and <base> on this site.
+      # The geolocation lookup (ip-api) is made by the server, not the browser,
+      # so it needs no entry here.
+      extraConfig = let
+        csp = lib.concatStringsSep "; " [
+          "default-src 'self'"
+          "script-src 'self' 'unsafe-inline'"
+          "style-src 'self' 'unsafe-inline'"
+          "img-src 'self' data: blob: https://mc-heads.net"
+          "font-src 'self' data:"
+          "connect-src 'self' wss://${domain}"
+          "media-src 'self' data: blob:"
+          "worker-src 'self' blob:"
+          "object-src 'none'"
+          "base-uri 'self'"
+          "form-action 'self'"
+          "frame-ancestors 'self'"
+        ];
+      in ''
         add_header Strict-Transport-Security "max-age=31536000" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
         add_header X-Frame-Options "SAMEORIGIN" always;
-        add_header Content-Security-Policy "frame-ancestors 'self'" always;
+        add_header Content-Security-Policy "${csp}" always;
+        add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
       '';
     };
 
