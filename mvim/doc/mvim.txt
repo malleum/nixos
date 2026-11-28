@@ -100,8 +100,10 @@ g.                      show / hide dotfiles
 LSP                                                                 *mvim-lsp*
 
 Servers are enabled when their binary is on PATH (configs in mvim/lsp/).
-Completion opens while typing; <CR> accepts. Neovim's default LSP keys
-apply (|lsp-defaults|): grn rename, gra code action, grr references,
+Completion opens while typing; <CR> accepts. The menu shows a kind icon, the
+name and a short type; a bordered float beside it holds the server's docs
+(lua/mvim/completion.lua). Neovim's default LSP keys apply
+(|lsp-defaults|): grn rename, gra code action, grr references,
 gri implementation, grt type definition, gO symbols, <C-s> signature
 help, [d ]d diagnostics, <C-w>d diagnostic float, an / in to grow /
 shrink a selection by syntax node.

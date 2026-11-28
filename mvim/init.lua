@@ -12,7 +12,8 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 
 local o = vim.opt
-o.completeopt = { "menuone", "noselect", "noinsert", "fuzzy", "popup" }
+-- No "popup": lua/mvim/completion.lua shows the docs in its own float.
+o.completeopt = { "menuone", "noselect", "noinsert", "fuzzy" }
 o.cursorcolumn = true
 o.cursorline = true
 o.expandtab = true
@@ -49,6 +50,7 @@ require("mvim.direnv").setup()
 -- servers are enabled, on startup and again after :Direnv.
 require("mvim.shellrtp").setup()
 require("mvim.lsp")
+require("mvim.completion").setup()
 require("mvim.lsp_keys")
 require("mvim.treesitter")
 require("mvim.picker").setup()
